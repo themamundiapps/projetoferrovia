@@ -1,0 +1,27 @@
+{
+  "name": "assetgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource/merriweather": "^5.3.0",
+    "@fontsource/michroma": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "@fontsource/roboto-mono": "^5.3.0",
+    "@fontsource/source-sans-pro": "^5.3.0",
+    "@fontsource/special-elite": "^5.3.0",
+    "@fontsource/titillium-web": "^5.3.0",
+    "d3-geo": "^3.1.2",
+    "luaparse": "^0.3.1",
+    "topojson-client": "^3.1.0",
+    "us-atlas": "^3.0.1",
+    "world-atlas": "^2.0.2"
+  }
+}

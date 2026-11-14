@@ -1,0 +1,277 @@
+{
+ "linhas": {
+  "emoji": "🛤️",
+  "unicode": "7.0",
+  "obs": ""
+ },
+ "trens": {
+  "emoji": "🚂",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "estacoes": {
+  "emoji": "🚉",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "cargas": {
+  "emoji": "📦",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "companhia": {
+  "emoji": "💼",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "loja": {
+  "emoji": "🛒",
+  "unicode": "9.0",
+  "obs": ""
+ },
+ "mapa_mundo": {
+  "emoji": "🌎",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "missoes": {
+  "emoji": "📋",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "ranking": {
+  "emoji": "🏆",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "configuracoes": {
+  "emoji": "⚙️",
+  "unicode": "4.1",
+  "obs": ""
+ },
+ "visitar": {
+  "emoji": "👀",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "menu": {
+  "emoji": "📜",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "dinheiro": {
+  "emoji": "💰",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "renda": {
+  "emoji": "📈",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "passageiros": {
+  "emoji": "👥",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "satisfacao": {
+  "emoji": "😊",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "relogio": {
+  "emoji": "⏰",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "cadeado": {
+  "emoji": "🔒",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "melhorar": {
+  "emoji": "⬆️",
+  "unicode": "4.0",
+  "obs": ""
+ },
+ "confirmar": {
+  "emoji": "✅",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "fechar": {
+  "emoji": "❌",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "mais": {
+  "emoji": "➕",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "menos": {
+  "emoji": "➖",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "info": {
+  "emoji": "ℹ️",
+  "unicode": "3.0",
+  "obs": ""
+ },
+ "alerta": {
+  "emoji": "⚠️",
+  "unicode": "4.0",
+  "obs": ""
+ },
+ "velocidade": {
+  "emoji": "💨",
+  "unicode": "6.0",
+  "obs": "não há velocímetro em emoji"
+ },
+ "distancia": {
+  "emoji": "📏",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "presente": {
+  "emoji": "🎁",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "prestigio": {
+  "emoji": "⭐",
+  "unicode": "5.1",
+  "obs": ""
+ },
+ "conectar": {
+  "emoji": "🔗",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "construir": {
+  "emoji": "🔨",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "assinar": {
+  "emoji": "✍️",
+  "unicode": "1.1",
+  "obs": ""
+ },
+ "sede": {
+  "emoji": "🚩",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "auto": {
+  "emoji": "🔄",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "carga_cafe": {
+  "emoji": "☕",
+  "unicode": "4.0",
+  "obs": ""
+ },
+ "carga_minerio": {
+  "emoji": "⛏️",
+  "unicode": "5.2",
+  "obs": "picareta no lugar de minério"
+ },
+ "carga_soja": {
+  "emoji": "🌱",
+  "unicode": "6.0",
+  "obs": "o emoji de feijão (🫘) é novo demais"
+ },
+ "carga_graos": {
+  "emoji": "🌾",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "carga_carvao": {
+  "emoji": "🔥",
+  "unicode": "6.0",
+  "obs": "não há emoji de carvão"
+ },
+ "carga_petroleo": {
+  "emoji": "🛢️",
+  "unicode": "7.0",
+  "obs": ""
+ },
+ "carga_madeira": {
+  "emoji": "🌲",
+  "unicode": "6.0",
+  "obs": "o emoji de tora (🪵) é novo demais"
+ },
+ "carga_gado": {
+  "emoji": "🐄",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "carga_aco": {
+  "emoji": "🔩",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "carga_mercadorias": {
+  "emoji": "🏭",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "carga_passageiros": {
+  "emoji": "🎫",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "terreno_montanha": {
+  "emoji": "⛰️",
+  "unicode": "5.2",
+  "obs": ""
+ },
+ "terreno_ponte": {
+  "emoji": "🌉",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "terreno_pantano": {
+  "emoji": "🐊",
+  "unicode": "6.0",
+  "obs": "jacaré representa o Pantanal"
+ },
+ "terreno_floresta": {
+  "emoji": "🌳",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "terreno_tunel": {
+  "emoji": "🚇",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "terreno_cremalheira": {
+  "emoji": "🧗",
+  "unicode": "10.0",
+  "obs": "não há emoji de cremalheira; escalada = trecho íngreme"
+ },
+ "era_vapor": {
+  "emoji": "🚂",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "era_diesel": {
+  "emoji": "🚆",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "era_eletrico": {
+  "emoji": "🚈",
+  "unicode": "6.0",
+  "obs": ""
+ },
+ "era_alta": {
+  "emoji": "🚅",
+  "unicode": "6.0",
+  "obs": ""
+ }
+}

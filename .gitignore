@@ -1,0 +1,15 @@
+# Arquivos de place locais (cada um mantém o seu; o código vem do repositório)
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Gerados por ferramentas
+sourcemap.json
+node_modules/
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store
+Thumbs.db

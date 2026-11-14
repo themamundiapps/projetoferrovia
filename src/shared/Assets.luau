@@ -1,0 +1,61 @@
+-- Assets.lua · ids das imagens. Depois do Bulk Import, cole cada rbxassetid no lugar do 0.
+-- Todas as imagens (exceto identidade/) são brancas: tingir com ImageColor3 usando a cor da era.
+-- Ícones: na v2 são emojis, veja Emojis.lua.
+
+local Assets = {}
+
+Assets.Ids = {
+	-- identidade
+	logo_branco = "rbxassetid://0",
+	logo_vapor = "rbxassetid://0",
+	-- marcadores
+	anel_selecao = "rbxassetid://0",
+	carimbo = "rbxassetid://0",
+	disco = "rbxassetid://0",
+	estacao_anel = "rbxassetid://0",
+	estacao_disco = "rbxassetid://0",
+	estacao_fechada = "rbxassetid://0",
+	trem_ficha = "rbxassetid://0",
+	-- molduras
+	bilhete_contorno = "rbxassetid://0",
+	bilhete_fundo = "rbxassetid://0",
+	brilho = "rbxassetid://0",
+	moldura_dupla = "rbxassetid://0",
+	perfuracao = "rbxassetid://0",
+	pilula_contorno = "rbxassetid://0",
+	pilula_fundo = "rbxassetid://0",
+	sombra_painel = "rbxassetid://0",
+	tracejado = "rbxassetid://0",
+	-- texturas
+	mar_hachura = "rbxassetid://0",
+	mar_ondas = "rbxassetid://0",
+	mar_pontos = "rbxassetid://0",
+	papel_grao = "rbxassetid://0",
+	vinheta = "rbxassetid://0",
+	-- trens
+	trem_alta_velocidade = "rbxassetid://0",
+	trem_diesel = "rbxassetid://0",
+	trem_eletrico = "rbxassetid://0",
+	trem_vapor = "rbxassetid://0",
+}
+
+-- Configuração de 9-slice e tiles.
+Assets.Slice = {
+	moldura_dupla = Rect.new(12, 12, 116, 116),
+	bilhete_fundo = Rect.new(18, 18, 110, 110),
+	bilhete_contorno = Rect.new(18, 18, 110, 110),
+	sombra_painel = Rect.new(64, 64, 96, 96),
+	pilula_fundo = Rect.new(32, 32, 96, 32),
+	pilula_contorno = Rect.new(32, 32, 96, 32),
+}
+
+Assets.Tile = {
+	perfuracao = UDim2.fromOffset(16, 8),
+	tracejado = UDim2.fromOffset(24, 4),
+	mar_hachura = UDim2.fromOffset(128, 128),
+	mar_ondas = UDim2.fromOffset(128, 64),
+	mar_pontos = UDim2.fromOffset(96, 96),
+	papel_grao = UDim2.fromOffset(512, 512),
+}
+
+return Assets
