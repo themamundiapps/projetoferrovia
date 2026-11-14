@@ -495,6 +495,12 @@ function Interface._preencher(self: Interface)
 		self.btnConstruir.AutoButtonColor = false
 		self.btnConstruir.BackgroundTransparency = 0.6
 		self.lblMotivo.Text = ""
+	elseif situacao == "projeto" then
+		self.btnConstruir.Text = `{Emojis.gabinete} Ainda é só um projeto`
+		self.btnConstruir.Active = false
+		self.btnConstruir.AutoButtonColor = false
+		self.btnConstruir.BackgroundTransparency = 0.6
+		self.lblMotivo.Text = "Estude este projeto no Gabinete (menu de baixo) para liberar a construção."
 	elseif situacao == "bloqueado" then
 		self.btnConstruir.Text = `{Emojis.cadeado} Ainda fechado`
 		self.btnConstruir.Active = false

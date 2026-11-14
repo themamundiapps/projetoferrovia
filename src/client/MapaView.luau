@@ -13,7 +13,7 @@ local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Em
 local MapaView = {}
 MapaView.__index = MapaView
 
-export type EstadoTrecho = "construido" | "disponivel" | "bloqueado"
+export type EstadoTrecho = "construido" | "disponivel" | "bloqueado" | "projeto"
 
 type Segmento = {
 	id: string,
@@ -23,6 +23,9 @@ type Segmento = {
 	casing: Frame,
 	linha: Frame,
 	estado: EstadoTrecho,
+	de: string,
+	para: string,
+	tracos: { Frame }, -- tracejado das linhas que ainda são só projeto (vazio nas outras)
 }
 
 type Estacao = {
@@ -35,6 +38,7 @@ type Estacao = {
 	nivel: number,
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
+	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
 }
 
 type RotuloMapa = {
@@ -317,7 +321,33 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 				BorderSizePixel = 0,
 				ZIndex = Z.linha,
 			}, self.conteudo) :: Frame
-			table.insert(self.segmentos, { id = trecho.id, cor = cor, a = a, b = b, casing = casing, linha = frame, estado = "construido" })
+			-- linhas do Gabinete de Projetos ganham um tracejado, mostrado enquanto forem só projeto
+			local tracos: { Frame } = {}
+			if linha.projeto then
+				local n = math.clamp(math.round((b - a).Magnitude / 9), 3, 40)
+				for k = 1, n do
+					tracos[k] = novo("Frame", {
+						Name = `{trecho.id}_traco{k}`,
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundColor3 = cor,
+						BorderSizePixel = 0,
+						Visible = false,
+						ZIndex = Z.linha,
+					}, self.conteudo) :: Frame
+				end
+			end
+			table.insert(self.segmentos, {
+				id = trecho.id,
+				cor = cor,
+				a = a,
+				b = b,
+				casing = casing,
+				linha = frame,
+				estado = "construido",
+				de = trecho.de,
+				para = trecho.para,
+				tracos = tracos,
+			})
 		end
 	end
 end
@@ -382,6 +412,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			nivel = 0,
 			rotulo = rotulo,
 			selo = selo,
+			apagada = false,
 		})
 	end
 end
@@ -392,7 +423,16 @@ end
 function MapaView._estilizar(self: MapaView, s: Segmento)
 	local cores = self.era.cores
 	local sel = self.selecionado == s.id
-	if s.estado == "construido" then
+	for _, t in s.tracos do
+		t.Visible = s.estado == "projeto"
+	end
+	if s.estado == "projeto" then
+		s.linha.BackgroundTransparency = 1
+		s.casing.BackgroundTransparency = 1
+		for _, t in s.tracos do
+			t.BackgroundTransparency = 0.25
+		end
+	elseif s.estado == "construido" then
 		s.linha.BackgroundColor3 = s.cor
 		s.linha.BackgroundTransparency = 0
 		s.casing.BackgroundTransparency = 0
@@ -412,12 +452,30 @@ function MapaView._estilizar(self: MapaView, s: Segmento)
 end
 
 function MapaView.definirSituacao(self: MapaView, situacoes: { [string]: string })
+	local real: { [string]: boolean } = {} -- estações com algum trilho que não é só projeto
 	for _, s in self.segmentos do
 		local nova = situacoes[s.id]
 		if nova then
 			s.estado = nova :: any
 		end
+		if s.estado ~= "projeto" then
+			real[s.de], real[s.para] = true, true
+		end
 		self:_estilizar(s)
+	end
+	-- cidades que só existem em projetos ficam esmaecidas, como um rascunho
+	for _, e in self.estacoes do
+		local apagada = not real[e.id]
+		if apagada ~= e.apagada then
+			e.apagada = apagada
+			e.ponto.BackgroundTransparency = if apagada then 0.4 else 0
+			e.traco.Transparency = if apagada then 0.55 else 0
+			e.rotulo.TextTransparency = if apagada then 0.4 else 0
+			local contorno = e.rotulo:FindFirstChildOfClass("UIStroke")
+			if contorno then
+				contorno.Transparency = if apagada then 0.5 else 0
+			end
+		end
 	end
 end
 
@@ -575,6 +633,16 @@ function MapaView._layout(self: MapaView)
 		s.casing.Position = s.linha.Position
 		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + extra)
 		s.casing.Rotation = angulo
+		local n = #s.tracos
+		if n > 0 and s.estado == "projeto" then
+			local tam = comprimento / n
+			for k, t in s.tracos do
+				local p = a + d * ((k - 0.5) / n)
+				t.Position = UDim2.fromOffset(p.X, p.Y)
+				t.Size = UDim2.fromOffset(tam * 0.55, math.max(3, espessura * 0.6))
+				t.Rotation = angulo
+			end
+		end
 	end
 
 	for _, r in self.rotulosMapa do

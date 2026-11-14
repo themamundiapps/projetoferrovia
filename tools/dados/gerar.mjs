@@ -46,7 +46,12 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   }
 
   const km = (a, b) => Math.round(d3.geoDistance([est[a].lon, est[a].lat], [est[b].lon, est[b].lat]) * 6371 * SINUOSIDADE);
-  const linhas = [...dados.linhas].sort((a, b) => a.ano - b.ano);
+  // Linhas históricas em ordem de ano; depois, as do Gabinete de Projetos na ordem da lista de projetos.
+  const ordemProjeto = Object.fromEntries((dados.projetos ?? []).map((p, i) => [p.id, i]));
+  for (const l of dados.linhas) if (l.projeto && ordemProjeto[l.projeto] === undefined) throw new Error(`Projeto desconhecido "${l.projeto}" na linha ${l.id}`);
+  const historicas = dados.linhas.filter((l) => !l.projeto).sort((a, b) => a.ano - b.ano);
+  const projetadas = dados.linhas.filter((l) => l.projeto).sort((a, b) => ordemProjeto[a.projeto] - ordemProjeto[b.projeto]);
+  const linhas = [...historicas, ...projetadas];
 
   const L = [];
   L.push(`-- ${cfg.modulo}.luau · GERADO por tools/dados/gerar.mjs a partir de tools/dados/${cfg.arquivo}. Não editar à mão.`);
@@ -68,9 +73,11 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push("\t},");
   L.push("\tlinhas = {");
   linhas.forEach((l, ordem) => {
-    const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, ordem);
+    // projetos dizem em que "degrau" de preço ficam (ordemCusto), para não explodir com 1,7^n
+    const degrau = l.ordemCusto ? l.ordemCusto - 1 : ordem;
+    const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, degrau);
     L.push("\t\t{");
-    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1},`);
+    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, projeto = ${lua(l.projeto)},`);
     L.push("\t\t\ttrechos = {");
     l.trechos.forEach((t, i) => {
       const k = km(t.de, t.para);
@@ -89,6 +96,16 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     L.push("\t\t\t},");
     L.push("\t\t},");
   });
+  L.push("\t},");
+  // Gabinete de Projetos: ferrovias planejadas que nunca saíram (ou não saíram inteiras) do papel.
+  L.push("\tprojetos = {");
+  for (const p of dados.projetos ?? []) {
+    const r = p.requer ?? {};
+    if (r.projeto && ordemProjeto[r.projeto] === undefined) throw new Error(`Projeto requer desconhecido "${r.projeto}"`);
+    const linha = linhas.find((l) => l.projeto === p.id);
+    if (!linha) throw new Error(`Projeto ${p.id} sem linha`);
+    L.push(`\t\t{ id = ${lua(p.id)}, nome = ${lua(p.nome)}, emoji = ${lua(p.emoji)}, linha = ${lua(linha.id)}, custo = ${lua(p.custo)}, segundos = ${lua(Math.round(p.minutos * 60))}, descricao = ${lua(p.descricao)}, requer = { linhasCompletas = ${lua(r.linhasCompletas)}, era = ${lua(r.era)}, projeto = ${lua(r.projeto)} } },`);
+  }
   L.push("\t},");
   // Rótulos do mapa (estados, regiões, rios, oceano). Estados e oceano com letras espaçadas, estilo carta antiga.
   const espacar = (t) => t.split("\n").map((linha) => [...linha].join(" ").replace(/   /g, "    ")).join("\n");

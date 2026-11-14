@@ -179,6 +179,155 @@
       "lat": -19.62,
       "porte": 1,
       "produz": "minerio"
+    },
+    {
+      "id": "porto_velho",
+      "nome": "Porto Velho",
+      "lon": -63.9,
+      "lat": -8.76,
+      "porte": 2,
+      "porto": true
+    },
+    {
+      "id": "anchieta",
+      "nome": "Anchieta",
+      "lon": -40.65,
+      "lat": -20.8,
+      "porte": 1
+    },
+    {
+      "id": "porto_acu",
+      "nome": "Porto do Açu",
+      "lon": -41.05,
+      "lat": -21.64,
+      "porte": 1,
+      "porto": true
+    },
+    {
+      "id": "macae",
+      "nome": "Macaé",
+      "lon": -41.79,
+      "lat": -22.37,
+      "porte": 2
+    },
+    {
+      "id": "eliseu_martins",
+      "nome": "Eliseu Martins",
+      "lon": -43.67,
+      "lat": -8.1,
+      "porte": 1,
+      "produz": "graos"
+    },
+    {
+      "id": "salgueiro",
+      "nome": "Salgueiro",
+      "lon": -39.12,
+      "lat": -8.07,
+      "porte": 2
+    },
+    {
+      "id": "quixada",
+      "nome": "Quixadá",
+      "lon": -39.02,
+      "lat": -4.97,
+      "porte": 2
+    },
+    {
+      "id": "pecem",
+      "nome": "Pecém",
+      "lon": -38.83,
+      "lat": -3.55,
+      "porte": 2,
+      "porto": true
+    },
+    {
+      "id": "arcoverde",
+      "nome": "Arcoverde",
+      "lon": -37.05,
+      "lat": -8.42,
+      "porte": 2
+    },
+    {
+      "id": "suape",
+      "nome": "Suape",
+      "lon": -34.95,
+      "lat": -8.39,
+      "porte": 2,
+      "porto": true
+    },
+    {
+      "id": "sinop",
+      "nome": "Sinop",
+      "lon": -55.5,
+      "lat": -11.86,
+      "porte": 2,
+      "produz": "graos"
+    },
+    {
+      "id": "matupa",
+      "nome": "Matupá",
+      "lon": -54.93,
+      "lat": -10.18,
+      "porte": 1
+    },
+    {
+      "id": "novo_progresso",
+      "nome": "Novo Progresso",
+      "lon": -55.38,
+      "lat": -7.05,
+      "porte": 1
+    },
+    {
+      "id": "miritituba",
+      "nome": "Miritituba",
+      "lon": -55.97,
+      "lat": -4.26,
+      "porte": 1,
+      "porto": true
+    },
+    {
+      "id": "sao_jose_campos",
+      "nome": "São José dos Campos",
+      "lon": -45.89,
+      "lat": -23.18,
+      "porte": 3
+    },
+    {
+      "id": "resende",
+      "nome": "Resende",
+      "lon": -44.45,
+      "lat": -22.47,
+      "porte": 2
+    },
+    {
+      "id": "campinorte",
+      "nome": "Campinorte",
+      "lon": -49.15,
+      "lat": -14.31,
+      "porte": 1
+    },
+    {
+      "id": "agua_boa",
+      "nome": "Água Boa",
+      "lon": -52.16,
+      "lat": -14.05,
+      "porte": 1,
+      "produz": "graos"
+    },
+    {
+      "id": "lucas_rv",
+      "nome": "Lucas do Rio Verde",
+      "lon": -55.95,
+      "lat": -13.05,
+      "porte": 2,
+      "produz": "graos"
+    },
+    {
+      "id": "vilhena",
+      "nome": "Vilhena",
+      "lon": -60.15,
+      "lat": -12.74,
+      "porte": 2
     }
   ],
   "linhas": [
@@ -341,6 +490,186 @@
           "para": "itabira",
           "ano": 1942,
           "terreno": "serra_leve"
+        }
+      ]
+    },
+    {
+      "id": "ef118",
+      "nome": "EF-118 Vitória–Rio",
+      "ano": 2026,
+      "cor": 7,
+      "projeto": "ef118",
+      "ordemCusto": 5,
+      "trechos": [
+        {
+          "de": "vitoria",
+          "para": "anchieta",
+          "ano": 2026,
+          "terreno": "baixada"
+        },
+        {
+          "de": "anchieta",
+          "para": "porto_acu",
+          "ano": 2026,
+          "terreno": "baixada"
+        },
+        {
+          "de": "porto_acu",
+          "para": "macae",
+          "ano": 2026,
+          "terreno": "baixada"
+        },
+        {
+          "de": "macae",
+          "para": "rio",
+          "ano": 2026,
+          "terreno": "serra_leve"
+        }
+      ]
+    },
+    {
+      "id": "transnordestina",
+      "nome": "Transnordestina",
+      "ano": 2006,
+      "cor": 4,
+      "projeto": "transnordestina",
+      "ordemCusto": 6,
+      "trechos": [
+        {
+          "de": "eliseu_martins",
+          "para": "salgueiro",
+          "ano": 2006,
+          "terreno": "planalto"
+        },
+        {
+          "de": "salgueiro",
+          "para": "quixada",
+          "ano": 2006,
+          "terreno": "planalto"
+        },
+        {
+          "de": "quixada",
+          "para": "pecem",
+          "ano": 2006,
+          "terreno": "baixada"
+        }
+      ]
+    },
+    {
+      "id": "ramal_suape",
+      "nome": "Ramal Salgueiro–Suape",
+      "ano": 2006,
+      "cor": 6,
+      "projeto": "ramal_suape",
+      "ordemCusto": 6,
+      "trechos": [
+        {
+          "de": "salgueiro",
+          "para": "arcoverde",
+          "ano": 2006,
+          "terreno": "planalto"
+        },
+        {
+          "de": "arcoverde",
+          "para": "suape",
+          "ano": 2006,
+          "terreno": "serra_leve"
+        }
+      ]
+    },
+    {
+      "id": "ferrograo",
+      "nome": "Ferrogrão (EF-170)",
+      "ano": 2017,
+      "cor": 3,
+      "projeto": "ferrograo",
+      "ordemCusto": 6,
+      "trechos": [
+        {
+          "de": "sinop",
+          "para": "matupa",
+          "ano": 2017,
+          "terreno": "planalto"
+        },
+        {
+          "de": "matupa",
+          "para": "novo_progresso",
+          "ano": 2017,
+          "terreno": "vale"
+        },
+        {
+          "de": "novo_progresso",
+          "para": "miritituba",
+          "ano": 2017,
+          "terreno": "vale"
+        }
+      ]
+    },
+    {
+      "id": "fico",
+      "nome": "Transcontinental (FICO)",
+      "ano": 2008,
+      "cor": 5,
+      "projeto": "fico",
+      "ordemCusto": 7,
+      "trechos": [
+        {
+          "de": "campinorte",
+          "para": "agua_boa",
+          "ano": 2008,
+          "terreno": "planalto"
+        },
+        {
+          "de": "agua_boa",
+          "para": "lucas_rv",
+          "ano": 2008,
+          "terreno": "planalto"
+        },
+        {
+          "de": "lucas_rv",
+          "para": "vilhena",
+          "ano": 2008,
+          "terreno": "planalto"
+        },
+        {
+          "de": "vilhena",
+          "para": "porto_velho",
+          "ano": 2008,
+          "terreno": "vale"
+        }
+      ]
+    },
+    {
+      "id": "tav",
+      "nome": "Trem-bala Rio–SP–Campinas",
+      "ano": 2007,
+      "cor": 8,
+      "projeto": "tav",
+      "ordemCusto": 8,
+      "trechos": [
+        {
+          "de": "campinas",
+          "para": "sao_paulo",
+          "ano": 2007,
+          "terreno": "planalto"
+        },
+        {
+          "de": "sao_paulo",
+          "para": "sao_jose_campos",
+          "ano": 2007,
+          "terreno": "vale"
+        },
+        {
+          "de": "sao_jose_campos",
+          "para": "resende",
+          "ano": 2007,
+          "terreno": "vale"
+        },
+        {
+          "de": "resende",
+          "para": "rio",
+          "ano": 2007,
+          "terreno": "serra"
         }
       ]
     }
@@ -654,6 +983,75 @@
       "lon": -43.6,
       "lat": -24.4,
       "zoomMin": 1.2
+    }
+  ],
+  "projetos": [
+    {
+      "id": "ef118",
+      "nome": "EF-118 Vitória–Rio",
+      "emoji": "conectar",
+      "custo": 40000,
+      "minutos": 5,
+      "requer": {
+        "linhasCompletas": 3
+      },
+      "descricao": "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão."
+    },
+    {
+      "id": "transnordestina",
+      "nome": "Transnordestina",
+      "emoji": "carga_graos",
+      "custo": 120000,
+      "minutos": 10,
+      "requer": {
+        "linhasCompletas": 4
+      },
+      "descricao": "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta."
+    },
+    {
+      "id": "ramal_suape",
+      "nome": "Ramal Salgueiro–Suape",
+      "emoji": "carga_mercadorias",
+      "custo": 90000,
+      "minutos": 8,
+      "requer": {
+        "projeto": "transnordestina"
+      },
+      "descricao": "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade."
+    },
+    {
+      "id": "ferrograo",
+      "nome": "Ferrogrão (EF-170)",
+      "emoji": "carga_graos",
+      "custo": 250000,
+      "minutos": 15,
+      "requer": {
+        "era": "diesel"
+      },
+      "descricao": "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel."
+    },
+    {
+      "id": "fico",
+      "nome": "Transcontinental (FICO)",
+      "emoji": "mapa_mundo",
+      "custo": 400000,
+      "minutos": 20,
+      "requer": {
+        "projeto": "ferrograo"
+      },
+      "descricao": "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia."
+    },
+    {
+      "id": "tav",
+      "nome": "Trem-bala Rio–SP–Campinas",
+      "emoji": "era_alta",
+      "custo": 1500000,
+      "minutos": 30,
+      "requer": {
+        "era": "diesel",
+        "projeto": "ef118"
+      },
+      "descricao": "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai."
     }
   ]
 }

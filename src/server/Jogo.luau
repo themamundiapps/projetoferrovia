@@ -77,6 +77,14 @@ local function sanear(salvo: any): EstadoMapa
 			end
 		end
 	end
+	if type(salvo.projetos) == "table" then
+		for k, v in salvo.projetos do
+			-- só projetos que existem em algum mapa; o valor é o horário em que a pesquisa termina
+			if type(k) == "string" and type(v) == "number" and v == v then
+				e.projetos[k] = v
+			end
+		end
+	end
 	if type(salvo.era) == "string" then
 		for _, era in Economia.ERAS do
 			if era.id == salvo.era then
@@ -101,6 +109,8 @@ local function pacoteEstado(s: Sessao): any
 		trens = e.trens,
 		era = e.era,
 		estacoes = e.estacoes,
+		projetos = e.projetos,
+		agora = os.time(),
 		ganhoOffline = s.ganhoOffline,
 		salvando = s.podeSalvar,
 	}
@@ -140,6 +150,8 @@ function Acoes.construir(s: Sessao, args: any): (boolean, string?)
 	local situacao = Economia.situacaoTrecho(e, dados, iLinha, iTrecho)
 	if situacao == "construido" then
 		return false, "Esse trecho já foi construído."
+	elseif situacao == "projeto" then
+		return false, "Essa ferrovia ainda é só um projeto: pesquise no Gabinete de Projetos."
 	elseif situacao == "bloqueado" then
 		return false, "Esse trecho ainda não está liberado."
 	end
@@ -261,6 +273,60 @@ function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 		return false, "Nenhuma linha precisa de trem, ou falta dinheiro."
 	end
 	return true, `{comprados} trem(ns) comprado(s).`
+end
+
+-- Gabinete de Projetos: começa a pesquisa (paga na hora, termina com o tempo, mesmo offline).
+function Acoes.pesquisar(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.projeto) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local p = Economia.acharProjeto(dados, args.projeto)
+	if not p then
+		return false, "Projeto desconhecido."
+	end
+	local situacao = Economia.situacaoProjeto(e, dados, p)
+	if situacao == "concluido" then
+		return false, "Esse projeto já foi concluído."
+	elseif situacao == "pesquisando" then
+		return false, "Esse projeto já está em estudo."
+	elseif situacao == "ocupado" then
+		return false, "O Gabinete já está estudando outro projeto. Espere terminar ou acelere."
+	elseif situacao == "bloqueado" then
+		local _, motivo = Economia.requisitosProjeto(e, dados, p)
+		return false, motivo or "Projeto ainda fechado."
+	end
+	if e.dinheiro < p.custo then
+		return false, "Dinheiro insuficiente."
+	end
+	e.dinheiro -= p.custo
+	e.projetos[p.id] = os.time() + p.segundos
+	return true, `Estudos da {p.nome} começaram.`
+end
+
+-- Paga para terminar agora a pesquisa em andamento.
+function Acoes.acelerar(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.projeto) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local p = Economia.acharProjeto(dados, args.projeto)
+	if not p then
+		return false, "Projeto desconhecido."
+	end
+	local atual, restante = Economia.pesquisaAtual(e)
+	if atual ~= p.id then
+		return false, "Esse projeto não está em estudo."
+	end
+	local custo = Economia.custoAcelerar(p, restante)
+	if e.dinheiro < custo then
+		return false, "Dinheiro insuficiente."
+	end
+	e.dinheiro -= custo
+	e.projetos[p.id] = os.time()
+	return true, nil
 end
 
 function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
@@ -403,6 +469,13 @@ if RunService:IsStudio() then
 				e.dinheiro += tonumber(valor) or 0
 			elseif comando == "zerar" then
 				s.mapas[s.mapaAtual] = Economia.estadoNovo()
+			elseif comando == "pesquisas" then
+				-- termina na hora todas as pesquisas em andamento
+				for id, fim in e.projetos do
+					e.projetos[id] = math.min(fim, os.time())
+				end
+			elseif comando == "estado" then
+				return e
 			end
 			enviarEstado(s)
 		end

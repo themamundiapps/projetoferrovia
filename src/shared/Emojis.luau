@@ -38,6 +38,8 @@ local Emojis = {
 	assinar = "✍️",
 	sede = "🚩",
 	auto = "🔄",
+	gabinete = "📐", -- Gabinete de Projetos (esquadro de desenhista)
+	pesquisa = "🔎",
 	-- carga
 	carga_cafe = "☕",
 	carga_minerio = "⛏️", -- picareta no lugar de minério

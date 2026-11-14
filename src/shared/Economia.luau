@@ -14,7 +14,17 @@ Economia.OFFLINE_MAX_SEGUNDOS = 2 * 60 * 60
 Economia.CARGAS = {
 	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25 },
 	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6 },
+	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4 },
 }
+
+-- Gabinete de Projetos: uma pesquisa por vez; acelerar custa até 60% do preço do projeto,
+-- proporcional ao tempo que ainda falta.
+Economia.FATOR_ACELERAR = 0.6
+
+-- Relógio usado nas pesquisas (os.time no servidor). O cliente troca pelo horário do servidor.
+Economia.relogio = function(): number
+	return os.time()
+end
 
 -- Estações: cada nível aumenta a renda dos trechos que chegam nela.
 Economia.NIVEIS_ESTACAO = {
@@ -40,11 +50,12 @@ export type EstadoMapa = {
 	trens: { [string]: number }, -- id da linha -> quantidade de trens
 	era: string, -- id da era atual
 	estacoes: { [string]: number }, -- id da estação -> nível (0 a 5)
+	projetos: { [string]: number }, -- id do projeto -> horário (os.time) em que a pesquisa termina
 	ultimoTick: number, -- os.time() do último cálculo de renda
 }
 
 function Economia.estadoNovo(): EstadoMapa
-	return { dinheiro = Economia.DINHEIRO_INICIAL, trechos = {}, trens = {}, era = "vapor", estacoes = {}, ultimoTick = os.time() }
+	return { dinheiro = Economia.DINHEIRO_INICIAL, trechos = {}, trens = {}, era = "vapor", estacoes = {}, projetos = {}, ultimoTick = os.time() }
 end
 
 -- Custo e alternativa efetivos de um trecho (com a escolha de traçado, se houver).
@@ -80,15 +91,98 @@ function Economia.linhaCompleta(estado: EstadoMapa, linha: any): boolean
 	return Economia.trechosConstruidos(estado, linha) == #linha.trechos
 end
 
--- Linhas abrem em ordem histórica: a próxima só libera quando a anterior estiver completa.
+-- ---------------------------------------------------------------- Gabinete de Projetos
+
+function Economia.acharProjeto(dados: any, id: string): any?
+	for _, p in dados.projetos or {} do
+		if p.id == id then
+			return p
+		end
+	end
+	return nil
+end
+
+function Economia.projetoConcluido(estado: EstadoMapa, id: string): boolean
+	local fim = (estado.projetos or {})[id]
+	return fim ~= nil and Economia.relogio() >= fim
+end
+
+-- Pesquisa em andamento (só uma por vez): id e segundos que faltam.
+function Economia.pesquisaAtual(estado: EstadoMapa): (string?, number)
+	local agora = Economia.relogio()
+	local projetos: { [string]: number } = estado.projetos or {}
+	for id, fim in projetos do
+		if fim > agora then
+			return id, fim - agora
+		end
+	end
+	return nil, 0
+end
+
+-- Requisitos de um projeto: se estão cumpridos e, se não, o que falta (texto para o jogador).
+function Economia.requisitosProjeto(estado: EstadoMapa, dados: any, p: any): (boolean, string?)
+	local r = p.requer or {}
+	if r.projeto and not Economia.projetoConcluido(estado, r.projeto) then
+		local outro = Economia.acharProjeto(dados, r.projeto)
+		return false, `Conclua antes o projeto {if outro then outro.nome else r.projeto}.`
+	end
+	if r.era then
+		local precisa, atual = 0, Economia.indiceEra(estado)
+		for i, era in Economia.ERAS do
+			if era.id == r.era then
+				precisa = i
+			end
+		end
+		if atual < precisa then
+			return false, `Chegue à era {r.era == "diesel" and "do Diesel" or r.era}.`
+		end
+	end
+	if r.linhasCompletas and Economia.linhasCompletas(estado, dados) < r.linhasCompletas then
+		return false, `Complete {r.linhasCompletas} linhas (hoje: {Economia.linhasCompletas(estado, dados)}).`
+	end
+	return true, nil
+end
+
+export type SituacaoProjeto = "concluido" | "pesquisando" | "disponivel" | "ocupado" | "bloqueado"
+
+function Economia.situacaoProjeto(estado: EstadoMapa, dados: any, p: any): SituacaoProjeto
+	if Economia.projetoConcluido(estado, p.id) then
+		return "concluido"
+	end
+	local atual = Economia.pesquisaAtual(estado)
+	if atual == p.id then
+		return "pesquisando"
+	end
+	if not Economia.requisitosProjeto(estado, dados, p) then
+		return "bloqueado"
+	end
+	if atual then
+		return "ocupado"
+	end
+	return "disponivel"
+end
+
+function Economia.custoAcelerar(p: any, restante: number): number
+	if restante <= 0 then
+		return 0
+	end
+	return math.max(1, math.ceil(p.custo * Economia.FATOR_ACELERAR * math.min(1, restante / p.segundos)))
+end
+
+-- Linhas históricas abrem em ordem: a próxima só libera quando a anterior estiver completa.
+-- Linhas de projeto abrem quando a pesquisa do projeto termina.
 function Economia.linhaLiberada(estado: EstadoMapa, dados: any, indiceLinha: number): boolean
+	local linha = dados.linhas[indiceLinha]
+	if linha and linha.projeto then
+		return Economia.projetoConcluido(estado, linha.projeto)
+	end
 	if indiceLinha <= 1 then
 		return true
 	end
 	return Economia.linhaCompleta(estado, dados.linhas[indiceLinha - 1])
 end
 
-export type SituacaoTrecho = "construido" | "disponivel" | "bloqueado"
+export type SituacaoTrecho = "construido" | "disponivel" | "bloqueado" | "projeto"
 
 -- Dentro da linha, os trechos são construídos em sequência.
 function Economia.situacaoTrecho(estado: EstadoMapa, dados: any, indiceLinha: number, indiceTrecho: number): SituacaoTrecho
@@ -98,7 +192,7 @@ function Economia.situacaoTrecho(estado: EstadoMapa, dados: any, indiceLinha: nu
 		return "construido"
 	end
 	if not Economia.linhaLiberada(estado, dados, indiceLinha) then
-		return "bloqueado"
+		return if linha.projeto then "projeto" else "bloqueado"
 	end
 	if indiceTrecho > 1 and not estado.trechos[linha.trechos[indiceTrecho - 1].id] then
 		return "bloqueado"
@@ -382,7 +476,7 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 			end
 		end
 	end
-	local cafe, minerio = 0, 0
+	local cafe, minerio, graos = 0, 0, 0
 	for _, lista in Economia.cargasPorLinha(estado, dados) do
 		for _, info in lista do
 			if info.conectada then
@@ -391,6 +485,8 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 					cafe += porte * 400
 				elseif info.carga == "minerio" then
 					minerio += porte * 900
+				elseif info.carga == "graos" then
+					graos += porte * 1200
 				end
 			end
 		end
@@ -411,6 +507,7 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		passageirosDia = math.round(passageiros),
 		cafeDia = cafe,
 		minerioDia = minerio,
+		graosDia = graos,
 		satisfacao = Economia.satisfacao(estado, dados),
 	}
 end

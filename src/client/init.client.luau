@@ -21,6 +21,11 @@ local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
 local remoteAcao = Remotes:WaitForChild("Acao") :: RemoteFunction
 local remotePedirEstado = Remotes:WaitForChild("PedirEstado") :: RemoteFunction
 
+-- Pesquisas usam o horário do servidor (o relógio do aparelho pode estar errado).
+Economia.relogio = function(): number
+	return workspace:GetServerTimeNow()
+end
+
 local jogador = Players.LocalPlayer
 local playerGui = jogador:WaitForChild("PlayerGui")
 
@@ -52,12 +57,19 @@ tela.ResetOnSpawn = false
 tela.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 tela.Parent = playerGui
 
--- Caixa que enquadra as estações das linhas do MVP.
+-- Caixa que enquadra as estações das linhas históricas (as do Gabinete ficam de fora: o jogo começa no Sudeste).
 local minimo = Vector2.new(math.huge, math.huge)
 local maximo = Vector2.new(-math.huge, -math.huge)
-for _, e: any in DadosBrasil.estacoes do
-	minimo = minimo:Min(e.pos)
-	maximo = maximo:Max(e.pos)
+for _, linha: any in DadosBrasil.linhas do
+	if not linha.projeto then
+		for _, t: any in linha.trechos do
+			for _, id in { t.de, t.para } do
+				local e: any = DadosBrasil.estacoes[id]
+				minimo = minimo:Min(e.pos)
+				maximo = maximo:Max(e.pos)
+			end
+		end
+	end
 end
 
 local mapa: any = nil
@@ -93,6 +105,8 @@ local function agir(tipo: string, args: any)
 	elseif resposta and resposta.ok then
 		if resposta.mensagem then
 			ui:avisar(`{Emojis.confirmar} {resposta.mensagem}`, 3)
+		elseif tipo == "acelerar" then
+			ui:avisar(`{Emojis.velocidade} Estudo concluído na hora!`, 2)
 		elseif tipo == "melhorarEstacao" then
 			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
 		elseif tipo == "trem" then
@@ -142,6 +156,9 @@ local function montar(eraId: string)
 	eraAtual = eraId
 
 	table.insert(conexoesTela, menu.aoAgir.Event:Connect(agir))
+	table.insert(conexoesTela, menu.aoConcluirProjeto.Event:Connect(function(p: any)
+		ui:avisar(`{Emojis.gabinete} Projeto aprovado: {p.nome}! A linha já pode ser construída.`, 6)
+	end))
 	-- o painel do menu acompanha a altura do caixa (que cresce quando aparece o botão da era)
 	local function reposicionar()
 		menu:posicionarAbaixoDe(ui.hud.AbsolutePosition.Y + ui.hud.AbsoluteSize.Y)

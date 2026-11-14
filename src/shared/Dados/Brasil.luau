@@ -35,16 +35,36 @@ return {
 		colatina = { nome = "Colatina", pos = Vector2.new(1669.4, 1240.6), lon = -40.63, lat = -19.54, porte = 1, produz = nil, porto = false },
 		valadares = { nome = "Governador Valadares", pos = Vector2.new(1607.6, 1206.3), lon = -41.95, lat = -18.85, porte = 2, produz = nil, porto = false },
 		itabira = { nome = "Itabira", pos = Vector2.new(1547.6, 1244.6), lon = -43.23, lat = -19.62, porte = 1, produz = "minerio", porto = false },
+		porto_velho = { nome = "Porto Velho", pos = Vector2.new(579.0, 718.8), lon = -63.9, lat = -8.76, porte = 2, produz = nil, porto = true },
+		anchieta = { nome = "Anchieta", pos = Vector2.new(1668.5, 1303.5), lon = -40.65, lat = -20.8, porte = 1, produz = nil, porto = false },
+		porto_acu = { nome = "Porto do Açu", pos = Vector2.new(1649.7, 1345.7), lon = -41.05, lat = -21.64, porte = 1, produz = nil, porto = true },
+		macae = { nome = "Macaé", pos = Vector2.new(1615.1, 1382.6), lon = -41.79, lat = -22.37, porte = 2, produz = nil, porto = false },
+		eliseu_martins = { nome = "Eliseu Martins", pos = Vector2.new(1527.0, 687.5), lon = -43.67, lat = -8.1, porte = 1, produz = "graos", porto = false },
+		salgueiro = { nome = "Salgueiro", pos = Vector2.new(1740.2, 686.1), lon = -39.12, lat = -8.07, porte = 2, produz = nil, porto = false },
+		quixada = { nome = "Quixadá", pos = Vector2.new(1744.9, 539.9), lon = -39.02, lat = -4.97, porte = 2, produz = nil, porto = false },
+		pecem = { nome = "Pecém", pos = Vector2.new(1753.8, 473.1), lon = -38.83, lat = -3.55, porte = 2, produz = nil, porto = true },
+		arcoverde = { nome = "Arcoverde", pos = Vector2.new(1837.2, 702.7), lon = -37.05, lat = -8.42, porte = 2, produz = nil, porto = false },
+		suape = { nome = "Suape", pos = Vector2.new(1935.6, 701.2), lon = -34.95, lat = -8.39, porte = 2, produz = nil, porto = true },
+		sinop = { nome = "Sinop", pos = Vector2.new(972.6, 866.4), lon = -55.5, lat = -11.86, porte = 2, produz = "graos", porto = false },
+		matupa = { nome = "Matupá", pos = Vector2.new(999.3, 786.2), lon = -54.93, lat = -10.18, porte = 1, produz = nil, porto = false },
+		novo_progresso = { nome = "Novo Progresso", pos = Vector2.new(978.3, 637.9), lon = -55.38, lat = -7.05, porte = 1, produz = nil, porto = false },
+		miritituba = { nome = "Miritituba", pos = Vector2.new(950.6, 506.5), lon = -55.97, lat = -4.26, porte = 1, produz = nil, porto = true },
+		sao_jose_campos = { nome = "São José dos Campos", pos = Vector2.new(1422.9, 1423.8), lon = -45.89, lat = -23.18, porte = 3, produz = nil, porto = false },
+		resende = { nome = "Resende", pos = Vector2.new(1490.4, 1387.7), lon = -44.45, lat = -22.47, porte = 2, produz = nil, porto = false },
+		campinorte = { nome = "Campinorte", pos = Vector2.new(1270.2, 984.3), lon = -49.15, lat = -14.31, porte = 1, produz = nil, porto = false },
+		agua_boa = { nome = "Água Boa", pos = Vector2.new(1129.1, 971.7), lon = -52.16, lat = -14.05, porte = 1, produz = "graos", porto = false },
+		lucas_rv = { nome = "Lucas do Rio Verde", pos = Vector2.new(951.5, 923.5), lon = -55.95, lat = -13.05, porte = 2, produz = "graos", porto = false },
+		vilhena = { nome = "Vilhena", pos = Vector2.new(754.7, 908.6), lon = -60.15, lat = -12.74, porte = 2, produz = nil, porto = false },
 	},
 	linhas = {
 		{
-			id = "maua", nome = "E.F. Mauá", ano = 1854, cor = 6, ordem = 1,
+			id = "maua", nome = "E.F. Mauá", ano = 1854, cor = 6, ordem = 1, projeto = nil,
 			trechos = {
 				{ id = "maua_1", de = "porto_maua", para = "fragoso", ano = 1854, km = 14, terreno = "baixada", custo = 92 },
 			},
 		},
 		{
-			id = "dpedro2", nome = "E.F. Dom Pedro II", ano = 1858, cor = 2, ordem = 2,
+			id = "dpedro2", nome = "E.F. Dom Pedro II", ano = 1858, cor = 2, ordem = 2, projeto = nil,
 			trechos = {
 				{ id = "dpedro2_1", de = "rio", para = "japeri", ano = 1858, km = 69, terreno = "baixada", custo = 774 },
 				{ id = "dpedro2_2", de = "japeri", para = "barra_pirai", ano = 1864, km = 33, terreno = "serra_leve", custo = 539 },
@@ -54,7 +74,7 @@ return {
 			},
 		},
 		{
-			id = "spr", nome = "Santos–Jundiaí", ano = 1867, cor = 1, ordem = 3,
+			id = "spr", nome = "Santos–Jundiaí", ano = 1867, cor = 1, ordem = 3, projeto = nil,
 			trechos = {
 				{ id = "spr_1", de = "santos", para = "paranapiacaba", ano = 1867, km = 25, terreno = "serra", custo = 1040,
 					alternativas = {
@@ -66,7 +86,7 @@ return {
 			},
 		},
 		{
-			id = "paulista", nome = "Cia. Paulista", ano = 1872, cor = 3, ordem = 4,
+			id = "paulista", nome = "Cia. Paulista", ano = 1872, cor = 3, ordem = 4, projeto = nil,
 			trechos = {
 				{ id = "paulista_1", de = "jundiai", para = "campinas", ano = 1872, km = 45, terreno = "planalto", custo = 1327 },
 				{ id = "paulista_2", de = "campinas", para = "rio_claro", ano = 1876, km = 95, terreno = "planalto", custo = 2800 },
@@ -76,13 +96,71 @@ return {
 			},
 		},
 		{
-			id = "vitoria_minas", nome = "Vitória–Minas", ano = 1904, cor = 5, ordem = 5,
+			id = "vitoria_minas", nome = "Vitória–Minas", ano = 1904, cor = 5, ordem = 5, projeto = nil,
 			trechos = {
 				{ id = "vitoria_minas_1", de = "vitoria", para = "colatina", ano = 1906, km = 115, terreno = "baixada", custo = 6339 },
 				{ id = "vitoria_minas_2", de = "colatina", para = "valadares", ano = 1910, km = 198, terreno = "vale", custo = 11907 },
 				{ id = "vitoria_minas_3", de = "valadares", para = "itabira", ano = 1942, km = 199, terreno = "serra_leve", custo = 15956 },
 			},
 		},
+		{
+			id = "ef118", nome = "EF-118 Vitória–Rio", ano = 2026, cor = 7, ordem = 6, projeto = "ef118",
+			trechos = {
+				{ id = "ef118_1", de = "vitoria", para = "anchieta", ano = 2026, km = 78, terreno = "baixada", custo = 4300 },
+				{ id = "ef118_2", de = "anchieta", para = "porto_acu", ano = 2026, km = 128, terreno = "baixada", custo = 7056 },
+				{ id = "ef118_3", de = "porto_acu", para = "macae", ano = 2026, km = 139, terreno = "baixada", custo = 7662 },
+				{ id = "ef118_4", de = "macae", para = "rio", ano = 2026, km = 194, terreno = "serra_leve", custo = 15555 },
+			},
+		},
+		{
+			id = "transnordestina", nome = "Transnordestina", ano = 2006, cor = 4, ordem = 7, projeto = "transnordestina",
+			trechos = {
+				{ id = "transnordestina_1", de = "eliseu_martins", para = "salgueiro", ano = 2006, km = 626, terreno = "planalto", custo = 53330 },
+				{ id = "transnordestina_2", de = "salgueiro", para = "quixada", ano = 2006, km = 431, terreno = "planalto", custo = 36718 },
+				{ id = "transnordestina_3", de = "quixada", para = "pecem", ano = 2006, km = 199, terreno = "baixada", custo = 18648 },
+			},
+		},
+		{
+			id = "ramal_suape", nome = "Ramal Salgueiro–Suape", ano = 2006, cor = 6, ordem = 8, projeto = "ramal_suape",
+			trechos = {
+				{ id = "ramal_suape_1", de = "salgueiro", para = "arcoverde", ano = 2006, km = 289, terreno = "planalto", custo = 24620 },
+				{ id = "ramal_suape_2", de = "arcoverde", para = "suape", ano = 2006, km = 289, terreno = "serra_leve", custo = 39393 },
+			},
+		},
+		{
+			id = "ferrograo", nome = "Ferrogrão (EF-170)", ano = 2017, cor = 3, ordem = 9, projeto = "ferrograo",
+			trechos = {
+				{ id = "ferrograo_1", de = "sinop", para = "matupa", ano = 2017, km = 246, terreno = "planalto", custo = 20957 },
+				{ id = "ferrograo_2", de = "matupa", para = "novo_progresso", ano = 2017, km = 439, terreno = "vale", custo = 44879 },
+				{ id = "ferrograo_3", de = "novo_progresso", para = "miritituba", ano = 2017, km = 396, terreno = "vale", custo = 40483 },
+			},
+		},
+		{
+			id = "fico", nome = "Transcontinental (FICO)", ano = 2008, cor = 5, ordem = 10, projeto = "fico",
+			trechos = {
+				{ id = "fico_1", de = "campinorte", para = "agua_boa", ano = 2008, km = 407, terreno = "planalto", custo = 58944 },
+				{ id = "fico_2", de = "agua_boa", para = "lucas_rv", ano = 2008, km = 531, terreno = "planalto", custo = 76902 },
+				{ id = "fico_3", de = "lucas_rv", para = "vilhena", ano = 2008, km = 571, terreno = "planalto", custo = 82695 },
+				{ id = "fico_4", de = "vilhena", para = "porto_velho", ano = 2008, km = 754, terreno = "vale", custo = 131038 },
+			},
+		},
+		{
+			id = "tav", nome = "Trem-bala Rio–SP–Campinas", ano = 2007, cor = 8, ordem = 11, projeto = "tav",
+			trechos = {
+				{ id = "tav_1", de = "campinas", para = "sao_paulo", ano = 2007, km = 102, terreno = "planalto", custo = 25113 },
+				{ id = "tav_2", de = "sao_paulo", para = "sao_jose_campos", ano = 2007, km = 107, terreno = "vale", custo = 31612 },
+				{ id = "tav_3", de = "sao_jose_campos", para = "resende", ano = 2007, km = 209, terreno = "vale", custo = 61748 },
+				{ id = "tav_4", de = "resende", para = "rio", ano = 2007, km = 172, terreno = "serra", custo = 101633 },
+			},
+		},
+	},
+	projetos = {
+		{ id = "ef118", nome = "EF-118 Vitória–Rio", emoji = "conectar", linha = "ef118", custo = 40000, segundos = 300, descricao = "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão.", requer = { linhasCompletas = 3, era = nil, projeto = nil } },
+		{ id = "transnordestina", nome = "Transnordestina", emoji = "carga_graos", linha = "transnordestina", custo = 120000, segundos = 600, descricao = "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta.", requer = { linhasCompletas = 4, era = nil, projeto = nil } },
+		{ id = "ramal_suape", nome = "Ramal Salgueiro–Suape", emoji = "carga_mercadorias", linha = "ramal_suape", custo = 90000, segundos = 480, descricao = "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade.", requer = { linhasCompletas = nil, era = nil, projeto = "transnordestina" } },
+		{ id = "ferrograo", nome = "Ferrogrão (EF-170)", emoji = "carga_graos", linha = "ferrograo", custo = 250000, segundos = 900, descricao = "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel.", requer = { linhasCompletas = nil, era = "diesel", projeto = nil } },
+		{ id = "fico", nome = "Transcontinental (FICO)", emoji = "mapa_mundo", linha = "fico", custo = 400000, segundos = 1200, descricao = "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia.", requer = { linhasCompletas = nil, era = nil, projeto = "ferrograo" } },
+		{ id = "tav", nome = "Trem-bala Rio–SP–Campinas", emoji = "era_alta", linha = "tav", custo = 1500000, segundos = 1800, descricao = "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai.", requer = { linhasCompletas = nil, era = "diesel", projeto = "ef118" } },
 	},
 	rotulos = {
 		{ tipo = "estado", texto = "A C R E", pos = Vector2.new(279.1, 726.8), angulo = 0, zoomMin = 0, zoomMax = 4 },
