@@ -22,6 +22,19 @@ local function novo(classe: string, props: { [string]: any }, pai: Instance?): a
 	return inst
 end
 
+-- string.upper não converte letras acentuadas; esta versão converte.
+local ACENTOS = {
+	["á"] = "Á", ["à"] = "À", ["â"] = "Â", ["ã"] = "Ã", ["é"] = "É", ["ê"] = "Ê",
+	["í"] = "Í", ["ó"] = "Ó", ["ô"] = "Ô", ["õ"] = "Õ", ["ú"] = "Ú", ["ç"] = "Ç",
+}
+local function maiusculas(texto: string): string
+	local r = string.upper(texto)
+	for min, mai in ACENTOS do
+		r = string.gsub(r, min, mai)
+	end
+	return r
+end
+
 local function padding(pai: Instance, px: number)
 	novo("UIPadding", {
 		PaddingLeft = UDim.new(0, px),
@@ -185,11 +198,13 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		return b
 	end
 	self.btnConstruir = botao(5, corpo)
+	self.btnConstruir.Name = "BtnConstruir"
 	self.lblMotivo = texto(6, f.body, 14, c.inkMuted)
 
 	novo("Frame", { LayoutOrder = 7, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
 	self.lblTrens = texto(8, f.body, 16, c.ink)
 	self.btnTrem = botao(9, corpo)
+	self.btnTrem.Name = "BtnTrem"
 	self.btnTrem.BackgroundColor3 = c.ink
 	self.btnTrem.TextColor3 = c.panel
 	self.btnTrem.Size = UDim2.new(1, 0, 0, 40)
@@ -200,7 +215,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		Position = UDim2.new(1, -6, 0, 6),
 		Size = UDim2.fromOffset(32, 32),
 		BackgroundTransparency = 1,
-		Text = "✕",
+		Text = "X",
 		FontFace = f.body,
 		TextSize = 20,
 		TextColor3 = c.inkMuted,
@@ -281,7 +296,7 @@ function Interface._preencher(self: Interface)
 	local terreno = dados.terrenos[opcao.terreno or trecho.terreno]
 	local de, para = dados.estacoes[trecho.de].nome, dados.estacoes[trecho.para].nome
 
-	self.lblCabecalho.Text = `{string.upper(linha.nome)} · {trecho.ano}`
+	self.lblCabecalho.Text = `{maiusculas(linha.nome)} · {trecho.ano}`
 	self.lblTitulo.Text = `{de} – {para}`
 	self.lblDetalhes.Text = table.concat({
 		`{Emojis.distancia} Extensão: {opcao.km} km`,
