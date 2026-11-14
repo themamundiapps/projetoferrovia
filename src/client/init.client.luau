@@ -14,6 +14,7 @@ local Emojis = require(Shared:WaitForChild("Emojis"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
 local Interface = require(script:WaitForChild("Interface"))
+local Menu = require(script:WaitForChild("Menu"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -61,6 +62,8 @@ end
 
 local mapa: any = nil
 local ui: any = nil
+local menu: any = nil
+local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true }
 local eraAtual: string? = nil
 local ultimoEstado: any = nil
 local conexoesTela: { RBXScriptConnection } = {}
@@ -78,7 +81,9 @@ end
 local function aplicarNaTela(estado: any)
 	mapa:definirSituacao(situacoes(estado))
 	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
+	mapa:definirNiveis(estado.estacoes or {})
 	ui:atualizarEstado(estado)
+	menu:atualizarEstado(estado)
 end
 
 local function agir(tipo: string, args: any)
@@ -86,7 +91,11 @@ local function agir(tipo: string, args: any)
 	if resposta and not resposta.ok then
 		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
 	elseif resposta and resposta.ok then
-		if tipo == "trem" then
+		if resposta.mensagem then
+			ui:avisar(`{Emojis.confirmar} {resposta.mensagem}`, 3)
+		elseif tipo == "melhorarEstacao" then
+			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
+		elseif tipo == "trem" then
 			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
 		elseif tipo == "construir" then
 			ui:avisar(`{Emojis.construir} Trecho construído!`, 2)
@@ -118,15 +127,69 @@ local function montar(eraId: string)
 		end
 		table.clear(conexoesTela)
 		ui:destruir()
+		menu:destruir()
 		mapa:destruir()
 	end
 
 	mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
 	ui = Interface.new(tela, era, DadosBrasil)
 	ui.eras = Theme.PorId
+	menu = Menu.new(tela, era, DadosBrasil)
+	menu.ajustes = ajustesSalvos
+	for chave, valor in ajustesSalvos do
+		mapa:definirAjuste(chave, valor)
+	end
 	eraAtual = eraId
 
+	table.insert(conexoesTela, menu.aoAgir.Event:Connect(agir))
+	table.insert(conexoesTela, menu.aoZoom.Event:Connect(function(fator: number)
+		local centro = mapa.raiz.AbsolutePosition + mapa.raiz.AbsoluteSize / 2
+		mapa.interagiu = true
+		mapa:zoomEm(mapa.zoom * fator, centro)
+	end))
+	table.insert(conexoesTela, menu.aoAjuste.Event:Connect(function(chave: string, valor: boolean)
+		if chave == "reenquadrar" then
+			mapa:focar(minimo, maximo, 80)
+		else
+			ajustesSalvos[chave] = valor
+			mapa:definirAjuste(chave, valor)
+		end
+	end))
+	table.insert(conexoesTela, menu.aoFocarLinha.Event:Connect(function(linhaId: string)
+		-- enquadra a linha e abre o próximo trecho a construir (ou o primeiro)
+		local mn = Vector2.new(math.huge, math.huge)
+		local mx = Vector2.new(-math.huge, -math.huge)
+		local alvo: string? = nil
+		for i, linha in DadosBrasil.linhas do
+			if linha.id == linhaId then
+				for j, t in linha.trechos do
+					for _, id in { t.de, t.para } do
+						local p = DadosBrasil.estacoes[id].pos
+						mn, mx = mn:Min(p), mx:Max(p)
+					end
+					if not alvo and ultimoEstado and Economia.situacaoTrecho(ultimoEstado, DadosBrasil, i, j) ~= "construido" then
+						alvo = t.id
+					end
+				end
+				alvo = alvo or linha.trechos[1].id
+			end
+		end
+		if alvo then
+			mapa.interagiu = true
+			mapa:focar(mn, mx, 140)
+			mapa:selecionar(alvo)
+			ui:abrir(alvo)
+		end
+	end))
+
 	table.insert(conexoesTela, mapa.aoTocar.Event:Connect(function(pontoMapa: Vector2)
+		-- estação tem prioridade sobre trecho quando o toque cai em cima dela
+		local estacao = mapa:estacaoProxima(pontoMapa, 14)
+		if estacao then
+			mapa:selecionar(nil)
+			ui:abrirEstacao(estacao)
+			return
+		end
 		local id = mapa:trechoProximo(pontoMapa, 22)
 		mapa:selecionar(id)
 		if id then

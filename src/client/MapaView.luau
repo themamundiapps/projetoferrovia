@@ -30,6 +30,9 @@ type Estacao = {
 	pos: Vector2,
 	porte: number,
 	ponto: Frame,
+	traco: UIStroke,
+	tamanho: number,
+	nivel: number,
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
 }
@@ -65,6 +68,8 @@ export type MapaView = typeof(setmetatable(
 		segmentos: { Segmento },
 		estacoes: { Estacao },
 		rotulosMapa: { RotuloMapa },
+		mostrarNomes: boolean,
+		mostrarRotulos: boolean,
 		conexoes: { RBXScriptConnection },
 		aoMudarCamera: BindableEvent,
 		aoTocar: BindableEvent,
@@ -163,6 +168,8 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		segmentos = {},
 		estacoes = {},
 		rotulosMapa = {},
+		mostrarNomes = true,
+		mostrarRotulos = true,
 		conexoes = {},
 		aoMudarCamera = Instance.new("BindableEvent"),
 		aoTocar = Instance.new("BindableEvent"),
@@ -328,7 +335,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			ZIndex = Z.estacao,
 		}, self.conteudo) :: Frame
 		novo("UICorner", { CornerRadius = UDim.new(0.5, 0) }, ponto)
-		novo("UIStroke", { Color = cores.ink, Thickness = 3 }, ponto)
+		local traco = novo("UIStroke", { Color = cores.ink, Thickness = 3 }, ponto) :: UIStroke
 
 		local rotulo = novo("TextLabel", {
 			Name = id .. "_nome",
@@ -365,7 +372,17 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			end
 		end
 
-		table.insert(self.estacoes, { id = id, pos = e.pos, porte = e.porte, ponto = ponto, rotulo = rotulo, selo = selo })
+		table.insert(self.estacoes, {
+			id = id,
+			pos = e.pos,
+			porte = e.porte,
+			ponto = ponto,
+			traco = traco,
+			tamanho = tamanho,
+			nivel = 0,
+			rotulo = rotulo,
+			selo = selo,
+		})
 	end
 end
 
@@ -420,6 +437,39 @@ function MapaView.selecionar(self: MapaView, trechoId: string?)
 		self:_estilizar(s)
 	end
 	self:_layout()
+end
+
+-- Nível das estações: bolinha maior e contorno mais grosso a cada nível.
+function MapaView.definirNiveis(self: MapaView, niveis: { [string]: number })
+	for _, e in self.estacoes do
+		local n = niveis[e.id] or 0
+		e.nivel = n
+		local tam = e.tamanho + n * 2
+		e.ponto.Size = UDim2.fromOffset(tam, tam)
+		e.traco.Thickness = 3 + n * 0.7
+		e.traco.Color = if n >= 5 then self.era.cores.accent else self.era.cores.ink
+	end
+end
+
+function MapaView.definirAjuste(self: MapaView, chave: string, valor: boolean)
+	if chave == "nomesEstacoes" then
+		self.mostrarNomes = valor
+	elseif chave == "nomesMapa" then
+		self.mostrarRotulos = valor
+	end
+	self:_layout()
+end
+
+-- Estação mais perto de um ponto do mapa, dentro de um raio em pixels de TELA.
+function MapaView.estacaoProxima(self: MapaView, ponto: Vector2, raioTela: number): string?
+	local melhor, melhorDist = nil, raioTela / self.zoom
+	for _, e in self.estacoes do
+		local d = (e.pos - ponto).Magnitude
+		if d < melhorDist then
+			melhor, melhorDist = e.id, d
+		end
+	end
+	return melhor
 end
 
 -- Trecho mais perto de um ponto do mapa, dentro de um raio em pixels de TELA.
@@ -528,7 +578,7 @@ function MapaView._layout(self: MapaView)
 	end
 
 	for _, r in self.rotulosMapa do
-		local visivel = z >= r.zoomMin and z < r.zoomMax
+		local visivel = self.mostrarRotulos and z >= r.zoomMin and z < r.zoomMax
 		r.label.Visible = visivel
 		if visivel then
 			local p = r.pos * z
@@ -540,7 +590,7 @@ function MapaView._layout(self: MapaView)
 		local p = e.pos * z
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
 		e.rotulo.Position = UDim2.fromOffset(p.X + 12, p.Y)
-		e.rotulo.Visible = z >= (ZOOM_ROTULO[e.porte] or 0)
+		e.rotulo.Visible = self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)
 			e.selo.Visible = z >= 1.2

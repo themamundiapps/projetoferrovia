@@ -53,6 +53,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.dados = dados
 	self.estado = nil :: any
 	self.trechoAberto = nil :: string?
+	self.estacaoAberta = nil :: string?
 	self.alternativa = nil :: string?
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFechar = Instance.new("BindableEvent")
@@ -235,7 +236,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.btnConstruir.Name = "BtnConstruir"
 	self.lblMotivo = texto(6, f.body, 14, c.inkMuted)
 
-	novo("Frame", { LayoutOrder = 7, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
+	self.divTrens = novo("Frame", { LayoutOrder = 7, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
 	self.lblTrens = texto(8, f.body, 16, c.ink)
 	self.btnTrem = botao(9, corpo)
 	self.btnTrem.Name = "BtnTrem"
@@ -260,7 +261,9 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	}, painel)
 
 	self.btnConstruir.Activated:Connect(function()
-		if self.trechoAberto then
+		if self.estacaoAberta then
+			self.aoAgir:Fire("melhorarEstacao", { estacao = self.estacaoAberta })
+		elseif self.trechoAberto then
 			self.aoAgir:Fire("construir", { trecho = self.trechoAberto, alternativa = self.alternativa })
 		end
 	end)
@@ -319,13 +322,85 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	end
 	if self.trechoAberto then
 		self:_preencher()
+	elseif self.estacaoAberta then
+		self:_preencherEstacao()
 	end
+end
+
+function Interface._modoTrecho(self: Interface, sim: boolean)
+	self.divTrens.Visible = sim
+	self.lblTrens.Visible = sim
+	if not sim then
+		self.btnTrem.Visible = false
+		self.opcoes.Visible = false
+		self.divCarga.Visible = false
+		self.lblCarga.Visible = false
+	end
+end
+
+local PORTES = { "Vila", "Cidade", "Cidade grande", "Capital regional", "Metrópole" }
+
+function Interface.abrirEstacao(self: Interface, estacaoId: string)
+	self.trechoAberto = nil
+	self.estacaoAberta = estacaoId
+	self.painel.Visible = true
+	self:_modoTrecho(false)
+	self:_preencherEstacao()
+end
+
+function Interface._preencherEstacao(self: Interface)
+	local estado, dados = self.estado, self.dados
+	local id = self.estacaoAberta
+	if not estado or not id then
+		return
+	end
+	local simbolo = dados.simbolo
+	local e = dados.estacoes[id]
+	local nivel = Economia.nivelEstacao(estado, id)
+	local naRede = Economia.estacaoNaRede(estado, dados, id)
+
+	self.lblCabecalho.Text = `ESTAÇÃO · {maiusculas(PORTES[e.porte] or "")}{if e.porto then " · PORTO" else ""}`
+	self.lblTitulo.Text = e.nome
+	local linhas = {}
+	for i, def in Economia.NIVEIS_ESTACAO do
+		local marca = if i <= nivel then Emojis.confirmar elseif i == nivel + 1 then Emojis.mais else Emojis.cadeado
+		table.insert(linhas, `{marca} {def.nome}`)
+	end
+	table.insert(linhas, "")
+	table.insert(linhas, `{Emojis.renda} Bônus atual: +{math.round(nivel * Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos que chegam aqui`)
+	if e.produz and Economia.CARGAS[e.produz] then
+		local def = Economia.CARGAS[e.produz]
+		local conectada = Economia.conectadasAoPorto(estado, dados)[id]
+		table.insert(linhas, `{(Emojis :: any)[def.emoji]} Produz {string.lower(def.nome)}{if conectada then " (chegando a um porto)" else " (sem trilho até um porto)"}`)
+	end
+	self.lblDetalhes.Text = table.concat(linhas, "\n")
+
+	local custo = Economia.custoMelhoria(estado, dados, id)
+	if not naRede then
+		self.btnConstruir.Text = `{Emojis.cadeado} Fora da rede`
+		self.lblMotivo.Text = "Construa um trecho até esta estação para poder melhorá-la."
+		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor, self.btnConstruir.BackgroundTransparency = false, false, 0.6
+	elseif not custo then
+		self.btnConstruir.Text = `{Emojis.prestigio} Nível máximo`
+		self.lblMotivo.Text = ""
+		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor, self.btnConstruir.BackgroundTransparency = false, false, 0.6
+	else
+		local proximo = Economia.NIVEIS_ESTACAO[nivel + 1].nome
+		local podePagar = estado.dinheiro >= custo
+		self.btnConstruir.Text = `{Emojis.melhorar} {proximo} · {Economia.formatar(custo, simbolo)}`
+		self.lblMotivo.Text = if podePagar then `+{math.round(Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos desta estação.` else `Faltam {Economia.formatar(custo - estado.dinheiro, simbolo)}.`
+		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor = podePagar, podePagar
+		self.btnConstruir.BackgroundTransparency = if podePagar then 0 else 0.6
+	end
+	self.lblMotivo.Visible = self.lblMotivo.Text ~= ""
 end
 
 function Interface.abrir(self: Interface, trechoId: string)
 	if self.trechoAberto ~= trechoId then
 		self.alternativa = nil
 	end
+	self.estacaoAberta = nil
+	self:_modoTrecho(true)
 	self.trechoAberto = trechoId
 	self.painel.Visible = true
 	self:_preencher()
@@ -333,6 +408,7 @@ end
 
 function Interface.fechar(self: Interface)
 	self.trechoAberto = nil
+	self.estacaoAberta = nil
 	self.painel.Visible = false
 	self.aoFechar:Fire()
 end

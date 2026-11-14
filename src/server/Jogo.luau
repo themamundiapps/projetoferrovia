@@ -70,6 +70,13 @@ local function sanear(salvo: any): EstadoMapa
 			end
 		end
 	end
+	if type(salvo.estacoes) == "table" then
+		for k, v in salvo.estacoes do
+			if type(k) == "string" and type(v) == "number" then
+				e.estacoes[k] = math.clamp(math.floor(v), 0, #Economia.NIVEIS_ESTACAO)
+			end
+		end
+	end
 	if type(salvo.era) == "string" then
 		for _, era in Economia.ERAS do
 			if era.id == salvo.era then
@@ -93,6 +100,7 @@ local function pacoteEstado(s: Sessao): any
 		trechos = e.trechos,
 		trens = e.trens,
 		era = e.era,
+		estacoes = e.estacoes,
 		ganhoOffline = s.ganhoOffline,
 		salvando = s.podeSalvar,
 	}
@@ -181,6 +189,80 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	return true, nil
 end
 
+function Acoes.melhorarEstacao(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.estacao) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	if not dados.estacoes[args.estacao] then
+		return false, "Estação desconhecida."
+	end
+	if not Economia.estacaoNaRede(e, dados, args.estacao) then
+		return false, "Construa um trecho até esta estação primeiro."
+	end
+	local custo = Economia.custoMelhoria(e, dados, args.estacao)
+	if not custo then
+		return false, "Esta estação já está no nível máximo."
+	end
+	if e.dinheiro < custo then
+		return false, "Dinheiro insuficiente."
+	end
+	e.dinheiro -= custo
+	e.estacoes[args.estacao] = Economia.nivelEstacao(e, args.estacao) + 1
+	return true, nil
+end
+
+-- Constrói, do mais barato para o mais caro, todos os trechos disponíveis que o dinheiro pagar.
+function Acoes.construirTudo(s: Sessao, _args: any): (boolean, string?)
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local construidos = 0
+	for _ = 1, 100 do
+		local melhor, melhorCusto = nil, math.huge
+		for i, linha in dados.linhas do
+			for j, t in linha.trechos do
+				if Economia.situacaoTrecho(e, dados, i, j) == "disponivel" then
+					local custo = Economia.opcaoTrecho(t, nil).custo
+					if custo < melhorCusto then
+						melhor, melhorCusto = t, custo
+					end
+				end
+			end
+		end
+		if not melhor or melhorCusto > e.dinheiro then
+			break
+		end
+		local ok = Acoes.construir(s, { trecho = melhor.id })
+		if not ok then
+			break
+		end
+		construidos += 1
+	end
+	if construidos == 0 then
+		return false, "Nenhum trecho disponível cabe no seu caixa agora."
+	end
+	return true, `{construidos} trecho(s) construído(s).`
+end
+
+-- Compra os trens que faltam em todas as linhas, enquanto houver dinheiro.
+function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local comprados = 0
+	for _, linha in dados.linhas do
+		while Economia.podeComprarTrem(e, linha) and e.dinheiro >= Economia.custoTrem(e, linha) do
+			e.dinheiro -= Economia.custoTrem(e, linha)
+			e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
+			comprados += 1
+		end
+	end
+	if comprados == 0 then
+		return false, "Nenhuma linha precisa de trem, ou falta dinheiro."
+	end
+	return true, `{comprados} trem(ns) comprado(s).`
+end
+
 function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -213,11 +295,12 @@ remoteAcao.OnServerInvoke = function(jogador: Player, tipo: any, args: any)
 	if not acao then
 		return { ok = false, erro = "Ação desconhecida." }
 	end
-	local ok, erro = acao(s, args)
+	local ok, texto = acao(s, args)
 	if ok then
 		enviarEstado(s)
 	end
-	return { ok = ok, erro = erro }
+	-- em caso de sucesso, o segundo valor (se houver) é uma mensagem para o jogador
+	return { ok = ok, erro = if ok then nil else texto, mensagem = if ok then texto else nil }
 end
 
 remotePedirEstado.OnServerInvoke = function(jogador: Player)

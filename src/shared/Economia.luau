@@ -16,6 +16,17 @@ Economia.CARGAS = {
 	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6 },
 }
 
+-- Estações: cada nível aumenta a renda dos trechos que chegam nela.
+Economia.NIVEIS_ESTACAO = {
+	{ nome = "Plataforma coberta", emoji = "estacoes" },
+	{ nome = "Armazém", emoji = "cargas" },
+	{ nome = "Restaurante", emoji = "satisfacao" },
+	{ nome = "Hotel", emoji = "companhia" },
+	{ nome = "Grande estação", emoji = "prestigio" },
+}
+Economia.BONUS_POR_NIVEL = 0.08
+Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira linha
+
 -- Eras: a próxima libera com N linhas completas e multiplica a renda de tudo.
 Economia.ERAS = {
 	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0 },
@@ -28,11 +39,12 @@ export type EstadoMapa = {
 	trechos: { [string]: string }, -- id do trecho -> id da alternativa escolhida ("padrao" se não houver)
 	trens: { [string]: number }, -- id da linha -> quantidade de trens
 	era: string, -- id da era atual
+	estacoes: { [string]: number }, -- id da estação -> nível (0 a 5)
 	ultimoTick: number, -- os.time() do último cálculo de renda
 }
 
 function Economia.estadoNovo(): EstadoMapa
-	return { dinheiro = Economia.DINHEIRO_INICIAL, trechos = {}, trens = {}, era = "vapor", ultimoTick = os.time() }
+	return { dinheiro = Economia.DINHEIRO_INICIAL, trechos = {}, trens = {}, era = "vapor", estacoes = {}, ultimoTick = os.time() }
 end
 
 -- Custo e alternativa efetivos de um trecho (com a escolha de traçado, se houver).
@@ -171,6 +183,88 @@ function Economia.proximaEra(estado: EstadoMapa, dados: any): (any?, boolean)
 	return proxima, Economia.linhasCompletas(estado, dados) >= proxima.linhasCompletas
 end
 
+-- ---------------------------------------------------------------- estações
+
+function Economia.nivelEstacao(estado: EstadoMapa, id: string): number
+	return estado.estacoes[id] or 0
+end
+
+-- Estação faz parte da rede se algum trecho construído chega nela.
+function Economia.estacaoNaRede(estado: EstadoMapa, dados: any, id: string): boolean
+	for _, linha in dados.linhas do
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] and (t.de == id or t.para == id) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+-- Ordem (1, 2, 3...) da primeira linha histórica que passa pela estação: cidades de linhas tardias custam mais.
+local function ordemEstacao(dados: any, id: string): number
+	for i, linha in dados.linhas do
+		for _, t in linha.trechos do
+			if t.de == id or t.para == id then
+				return i
+			end
+		end
+	end
+	return 1
+end
+
+function Economia.custoMelhoria(estado: EstadoMapa, dados: any, id: string): number?
+	local nivel = Economia.nivelEstacao(estado, id)
+	if nivel >= #Economia.NIVEIS_ESTACAO then
+		return nil
+	end
+	local e = dados.estacoes[id]
+	local base = Economia.CUSTO_BASE_ESTACAO * e.porte * (1.7 ^ (ordemEstacao(dados, id) - 1))
+	return math.round(base * (2 ^ nivel))
+end
+
+local function fatorEstacoes(estado: EstadoMapa, t: any): number
+	return 1 + Economia.BONUS_POR_NIVEL * (Economia.nivelEstacao(estado, t.de) + Economia.nivelEstacao(estado, t.para))
+end
+
+-- ---------------------------------------------------------------- satisfação
+
+-- 70% vem do serviço das linhas (trens), 30% do nível médio das estações da rede. Vai de 0 a 1.
+function Economia.satisfacao(estado: EstadoMapa, dados: any): number
+	local servicoPeso, peso = 0, 0
+	local niveis, nEst = 0, 0
+	local contada: { [string]: boolean } = {}
+	for _, linha in dados.linhas do
+		local n = Economia.trechosConstruidos(estado, linha)
+		if n > 0 then
+			servicoPeso += Economia.servico(estado, linha) * n
+			peso += n
+			for _, t in linha.trechos do
+				if estado.trechos[t.id] then
+					for _, id in { t.de, t.para } do
+						if not contada[id] then
+							contada[id] = true
+							niveis += Economia.nivelEstacao(estado, id)
+							nEst += 1
+						end
+					end
+				end
+			end
+		end
+	end
+	if peso == 0 then
+		return 0.5
+	end
+	local servico = servicoPeso / peso
+	local nivelMedio = if nEst > 0 then niveis / nEst / #Economia.NIVEIS_ESTACAO else 0
+	return math.clamp(0.7 * servico + 0.3 * nivelMedio, 0, 1)
+end
+
+-- Satisfação mexe na renda de tudo: de -15% (0%) a +15% (100%).
+function Economia.fatorSatisfacao(estado: EstadoMapa, dados: any): number
+	return 0.85 + 0.3 * Economia.satisfacao(estado, dados)
+end
+
 -- ---------------------------------------------------------------- cargas
 
 -- Estações ligadas a algum porto por trilho construído (busca em largura a partir dos portos).
@@ -249,7 +343,7 @@ function Economia.rendaLinha(estado: EstadoMapa, linha: any, cargas: { InfoCarga
 	for _, t in linha.trechos do
 		local alt = estado.trechos[t.id]
 		if alt then
-			bruta += Economia.rendaTrecho(t, alt)
+			bruta += Economia.rendaTrecho(t, alt) * fatorEstacoes(estado, t)
 		end
 	end
 	local bonus = if cargas then Economia.bonusCarga(cargas) else 0
@@ -262,7 +356,63 @@ function Economia.rendaTotal(estado: EstadoMapa, dados: any): number
 	for _, linha in dados.linhas do
 		total += Economia.rendaLinha(estado, linha, cargas[linha.id])
 	end
-	return total
+	return total * Economia.fatorSatisfacao(estado, dados)
+end
+
+-- Renda de uma linha já com a satisfação aplicada (para mostrar no painel).
+function Economia.rendaLinhaFinal(estado: EstadoMapa, dados: any, linha: any): number
+	local cargas = Economia.cargasPorLinha(estado, dados)
+	return Economia.rendaLinha(estado, linha, cargas[linha.id]) * Economia.fatorSatisfacao(estado, dados)
+end
+
+-- ---------------------------------------------------------------- estatísticas (para o painel da companhia)
+
+function Economia.estatisticas(estado: EstadoMapa, dados: any): any
+	local trechos, total = 0, 0
+	local passageiros = 0
+	for _, linha in dados.linhas do
+		local servico = Economia.servico(estado, linha)
+		for _, t in linha.trechos do
+			total += 1
+			if estado.trechos[t.id] then
+				trechos += 1
+				local a, b = dados.estacoes[t.de], dados.estacoes[t.para]
+				local opcao = Economia.opcaoTrecho(t, estado.trechos[t.id])
+				passageiros += (a.porte + b.porte) * opcao.km * 15 * (opcao.fatorDemanda or 1) * fatorEstacoes(estado, t) * servico
+			end
+		end
+	end
+	local cafe, minerio = 0, 0
+	for _, lista in Economia.cargasPorLinha(estado, dados) do
+		for _, info in lista do
+			if info.conectada then
+				local porte = dados.estacoes[info.estacao].porte
+				if info.carga == "cafe" then
+					cafe += porte * 400
+				elseif info.carga == "minerio" then
+					minerio += porte * 900
+				end
+			end
+		end
+	end
+	local estacoes = 0
+	for id in dados.estacoes do
+		if Economia.estacaoNaRede(estado, dados, id) then
+			estacoes += 1
+		end
+	end
+	return {
+		renda = Economia.rendaTotal(estado, dados),
+		trechos = trechos,
+		trechosTotal = total,
+		linhasCompletas = Economia.linhasCompletas(estado, dados),
+		linhasTotal = #dados.linhas,
+		estacoes = estacoes,
+		passageirosDia = math.round(passageiros),
+		cafeDia = cafe,
+		minerioDia = minerio,
+		satisfacao = Economia.satisfacao(estado, dados),
+	}
 end
 
 -- Localiza um trecho pelo id: retorna linha, índice da linha, trecho, índice do trecho.
