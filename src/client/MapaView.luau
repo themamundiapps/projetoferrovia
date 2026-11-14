@@ -53,6 +53,8 @@ export type MapaView = typeof(setmetatable(
 		estacoes: { Estacao },
 		conexoes: { RBXScriptConnection },
 		aoMudarCamera: BindableEvent,
+		foco: { min: Vector2, max: Vector2, margem: number }?,
+		interagiu: boolean,
 	},
 	MapaView
 ))
@@ -133,6 +135,8 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		estacoes = {},
 		conexoes = {},
 		aoMudarCamera = Instance.new("BindableEvent"),
+		foco = nil,
+		interagiu = false,
 	}, MapaView)
 
 	self:_criarTiles(mapa)
@@ -144,7 +148,13 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		self.conexoes,
 		raiz:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 			self:_atualizarZoomMin()
-			self:definirCamera(self.zoom, self.pan)
+			-- enquanto o jogador não mexeu no mapa, mantém o enquadramento inicial
+			local foco = self.foco
+			if foco and not self.interagiu then
+				self:focar(foco.min, foco.max, foco.margem)
+			else
+				self:definirCamera(self.zoom, self.pan)
+			end
 		end)
 	)
 
@@ -316,6 +326,7 @@ end
 -- Enquadra uma caixa do mapa (em pixels do mapa) com uma margem.
 function MapaView.focar(self: MapaView, min: Vector2, max: Vector2, margem: number?)
 	local m = margem or 60
+	self.foco = { min = min, max = max, margem = m }
 	local tela = self.raiz.AbsoluteSize
 	local tam = max - min
 	local zoom = math.min((tela.X - m * 2) / math.max(tam.X, 1), (tela.Y - m * 2) / math.max(tam.Y, 1))
@@ -388,6 +399,7 @@ function MapaView._conectarEntrada(self: MapaView)
 				if dentro(pos) then
 					arrastando = true
 					ultimo = pos
+					self.interagiu = true
 				end
 			end
 		end)
@@ -410,6 +422,7 @@ function MapaView._conectarEntrada(self: MapaView)
 			elseif input.UserInputType == Enum.UserInputType.MouseWheel and not processado then
 				local pos = Vector2.new(input.Position.X, input.Position.Y)
 				if dentro(pos) then
+					self.interagiu = true
 					local fator = if input.Position.Z > 0 then 1.15 else 1 / 1.15
 					self:zoomEm(self.zoom * fator, pos)
 				end
@@ -426,6 +439,7 @@ function MapaView._conectarEntrada(self: MapaView)
 				return
 			end
 			if estado == Enum.UserInputState.Begin then
+				self.interagiu = true
 				panInicial = self.pan
 			elseif estado == Enum.UserInputState.Change then
 				self:definirCamera(self.zoom, panInicial + translacao)
@@ -441,6 +455,7 @@ function MapaView._conectarEntrada(self: MapaView)
 				return
 			end
 			if estado == Enum.UserInputState.Begin then
+				self.interagiu = true
 				zoomInicial = self.zoom
 			elseif estado == Enum.UserInputState.Change and #toques >= 2 then
 				local centro = (toques[1] + toques[2]) / 2
