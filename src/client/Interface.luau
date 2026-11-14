@@ -375,23 +375,31 @@ function Interface._preencher(self: Interface)
 	end
 	self.lblMotivo.Visible = self.lblMotivo.Text ~= ""
 
-	-- trens da linha
+	-- trens da linha (a frota vai só até o necessário)
 	local construidos = Economia.trechosConstruidos(estado, linha)
 	local trens = estado.trens[linha.id] or 0
 	local necessarios = Economia.trensNecessarios(estado, linha)
+	local faltando = Economia.trensFaltando(estado, linha)
 	local servico = math.round(Economia.servico(estado, linha) * 100)
 	if construidos == 0 then
-		self.lblTrens.Text = `{Emojis.trens} Trens: o primeiro vem junto com o primeiro trecho.`
+		self.lblTrens.Text = `{Emojis.trens} O primeiro trem vem junto com o primeiro trecho. Cada 2 trechos pedem mais 1 trem.`
+		self.lblTrens.TextColor3 = c.inkMuted
 		self.btnTrem.Visible = false
-	else
-		self.lblTrens.Text = `{Emojis.trens} Trens: {trens} de {necessarios} necessários · serviço {servico}%`
+	elseif faltando > 0 then
+		local plural = if faltando == 1 then "trem" else "trens"
+		self.lblTrens.Text = `{Emojis.alerta} Frota: {trens} de {necessarios} trens. Faltam {faltando} {plural}: esta linha rende só {servico}%.`
+		self.lblTrens.TextColor3 = c.negative
 		local custoTrem = Economia.custoTrem(estado, linha)
 		local podePagar = estado.dinheiro >= custoTrem
 		self.btnTrem.Visible = true
-		self.btnTrem.Text = `Comprar trem · {Economia.formatar(custoTrem, simbolo)}`
+		self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`
 		self.btnTrem.Active = podePagar
 		self.btnTrem.AutoButtonColor = podePagar
 		self.btnTrem.BackgroundTransparency = if podePagar then 0 else 0.6
+	else
+		self.lblTrens.Text = `{Emojis.confirmar} Frota completa: {trens} de {necessarios} trens · rendendo 100%.`
+		self.lblTrens.TextColor3 = c.positive
+		self.btnTrem.Visible = false
 	end
 end
 

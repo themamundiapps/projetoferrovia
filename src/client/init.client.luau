@@ -122,6 +122,16 @@ ui.aoAgir.Event:Connect(function(tipo: string, args: any)
 		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
 	elseif resposta and resposta.ok then
 		ui:avisar(if tipo == "trem" then `{Emojis.trens} Trem comprado!` else `{Emojis.construir} Trecho construído!`, 2)
+		if tipo == "construir" then
+			-- se o trecho novo fez a linha precisar de mais trens, avisa
+			task.delay(0.4, function()
+				local linha = Economia.acharTrecho(DadosBrasil, args.trecho)
+				local estado = ui.estado
+				if linha and estado and Economia.trensFaltando(estado, linha) > 0 then
+					ui:avisar(`{Emojis.trens} A linha {linha.nome} cresceu e precisa de mais 1 trem para render 100%.`, 5)
+				end
+			end)
+		end
 	end
 end)
 

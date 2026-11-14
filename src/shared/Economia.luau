@@ -93,15 +93,35 @@ function Economia.servico(estado: EstadoMapa, linha: any): number
 	return math.min(1, (estado.trens[linha.id] or 0) / necessarios)
 end
 
-function Economia.custoTrem(estado: EstadoMapa, linha: any): number
+-- Preço fixo por linha: 40% do custo médio dos trechos dela.
+function Economia.custoTrem(_estado: EstadoMapa, linha: any): number
 	local soma = 0
 	for _, t in linha.trechos do
 		soma += t.custo
 	end
-	local base = soma / #linha.trechos * Economia.FATOR_CUSTO_TREM
-	-- cada trem a mais na mesma linha fica 15% mais caro
-	local ja = estado.trens[linha.id] or 0
-	return math.round(base * (1.15 ^ math.max(0, ja - 1)))
+	return math.round(soma / #linha.trechos * Economia.FATOR_CUSTO_TREM)
+end
+
+-- Quantos trens faltam para a linha rodar a 100%. A frota nunca passa disso.
+function Economia.trensFaltando(estado: EstadoMapa, linha: any): number
+	return math.max(0, Economia.trensNecessarios(estado, linha) - (estado.trens[linha.id] or 0))
+end
+
+function Economia.podeComprarTrem(estado: EstadoMapa, linha: any): boolean
+	return Economia.trechosConstruidos(estado, linha) > 0 and Economia.trensFaltando(estado, linha) > 0
+end
+
+-- Corrige a frota salva: nunca acima do necessário, e ao menos 1 trem se a linha tem trechos.
+function Economia.ajustarFrota(estado: EstadoMapa, dados: any)
+	for _, linha in dados.linhas do
+		local necessarios = Economia.trensNecessarios(estado, linha)
+		local atual = estado.trens[linha.id] or 0
+		if necessarios == 0 then
+			estado.trens[linha.id] = nil
+		else
+			estado.trens[linha.id] = math.clamp(atual, 1, necessarios)
+		end
+	end
 end
 
 function Economia.rendaLinha(estado: EstadoMapa, linha: any): number

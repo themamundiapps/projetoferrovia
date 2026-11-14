@@ -159,6 +159,9 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	if Economia.trechosConstruidos(e, linha) == 0 then
 		return false, "Construa um trecho dessa linha primeiro."
 	end
+	if not Economia.podeComprarTrem(e, linha) then
+		return false, "Frota completa: esta linha já tem todos os trens de que precisa."
+	end
 	local custo = Economia.custoTrem(e, linha)
 	if e.dinheiro < custo then
 		return false, "Dinheiro insuficiente."
@@ -226,6 +229,7 @@ local function aoEntrar(jogador: Player)
 	for id, dados in MAPAS do
 		local estadoSalvo = if type(salvo) == "table" and type(salvo.mapas) == "table" then salvo.mapas[id] else nil
 		local e = sanear(estadoSalvo)
+		Economia.ajustarFrota(e, dados)
 		if estadoSalvo then
 			local decorrido = math.clamp(os.time() - e.ultimoTick, 0, Economia.OFFLINE_MAX_SEGUNDOS)
 			local ganho = Economia.rendaTotal(e, dados) * decorrido
