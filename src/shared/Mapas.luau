@@ -17,6 +17,10 @@ Mapas.brasil = {
 		{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://128572779648652", arquivo = "mapas/brasil/brasil_linhas_0_1.png" },
 		{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 1024, id = "rbxassetid://135970764229108", arquivo = "mapas/brasil/brasil_linhas_1_0.png" },
 		{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 1024, id = "rbxassetid://84132376955281", arquivo = "mapas/brasil/brasil_linhas_1_1.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil/brasil_rios_0_0.png" },
+		{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil/brasil_rios_0_1.png" },
+		{ camada = "rios", x = 0, y = 1024, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil/brasil_rios_1_0.png" },
+		{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil/brasil_rios_1_1.png" },
 	},
 	cidades = {
 		["São Paulo"] = Vector2.new(1388, 1443),
@@ -110,6 +114,10 @@ Mapas.brasil.detalhes = {
 			{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://108289231527909", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_1.png" },
 			{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://127831580734346", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_0.png" },
 			{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://120458233669700", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_1.png" },
+			{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_0_0.png" },
+			{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_0_1.png" },
+			{ camada = "rios", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_1_0.png" },
+			{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_1_1.png" },
 		},
 	},
 }

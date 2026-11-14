@@ -1,83 +1,659 @@
 {
   "_nota": "Fonte editável dos dados do mapa Brasil. Coordenadas em graus (lon, lat). Anos e traçados aproximados: conferir antes do lançamento. Depois de editar, rode `node tools/dados/gerar.mjs` para regenerar src/shared/Dados/Brasil.luau.",
   "terrenos": {
-    "planalto":   { "nome": "Planalto",          "custo": 1.0 },
-    "baixada":    { "nome": "Baixada litorânea", "custo": 1.1 },
-    "vale":       { "nome": "Vale",              "custo": 1.2 },
-    "serra_leve": { "nome": "Serra",             "custo": 1.6 },
-    "serra":      { "nome": "Serra do Mar",      "custo": 2.4 }
+    "planalto": {
+      "nome": "Planalto",
+      "custo": 1.0
+    },
+    "baixada": {
+      "nome": "Baixada litorânea",
+      "custo": 1.1
+    },
+    "vale": {
+      "nome": "Vale",
+      "custo": 1.2
+    },
+    "serra_leve": {
+      "nome": "Serra",
+      "custo": 1.6
+    },
+    "serra": {
+      "nome": "Serra do Mar",
+      "custo": 2.4
+    }
   },
   "estacoes": [
-    { "id": "porto_maua",     "nome": "Porto Mauá",            "lon": -43.18, "lat": -22.69, "porte": 1 },
-    { "id": "fragoso",        "nome": "Fragoso",               "lon": -43.13, "lat": -22.60, "porte": 1 },
-    { "id": "rio",            "nome": "Rio de Janeiro",        "lon": -43.19, "lat": -22.90, "porte": 5, "porto": true },
-    { "id": "japeri",         "nome": "Japeri",                "lon": -43.65, "lat": -22.64, "porte": 1 },
-    { "id": "barra_pirai",    "nome": "Barra do Piraí",        "lon": -43.83, "lat": -22.47, "porte": 2, "produz": "cafe" },
-    { "id": "juiz_de_fora",   "nome": "Juiz de Fora",          "lon": -43.35, "lat": -21.76, "porte": 3 },
-    { "id": "barbacena",      "nome": "Barbacena",             "lon": -43.77, "lat": -21.22, "porte": 2 },
-    { "id": "bh",             "nome": "Belo Horizonte",        "lon": -43.94, "lat": -19.92, "porte": 4 },
-    { "id": "santos",         "nome": "Santos",                "lon": -46.33, "lat": -23.96, "porte": 3, "porto": true },
-    { "id": "paranapiacaba",  "nome": "Paranapiacaba",         "lon": -46.30, "lat": -23.78, "porte": 1 },
-    { "id": "sao_paulo",      "nome": "São Paulo",             "lon": -46.635,"lat": -23.535,"porte": 5 },
-    { "id": "jundiai",        "nome": "Jundiaí",               "lon": -46.88, "lat": -23.19, "porte": 2, "produz": "cafe" },
-    { "id": "campinas",       "nome": "Campinas",              "lon": -47.06, "lat": -22.91, "porte": 3, "produz": "cafe" },
-    { "id": "rio_claro",      "nome": "Rio Claro",             "lon": -47.56, "lat": -22.41, "porte": 2, "produz": "cafe" },
-    { "id": "sao_carlos",     "nome": "São Carlos",            "lon": -47.89, "lat": -22.02, "porte": 2, "produz": "cafe" },
-    { "id": "araraquara",     "nome": "Araraquara",            "lon": -48.18, "lat": -21.79, "porte": 2, "produz": "cafe" },
-    { "id": "bauru",          "nome": "Bauru",                 "lon": -49.06, "lat": -22.32, "porte": 2 },
-    { "id": "vitoria",        "nome": "Vitória",               "lon": -40.34, "lat": -20.32, "porte": 3, "porto": true },
-    { "id": "colatina",       "nome": "Colatina",              "lon": -40.63, "lat": -19.54, "porte": 1 },
-    { "id": "valadares",      "nome": "Governador Valadares",  "lon": -41.95, "lat": -18.85, "porte": 2 },
-    { "id": "itabira",        "nome": "Itabira",               "lon": -43.23, "lat": -19.62, "porte": 1, "produz": "minerio" }
+    {
+      "id": "porto_maua",
+      "nome": "Porto Mauá",
+      "lon": -43.18,
+      "lat": -22.69,
+      "porte": 1
+    },
+    {
+      "id": "fragoso",
+      "nome": "Fragoso",
+      "lon": -43.13,
+      "lat": -22.6,
+      "porte": 1
+    },
+    {
+      "id": "rio",
+      "nome": "Rio de Janeiro",
+      "lon": -43.19,
+      "lat": -22.9,
+      "porte": 5,
+      "porto": true
+    },
+    {
+      "id": "japeri",
+      "nome": "Japeri",
+      "lon": -43.65,
+      "lat": -22.64,
+      "porte": 1
+    },
+    {
+      "id": "barra_pirai",
+      "nome": "Barra do Piraí",
+      "lon": -43.83,
+      "lat": -22.47,
+      "porte": 2,
+      "produz": "cafe"
+    },
+    {
+      "id": "juiz_de_fora",
+      "nome": "Juiz de Fora",
+      "lon": -43.35,
+      "lat": -21.76,
+      "porte": 3
+    },
+    {
+      "id": "barbacena",
+      "nome": "Barbacena",
+      "lon": -43.77,
+      "lat": -21.22,
+      "porte": 2
+    },
+    {
+      "id": "bh",
+      "nome": "Belo Horizonte",
+      "lon": -43.94,
+      "lat": -19.92,
+      "porte": 4
+    },
+    {
+      "id": "santos",
+      "nome": "Santos",
+      "lon": -46.33,
+      "lat": -23.96,
+      "porte": 3,
+      "porto": true
+    },
+    {
+      "id": "paranapiacaba",
+      "nome": "Paranapiacaba",
+      "lon": -46.3,
+      "lat": -23.78,
+      "porte": 1
+    },
+    {
+      "id": "sao_paulo",
+      "nome": "São Paulo",
+      "lon": -46.635,
+      "lat": -23.535,
+      "porte": 5
+    },
+    {
+      "id": "jundiai",
+      "nome": "Jundiaí",
+      "lon": -46.88,
+      "lat": -23.19,
+      "porte": 2,
+      "produz": "cafe"
+    },
+    {
+      "id": "campinas",
+      "nome": "Campinas",
+      "lon": -47.06,
+      "lat": -22.91,
+      "porte": 3,
+      "produz": "cafe"
+    },
+    {
+      "id": "rio_claro",
+      "nome": "Rio Claro",
+      "lon": -47.56,
+      "lat": -22.41,
+      "porte": 2,
+      "produz": "cafe"
+    },
+    {
+      "id": "sao_carlos",
+      "nome": "São Carlos",
+      "lon": -47.89,
+      "lat": -22.02,
+      "porte": 2,
+      "produz": "cafe"
+    },
+    {
+      "id": "araraquara",
+      "nome": "Araraquara",
+      "lon": -48.18,
+      "lat": -21.79,
+      "porte": 2,
+      "produz": "cafe"
+    },
+    {
+      "id": "bauru",
+      "nome": "Bauru",
+      "lon": -49.06,
+      "lat": -22.32,
+      "porte": 2
+    },
+    {
+      "id": "vitoria",
+      "nome": "Vitória",
+      "lon": -40.34,
+      "lat": -20.32,
+      "porte": 3,
+      "porto": true
+    },
+    {
+      "id": "colatina",
+      "nome": "Colatina",
+      "lon": -40.63,
+      "lat": -19.54,
+      "porte": 1
+    },
+    {
+      "id": "valadares",
+      "nome": "Governador Valadares",
+      "lon": -41.95,
+      "lat": -18.85,
+      "porte": 2
+    },
+    {
+      "id": "itabira",
+      "nome": "Itabira",
+      "lon": -43.23,
+      "lat": -19.62,
+      "porte": 1,
+      "produz": "minerio"
+    }
   ],
   "linhas": [
     {
-      "id": "maua", "nome": "E.F. Mauá", "ano": 1854, "cor": 6,
-      "trechos": [
-        { "de": "porto_maua", "para": "fragoso", "ano": 1854, "terreno": "baixada" }
-      ]
-    },
-    {
-      "id": "dpedro2", "nome": "E.F. Dom Pedro II", "ano": 1858, "cor": 2,
-      "trechos": [
-        { "de": "rio", "para": "japeri", "ano": 1858, "terreno": "baixada" },
-        { "de": "japeri", "para": "barra_pirai", "ano": 1864, "terreno": "serra_leve" },
-        { "de": "barra_pirai", "para": "juiz_de_fora", "ano": 1875, "terreno": "vale" },
-        { "de": "juiz_de_fora", "para": "barbacena", "ano": 1880, "terreno": "serra_leve" },
-        { "de": "barbacena", "para": "bh", "ano": 1895, "terreno": "planalto" }
-      ]
-    },
-    {
-      "id": "spr", "nome": "Santos–Jundiaí", "ano": 1867, "cor": 1,
+      "id": "maua",
+      "nome": "E.F. Mauá",
+      "ano": 1854,
+      "cor": 6,
       "trechos": [
         {
-          "de": "santos", "para": "paranapiacaba", "ano": 1867, "terreno": "serra",
+          "de": "porto_maua",
+          "para": "fragoso",
+          "ano": 1854,
+          "terreno": "baixada"
+        }
+      ]
+    },
+    {
+      "id": "dpedro2",
+      "nome": "E.F. Dom Pedro II",
+      "ano": 1858,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "rio",
+          "para": "japeri",
+          "ano": 1858,
+          "terreno": "baixada"
+        },
+        {
+          "de": "japeri",
+          "para": "barra_pirai",
+          "ano": 1864,
+          "terreno": "serra_leve"
+        },
+        {
+          "de": "barra_pirai",
+          "para": "juiz_de_fora",
+          "ano": 1875,
+          "terreno": "vale"
+        },
+        {
+          "de": "juiz_de_fora",
+          "para": "barbacena",
+          "ano": 1880,
+          "terreno": "serra_leve"
+        },
+        {
+          "de": "barbacena",
+          "para": "bh",
+          "ano": 1895,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "spr",
+      "nome": "Santos–Jundiaí",
+      "ano": 1867,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "santos",
+          "para": "paranapiacaba",
+          "ano": 1867,
+          "terreno": "serra",
           "alternativas": [
-            { "id": "serra", "nome": "Subir a Serra do Mar", "descricao": "Cremalheira: caro, mas curto e rápido.", "terreno": "serra", "fatorKm": 1.0, "fatorDemanda": 1.0, "historico": true },
-            { "id": "vale", "nome": "Contornar pelo vale", "descricao": "Mais barato, porém longo; perde passageiros.", "terreno": "vale", "fatorKm": 1.5, "fatorDemanda": 0.8, "historico": false }
+            {
+              "id": "serra",
+              "nome": "Subir a Serra do Mar",
+              "descricao": "Cremalheira: caro, mas curto e rápido.",
+              "terreno": "serra",
+              "fatorKm": 1.0,
+              "fatorDemanda": 1.0,
+              "historico": true
+            },
+            {
+              "id": "vale",
+              "nome": "Contornar pelo vale",
+              "descricao": "Mais barato, porém longo; perde passageiros.",
+              "terreno": "vale",
+              "fatorKm": 1.5,
+              "fatorDemanda": 0.8,
+              "historico": false
+            }
           ]
         },
-        { "de": "paranapiacaba", "para": "sao_paulo", "ano": 1867, "terreno": "planalto" },
-        { "de": "sao_paulo", "para": "jundiai", "ano": 1867, "terreno": "planalto" }
+        {
+          "de": "paranapiacaba",
+          "para": "sao_paulo",
+          "ano": 1867,
+          "terreno": "planalto"
+        },
+        {
+          "de": "sao_paulo",
+          "para": "jundiai",
+          "ano": 1867,
+          "terreno": "planalto"
+        }
       ]
     },
     {
-      "id": "paulista", "nome": "Cia. Paulista", "ano": 1872, "cor": 3,
+      "id": "paulista",
+      "nome": "Cia. Paulista",
+      "ano": 1872,
+      "cor": 3,
       "trechos": [
-        { "de": "jundiai", "para": "campinas", "ano": 1872, "terreno": "planalto" },
-        { "de": "campinas", "para": "rio_claro", "ano": 1876, "terreno": "planalto" },
-        { "de": "rio_claro", "para": "sao_carlos", "ano": 1884, "terreno": "planalto" },
-        { "de": "sao_carlos", "para": "araraquara", "ano": 1885, "terreno": "planalto" },
-        { "de": "araraquara", "para": "bauru", "ano": 1910, "terreno": "planalto" }
+        {
+          "de": "jundiai",
+          "para": "campinas",
+          "ano": 1872,
+          "terreno": "planalto"
+        },
+        {
+          "de": "campinas",
+          "para": "rio_claro",
+          "ano": 1876,
+          "terreno": "planalto"
+        },
+        {
+          "de": "rio_claro",
+          "para": "sao_carlos",
+          "ano": 1884,
+          "terreno": "planalto"
+        },
+        {
+          "de": "sao_carlos",
+          "para": "araraquara",
+          "ano": 1885,
+          "terreno": "planalto"
+        },
+        {
+          "de": "araraquara",
+          "para": "bauru",
+          "ano": 1910,
+          "terreno": "planalto"
+        }
       ]
     },
     {
-      "id": "vitoria_minas", "nome": "Vitória–Minas", "ano": 1904, "cor": 5,
+      "id": "vitoria_minas",
+      "nome": "Vitória–Minas",
+      "ano": 1904,
+      "cor": 5,
       "trechos": [
-        { "de": "vitoria", "para": "colatina", "ano": 1906, "terreno": "baixada" },
-        { "de": "colatina", "para": "valadares", "ano": 1910, "terreno": "vale" },
-        { "de": "valadares", "para": "itabira", "ano": 1942, "terreno": "serra_leve" }
+        {
+          "de": "vitoria",
+          "para": "colatina",
+          "ano": 1906,
+          "terreno": "baixada"
+        },
+        {
+          "de": "colatina",
+          "para": "valadares",
+          "ano": 1910,
+          "terreno": "vale"
+        },
+        {
+          "de": "valadares",
+          "para": "itabira",
+          "ano": 1942,
+          "terreno": "serra_leve"
+        }
       ]
+    }
+  ],
+  "rotulos": [
+    {
+      "tipo": "estado",
+      "texto": "ACRE",
+      "lon": -70.3,
+      "lat": -8.93,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "RONDÔNIA",
+      "lon": -63.14,
+      "lat": -10.97,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "RORAIMA",
+      "lon": -61.33,
+      "lat": 1.94,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "AMAZONAS",
+      "lon": -63.79,
+      "lat": -4.22,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PARÁ",
+      "lon": -52.65,
+      "lat": -4.44,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MATO GROSSO DO SUL",
+      "lon": -54.55,
+      "lat": -20.68,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "AMAPÁ",
+      "lon": -51.68,
+      "lat": 1.41,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MATO GROSSO",
+      "lon": -55.92,
+      "lat": -13.39,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PARANÁ",
+      "lon": -51.32,
+      "lat": -24.66,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "GOIÁS",
+      "lon": -49.58,
+      "lat": -15.86,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "TOCANTINS",
+      "lon": -48.25,
+      "lat": -10.22,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "SÃO PAULO",
+      "lon": -48.6,
+      "lat": -21.75,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MARANHÃO",
+      "lon": -45.39,
+      "lat": -5.02,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "RIO DE JANEIRO",
+      "lon": -42.9,
+      "lat": -22.0,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PIAUÍ",
+      "lon": -43.2,
+      "lat": -8.09,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MINAS GERAIS",
+      "lon": -45.6,
+      "lat": -19.6,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ESPÍRITO\nSANTO",
+      "lon": -40.55,
+      "lat": -19.2,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "BAHIA",
+      "lon": -41.8,
+      "lat": -12.37,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "CEARÁ",
+      "lon": -39.34,
+      "lat": -5.38,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "SERGIPE",
+      "lon": -37.38,
+      "lat": -10.59,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ALAGOAS",
+      "lon": -36.69,
+      "lat": -9.77,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "RIO GRANDE\nDO NORTE",
+      "lon": -36.55,
+      "lat": -5.66,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PERNAMBUCO",
+      "lon": -37.3,
+      "lat": -8.47,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PARAÍBA",
+      "lon": -36.27,
+      "lat": -7.34,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "SANTA CATARINA",
+      "lon": -51.16,
+      "lat": -27.04,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "RIO GRANDE DO SUL",
+      "lon": -53.66,
+      "lat": -29.73,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Vale do Paraíba",
+      "lon": -45.4,
+      "lat": -22.9,
+      "angulo": -18,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Planalto Paulista",
+      "lon": -48.6,
+      "lat": -23.15,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Zona da Mata",
+      "lon": -42.3,
+      "lat": -21.0,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Triângulo Mineiro",
+      "lon": -48.6,
+      "lat": -19.3,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Tietê",
+      "lon": -48.9,
+      "lat": -22.55,
+      "angulo": -20,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Grande",
+      "lon": -48.2,
+      "lat": -20.25,
+      "angulo": 10,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Paraíba do Sul",
+      "lon": -44.7,
+      "lat": -22.35,
+      "angulo": -15,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Doce",
+      "lon": -41.6,
+      "lat": -19.45,
+      "angulo": -25,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio São Francisco",
+      "lon": -43.0,
+      "lat": -12.5,
+      "angulo": -60,
+      "zoomMin": 0.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Amazonas",
+      "lon": -58.0,
+      "lat": -2.6,
+      "angulo": -5,
+      "zoomMin": 0.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Paraná",
+      "lon": -52.3,
+      "lat": -21.6,
+      "angulo": -55,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO ATLÂNTICO",
+      "lon": -34.5,
+      "lat": -16.0,
+      "angulo": -75,
+      "zoomMin": 0,
+      "zoomMax": 1.2
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO ATLÂNTICO",
+      "lon": -43.6,
+      "lat": -24.4,
+      "zoomMin": 1.2
     }
   ]
 }

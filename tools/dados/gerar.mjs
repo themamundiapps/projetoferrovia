@@ -90,6 +90,15 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     L.push("\t\t},");
   });
   L.push("\t},");
+  // Rótulos do mapa (estados, regiões, rios, oceano). Estados e oceano com letras espaçadas, estilo carta antiga.
+  const espacar = (t) => t.split("\n").map((linha) => [...linha].join(" ").replace(/   /g, "    ")).join("\n");
+  L.push("\trotulos = {");
+  for (const r of dados.rotulos ?? []) {
+    const [x, y] = proj([r.lon, r.lat]);
+    const texto = r.tipo === "estado" || r.tipo === "oceano" ? espacar(r.texto) : r.texto;
+    L.push(`\t\t{ tipo = ${lua(r.tipo)}, texto = ${lua(texto)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), angulo = ${lua(r.angulo ?? 0)}, zoomMin = ${lua(r.zoomMin ?? 0)}, zoomMax = ${lua(r.zoomMax ?? 99)} },`);
+  }
+  L.push("\t},");
   L.push("}");
   L.push("");
   fs.mkdirSync(SAIDA, { recursive: true });

@@ -13,3 +13,6 @@ __pycache__/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Dados brutos do Natural Earth (baixados pelo script, ver tools/assetgen/feicoes.mjs)
+tools/assetgen/naturalearth/

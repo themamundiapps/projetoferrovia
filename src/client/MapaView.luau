@@ -28,6 +28,13 @@ type Estacao = {
 	rotulo: TextLabel,
 }
 
+type RotuloMapa = {
+	pos: Vector2,
+	zoomMin: number,
+	zoomMax: number,
+	label: TextLabel,
+}
+
 type Tile = {
 	x: number,
 	y: number,
@@ -51,6 +58,7 @@ export type MapaView = typeof(setmetatable(
 		tiles: { Tile },
 		segmentos: { Segmento },
 		estacoes: { Estacao },
+		rotulosMapa: { RotuloMapa },
 		conexoes: { RBXScriptConnection },
 		aoMudarCamera: BindableEvent,
 		foco: { min: Vector2, max: Vector2, margem: number }?,
@@ -68,15 +76,28 @@ local ZOOM_DETALHE = 1.8
 -- Ordem das camadas (ZIndex).
 local Z = {
 	terra = 1,
-	costa = 2,
-	detalheFundo = 3,
-	detalheTerra = 4,
-	detalheCosta = 5,
-	contorno = 6,
-	linha = 7,
-	estacao = 8,
-	rotulo = 9,
+	rios = 2,
+	costa = 3,
+	detalheFundo = 4,
+	detalheTerra = 5,
+	detalheRios = 6,
+	detalheCosta = 7,
+	rotuloMapa = 8, -- estados, regiões, rios, oceano (abaixo dos trilhos)
+	contorno = 9,
+	linha = 10,
+	estacao = 11,
+	rotulo = 12,
 }
+
+-- Cor e camada de cada tipo de tile.
+local function estiloTile(camada: string, cores: any, detalhe: boolean): (Color3, number)
+	if camada == "terra" then
+		return cores.land, if detalhe then Z.detalheTerra else Z.terra
+	elseif camada == "rios" then
+		return cores.rio, if detalhe then Z.detalheRios else Z.rios
+	end
+	return cores.coast, if detalhe then Z.detalheCosta else Z.costa
+end
 
 local function novo(classe: string, props: { [string]: any }, pai: Instance?): Instance
 	local inst = Instance.new(classe)
@@ -133,6 +154,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		tiles = {},
 		segmentos = {},
 		estacoes = {},
+		rotulosMapa = {},
 		conexoes = {},
 		aoMudarCamera = Instance.new("BindableEvent"),
 		foco = nil,
@@ -140,6 +162,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 	}, MapaView)
 
 	self:_criarTiles(mapa)
+	self:_criarRotulosMapa(dados)
 	self:_criarLinhas(dados)
 	self:_criarEstacoes(dados)
 	self:_conectarEntrada()
@@ -167,8 +190,10 @@ end
 function MapaView._criarTiles(self: MapaView, mapa: any)
 	local cores = self.era.cores
 	for _, t in mapa.tiles do
-		local cor = if t.camada == "terra" then cores.land else cores.coast
-		local z = if t.camada == "terra" then Z.terra else Z.costa
+		if t.id == "rbxassetid://0" then
+			continue -- ainda não enviado ao Roblox
+		end
+		local cor, z = estiloTile(t.camada, cores, false)
 		local imagem = novo("ImageLabel", {
 			Name = t.arquivo,
 			BackgroundTransparency = 1,
@@ -198,14 +223,14 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 			if t.id == "rbxassetid://0" then
 				continue -- ainda não enviado ao Roblox
 			end
-			local terra = t.camada == "terra"
+			local cor, z = estiloTile(t.camada, cores, true)
 			local imagem = novo("ImageLabel", {
 				Name = t.arquivo,
 				BackgroundTransparency = 1,
 				Image = t.id,
-				ImageColor3 = if terra then cores.land else cores.coast,
+				ImageColor3 = cor,
 				ScaleType = Enum.ScaleType.Stretch,
-				ZIndex = if terra then Z.detalheTerra else Z.detalheCosta,
+				ZIndex = z,
 			}, self.conteudo) :: ImageLabel
 			table.insert(self.tiles, {
 				x = d.x0 + t.x / d.escala,
@@ -216,6 +241,41 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 				detalhe = true,
 			})
 		end
+	end
+end
+
+-- Estilo de cada tipo de rótulo do mapa: fonte, tamanho, cor e transparência.
+local function estiloRotulo(tipo: string, era: any): (Font, number, Color3, number)
+	local c, f = era.cores, era.fontes
+	if tipo == "estado" then
+		return f.display, 20, c.ink, 0.78
+	elseif tipo == "oceano" then
+		return f.display, 24, c.ink, 0.5
+	elseif tipo == "rio" then
+		return f.label, 14, c.rio, 0
+	end
+	return f.label, 15, c.inkMuted, 0.1 -- regiao
+end
+
+function MapaView._criarRotulosMapa(self: MapaView, dados: any)
+	for i, r in dados.rotulos or {} do
+		local fonte, tamanho, cor, transp = estiloRotulo(r.tipo, self.era)
+		local label = novo("TextLabel", {
+			Name = "rotulo_" .. i,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			AutomaticSize = Enum.AutomaticSize.XY,
+			Size = UDim2.fromOffset(0, 0),
+			BackgroundTransparency = 1,
+			Text = r.texto,
+			FontFace = fonte,
+			TextSize = tamanho,
+			TextColor3 = cor,
+			TextTransparency = transp,
+			LineHeight = 1.1,
+			Rotation = r.angulo or 0,
+			ZIndex = Z.rotuloMapa,
+		}, self.conteudo) :: TextLabel
+		table.insert(self.rotulosMapa, { pos = r.pos, zoomMin = r.zoomMin or 0, zoomMax = r.zoomMax or 99, label = label })
 	end
 end
 
@@ -366,6 +426,15 @@ function MapaView._layout(self: MapaView)
 		s.casing.Position = s.linha.Position
 		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + 4)
 		s.casing.Rotation = angulo
+	end
+
+	for _, r in self.rotulosMapa do
+		local visivel = z >= r.zoomMin and z < r.zoomMax
+		r.label.Visible = visivel
+		if visivel then
+			local p = r.pos * z
+			r.label.Position = UDim2.fromOffset(p.X, p.Y)
+		end
 	end
 
 	for _, e in self.estacoes do
