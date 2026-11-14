@@ -1,0 +1,59 @@
+{
+ "brasil": {
+  "largura": 2048,
+  "altura": 2048,
+  "projecao": {
+   "type": "geoMercator",
+   "rotate": [
+    0,
+    0,
+    0
+   ],
+   "scale": 2684.782166352735,
+   "translate": [
+    3573.266333678007,
+    306.6919286932142
+   ],
+   "parallels": null
+  }
+ },
+ "eua": {
+  "largura": 2048,
+  "altura": 1280,
+  "projecao": {
+   "type": "geoConicEqualArea",
+   "rotate": [
+    96.00000000000001,
+    0,
+    0
+   ],
+   "scale": 2540.41078408375,
+   "translate": [
+    1044.0341323341663,
+    856.9346907098497
+   ],
+   "parallels": [
+    29.500000000000004,
+    45.5
+   ]
+  }
+ },
+ "europa": {
+  "largura": 2048,
+  "altura": 1536,
+  "projecao": {
+   "type": "geoAzimuthalEqualArea",
+   "rotate": [
+    -10,
+    -52,
+    0
+   ],
+   "scale": 3026.708343994842,
+   "translate": [
+    1024,
+    607.3793674351995
+   ],
+   "parallels": null
+  }
+ }
+}

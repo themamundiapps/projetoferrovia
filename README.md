@@ -58,7 +58,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] GDD aprovado
 - [x] Pacote gráfico (v2, com emojis)
 - [x] Estrutura do projeto com Rojo
-- [ ] Dados do Brasil (contorno + 5 linhas históricas)
+- [x] Dados do Brasil (5 linhas históricas, 21 estações, 17 trechos; economia provisória)
 - [ ] Mapa 2D com zoom e arrastar, funcionando no celular
 - [ ] Compra de trechos, desbloqueio histórico e renda por segundo
 - [ ] Trens por linha e porcentagem de serviço
