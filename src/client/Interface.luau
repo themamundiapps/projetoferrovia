@@ -23,7 +23,7 @@ local function novo(classe: string, props: { [string]: any }, pai: Instance?): a
 end
 
 -- string.upper não converte letras acentuadas; esta versão converte.
-local ACENTOS = {
+local ACENTOS: { [string]: string } = {
 	["á"] = "Á", ["à"] = "À", ["â"] = "Â", ["ã"] = "Ã", ["é"] = "É", ["ê"] = "Ê",
 	["í"] = "Í", ["ó"] = "Ó", ["ô"] = "Ô", ["õ"] = "Õ", ["ú"] = "Ú", ["ç"] = "Ç",
 }
