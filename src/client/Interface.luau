@@ -76,6 +76,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
 	})
+	self.hud = hud
 	padding(hud, 12)
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, hud)
 	novo("TextLabel", {
@@ -108,6 +109,39 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		TextColor3 = c.positive,
 		ZIndex = 31,
 	}, hud)
+
+	self.btnEra = novo("TextButton", {
+		Name = "BtnEra",
+		LayoutOrder = 4,
+		Size = UDim2.fromOffset(250, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = c.accent,
+		TextColor3 = c.onAccent,
+		FontFace = f.display,
+		TextSize = 15,
+		TextWrapped = true,
+		RichText = true,
+		Text = "",
+		Visible = false,
+		ZIndex = 32,
+	}, hud)
+	padding(self.btnEra, 8)
+	if era.forma.canto > 0 then
+		novo("UICorner", { CornerRadius = UDim.new(0, era.forma.canto) }, self.btnEra)
+	end
+	self.lblEra = novo("TextLabel", {
+		LayoutOrder = 5,
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundTransparency = 1,
+		Text = `{era.nome} · {era.anos}`,
+		FontFace = f.label,
+		TextSize = 13,
+		TextColor3 = c.inkMuted,
+		ZIndex = 31,
+	}, hud)
+	self.btnEra.Activated:Connect(function()
+		self.aoAgir:Fire("modernizar", {})
+	end)
 
 	-- ---------------------------------------------------- aviso (topo, centro)
 	self.aviso = caixa({
@@ -208,6 +242,9 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.btnTrem.BackgroundColor3 = c.ink
 	self.btnTrem.TextColor3 = c.panel
 	self.btnTrem.Size = UDim2.new(1, 0, 0, 40)
+	self.divCarga = novo("Frame", { LayoutOrder = 10, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
+	self.lblCarga = texto(11, f.body, 15, c.ink)
+	self.lblCarga.LineHeight = 1.2
 
 	self.btnFechar = novo("TextButton", {
 		Name = "Fechar",
@@ -240,6 +277,14 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	return self
 end
 
+function Interface.destruir(self: Interface)
+	self.hud:Destroy()
+	self.aviso:Destroy()
+	self.painel:Destroy()
+	self.aoAgir:Destroy()
+	self.aoFechar:Destroy()
+end
+
 function Interface.avisar(self: Interface, msg: string, segundos: number?)
 	self.lblAviso.Text = msg
 	self.aviso.Visible = true
@@ -257,6 +302,18 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	local simbolo = self.dados.simbolo
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
+	local proxima, liberada = Economia.proximaEra(estado, self.dados)
+	local eraProx = proxima and self.eras and self.eras[proxima.id]
+	if proxima and liberada and eraProx then
+		local podePagar = estado.dinheiro >= proxima.custo
+		self.btnEra.Visible = true
+		self.btnEra.Text = `{Emojis.era_diesel} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{proxima.multiplicador} em todas as linhas · {Economia.formatar(proxima.custo, simbolo)}`
+		self.btnEra.Active = podePagar
+		self.btnEra.AutoButtonColor = podePagar
+		self.btnEra.BackgroundTransparency = if podePagar then 0 else 0.55
+	else
+		self.btnEra.Visible = false
+	end
 	if estado.ganhoOffline and estado.ganhoOffline > 0.5 then
 		self:avisar(`{Emojis.relogio} Enquanto você esteve fora, seus trens renderam {Economia.formatar(estado.ganhoOffline, simbolo)}`, 6)
 	end
@@ -401,6 +458,24 @@ function Interface._preencher(self: Interface)
 		self.lblTrens.TextColor3 = c.positive
 		self.btnTrem.Visible = false
 	end
+
+	-- cargas desta linha
+	local cargas = Economia.cargasPorLinha(estado, dados)[linha.id]
+	local linhasTexto = {}
+	for _, info in cargas do
+		local def = Economia.CARGAS[info.carga]
+		local emoji = (Emojis :: any)[def.emoji] or ""
+		local nome = dados.estacoes[info.estacao].nome
+		if info.conectada then
+			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda`)
+		else
+			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} ainda sem trilho até um porto`)
+		end
+	end
+	local temCarga = #linhasTexto > 0
+	self.divCarga.Visible = temCarga
+	self.lblCarga.Visible = temCarga
+	self.lblCarga.Text = table.concat(linhasTexto, "\n")
 end
 
 return Interface

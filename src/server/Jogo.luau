@@ -4,6 +4,8 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local ServerStorage = game:GetService("ServerStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
@@ -68,6 +70,13 @@ local function sanear(salvo: any): EstadoMapa
 			end
 		end
 	end
+	if type(salvo.era) == "string" then
+		for _, era in Economia.ERAS do
+			if era.id == salvo.era then
+				e.era = salvo.era
+			end
+		end
+	end
 	if type(salvo.ultimoTick) == "number" then
 		e.ultimoTick = salvo.ultimoTick
 	end
@@ -83,6 +92,7 @@ local function pacoteEstado(s: Sessao): any
 		renda = Economia.rendaTotal(e, dados),
 		trechos = e.trechos,
 		trens = e.trens,
+		era = e.era,
 		ganhoOffline = s.ganhoOffline,
 		salvando = s.podeSalvar,
 	}
@@ -168,6 +178,24 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	end
 	e.dinheiro -= custo
 	e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
+	return true, nil
+end
+
+function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local proxima, liberada = Economia.proximaEra(e, dados)
+	if not proxima then
+		return false, "Você já está na era mais moderna."
+	end
+	if not liberada then
+		return false, `Complete {proxima.linhasCompletas} linhas para liberar a próxima era.`
+	end
+	if e.dinheiro < proxima.custo then
+		return false, "Dinheiro insuficiente."
+	end
+	e.dinheiro -= proxima.custo
+	e.era = proxima.id
 	return true, nil
 end
 
@@ -276,6 +304,29 @@ game:BindToClose(function()
 		task.wait(0.1)
 	end
 end)
+
+-- ---------------------------------------------------------------- atalhos de teste (só no Studio)
+
+if RunService:IsStudio() then
+	-- Uso (barra de comandos, contexto Server):
+	--   game.ServerStorage.FerroviaDebug:Invoke("dinheiro", 100000)
+	--   game.ServerStorage.FerroviaDebug:Invoke("zerar")
+	local debug = Instance.new("BindableFunction")
+	debug.Name = "FerroviaDebug"
+	debug.OnInvoke = function(comando: string, valor: any)
+		for _, s in sessoes do
+			local e = s.mapas[s.mapaAtual]
+			if comando == "dinheiro" then
+				e.dinheiro += tonumber(valor) or 0
+			elseif comando == "zerar" then
+				s.mapas[s.mapaAtual] = Economia.estadoNovo()
+			end
+			enviarEstado(s)
+		end
+		return "ok"
+	end
+	debug.Parent = ServerStorage
+end
 
 -- ---------------------------------------------------------------- renda e autosave
 

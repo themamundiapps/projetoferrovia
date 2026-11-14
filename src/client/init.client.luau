@@ -44,12 +44,6 @@ pcall(function()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 end)
 
-local era = Theme.PorId.vapor
-local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
-if idMar and idMar ~= "rbxassetid://0" then
-	era.marTextura = idMar
-end
-
 local tela = Instance.new("ScreenGui")
 tela.Name = "Ferrovia"
 tela.IgnoreGuiInset = true
@@ -57,25 +51,19 @@ tela.ResetOnSpawn = false
 tela.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 tela.Parent = playerGui
 
-local mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
-local ui = Interface.new(tela, era, DadosBrasil)
-
--- Enquadra as estações das linhas do MVP.
+-- Caixa que enquadra as estações das linhas do MVP.
 local minimo = Vector2.new(math.huge, math.huge)
 local maximo = Vector2.new(-math.huge, -math.huge)
 for _, e: any in DadosBrasil.estacoes do
 	minimo = minimo:Min(e.pos)
 	maximo = maximo:Max(e.pos)
 end
-task.spawn(function()
-	while mapa.raiz.AbsoluteSize.X <= 0 do
-		task.wait()
-	end
-	mapa:_atualizarZoomMin()
-	mapa:focar(minimo, maximo, 80)
-end)
 
--- ---------------------------------------------------------------- estado vindo do servidor
+local mapa: any = nil
+local ui: any = nil
+local eraAtual: string? = nil
+local ultimoEstado: any = nil
+local conexoesTela: { RBXScriptConnection } = {}
 
 local function situacoes(estado: any): { [string]: string }
 	local s = {}
@@ -87,42 +75,21 @@ local function situacoes(estado: any): { [string]: string }
 	return s
 end
 
-local function aplicarEstado(estado: any)
-	if not estado then
-		return
-	end
+local function aplicarNaTela(estado: any)
 	mapa:definirSituacao(situacoes(estado))
+	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
 	ui:atualizarEstado(estado)
 end
 
-remoteEstado.OnClientEvent:Connect(aplicarEstado)
-task.spawn(function()
-	aplicarEstado(remotePedirEstado:InvokeServer())
-end)
-
--- ---------------------------------------------------------------- seleção e ações
-
-mapa.aoTocar.Event:Connect(function(pontoMapa: Vector2)
-	local id = mapa:trechoProximo(pontoMapa, 22)
-	mapa:selecionar(id)
-	if id then
-		ui:abrir(id)
-	else
-		ui:fechar()
-	end
-end)
-
-ui.aoFechar.Event:Connect(function()
-	mapa:selecionar(nil)
-end)
-
-ui.aoAgir.Event:Connect(function(tipo: string, args: any)
+local function agir(tipo: string, args: any)
 	local resposta = remoteAcao:InvokeServer(tipo, args)
 	if resposta and not resposta.ok then
 		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
 	elseif resposta and resposta.ok then
-		ui:avisar(if tipo == "trem" then `{Emojis.trens} Trem comprado!` else `{Emojis.construir} Trecho construído!`, 2)
-		if tipo == "construir" then
+		if tipo == "trem" then
+			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
+		elseif tipo == "construir" then
+			ui:avisar(`{Emojis.construir} Trecho construído!`, 2)
 			-- se o trecho novo fez a linha precisar de mais trens, avisa
 			task.delay(0.4, function()
 				local linha = Economia.acharTrecho(DadosBrasil, args.trecho)
@@ -133,6 +100,92 @@ ui.aoAgir.Event:Connect(function(tipo: string, args: any)
 			end)
 		end
 	end
+end
+
+-- Monta (ou remonta, ao trocar de era) o mapa e a interface com o visual da era.
+local function montar(eraId: string)
+	local era = Theme.PorId[eraId] or Theme.PorId.vapor
+	local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
+	era.marTextura = if idMar and idMar ~= "rbxassetid://0" then idMar else nil
+
+	local camera: { zoom: number, pan: Vector2 }? = nil
+	local selecionado: string? = nil
+	if mapa then
+		camera = { zoom = mapa.zoom, pan = mapa.pan }
+		selecionado = ui.trechoAberto
+		for _, c in conexoesTela do
+			c:Disconnect()
+		end
+		table.clear(conexoesTela)
+		ui:destruir()
+		mapa:destruir()
+	end
+
+	mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
+	ui = Interface.new(tela, era, DadosBrasil)
+	ui.eras = Theme.PorId
+	eraAtual = eraId
+
+	table.insert(conexoesTela, mapa.aoTocar.Event:Connect(function(pontoMapa: Vector2)
+		local id = mapa:trechoProximo(pontoMapa, 22)
+		mapa:selecionar(id)
+		if id then
+			ui:abrir(id)
+		else
+			ui:fechar()
+		end
+	end))
+	table.insert(conexoesTela, ui.aoFechar.Event:Connect(function()
+		mapa:selecionar(nil)
+	end))
+	table.insert(conexoesTela, ui.aoAgir.Event:Connect(agir))
+
+	task.spawn(function()
+		while mapa.raiz.AbsoluteSize.X <= 0 do
+			task.wait()
+		end
+		mapa:_atualizarZoomMin()
+		if camera then
+			mapa.interagiu = true
+			mapa.zoom = -1
+			mapa:definirCamera(camera.zoom, camera.pan)
+		else
+			mapa:focar(minimo, maximo, 80)
+		end
+	end)
+
+	if ultimoEstado then
+		aplicarNaTela(ultimoEstado)
+		if selecionado then
+			mapa:selecionar(selecionado)
+			ui:abrir(selecionado)
+		end
+	end
+end
+
+-- ---------------------------------------------------------------- estado vindo do servidor
+
+local function aplicarEstado(estado: any)
+	if not estado then
+		return
+	end
+	ultimoEstado = estado
+	if estado.era ~= eraAtual then
+		local trocou = eraAtual ~= nil
+		montar(estado.era)
+		if trocou then
+			local era = Theme.PorId[estado.era]
+			ui:avisar(`{Emojis.era_diesel} Bem-vindo à {era and era.nome or "nova era"}! A renda de todas as linhas dobrou.`, 6)
+		end
+		return
+	end
+	aplicarNaTela(estado)
+end
+
+montar("vapor")
+remoteEstado.OnClientEvent:Connect(aplicarEstado)
+task.spawn(function()
+	aplicarEstado(remotePedirEstado:InvokeServer())
 end)
 
 task.delay(1.5, function()

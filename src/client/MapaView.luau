@@ -6,6 +6,9 @@
 -- Ao mudar o zoom, reposicionamos os elementos (são poucos); ao arrastar, só movemos o conteúdo.
 
 local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
 
 local MapaView = {}
 MapaView.__index = MapaView
@@ -28,6 +31,7 @@ type Estacao = {
 	porte: number,
 	ponto: Frame,
 	rotulo: TextLabel,
+	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
 }
 
 type RotuloMapa = {
@@ -344,7 +348,24 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual,
 		}, rotulo)
 
-		table.insert(self.estacoes, { id = id, pos = e.pos, porte = e.porte, ponto = ponto, rotulo = rotulo })
+		local selo: TextLabel? = nil
+		if e.produz then
+			local emoji = (Emojis :: any)["carga_" .. e.produz]
+			if emoji then
+				selo = novo("TextLabel", {
+					Name = id .. "_carga",
+					AnchorPoint = Vector2.new(0.5, 1),
+					Size = UDim2.fromOffset(22, 22),
+					BackgroundTransparency = 1,
+					Text = emoji,
+					TextSize = 18,
+					TextTransparency = 0.7,
+					ZIndex = Z.rotulo,
+				}, self.conteudo) :: TextLabel
+			end
+		end
+
+		table.insert(self.estacoes, { id = id, pos = e.pos, porte = e.porte, ponto = ponto, rotulo = rotulo, selo = selo })
 	end
 end
 
@@ -380,6 +401,16 @@ function MapaView.definirSituacao(self: MapaView, situacoes: { [string]: string 
 			s.estado = nova :: any
 		end
 		self:_estilizar(s)
+	end
+end
+
+-- Selo de carga: forte quando a produtora tem caminho até um porto, apagado quando não.
+function MapaView.definirCargas(self: MapaView, conectadas: { [string]: boolean })
+	for _, e in self.estacoes do
+		local selo = e.selo
+		if selo then
+			selo.TextTransparency = if conectadas[e.id] then 0 else 0.65
+		end
 	end
 end
 
@@ -510,6 +541,10 @@ function MapaView._layout(self: MapaView)
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
 		e.rotulo.Position = UDim2.fromOffset(p.X + 12, p.Y)
 		e.rotulo.Visible = z >= (ZOOM_ROTULO[e.porte] or 0)
+		if e.selo then
+			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)
+			e.selo.Visible = z >= 1.2
+		end
 	end
 end
 
