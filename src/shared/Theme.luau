@@ -4,7 +4,7 @@
 local Theme = {}
 
 local function F(familia, peso)
-	return Font.new("rbxasset://fonts/families/" .. familia .. ".json", Enum.FontWeight[peso])
+	return Font.new("rbxasset://fonts/families/" .. familia .. ".json", (Enum.FontWeight :: any)[peso])
 end
 
 Theme.Eras = {

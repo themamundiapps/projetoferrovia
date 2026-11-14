@@ -59,7 +59,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Pacote gráfico (v2, com emojis)
 - [x] Estrutura do projeto com Rojo
 - [x] Dados do Brasil (5 linhas históricas, 21 estações, 17 trechos; economia provisória)
-- [ ] Mapa 2D com zoom e arrastar, funcionando no celular
+- [ ] Mapa 2D com zoom e arrastar, funcionando no celular (protótipo no ar; falta testar no celular e melhorar a nitidez do Sudeste)
 - [ ] Compra de trechos, desbloqueio histórico e renda por segundo
 - [ ] Trens por linha e porcentagem de serviço
 - [ ] Uma carga (café → porto de Santos) e uma escolha de traçado

@@ -1,0 +1,387 @@
+--!strict
+-- MapaView: desenha um mapa (tiles + trilhos + estações) dentro de um Frame e cuida de
+-- arrastar (mouse/toque) e zoom (roda do mouse/pinça).
+--
+-- Tudo é guardado em coordenadas do mapa completo (pixels do mapa, ex.: 2048x2048).
+-- Ao mudar o zoom, reposicionamos os elementos (são poucos); ao arrastar, só movemos o conteúdo.
+
+local UserInputService = game:GetService("UserInputService")
+
+local MapaView = {}
+MapaView.__index = MapaView
+
+export type EstadoTrecho = "construido" | "disponivel" | "bloqueado"
+
+type Segmento = {
+	a: Vector2,
+	b: Vector2,
+	casing: Frame,
+	linha: Frame,
+	estado: EstadoTrecho,
+}
+
+type Estacao = {
+	id: string,
+	pos: Vector2,
+	porte: number,
+	ponto: Frame,
+	rotulo: TextLabel,
+}
+
+type Tile = {
+	x: number,
+	y: number,
+	w: number,
+	h: number,
+	imagem: ImageLabel,
+}
+
+export type MapaView = typeof(setmetatable(
+	{} :: {
+		raiz: Frame,
+		conteudo: Frame,
+		largura: number,
+		altura: number,
+		zoom: number,
+		zoomMin: number,
+		zoomMax: number,
+		pan: Vector2,
+		era: any,
+		tiles: { Tile },
+		segmentos: { Segmento },
+		estacoes: { Estacao },
+		conexoes: { RBXScriptConnection },
+		aoMudarCamera: BindableEvent,
+	},
+	MapaView
+))
+
+-- Zoom mínimo para mostrar o nome da estação, por porte (5 = metrópole, 1 = vila).
+local ZOOM_ROTULO = { [5] = 0, [4] = 0.8, [3] = 1.6, [2] = 2.6, [1] = 4 }
+local ZOOM_MAX = 8
+
+local function novo(classe: string, props: { [string]: any }, pai: Instance?): Instance
+	local inst = Instance.new(classe)
+	for k, v in props do
+		(inst :: any)[k] = v
+	end
+	if pai then
+		inst.Parent = pai
+	end
+	return inst
+end
+
+function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
+	local cores = era.cores
+
+	local raiz = novo("Frame", {
+		Name = "Mapa",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = cores.sea,
+		BorderSizePixel = 0,
+		ClipsDescendants = true,
+		Active = false, -- deixa os gestos passarem; botões da interface (Active = true) bloqueiam o mapa
+	}, pai) :: Frame
+
+	local conteudo = novo("Frame", {
+		Name = "Conteudo",
+		BackgroundTransparency = 1,
+		Size = UDim2.fromOffset(0, 0),
+	}, raiz) :: Frame
+
+	local self = setmetatable({
+		raiz = raiz,
+		conteudo = conteudo,
+		largura = mapa.largura,
+		altura = mapa.altura,
+		zoom = 1,
+		zoomMin = 0.1,
+		zoomMax = ZOOM_MAX,
+		pan = Vector2.zero,
+		era = era,
+		tiles = {},
+		segmentos = {},
+		estacoes = {},
+		conexoes = {},
+		aoMudarCamera = Instance.new("BindableEvent"),
+	}, MapaView)
+
+	self:_criarTiles(mapa)
+	self:_criarLinhas(dados)
+	self:_criarEstacoes(dados)
+	self:_conectarEntrada()
+
+	table.insert(
+		self.conexoes,
+		raiz:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			self:_atualizarZoomMin()
+			self:definirCamera(self.zoom, self.pan)
+		end)
+	)
+
+	self:_atualizarZoomMin()
+	return self
+end
+
+-- ---------------------------------------------------------------- criação
+
+function MapaView._criarTiles(self: MapaView, mapa: any)
+	local cores = self.era.cores
+	for _, t in mapa.tiles do
+		local cor = if t.camada == "terra" then cores.land else cores.coast
+		local z = if t.camada == "terra" then 1 else 2
+		local imagem = novo("ImageLabel", {
+			Name = t.arquivo,
+			BackgroundTransparency = 1,
+			Image = t.id,
+			ImageColor3 = cor,
+			ScaleType = Enum.ScaleType.Stretch,
+			ZIndex = z,
+		}, self.conteudo) :: ImageLabel
+		table.insert(self.tiles, { x = t.x, y = t.y, w = t.w, h = t.h, imagem = imagem })
+	end
+end
+
+function MapaView._criarLinhas(self: MapaView, dados: any)
+	local cores = self.era.cores
+	for _, linha in dados.linhas do
+		local cor: Color3 = self.era.linhas[linha.cor] or cores.ink
+		for _, trecho in linha.trechos do
+			local a: Vector2 = dados.estacoes[trecho.de].pos
+			local b: Vector2 = dados.estacoes[trecho.para].pos
+			local casing = novo("Frame", {
+				Name = trecho.id .. "_contorno",
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundColor3 = cores.ink,
+				BorderSizePixel = 0,
+				ZIndex = 3,
+			}, self.conteudo) :: Frame
+			local frame = novo("Frame", {
+				Name = trecho.id,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundColor3 = cor,
+				BorderSizePixel = 0,
+				ZIndex = 4,
+			}, self.conteudo) :: Frame
+			table.insert(self.segmentos, { a = a, b = b, casing = casing, linha = frame, estado = "construido" })
+		end
+	end
+end
+
+function MapaView._criarEstacoes(self: MapaView, dados: any)
+	local cores = self.era.cores
+	local fontes = self.era.fontes
+	for id, e in dados.estacoes do
+		local tamanho = 10 + e.porte * 2
+		local ponto = novo("Frame", {
+			Name = id,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromOffset(tamanho, tamanho),
+			BackgroundColor3 = cores.panel,
+			ZIndex = 5,
+		}, self.conteudo) :: Frame
+		novo("UICorner", { CornerRadius = UDim.new(0.5, 0) }, ponto)
+		novo("UIStroke", { Color = cores.ink, Thickness = 3 }, ponto)
+
+		local rotulo = novo("TextLabel", {
+			Name = id .. "_nome",
+			AnchorPoint = Vector2.new(0, 0.5),
+			AutomaticSize = Enum.AutomaticSize.XY,
+			Size = UDim2.fromOffset(0, 0),
+			BackgroundTransparency = 1,
+			Text = e.nome,
+			FontFace = fontes.display,
+			TextSize = if e.porte >= 4 then 16 else 14,
+			TextColor3 = cores.ink,
+			ZIndex = 6,
+		}, self.conteudo) :: TextLabel
+		novo("UIStroke", {
+			Color = cores.panel,
+			Thickness = 2,
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual,
+		}, rotulo)
+
+		table.insert(self.estacoes, { id = id, pos = e.pos, porte = e.porte, ponto = ponto, rotulo = rotulo })
+	end
+end
+
+-- ---------------------------------------------------------------- câmera
+
+function MapaView._atualizarZoomMin(self: MapaView)
+	local tela = self.raiz.AbsoluteSize
+	if tela.X <= 0 or tela.Y <= 0 then
+		return
+	end
+	self.zoomMin = math.min(tela.X / self.largura, tela.Y / self.altura)
+end
+
+local function limitarEixo(pan: number, tamanhoMapa: number, tela: number): number
+	if tamanhoMapa <= tela then
+		return (tela - tamanhoMapa) / 2
+	end
+	return math.clamp(pan, tela - tamanhoMapa, 0)
+end
+
+function MapaView.definirCamera(self: MapaView, zoom: number, pan: Vector2)
+	local tela = self.raiz.AbsoluteSize
+	zoom = math.clamp(zoom, self.zoomMin, self.zoomMax)
+	local mudouZoom = zoom ~= self.zoom
+	self.zoom = zoom
+	self.pan = Vector2.new(
+		limitarEixo(pan.X, self.largura * zoom, tela.X),
+		limitarEixo(pan.Y, self.altura * zoom, tela.Y)
+	)
+	self.conteudo.Position = UDim2.fromOffset(math.round(self.pan.X), math.round(self.pan.Y))
+	if mudouZoom then
+		self:_layout()
+	end
+	self.aoMudarCamera:Fire(self.zoom)
+end
+
+-- Aplica um fator de zoom mantendo fixo o ponto da tela informado (cursor ou centro da pinça).
+function MapaView.zoomEm(self: MapaView, novoZoom: number, pontoTela: Vector2)
+	novoZoom = math.clamp(novoZoom, self.zoomMin, self.zoomMax)
+	local local_ = pontoTela - self.raiz.AbsolutePosition
+	local noMapa = (local_ - self.pan) / self.zoom
+	self:definirCamera(novoZoom, local_ - noMapa * novoZoom)
+end
+
+-- Enquadra uma caixa do mapa (em pixels do mapa) com uma margem.
+function MapaView.focar(self: MapaView, min: Vector2, max: Vector2, margem: number?)
+	local m = margem or 60
+	local tela = self.raiz.AbsoluteSize
+	local tam = max - min
+	local zoom = math.min((tela.X - m * 2) / math.max(tam.X, 1), (tela.Y - m * 2) / math.max(tam.Y, 1))
+	zoom = math.clamp(zoom, self.zoomMin, self.zoomMax)
+	local centro = (min + max) / 2
+	self.zoom = -1 -- força relayout
+	self:definirCamera(zoom, tela / 2 - centro * zoom)
+end
+
+function MapaView._layout(self: MapaView)
+	local z = self.zoom
+	self.conteudo.Size = UDim2.fromOffset(self.largura * z, self.altura * z)
+
+	for _, t in self.tiles do
+		-- +1 px evita frestas finas entre os blocos
+		t.imagem.Position = UDim2.fromOffset(math.floor(t.x * z), math.floor(t.y * z))
+		t.imagem.Size = UDim2.fromOffset(math.ceil(t.w * z) + 1, math.ceil(t.h * z) + 1)
+	end
+
+	local espessura = math.clamp(2 + z * 0.9, 4, 10)
+	for _, s in self.segmentos do
+		local a, b = s.a * z, s.b * z
+		local d = b - a
+		local meio = (a + b) / 2
+		local angulo = math.deg(math.atan2(d.Y, d.X))
+		local comprimento = d.Magnitude
+		s.linha.Position = UDim2.fromOffset(meio.X, meio.Y)
+		s.linha.Size = UDim2.fromOffset(comprimento, espessura)
+		s.linha.Rotation = angulo
+		s.casing.Position = s.linha.Position
+		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + 4)
+		s.casing.Rotation = angulo
+	end
+
+	for _, e in self.estacoes do
+		local p = e.pos * z
+		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
+		e.rotulo.Position = UDim2.fromOffset(p.X + 12, p.Y)
+		e.rotulo.Visible = z >= (ZOOM_ROTULO[e.porte] or 0)
+	end
+end
+
+-- ---------------------------------------------------------------- entrada
+
+function MapaView._conectarEntrada(self: MapaView)
+	local arrastando = false
+	local ultimo = Vector2.zero
+
+	local function dentro(pos: Vector2): boolean
+		local p, t = self.raiz.AbsolutePosition, self.raiz.AbsoluteSize
+		return pos.X >= p.X and pos.Y >= p.Y and pos.X <= p.X + t.X and pos.Y <= p.Y + t.Y
+	end
+
+	-- Mouse: arrastar com o botão esquerdo, zoom com a roda.
+	table.insert(
+		self.conexoes,
+		UserInputService.InputBegan:Connect(function(input: InputObject, processado: boolean)
+			if processado then
+				return
+			end
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				local pos = Vector2.new(input.Position.X, input.Position.Y)
+				if dentro(pos) then
+					arrastando = true
+					ultimo = pos
+				end
+			end
+		end)
+	)
+	table.insert(
+		self.conexoes,
+		UserInputService.InputEnded:Connect(function(input: InputObject)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				arrastando = false
+			end
+		end)
+	)
+	table.insert(
+		self.conexoes,
+		UserInputService.InputChanged:Connect(function(input: InputObject, processado: boolean)
+			if input.UserInputType == Enum.UserInputType.MouseMovement and arrastando then
+				local pos = Vector2.new(input.Position.X, input.Position.Y)
+				self:definirCamera(self.zoom, self.pan + (pos - ultimo))
+				ultimo = pos
+			elseif input.UserInputType == Enum.UserInputType.MouseWheel and not processado then
+				local pos = Vector2.new(input.Position.X, input.Position.Y)
+				if dentro(pos) then
+					local fator = if input.Position.Z > 0 then 1.15 else 1 / 1.15
+					self:zoomEm(self.zoom * fator, pos)
+				end
+			end
+		end)
+	)
+
+	-- Toque: arrastar com um dedo, pinça com dois.
+	local panInicial = Vector2.zero
+	table.insert(
+		self.conexoes,
+		UserInputService.TouchPan:Connect(function(_toques, translacao: Vector2, _vel, estado: Enum.UserInputState, processado: boolean)
+			if processado then
+				return
+			end
+			if estado == Enum.UserInputState.Begin then
+				panInicial = self.pan
+			elseif estado == Enum.UserInputState.Change then
+				self:definirCamera(self.zoom, panInicial + translacao)
+			end
+		end)
+	)
+
+	local zoomInicial = 1
+	table.insert(
+		self.conexoes,
+		UserInputService.TouchPinch:Connect(function(toques: { Vector2 }, escala: number, _vel, estado: Enum.UserInputState, processado: boolean)
+			if processado then
+				return
+			end
+			if estado == Enum.UserInputState.Begin then
+				zoomInicial = self.zoom
+			elseif estado == Enum.UserInputState.Change and #toques >= 2 then
+				local centro = (toques[1] + toques[2]) / 2
+				self:zoomEm(zoomInicial * escala, centro)
+			end
+		end)
+	)
+end
+
+function MapaView.destruir(self: MapaView)
+	for _, c in self.conexoes do
+		c:Disconnect()
+	end
+	self.aoMudarCamera:Destroy()
+	self.raiz:Destroy()
+end
+
+return MapaView

@@ -17,7 +17,7 @@ L = ["-- Theme.lua · gerado automaticamente a partir de theme.py (não editar �
      "-- Cores, fontes nativas do Roblox e formas de cada era.", "",
      "local Theme = {}", "",
      "local function F(familia, peso)",
-     '\treturn Font.new("rbxasset://fonts/families/" .. familia .. ".json", Enum.FontWeight[peso])',
+     '\treturn Font.new("rbxasset://fonts/families/" .. familia .. ".json", (Enum.FontWeight :: any)[peso])',
      "end", "",
      "Theme.Eras = {"]
 for e in ERAS:
