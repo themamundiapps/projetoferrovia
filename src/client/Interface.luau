@@ -437,14 +437,21 @@ function Interface._preencher(self: Interface)
 		`{Emojis.renda} Renda: + {Economia.formatar(Economia.rendaTrecho(trecho, escolhida) * Economia.multiplicadorEra(estado), simbolo, true)}/s{if Economia.multiplicadorEra(estado) > 1 then ` (×{Economia.multiplicadorEra(estado)} da era)` else ""}`,
 	}, "\n")
 
-	-- opções de traçado (só antes de construir)
-	for _, filho in self.opcoes:GetChildren() do
-		if filho:IsA("TextButton") then
-			filho:Destroy()
-		end
-	end
+	-- opções de traçado (só antes de construir). Só recria os botões quando algo muda,
+	-- senão um clique poderia cair num botão que acabou de ser destruído.
 	local temOpcoes = trecho.alternativas ~= nil and situacao ~= "construido"
 	self.opcoes.Visible = temOpcoes
+	local chaveOpcoes = `{trecho.id}|{self.alternativa or ""}|{situacao}|{temOpcoes}`
+	if chaveOpcoes ~= self._chaveOpcoes then
+		self._chaveOpcoes = chaveOpcoes
+		for _, filho in self.opcoes:GetChildren() do
+			if filho:IsA("TextButton") then
+				filho:Destroy()
+			end
+		end
+	else
+		temOpcoes = false -- já estão desenhadas
+	end
 	if temOpcoes then
 		local atual = self.alternativa or trecho.alternativas[1].id
 		for i, alt in trecho.alternativas do

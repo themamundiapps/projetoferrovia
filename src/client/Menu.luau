@@ -2,6 +2,7 @@
 -- Menu: barra inferior (Linhas, Companhia, Ajustes), o painel lateral de cada uma e os botões de zoom.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
@@ -49,6 +50,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.botoesAba = {} :: { [string]: TextButton }
 	for i, aba in ABAS do
 		local b = est:botao("discreto", `{(Emojis :: any)[aba.emoji]} {aba.nome}`, barra, i)
+		b.Name = "Aba_" .. aba.id
 		b.Size = UDim2.fromOffset(0, 44)
 		b.AutomaticSize = Enum.AutomaticSize.X
 		est:padding(b, 14, 0)
@@ -74,6 +76,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	local fatores = { 1.4, 1 / 1.4 }
 	for i, rotulo in rotulos do
 		local b = est:botao("discreto", rotulo, zoom, i)
+		b.Name = if i == 1 then "ZoomMais" else "ZoomMenos"
 		b.Size = UDim2.fromOffset(46, 46)
 		b.BackgroundColor3 = est.c.panel
 		b.TextSize = 24
@@ -119,6 +122,12 @@ function Menu.destruir(self: Menu)
 	self.aoZoom:Destroy()
 end
 
+-- Coloca o painel lateral logo abaixo de uma posição Y da tela (abaixo do caixa da companhia).
+function Menu.posicionarAbaixoDe(self: Menu, y: number)
+	self.painel.Position = UDim2.fromOffset(16, y + 10)
+	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10) - 90)
+end
+
 function Menu.abrirAba(self: Menu, aba: string?)
 	self.aba = aba
 	self.painel.Visible = aba ~= nil
@@ -131,10 +140,23 @@ function Menu.abrirAba(self: Menu, aba: string?)
 	self:_redesenhar()
 end
 
+-- O painel só é redesenhado quando muda algo que ele mostra (trechos, trens, estações, era).
+-- Redesenhar a cada segundo destruiria os botões no meio de um clique.
+local function assinatura(estado: any): string
+	local ok, txt = pcall(function()
+		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era })
+	end)
+	return if ok then txt else tostring(os.clock())
+end
+
 function Menu.atualizarEstado(self: Menu, estado: any)
 	self.estado = estado
-	if self.aba then
-		self:_redesenhar()
+	local nova = assinatura(estado)
+	if nova ~= self._assinatura then
+		self._assinatura = nova
+		if self.aba then
+			self:_redesenhar()
+		end
 	end
 end
 
@@ -174,10 +196,12 @@ function Menu._abaLinhas(self: Menu)
 	local simbolo = dados.simbolo
 
 	local bTudo = est:botao("principal", `{Emojis.construir} Construir tudo que der`, r, 2)
+	bTudo.Name = "BtnConstruirTudo"
 	bTudo.Activated:Connect(function()
 		self.aoAgir:Fire("construirTudo", {})
 	end)
 	local bFrota = est:botao("secundario", `{Emojis.trens} Completar frotas`, r, 3)
+	bFrota.Name = "BtnCompletarFrotas"
 	bFrota.Activated:Connect(function()
 		self.aoAgir:Fire("completarFrotas", {})
 	end)
@@ -191,6 +215,7 @@ function Menu._abaLinhas(self: Menu)
 		local cor = self.est.era.linhas[linha.cor] or est.c.ink
 
 		local linhaBtn = novo("TextButton", {
+			Name = "Linha_" .. linha.id,
 			LayoutOrder = 10 + i,
 			Size = UDim2.new(1, 0, 0, 0),
 			AutomaticSize = Enum.AutomaticSize.Y,

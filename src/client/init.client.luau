@@ -142,6 +142,12 @@ local function montar(eraId: string)
 	eraAtual = eraId
 
 	table.insert(conexoesTela, menu.aoAgir.Event:Connect(agir))
+	-- o painel do menu acompanha a altura do caixa (que cresce quando aparece o botão da era)
+	local function reposicionar()
+		menu:posicionarAbaixoDe(ui.hud.AbsolutePosition.Y + ui.hud.AbsoluteSize.Y)
+	end
+	table.insert(conexoesTela, ui.hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(reposicionar))
+	task.defer(reposicionar)
 	table.insert(conexoesTela, menu.aoZoom.Event:Connect(function(fator: number)
 		local centro = mapa.raiz.AbsolutePosition + mapa.raiz.AbsoluteSize / 2
 		mapa.interagiu = true
