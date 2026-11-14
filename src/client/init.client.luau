@@ -9,6 +9,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Theme = require(Shared:WaitForChild("Theme"))
 local Mapas = require(Shared:WaitForChild("Mapas"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
+local Assets = require(Shared:WaitForChild("Assets"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
 
@@ -37,6 +38,11 @@ pcall(function()
 end)
 
 local era = Theme.PorId.vapor
+-- textura do mar da era, se já tiver sido enviada ao Roblox
+local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
+if idMar and idMar ~= "rbxassetid://0" then
+	era.marTextura = idMar
+end
 
 local tela = Instance.new("ScreenGui")
 tela.Name = "Ferrovia"

@@ -34,6 +34,7 @@ type Tile = {
 	w: number,
 	h: number,
 	imagem: ImageLabel,
+	detalhe: boolean,
 }
 
 export type MapaView = typeof(setmetatable(
@@ -59,6 +60,21 @@ export type MapaView = typeof(setmetatable(
 -- Zoom mínimo para mostrar o nome da estação, por porte (5 = metrópole, 1 = vila).
 local ZOOM_ROTULO = { [5] = 0, [4] = 0.8, [3] = 1.6, [2] = 2.6, [1] = 4 }
 local ZOOM_MAX = 8
+-- A partir deste zoom, as regiões de detalhe (alta resolução) aparecem por cima do mapa base.
+local ZOOM_DETALHE = 1.8
+
+-- Ordem das camadas (ZIndex).
+local Z = {
+	terra = 1,
+	costa = 2,
+	detalheFundo = 3,
+	detalheTerra = 4,
+	detalheCosta = 5,
+	contorno = 6,
+	linha = 7,
+	estacao = 8,
+	rotulo = 9,
+}
 
 local function novo(classe: string, props: { [string]: any }, pai: Instance?): Instance
 	local inst = Instance.new(classe)
@@ -82,6 +98,19 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		ClipsDescendants = true,
 		Active = false, -- deixa os gestos passarem; botões da interface (Active = true) bloqueiam o mapa
 	}, pai) :: Frame
+
+	if era.marPadrao and era.marTextura then
+		novo("ImageLabel", {
+			Name = "TexturaMar",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Image = era.marTextura,
+			ImageColor3 = cores.seaPattern,
+			ScaleType = Enum.ScaleType.Tile,
+			TileSize = UDim2.fromOffset(128, 128),
+			ZIndex = 0,
+		}, raiz)
+	end
 
 	local conteudo = novo("Frame", {
 		Name = "Conteudo",
@@ -129,7 +158,7 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 	local cores = self.era.cores
 	for _, t in mapa.tiles do
 		local cor = if t.camada == "terra" then cores.land else cores.coast
-		local z = if t.camada == "terra" then 1 else 2
+		local z = if t.camada == "terra" then Z.terra else Z.costa
 		local imagem = novo("ImageLabel", {
 			Name = t.arquivo,
 			BackgroundTransparency = 1,
@@ -138,7 +167,45 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 			ScaleType = Enum.ScaleType.Stretch,
 			ZIndex = z,
 		}, self.conteudo) :: ImageLabel
-		table.insert(self.tiles, { x = t.x, y = t.y, w = t.w, h = t.h, imagem = imagem })
+		table.insert(self.tiles, { x = t.x, y = t.y, w = t.w, h = t.h, imagem = imagem, detalhe = false })
+	end
+
+	-- Regiões de detalhe: um fundo da cor do mar esconde o contorno grosso do mapa base,
+	-- e por cima vêm os blocos de alta resolução (convertidos para coordenadas do mapa base).
+	for _, d in mapa.detalhes or {} do
+		local fundo = novo("ImageLabel", {
+			Name = "detalhe_" .. d.id,
+			BackgroundColor3 = cores.sea,
+			BorderSizePixel = 0,
+			Image = self.era.marTextura or "",
+			ImageColor3 = cores.seaPattern,
+			ScaleType = Enum.ScaleType.Tile,
+			TileSize = UDim2.fromOffset(128, 128),
+			ZIndex = Z.detalheFundo,
+		}, self.conteudo) :: ImageLabel
+		table.insert(self.tiles, { x = d.x0, y = d.y0, w = d.largura, h = d.altura, imagem = fundo, detalhe = true })
+		for _, t in d.tiles do
+			if t.id == "rbxassetid://0" then
+				continue -- ainda não enviado ao Roblox
+			end
+			local terra = t.camada == "terra"
+			local imagem = novo("ImageLabel", {
+				Name = t.arquivo,
+				BackgroundTransparency = 1,
+				Image = t.id,
+				ImageColor3 = if terra then cores.land else cores.coast,
+				ScaleType = Enum.ScaleType.Stretch,
+				ZIndex = if terra then Z.detalheTerra else Z.detalheCosta,
+			}, self.conteudo) :: ImageLabel
+			table.insert(self.tiles, {
+				x = d.x0 + t.x / d.escala,
+				y = d.y0 + t.y / d.escala,
+				w = t.w / d.escala,
+				h = t.h / d.escala,
+				imagem = imagem,
+				detalhe = true,
+			})
+		end
 	end
 end
 
@@ -154,14 +221,14 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = cores.ink,
 				BorderSizePixel = 0,
-				ZIndex = 3,
+				ZIndex = Z.contorno,
 			}, self.conteudo) :: Frame
 			local frame = novo("Frame", {
 				Name = trecho.id,
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = cor,
 				BorderSizePixel = 0,
-				ZIndex = 4,
+				ZIndex = Z.linha,
 			}, self.conteudo) :: Frame
 			table.insert(self.segmentos, { a = a, b = b, casing = casing, linha = frame, estado = "construido" })
 		end
@@ -178,7 +245,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Size = UDim2.fromOffset(tamanho, tamanho),
 			BackgroundColor3 = cores.panel,
-			ZIndex = 5,
+			ZIndex = Z.estacao,
 		}, self.conteudo) :: Frame
 		novo("UICorner", { CornerRadius = UDim.new(0.5, 0) }, ponto)
 		novo("UIStroke", { Color = cores.ink, Thickness = 3 }, ponto)
@@ -193,7 +260,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			FontFace = fontes.display,
 			TextSize = if e.porte >= 4 then 16 else 14,
 			TextColor3 = cores.ink,
-			ZIndex = 6,
+			ZIndex = Z.rotulo,
 		}, self.conteudo) :: TextLabel
 		novo("UIStroke", {
 			Color = cores.panel,
@@ -262,7 +329,14 @@ function MapaView._layout(self: MapaView)
 	local z = self.zoom
 	self.conteudo.Size = UDim2.fromOffset(self.largura * z, self.altura * z)
 
+	local mostrarDetalhe = z >= ZOOM_DETALHE
 	for _, t in self.tiles do
+		if t.detalhe then
+			t.imagem.Visible = mostrarDetalhe
+			if not mostrarDetalhe then
+				continue
+			end
+		end
 		-- +1 px evita frestas finas entre os blocos
 		t.imagem.Position = UDim2.fromOffset(math.floor(t.x * z), math.floor(t.y * z))
 		t.imagem.Size = UDim2.fromOffset(math.ceil(t.w * z) + 1, math.ceil(t.h * z) + 1)
