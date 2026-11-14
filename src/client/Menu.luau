@@ -217,8 +217,8 @@ function Menu.atualizarEstado(self: Menu, estado: any)
 	self.estado = estado
 	self:_rotularAbas()
 	local nova = self:_assinatura(estado)
-	if nova ~= self._assinatura then
-		self._assinatura = nova
+	if nova ~= self._assinaturaAtual then
+		self._assinaturaAtual = nova
 		if self.aba then
 			self:_redesenhar()
 		end
