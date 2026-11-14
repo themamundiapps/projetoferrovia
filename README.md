@@ -53,13 +53,20 @@ Qualquer arquivo salvo em `src/` aparece no Studio na hora.
 
 As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Import** do Studio. Depois, os ids entram em `src/shared/Assets.luau` e `src/shared/Mapas.luau`, no lugar de `rbxassetid://0`. O passo a passo está em `arte/LEIA-ME.md`.
 
+## Pendências visuais (para depois)
+
+- [ ] Estender a região de detalhe do Sudeste para o sul (litoral do Paraná fica grosso fora dela)
+- [ ] Afinar os rios do mapa base no zoom intermediário (1x a 1,8x)
+- [ ] Estações encolherem com o zoom (no Brasil inteiro, as do Sudeste se amontoam)
+- [ ] Posição manual dos nomes de estações muito próximas (Rio, Porto Mauá, Fragoso)
+
 ## Andamento do MVP
 
 - [x] GDD aprovado
 - [x] Pacote gráfico (v2, com emojis)
 - [x] Estrutura do projeto com Rojo
 - [x] Dados do Brasil (5 linhas históricas, 21 estações, 17 trechos; economia provisória)
-- [ ] Mapa 2D com zoom e arrastar, funcionando no celular (protótipo no ar; falta testar no celular e melhorar a nitidez do Sudeste)
+- [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e Sudeste em alta resolução (falta testar no celular)
 - [ ] Compra de trechos, desbloqueio histórico e renda por segundo
 - [ ] Trens por linha e porcentagem de serviço
 - [ ] Uma carga (café → porto de Santos) e uma escolha de traçado

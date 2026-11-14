@@ -1,5 +1,5 @@
 --!strict
--- Ponto de entrada do cliente: abre o mapa do Brasil em tela cheia (protótipo do mapa 2D).
+-- Ponto de entrada do cliente: mapa do Brasil + interface da economia.
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -8,10 +8,17 @@ local StarterGui = game:GetService("StarterGui")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Theme = require(Shared:WaitForChild("Theme"))
 local Mapas = require(Shared:WaitForChild("Mapas"))
-local Emojis = require(Shared:WaitForChild("Emojis"))
 local Assets = require(Shared:WaitForChild("Assets"))
+local Economia = require(Shared:WaitForChild("Economia"))
+local Emojis = require(Shared:WaitForChild("Emojis"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
+local Interface = require(script:WaitForChild("Interface"))
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
+local remoteAcao = Remotes:WaitForChild("Acao") :: RemoteFunction
+local remotePedirEstado = Remotes:WaitForChild("PedirEstado") :: RemoteFunction
 
 local jogador = Players.LocalPlayer
 local playerGui = jogador:WaitForChild("PlayerGui")
@@ -38,7 +45,6 @@ pcall(function()
 end)
 
 local era = Theme.PorId.vapor
--- textura do mar da era, se já tiver sido enviada ao Roblox
 local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
 if idMar and idMar ~= "rbxassetid://0" then
 	era.marTextura = idMar
@@ -52,6 +58,7 @@ tela.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 tela.Parent = playerGui
 
 local mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
+local ui = Interface.new(tela, era, DadosBrasil)
 
 -- Enquadra as estações das linhas do MVP.
 local minimo = Vector2.new(math.huge, math.huge)
@@ -61,7 +68,6 @@ for _, e: any in DadosBrasil.estacoes do
 	maximo = maximo:Max(e.pos)
 end
 task.spawn(function()
-	-- espera a interface ter tamanho real antes de enquadrar
 	while mapa.raiz.AbsoluteSize.X <= 0 do
 		task.wait()
 	end
@@ -69,34 +75,58 @@ task.spawn(function()
 	mapa:focar(minimo, maximo, 80)
 end)
 
--- Faixa de depuração (temporária): mostra o zoom e como usar.
-local info = Instance.new("TextLabel")
-info.Name = "Info"
-info.AnchorPoint = Vector2.new(0, 1)
-info.Position = UDim2.new(0, 16, 1, -16)
-info.AutomaticSize = Enum.AutomaticSize.XY
-info.BackgroundColor3 = era.cores.panel
-info.TextColor3 = era.cores.ink
-info.FontFace = era.fontes.body
-info.TextSize = 16
-info.TextXAlignment = Enum.TextXAlignment.Left
-info.ZIndex = 20
-info.Parent = tela
-local margem = Instance.new("UIPadding")
-margem.PaddingLeft = UDim.new(0, 10)
-margem.PaddingRight = UDim.new(0, 10)
-margem.PaddingTop = UDim.new(0, 6)
-margem.PaddingBottom = UDim.new(0, 6)
-margem.Parent = info
-local borda = Instance.new("UIStroke")
-borda.Color = era.cores.ink
-borda.Thickness = 1.5
-borda.Parent = info
+-- ---------------------------------------------------------------- estado vindo do servidor
 
-local function atualizarInfo(zoom: number)
-	info.Text = `{Emojis.linhas} Brasil · {era.nome} · zoom {string.format("%.1f", zoom)}x   |   arraste para mover · roda do mouse ou pinça para zoom`
+local function situacoes(estado: any): { [string]: string }
+	local s = {}
+	for i, linha in DadosBrasil.linhas do
+		for j, t in linha.trechos do
+			s[t.id] = Economia.situacaoTrecho(estado, DadosBrasil, i, j)
+		end
+	end
+	return s
 end
-mapa.aoMudarCamera.Event:Connect(atualizarInfo)
-atualizarInfo(mapa.zoom)
+
+local function aplicarEstado(estado: any)
+	if not estado then
+		return
+	end
+	mapa:definirSituacao(situacoes(estado))
+	ui:atualizarEstado(estado)
+end
+
+remoteEstado.OnClientEvent:Connect(aplicarEstado)
+task.spawn(function()
+	aplicarEstado(remotePedirEstado:InvokeServer())
+end)
+
+-- ---------------------------------------------------------------- seleção e ações
+
+mapa.aoTocar.Event:Connect(function(pontoMapa: Vector2)
+	local id = mapa:trechoProximo(pontoMapa, 22)
+	mapa:selecionar(id)
+	if id then
+		ui:abrir(id)
+	else
+		ui:fechar()
+	end
+end)
+
+ui.aoFechar.Event:Connect(function()
+	mapa:selecionar(nil)
+end)
+
+ui.aoAgir.Event:Connect(function(tipo: string, args: any)
+	local resposta = remoteAcao:InvokeServer(tipo, args)
+	if resposta and not resposta.ok then
+		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
+	elseif resposta and resposta.ok then
+		ui:avisar(if tipo == "trem" then `{Emojis.trens} Trem comprado!` else `{Emojis.construir} Trecho construído!`, 2)
+	end
+end)
+
+task.delay(1.5, function()
+	ui:avisar(`{Emojis.linhas} Toque num trilho para ver a concessão. Comece pela E.F. Mauá, perto do Rio.`, 6)
+end)
 
 print(`[Ferrovia] Cliente iniciado: mapa do Brasil com {#DadosBrasil.linhas} linhas.`)

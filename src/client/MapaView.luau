@@ -13,6 +13,8 @@ MapaView.__index = MapaView
 export type EstadoTrecho = "construido" | "disponivel" | "bloqueado"
 
 type Segmento = {
+	id: string,
+	cor: Color3,
 	a: Vector2,
 	b: Vector2,
 	casing: Frame,
@@ -61,6 +63,8 @@ export type MapaView = typeof(setmetatable(
 		rotulosMapa: { RotuloMapa },
 		conexoes: { RBXScriptConnection },
 		aoMudarCamera: BindableEvent,
+		aoTocar: BindableEvent,
+		selecionado: string?,
 		foco: { min: Vector2, max: Vector2, margem: number }?,
 		interagiu: boolean,
 	},
@@ -157,6 +161,8 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		rotulosMapa = {},
 		conexoes = {},
 		aoMudarCamera = Instance.new("BindableEvent"),
+		aoTocar = Instance.new("BindableEvent"),
+		selecionado = nil,
 		foco = nil,
 		interagiu = false,
 	}, MapaView)
@@ -300,7 +306,7 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 				BorderSizePixel = 0,
 				ZIndex = Z.linha,
 			}, self.conteudo) :: Frame
-			table.insert(self.segmentos, { a = a, b = b, casing = casing, linha = frame, estado = "construido" })
+			table.insert(self.segmentos, { id = trecho.id, cor = cor, a = a, b = b, casing = casing, linha = frame, estado = "construido" })
 		end
 	end
 end
@@ -340,6 +346,67 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 
 		table.insert(self.estacoes, { id = id, pos = e.pos, porte = e.porte, ponto = ponto, rotulo = rotulo })
 	end
+end
+
+-- ---------------------------------------------------------------- trechos
+
+-- Aparência de cada situação: construído (cor cheia), disponível (cor clara, pode comprar), bloqueado (apagado).
+function MapaView._estilizar(self: MapaView, s: Segmento)
+	local cores = self.era.cores
+	local sel = self.selecionado == s.id
+	if s.estado == "construido" then
+		s.linha.BackgroundColor3 = s.cor
+		s.linha.BackgroundTransparency = 0
+		s.casing.BackgroundTransparency = 0
+	elseif s.estado == "disponivel" then
+		s.linha.BackgroundColor3 = s.cor
+		s.linha.BackgroundTransparency = 0.55
+		s.casing.BackgroundTransparency = 0.7
+	else
+		s.linha.BackgroundColor3 = cores.locked
+		s.linha.BackgroundTransparency = 0.82
+		s.casing.BackgroundTransparency = 1
+	end
+	s.casing.BackgroundColor3 = if sel then cores.accent else cores.ink
+	if sel then
+		s.casing.BackgroundTransparency = 0
+	end
+end
+
+function MapaView.definirSituacao(self: MapaView, situacoes: { [string]: string })
+	for _, s in self.segmentos do
+		local nova = situacoes[s.id]
+		if nova then
+			s.estado = nova :: any
+		end
+		self:_estilizar(s)
+	end
+end
+
+function MapaView.selecionar(self: MapaView, trechoId: string?)
+	self.selecionado = trechoId
+	for _, s in self.segmentos do
+		self:_estilizar(s)
+	end
+	self:_layout()
+end
+
+-- Trecho mais perto de um ponto do mapa, dentro de um raio em pixels de TELA.
+function MapaView.trechoProximo(self: MapaView, ponto: Vector2, raioTela: number): string?
+	local melhor, melhorDist = nil, raioTela / self.zoom
+	for _, s in self.segmentos do
+		local ab = s.b - s.a
+		local t = math.clamp((ponto - s.a):Dot(ab) / math.max(ab:Dot(ab), 1e-6), 0, 1)
+		local d = (s.a + ab * t - ponto).Magnitude
+		if d < melhorDist then
+			melhor, melhorDist = s.id, d
+		end
+	end
+	return melhor
+end
+
+function MapaView.telaParaMapa(self: MapaView, pontoTela: Vector2): Vector2
+	return (pontoTela - self.raiz.AbsolutePosition - self.pan) / self.zoom
 end
 
 -- ---------------------------------------------------------------- câmera
@@ -423,8 +490,9 @@ function MapaView._layout(self: MapaView)
 		s.linha.Position = UDim2.fromOffset(meio.X, meio.Y)
 		s.linha.Size = UDim2.fromOffset(comprimento, espessura)
 		s.linha.Rotation = angulo
+		local extra = if self.selecionado == s.id then 8 else 4
 		s.casing.Position = s.linha.Position
-		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + 4)
+		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + extra)
 		s.casing.Rotation = angulo
 	end
 
@@ -450,6 +518,7 @@ end
 function MapaView._conectarEntrada(self: MapaView)
 	local arrastando = false
 	local ultimo = Vector2.zero
+	local inicioClique: Vector2? = nil
 
 	local function dentro(pos: Vector2): boolean
 		local p, t = self.raiz.AbsolutePosition, self.raiz.AbsoluteSize
@@ -468,6 +537,7 @@ function MapaView._conectarEntrada(self: MapaView)
 				if dentro(pos) then
 					arrastando = true
 					ultimo = pos
+					inicioClique = pos
 					self.interagiu = true
 				end
 			end
@@ -478,6 +548,12 @@ function MapaView._conectarEntrada(self: MapaView)
 		UserInputService.InputEnded:Connect(function(input: InputObject)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
 				arrastando = false
+				local inicio = inicioClique
+				inicioClique = nil
+				local pos = Vector2.new(input.Position.X, input.Position.Y)
+				if inicio and (pos - inicio).Magnitude < 6 then
+					self.aoTocar:Fire(self:telaParaMapa(pos))
+				end
 			end
 		end)
 	)
@@ -499,7 +575,15 @@ function MapaView._conectarEntrada(self: MapaView)
 		end)
 	)
 
-	-- Toque: arrastar com um dedo, pinça com dois.
+	-- Toque: tocar seleciona, arrastar com um dedo, pinça com dois.
+	table.insert(
+		self.conexoes,
+		UserInputService.TouchTap:Connect(function(toques: { Vector2 }, processado: boolean)
+			if not processado and toques[1] and dentro(toques[1]) then
+				self.aoTocar:Fire(self:telaParaMapa(toques[1]))
+			end
+		end)
+	)
 	local panInicial = Vector2.zero
 	table.insert(
 		self.conexoes,
@@ -539,6 +623,7 @@ function MapaView.destruir(self: MapaView)
 		c:Disconnect()
 	end
 	self.aoMudarCamera:Destroy()
+	self.aoTocar:Destroy()
 	self.raiz:Destroy()
 end
 
