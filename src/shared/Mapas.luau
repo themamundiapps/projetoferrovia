@@ -102,14 +102,14 @@ Mapas.brasil.detalhes = {
 	{
 		id = "sudeste", x0 = 1232, y0 = 1168, largura = 512, altura = 336, escala = 4,
 		tiles = {
-			{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_0.png" },
-			{ camada = "terra", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_1.png" },
-			{ camada = "terra", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_0.png" },
-			{ camada = "terra", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_1.png" },
-			{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_0.png" },
-			{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_1.png" },
-			{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_0.png" },
-			{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://0", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_1.png" },
+			{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://114039282288394", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_0.png" },
+			{ camada = "terra", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://135942309318603", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_1.png" },
+			{ camada = "terra", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://140430238835236", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_0.png" },
+			{ camada = "terra", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://115951286204902", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_1.png" },
+			{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://121705042467932", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_0.png" },
+			{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://108289231527909", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_1.png" },
+			{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://127831580734346", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_0.png" },
+			{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://120458233669700", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_1.png" },
 		},
 	},
 }

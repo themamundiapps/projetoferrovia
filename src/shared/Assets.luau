@@ -27,7 +27,7 @@ Assets.Ids = {
 	sombra_painel = "rbxassetid://0",
 	tracejado = "rbxassetid://0",
 	-- texturas
-	mar_hachura = "rbxassetid://0",
+	mar_hachura = "rbxassetid://122559079201789",
 	mar_ondas = "rbxassetid://0",
 	mar_pontos = "rbxassetid://0",
 	papel_grao = "rbxassetid://0",
