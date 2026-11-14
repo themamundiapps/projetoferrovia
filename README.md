@@ -69,7 +69,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e Sudeste em alta resolução (falta testar no celular)
 - [x] Compra de trechos, desbloqueio histórico e renda por segundo
 - [x] Trens por linha e porcentagem de serviço
-- [ ] Uma carga (café → porto de Santos) e uma escolha de traçado
-- [ ] Duas eras (vapor e diesel)
+- [x] Carga (café e minério até os portos) e escolha de traçado
+- [x] Duas eras (vapor e diesel), com troca de visual
 - [x] Save com DataStore e ganho offline (falta testar com as APIs ligadas no Studio)
 - [ ] Um gamepass e um developer product

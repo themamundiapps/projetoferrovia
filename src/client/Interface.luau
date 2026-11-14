@@ -358,7 +358,7 @@ function Interface._preencher(self: Interface)
 	self.lblDetalhes.Text = table.concat({
 		`{Emojis.distancia} Extensão: {opcao.km} km`,
 		`{Emojis.terreno_montanha} Terreno: {terreno.nome} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`,
-		`{Emojis.renda} Renda: + {Economia.formatar(Economia.rendaTrecho(trecho, escolhida), simbolo, true)}/s`,
+		`{Emojis.renda} Renda: + {Economia.formatar(Economia.rendaTrecho(trecho, escolhida) * Economia.multiplicadorEra(estado), simbolo, true)}/s{if Economia.multiplicadorEra(estado) > 1 then ` (×{Economia.multiplicadorEra(estado)} da era)` else ""}`,
 	}, "\n")
 
 	-- opções de traçado (só antes de construir)
