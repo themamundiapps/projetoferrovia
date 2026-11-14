@@ -67,9 +67,9 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Estrutura do projeto com Rojo
 - [x] Dados do Brasil (5 linhas históricas, 21 estações, 17 trechos; economia provisória)
 - [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e Sudeste em alta resolução (falta testar no celular)
-- [ ] Compra de trechos, desbloqueio histórico e renda por segundo
-- [ ] Trens por linha e porcentagem de serviço
+- [x] Compra de trechos, desbloqueio histórico e renda por segundo
+- [x] Trens por linha e porcentagem de serviço
 - [ ] Uma carga (café → porto de Santos) e uma escolha de traçado
 - [ ] Duas eras (vapor e diesel)
-- [ ] Save com DataStore e ganho offline
+- [x] Save com DataStore e ganho offline (falta testar com as APIs ligadas no Studio)
 - [ ] Um gamepass e um developer product
