@@ -521,13 +521,20 @@ end
 -- Nível das estações: bolinha maior e contorno mais grosso a cada nível.
 function MapaView.definirNiveis(self: MapaView, niveis: { [string]: number })
 	for _, e in self.estacoes do
-		local n = niveis[e.id] or 0
-		e.nivel = n
-		local tam = e.tamanho + n * 2
-		e.ponto.Size = UDim2.fromOffset(tam, tam)
-		e.traco.Thickness = 3 + n * 0.7
-		e.traco.Color = if n >= 5 then self.era.cores.accent else self.era.cores.ink
+		e.nivel = niveis[e.id] or 0
+		self:_tamanhoEstacao(e)
 	end
+end
+
+-- Tamanho da bolinha da estação: cresce com o nível e encolhe quando o mapa está afastado,
+-- para as cidades não se amontoarem com o país inteiro na tela.
+function MapaView._tamanhoEstacao(self: MapaView, e: Estacao): number
+	local escala = math.clamp(0.35 + 0.45 * self.zoom, 0.45, 1)
+	local tam = (e.tamanho + e.nivel * 2) * escala
+	e.ponto.Size = UDim2.fromOffset(tam, tam)
+	e.traco.Thickness = math.max(1.2, (3 + e.nivel * 0.7) * escala)
+	e.traco.Color = if e.nivel >= 5 then self.era.cores.accent else self.era.cores.ink
+	return tam
 end
 
 function MapaView.definirAjuste(self: MapaView, chave: string, valor: boolean)
@@ -547,11 +554,11 @@ end
 -- ---------------------------------------------------------------- trens
 
 local function espessuraLinha(zoom: number): number
-	return math.clamp(2 + zoom * 0.9, 4, 10)
+	return math.clamp(2 + zoom * 0.9, 3, 10)
 end
 
 function MapaView._tamanhoTrens(self: MapaView)
-	local altura = espessuraLinha(self.zoom) + 3
+	local altura = espessuraLinha(self.zoom) + (if self.zoom < 1 then 2 else 3)
 	for _, t in self.trens do
 		t.frame.Size = UDim2.fromOffset(altura * 1.9, altura)
 	end
@@ -737,7 +744,7 @@ function MapaView._layout(self: MapaView)
 		t.imagem.Size = UDim2.fromOffset(math.ceil(t.w * z) + 1, math.ceil(t.h * z) + 1)
 	end
 
-	local espessura = math.clamp(2 + z * 0.9, 4, 10)
+	local espessura = espessuraLinha(z)
 	self:_tamanhoTrens()
 	for _, s in self.segmentos do
 		local a, b = s.a * z, s.b * z
@@ -775,8 +782,9 @@ function MapaView._layout(self: MapaView)
 
 	for _, e in self.estacoes do
 		local p = e.pos * z
+		local tam = self:_tamanhoEstacao(e)
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
-		e.rotulo.Position = UDim2.fromOffset(p.X + 12, p.Y)
+		e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
 		e.rotulo.Visible = self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)

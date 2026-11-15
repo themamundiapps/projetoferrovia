@@ -57,7 +57,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 
 - [ ] Estender a região de detalhe do Sudeste para o sul (litoral do Paraná fica grosso fora dela)
 - [ ] Afinar os rios do mapa base no zoom intermediário (1x a 1,8x)
-- [ ] Estações encolherem com o zoom (no Brasil inteiro, as do Sudeste se amontoam)
+- [x] Estações encolherem com o zoom (no Brasil inteiro, as do Sudeste se amontoavam)
 - [ ] Posição manual dos nomes de estações muito próximas (Rio, Porto Mauá, Fragoso)
 
 ## Andamento do MVP
