@@ -354,7 +354,7 @@ function Menu._abaLinhas(self: Menu)
 		if not liberada and linha.projeto then
 			info = `{Emojis.gabinete} Projeto: estude no Gabinete para liberar`
 		elseif not liberada then
-			info = `{Emojis.cadeado} Libera ao completar {dados.linhas[i - 1].nome}`
+			info = `{Emojis.cadeado} Complete antes: {table.concat(Economia.faltaParaLiberar(estado, dados, i), ", ")}`
 		else
 			local lucro = if bl then bl.lucro else 0
 			local txtLucro = if lucro >= 0 then `lucro {Economia.formatar(lucro, simbolo, true)}/s`
@@ -737,15 +737,20 @@ function Menu._abaCompanhia(self: Menu)
 			else `{Emojis.alerta} Prejuízo: <b>{Economia.formatar(-st.renda, simbolo, true)}/s</b>`,
 		`{Emojis.trens} Trens: <b>{st.trens}</b>`,
 		`{Emojis.passageiros} Passageiros: <b>{numero(st.passageirosDia)}</b> por dia`,
-		`{Emojis.carga_cafe} Café: <b>{numero(st.cafeDia)}</b> sacas por dia`,
-		`{Emojis.carga_minerio} Minério: <b>{numero(st.minerioDia)}</b> t por dia`,
-		`{Emojis.carga_graos} Grãos: <b>{numero(st.graosDia)}</b> t por dia`,
 		`{Emojis.linhas} Trechos: <b>{st.trechos}</b> de {st.trechosTotal}`,
 		`{Emojis.confirmar} Linhas completas: <b>{st.linhasCompletas}</b> de {st.linhasTotal}`,
 		`{Emojis.estacoes} Estações na rede: <b>{st.estacoes}</b>`,
 		`{Emojis.contratos} Contratos cumpridos: <b>{(estado.contadores or {}).contratos or 0}</b>`,
 		`{Emojis.carga_passageiros} Passageiros desde a fundação: <b>{numero(math.floor((estado.contadores or {}).passageiros or 0))}</b>`,
 	}
+	-- cargas que já chegam a algum porto
+	for _, id in Economia.ORDEM_CARGAS do
+		local porDia = st.cargaDia[id] or 0
+		if porDia > 0 then
+			local carga = (Economia.CARGAS :: any)[id]
+			table.insert(linhas, `{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(porDia))}</b> {carga.unidade} por dia`)
+		end
+	end
 	for i, txt in linhas do
 		est:texto("corpo", txt, r, 10 + i)
 	end

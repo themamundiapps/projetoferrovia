@@ -13,7 +13,7 @@ const projecoes = JSON.parse(fs.readFileSync(path.join(AQUI, "projecoes.json"), 
 
 // Economia provisória: só para o protótipo andar. O balanceamento real vem nos playtests.
 const CUSTO_POR_KM = 6;        // R$ por km no primeiro trecho do jogo
-const CRESCIMENTO_LINHA = 1.7; // cada linha nova (em ordem histórica) custa ~70% mais por km
+const CRESCIMENTO_LINHA = 2.4; // cada degrau (onda de linhas) custa ~70% mais por km
 const SINUOSIDADE = 1.25;      // trilho real é mais longo que a linha reta
 
 const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" } };
@@ -44,6 +44,12 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     for (const k of [t.de, t.para]) if (!est[k]) throw new Error(`Estação desconhecida "${k}" na linha ${l.id}`);
     if (!dados.terrenos[t.terreno]) throw new Error(`Terreno desconhecido "${t.terreno}" em ${l.id}`);
   }
+  for (const l of dados.linhas) {
+    if (!Number.isInteger(l.degrau)) throw new Error(`Linha ${l.id} sem "degrau"`);
+    // os trens andam pela linha de ponta a ponta: cada trecho tem que começar onde o anterior termina
+    l.trechos.forEach((t, i) => { if (i > 0 && l.trechos[i - 1].para !== t.de) throw new Error(`Linha ${l.id}: trecho ${i + 1} não continua o anterior`); });
+  }
+  for (const e of dados.estacoes) if (e.porte < 3 && !e.paisagem) throw new Error(`Estação ${e.id} sem "paisagem"`);
 
   const km = (a, b) => Math.round(d3.geoDistance([est[a].lon, est[a].lat], [est[b].lon, est[b].lat]) * 6371 * SINUOSIDADE);
   // Linhas históricas em ordem de ano; depois, as do Gabinete de Projetos na ordem da lista de projetos.
@@ -68,13 +74,19 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push("\testacoes = {");
   for (const e of dados.estacoes) {
     const [x, y] = proj([e.lon, e.lat]);
-    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)} },`);
+    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)} },`);
   }
   L.push("\t},");
+  // Enquadramento inicial da câmera: as estações das linhas listadas em "foco".
+  if (dados.foco) {
+    const pts = dados.linhas.filter((l) => dados.foco.includes(l.id)).flatMap((l) => l.trechos.flatMap((t) => [t.de, t.para])).map((k) => proj([est[k].lon, est[k].lat]));
+    const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+    L.push(`\tfoco = { min = Vector2.new(${Math.min(...xs).toFixed(1)}, ${Math.min(...ys).toFixed(1)}), max = Vector2.new(${Math.max(...xs).toFixed(1)}, ${Math.max(...ys).toFixed(1)}) },`);
+  }
   L.push("\tlinhas = {");
   linhas.forEach((l, ordem) => {
-    // projetos dizem em que "degrau" de preço ficam (ordemCusto), para não explodir com 1,7^n
-    const degrau = l.ordemCusto ? l.ordemCusto - 1 : ordem;
+    // o degrau (onda) da linha define o preço por km, o prazo de retorno e quando ela libera
+    const degrau = l.degrau;
     const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, degrau);
     L.push("\t\t{");
     L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)},`);

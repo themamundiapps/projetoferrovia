@@ -592,7 +592,7 @@ function Interface._preencher(self: Interface)
 		self.btnConstruir.AutoButtonColor = false
 		self.btnConstruir.BackgroundTransparency = 0.6
 		if not Economia.linhaLiberada(estado, dados, iLinha) then
-			self.lblMotivo.Text = `Complete a linha {dados.linhas[iLinha - 1].nome} para liberar.`
+			self.lblMotivo.Text = `Para liberar, complete antes: {table.concat(Economia.faltaParaLiberar(estado, dados, iLinha), ", ")}.`
 		else
 			self.lblMotivo.Text = "Construa antes o trecho anterior desta linha."
 		end

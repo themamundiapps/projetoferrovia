@@ -59,20 +59,9 @@ tela.ResetOnSpawn = false
 tela.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 tela.Parent = playerGui
 
--- Caixa que enquadra as estações das linhas históricas (as do Gabinete ficam de fora: o jogo começa no Sudeste).
-local minimo = Vector2.new(math.huge, math.huge)
-local maximo = Vector2.new(-math.huge, -math.huge)
-for _, linha: any in DadosBrasil.linhas do
-	if not linha.projeto then
-		for _, t: any in linha.trechos do
-			for _, id in { t.de, t.para } do
-				local e: any = DadosBrasil.estacoes[id]
-				minimo = minimo:Min(e.pos)
-				maximo = maximo:Max(e.pos)
-			end
-		end
-	end
-end
+-- Onde a câmera começa (e volta, em "Reenquadrar"): a região das primeiras linhas, definida nos dados.
+local minimo: Vector2 = DadosBrasil.foco.min
+local maximo: Vector2 = DadosBrasil.foco.max
 
 local mapa: any = nil
 local ui: any = nil

@@ -1,5 +1,5 @@
 {
-  "_nota": "Fonte editável dos dados do mapa Brasil. Coordenadas em graus (lon, lat). Anos e traçados aproximados: conferir antes do lançamento. Depois de editar, rode `node tools/dados/gerar.mjs` para regenerar src/shared/Dados/Brasil.luau.",
+  "_nota": "Fonte editável dos dados do mapa Brasil. Coordenadas em graus (lon, lat). Traçados simplificados (só as cidades principais de cada linha) e alguns anos de trechos intermediários aproximados: conferir antes do lançamento. 'degrau' é a onda da linha: define preço, prazo de retorno e a ordem de liberação (uma onda abre quando todas as linhas históricas da onda anterior estão completas). 'paisagem' é a imagem genérica da ficha da cidade (cidades de porte 3+ têm imagem própria em arte/cidades/<id>.png). Depois de editar, rode `node tools/dados/gerar.mjs`.",
   "terrenos": {
     "planalto": {
       "nome": "Planalto",
@@ -20,6 +20,14 @@
     "serra": {
       "nome": "Serra do Mar",
       "custo": 2.4
+    },
+    "pantanal": {
+      "nome": "Pantanal",
+      "custo": 1.5
+    },
+    "floresta": {
+      "nome": "Floresta",
+      "custo": 1.8
     }
   },
   "estacoes": [
@@ -28,14 +36,16 @@
       "nome": "Porto Mauá",
       "lon": -43.18,
       "lat": -22.69,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "litoral"
     },
     {
       "id": "fragoso",
       "nome": "Fragoso",
       "lon": -43.13,
       "lat": -22.6,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "serra"
     },
     {
       "id": "rio",
@@ -50,7 +60,8 @@
       "nome": "Japeri",
       "lon": -43.65,
       "lat": -22.64,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "serra"
     },
     {
       "id": "barra_pirai",
@@ -58,7 +69,8 @@
       "lon": -43.83,
       "lat": -22.47,
       "porte": 2,
-      "produz": "cafe"
+      "produz": "cafe",
+      "paisagem": "cafe"
     },
     {
       "id": "juiz_de_fora",
@@ -72,7 +84,8 @@
       "nome": "Barbacena",
       "lon": -43.77,
       "lat": -21.22,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "serra"
     },
     {
       "id": "bh",
@@ -94,7 +107,8 @@
       "nome": "Paranapiacaba",
       "lon": -46.3,
       "lat": -23.78,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "serra"
     },
     {
       "id": "sao_paulo",
@@ -109,7 +123,8 @@
       "lon": -46.88,
       "lat": -23.19,
       "porte": 2,
-      "produz": "cafe"
+      "produz": "cafe",
+      "paisagem": "cafe"
     },
     {
       "id": "campinas",
@@ -125,7 +140,8 @@
       "lon": -47.56,
       "lat": -22.41,
       "porte": 2,
-      "produz": "cafe"
+      "produz": "cafe",
+      "paisagem": "cafe"
     },
     {
       "id": "sao_carlos",
@@ -133,7 +149,8 @@
       "lon": -47.89,
       "lat": -22.02,
       "porte": 2,
-      "produz": "cafe"
+      "produz": "cafe",
+      "paisagem": "cafe"
     },
     {
       "id": "araraquara",
@@ -141,14 +158,16 @@
       "lon": -48.18,
       "lat": -21.79,
       "porte": 2,
-      "produz": "cafe"
+      "produz": "cafe",
+      "paisagem": "cafe"
     },
     {
       "id": "bauru",
       "nome": "Bauru",
       "lon": -49.06,
       "lat": -22.32,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "cafe"
     },
     {
       "id": "vitoria",
@@ -163,14 +182,16 @@
       "nome": "Colatina",
       "lon": -40.63,
       "lat": -19.54,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "serra"
     },
     {
       "id": "valadares",
       "nome": "Governador Valadares",
       "lon": -41.95,
       "lat": -18.85,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "serra"
     },
     {
       "id": "itabira",
@@ -178,7 +199,8 @@
       "lon": -43.23,
       "lat": -19.62,
       "porte": 1,
-      "produz": "minerio"
+      "produz": "minerio",
+      "paisagem": "serra"
     },
     {
       "id": "porto_velho",
@@ -186,14 +208,16 @@
       "lon": -63.9,
       "lat": -8.76,
       "porte": 2,
-      "porto": true
+      "porto": true,
+      "paisagem": "amazonia"
     },
     {
       "id": "anchieta",
       "nome": "Anchieta",
       "lon": -40.65,
       "lat": -20.8,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "litoral"
     },
     {
       "id": "porto_acu",
@@ -201,14 +225,16 @@
       "lon": -41.05,
       "lat": -21.64,
       "porte": 1,
-      "porto": true
+      "porto": true,
+      "paisagem": "litoral"
     },
     {
       "id": "macae",
       "nome": "Macaé",
       "lon": -41.79,
       "lat": -22.37,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "litoral"
     },
     {
       "id": "eliseu_martins",
@@ -216,21 +242,24 @@
       "lon": -43.67,
       "lat": -8.1,
       "porte": 1,
-      "produz": "graos"
+      "produz": "graos",
+      "paisagem": "sertao"
     },
     {
       "id": "salgueiro",
       "nome": "Salgueiro",
       "lon": -39.12,
       "lat": -8.07,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "sertao"
     },
     {
       "id": "quixada",
       "nome": "Quixadá",
       "lon": -39.02,
       "lat": -4.97,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "sertao"
     },
     {
       "id": "pecem",
@@ -238,14 +267,16 @@
       "lon": -38.83,
       "lat": -3.55,
       "porte": 2,
-      "porto": true
+      "porto": true,
+      "paisagem": "litoral"
     },
     {
       "id": "arcoverde",
       "nome": "Arcoverde",
       "lon": -37.05,
       "lat": -8.42,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "sertao"
     },
     {
       "id": "suape",
@@ -253,7 +284,8 @@
       "lon": -34.95,
       "lat": -8.39,
       "porte": 2,
-      "porto": true
+      "porto": true,
+      "paisagem": "litoral"
     },
     {
       "id": "sinop",
@@ -261,21 +293,24 @@
       "lon": -55.5,
       "lat": -11.86,
       "porte": 2,
-      "produz": "graos"
+      "produz": "graos",
+      "paisagem": "cerrado"
     },
     {
       "id": "matupa",
       "nome": "Matupá",
       "lon": -54.93,
       "lat": -10.18,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "amazonia"
     },
     {
       "id": "novo_progresso",
       "nome": "Novo Progresso",
       "lon": -55.38,
       "lat": -7.05,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "amazonia"
     },
     {
       "id": "miritituba",
@@ -283,7 +318,8 @@
       "lon": -55.97,
       "lat": -4.26,
       "porte": 1,
-      "porto": true
+      "porto": true,
+      "paisagem": "amazonia"
     },
     {
       "id": "sao_jose_campos",
@@ -297,14 +333,16 @@
       "nome": "Resende",
       "lon": -44.45,
       "lat": -22.47,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "serra"
     },
     {
       "id": "campinorte",
       "nome": "Campinorte",
       "lon": -49.15,
       "lat": -14.31,
-      "porte": 1
+      "porte": 1,
+      "paisagem": "cerrado"
     },
     {
       "id": "agua_boa",
@@ -312,7 +350,8 @@
       "lon": -52.16,
       "lat": -14.05,
       "porte": 1,
-      "produz": "graos"
+      "produz": "graos",
+      "paisagem": "cerrado"
     },
     {
       "id": "lucas_rv",
@@ -320,14 +359,261 @@
       "lon": -55.95,
       "lat": -13.05,
       "porte": 2,
-      "produz": "graos"
+      "produz": "graos",
+      "paisagem": "cerrado"
     },
     {
       "id": "vilhena",
       "nome": "Vilhena",
       "lon": -60.15,
       "lat": -12.74,
-      "porte": 2
+      "porte": 2,
+      "paisagem": "cerrado"
+    },
+    {
+      "id": "recife",
+      "nome": "Recife",
+      "lon": -34.88,
+      "lat": -8.06,
+      "porte": 4,
+      "porto": true
+    },
+    {
+      "id": "cabo",
+      "nome": "Cabo",
+      "lon": -35.03,
+      "lat": -8.28,
+      "porte": 1,
+      "produz": "acucar",
+      "paisagem": "canavial"
+    },
+    {
+      "id": "palmares",
+      "nome": "Palmares",
+      "lon": -35.59,
+      "lat": -8.68,
+      "porte": 2,
+      "produz": "acucar",
+      "paisagem": "canavial"
+    },
+    {
+      "id": "garanhuns",
+      "nome": "Garanhuns",
+      "lon": -36.49,
+      "lat": -8.89,
+      "porte": 2,
+      "paisagem": "sertao"
+    },
+    {
+      "id": "salvador",
+      "nome": "Salvador",
+      "lon": -38.5,
+      "lat": -12.97,
+      "porte": 4,
+      "porto": true
+    },
+    {
+      "id": "alagoinhas",
+      "nome": "Alagoinhas",
+      "lon": -38.42,
+      "lat": -12.14,
+      "porte": 2,
+      "paisagem": "sertao"
+    },
+    {
+      "id": "senhor_bonfim",
+      "nome": "Senhor do Bonfim",
+      "lon": -40.19,
+      "lat": -10.46,
+      "porte": 2,
+      "paisagem": "sertao"
+    },
+    {
+      "id": "juazeiro",
+      "nome": "Juazeiro",
+      "lon": -40.5,
+      "lat": -9.42,
+      "porte": 2,
+      "paisagem": "sertao"
+    },
+    {
+      "id": "sorocaba",
+      "nome": "Sorocaba",
+      "lon": -47.46,
+      "lat": -23.5,
+      "porte": 3
+    },
+    {
+      "id": "itapetininga",
+      "nome": "Itapetininga",
+      "lon": -48.05,
+      "lat": -23.59,
+      "porte": 2,
+      "paisagem": "cafe"
+    },
+    {
+      "id": "itarare",
+      "nome": "Itararé",
+      "lon": -49.34,
+      "lat": -24.11,
+      "porte": 1,
+      "paisagem": "sul"
+    },
+    {
+      "id": "paranagua",
+      "nome": "Paranaguá",
+      "lon": -48.51,
+      "lat": -25.52,
+      "porte": 2,
+      "porto": true,
+      "paisagem": "litoral"
+    },
+    {
+      "id": "morretes",
+      "nome": "Morretes",
+      "lon": -48.83,
+      "lat": -25.48,
+      "porte": 1,
+      "paisagem": "serra"
+    },
+    {
+      "id": "curitiba",
+      "nome": "Curitiba",
+      "lon": -49.27,
+      "lat": -25.43,
+      "porte": 4
+    },
+    {
+      "id": "ponta_grossa",
+      "nome": "Ponta Grossa",
+      "lon": -50.16,
+      "lat": -25.09,
+      "porte": 3,
+      "produz": "madeira"
+    },
+    {
+      "id": "uniao_vitoria",
+      "nome": "União da Vitória",
+      "lon": -51.09,
+      "lat": -26.23,
+      "porte": 2,
+      "produz": "madeira",
+      "paisagem": "sul"
+    },
+    {
+      "id": "marcelino_ramos",
+      "nome": "Marcelino Ramos",
+      "lon": -51.91,
+      "lat": -27.46,
+      "porte": 1,
+      "paisagem": "sul"
+    },
+    {
+      "id": "passo_fundo",
+      "nome": "Passo Fundo",
+      "lon": -52.41,
+      "lat": -28.26,
+      "porte": 2,
+      "paisagem": "sul"
+    },
+    {
+      "id": "santa_maria",
+      "nome": "Santa Maria",
+      "lon": -53.81,
+      "lat": -29.68,
+      "porte": 3
+    },
+    {
+      "id": "porto_alegre",
+      "nome": "Porto Alegre",
+      "lon": -51.23,
+      "lat": -30.03,
+      "porte": 4,
+      "porto": true
+    },
+    {
+      "id": "cachoeira_sul",
+      "nome": "Cachoeira do Sul",
+      "lon": -52.89,
+      "lat": -30.04,
+      "porte": 2,
+      "paisagem": "sul"
+    },
+    {
+      "id": "alegrete",
+      "nome": "Alegrete",
+      "lon": -55.79,
+      "lat": -29.78,
+      "porte": 2,
+      "produz": "gado",
+      "paisagem": "sul"
+    },
+    {
+      "id": "uruguaiana",
+      "nome": "Uruguaiana",
+      "lon": -57.09,
+      "lat": -29.76,
+      "porte": 2,
+      "paisagem": "sul"
+    },
+    {
+      "id": "aracatuba",
+      "nome": "Araçatuba",
+      "lon": -50.43,
+      "lat": -21.21,
+      "porte": 2,
+      "paisagem": "cafe"
+    },
+    {
+      "id": "tres_lagoas",
+      "nome": "Três Lagoas",
+      "lon": -51.7,
+      "lat": -20.79,
+      "porte": 2,
+      "paisagem": "cerrado"
+    },
+    {
+      "id": "campo_grande",
+      "nome": "Campo Grande",
+      "lon": -54.62,
+      "lat": -20.44,
+      "porte": 3,
+      "produz": "gado"
+    },
+    {
+      "id": "porto_esperanca",
+      "nome": "Porto Esperança",
+      "lon": -57.45,
+      "lat": -19.61,
+      "porte": 1,
+      "porto": true,
+      "paisagem": "cerrado"
+    },
+    {
+      "id": "corumba",
+      "nome": "Corumbá",
+      "lon": -57.65,
+      "lat": -19.01,
+      "porte": 2,
+      "porto": true,
+      "paisagem": "cerrado"
+    },
+    {
+      "id": "abuna",
+      "nome": "Abunã",
+      "lon": -65.33,
+      "lat": -9.7,
+      "porte": 1,
+      "paisagem": "amazonia"
+    },
+    {
+      "id": "guajara_mirim",
+      "nome": "Guajará-Mirim",
+      "lon": -65.34,
+      "lat": -10.78,
+      "porte": 1,
+      "produz": "borracha",
+      "paisagem": "amazonia"
     }
   ],
   "linhas": [
@@ -343,7 +629,8 @@
           "ano": 1854,
           "terreno": "baixada"
         }
-      ]
+      ],
+      "degrau": 0
     },
     {
       "id": "dpedro2",
@@ -381,7 +668,8 @@
           "ano": 1895,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "degrau": 1
     },
     {
       "id": "spr",
@@ -427,7 +715,8 @@
           "ano": 1867,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "degrau": 2
     },
     {
       "id": "paulista",
@@ -465,7 +754,8 @@
           "ano": 1910,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "degrau": 2
     },
     {
       "id": "vitoria_minas",
@@ -491,7 +781,8 @@
           "ano": 1942,
           "terreno": "serra_leve"
         }
-      ]
+      ],
+      "degrau": 3
     },
     {
       "id": "ef118",
@@ -499,7 +790,6 @@
       "ano": 2026,
       "cor": 7,
       "projeto": "ef118",
-      "ordemCusto": 5,
       "trechos": [
         {
           "de": "vitoria",
@@ -525,7 +815,8 @@
           "ano": 2026,
           "terreno": "serra_leve"
         }
-      ]
+      ],
+      "degrau": 5
     },
     {
       "id": "transnordestina",
@@ -533,7 +824,6 @@
       "ano": 2006,
       "cor": 4,
       "projeto": "transnordestina",
-      "ordemCusto": 6,
       "trechos": [
         {
           "de": "eliseu_martins",
@@ -553,7 +843,8 @@
           "ano": 2006,
           "terreno": "baixada"
         }
-      ]
+      ],
+      "degrau": 6
     },
     {
       "id": "ramal_suape",
@@ -561,7 +852,6 @@
       "ano": 2006,
       "cor": 6,
       "projeto": "ramal_suape",
-      "ordemCusto": 6,
       "trechos": [
         {
           "de": "salgueiro",
@@ -575,7 +865,8 @@
           "ano": 2006,
           "terreno": "serra_leve"
         }
-      ]
+      ],
+      "degrau": 6
     },
     {
       "id": "ferrograo",
@@ -583,7 +874,6 @@
       "ano": 2017,
       "cor": 3,
       "projeto": "ferrograo",
-      "ordemCusto": 6,
       "trechos": [
         {
           "de": "sinop",
@@ -603,7 +893,8 @@
           "ano": 2017,
           "terreno": "vale"
         }
-      ]
+      ],
+      "degrau": 6
     },
     {
       "id": "fico",
@@ -611,7 +902,6 @@
       "ano": 2008,
       "cor": 5,
       "projeto": "fico",
-      "ordemCusto": 7,
       "trechos": [
         {
           "de": "campinorte",
@@ -637,7 +927,8 @@
           "ano": 2008,
           "terreno": "vale"
         }
-      ]
+      ],
+      "degrau": 7
     },
     {
       "id": "tav",
@@ -645,7 +936,6 @@
       "ano": 2007,
       "cor": 8,
       "projeto": "tav",
-      "ordemCusto": 8,
       "trechos": [
         {
           "de": "campinas",
@@ -670,6 +960,247 @@
           "para": "rio",
           "ano": 2007,
           "terreno": "serra"
+        }
+      ],
+      "degrau": 8
+    },
+    {
+      "id": "recife_sf",
+      "nome": "Recife–São Francisco",
+      "ano": 1858,
+      "cor": 4,
+      "degrau": 1,
+      "trechos": [
+        {
+          "de": "recife",
+          "para": "cabo",
+          "ano": 1858,
+          "terreno": "baixada"
+        },
+        {
+          "de": "cabo",
+          "para": "palmares",
+          "ano": 1862,
+          "terreno": "vale"
+        },
+        {
+          "de": "palmares",
+          "para": "garanhuns",
+          "ano": 1887,
+          "terreno": "serra_leve"
+        }
+      ]
+    },
+    {
+      "id": "bahia_sf",
+      "nome": "Bahia–São Francisco",
+      "ano": 1863,
+      "cor": 7,
+      "degrau": 1,
+      "trechos": [
+        {
+          "de": "salvador",
+          "para": "alagoinhas",
+          "ano": 1863,
+          "terreno": "baixada"
+        },
+        {
+          "de": "alagoinhas",
+          "para": "senhor_bonfim",
+          "ano": 1887,
+          "terreno": "planalto"
+        },
+        {
+          "de": "senhor_bonfim",
+          "para": "juazeiro",
+          "ano": 1896,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "sorocabana",
+      "nome": "E.F. Sorocabana",
+      "ano": 1875,
+      "cor": 8,
+      "degrau": 2,
+      "trechos": [
+        {
+          "de": "sao_paulo",
+          "para": "sorocaba",
+          "ano": 1875,
+          "terreno": "planalto"
+        },
+        {
+          "de": "sorocaba",
+          "para": "itapetininga",
+          "ano": 1895,
+          "terreno": "planalto"
+        },
+        {
+          "de": "itapetininga",
+          "para": "itarare",
+          "ano": 1909,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "poa_uruguaiana",
+      "nome": "Porto Alegre–Uruguaiana",
+      "ano": 1883,
+      "cor": 1,
+      "degrau": 3,
+      "trechos": [
+        {
+          "de": "porto_alegre",
+          "para": "cachoeira_sul",
+          "ano": 1883,
+          "terreno": "vale"
+        },
+        {
+          "de": "cachoeira_sul",
+          "para": "santa_maria",
+          "ano": 1885,
+          "terreno": "vale"
+        },
+        {
+          "de": "santa_maria",
+          "para": "alegrete",
+          "ano": 1907,
+          "terreno": "planalto"
+        },
+        {
+          "de": "alegrete",
+          "para": "uruguaiana",
+          "ano": 1907,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "parana",
+      "nome": "E.F. do Paraná",
+      "ano": 1885,
+      "cor": 6,
+      "degrau": 3,
+      "trechos": [
+        {
+          "de": "paranagua",
+          "para": "morretes",
+          "ano": 1885,
+          "terreno": "baixada"
+        },
+        {
+          "de": "morretes",
+          "para": "curitiba",
+          "ano": 1885,
+          "terreno": "serra"
+        },
+        {
+          "de": "curitiba",
+          "para": "ponta_grossa",
+          "ano": 1894,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "sp_rg",
+      "nome": "São Paulo–Rio Grande",
+      "ano": 1910,
+      "cor": 2,
+      "degrau": 4,
+      "trechos": [
+        {
+          "de": "itarare",
+          "para": "ponta_grossa",
+          "ano": 1909,
+          "terreno": "planalto"
+        },
+        {
+          "de": "ponta_grossa",
+          "para": "uniao_vitoria",
+          "ano": 1905,
+          "terreno": "planalto"
+        },
+        {
+          "de": "uniao_vitoria",
+          "para": "marcelino_ramos",
+          "ano": 1910,
+          "terreno": "vale"
+        },
+        {
+          "de": "marcelino_ramos",
+          "para": "passo_fundo",
+          "ano": 1910,
+          "terreno": "serra_leve"
+        },
+        {
+          "de": "passo_fundo",
+          "para": "santa_maria",
+          "ano": 1898,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "madeira_mamore",
+      "nome": "Madeira–Mamoré",
+      "ano": 1912,
+      "cor": 5,
+      "degrau": 4,
+      "trechos": [
+        {
+          "de": "porto_velho",
+          "para": "abuna",
+          "ano": 1911,
+          "terreno": "floresta"
+        },
+        {
+          "de": "abuna",
+          "para": "guajara_mirim",
+          "ano": 1912,
+          "terreno": "floresta"
+        }
+      ]
+    },
+    {
+      "id": "noroeste",
+      "nome": "Noroeste do Brasil",
+      "ano": 1914,
+      "cor": 3,
+      "degrau": 4,
+      "trechos": [
+        {
+          "de": "bauru",
+          "para": "aracatuba",
+          "ano": 1908,
+          "terreno": "planalto"
+        },
+        {
+          "de": "aracatuba",
+          "para": "tres_lagoas",
+          "ano": 1912,
+          "terreno": "planalto"
+        },
+        {
+          "de": "tres_lagoas",
+          "para": "campo_grande",
+          "ano": 1914,
+          "terreno": "planalto"
+        },
+        {
+          "de": "campo_grande",
+          "para": "porto_esperanca",
+          "ano": 1914,
+          "terreno": "pantanal"
+        },
+        {
+          "de": "porto_esperanca",
+          "para": "corumba",
+          "ano": 1952,
+          "terreno": "pantanal"
         }
       ]
     }
@@ -983,6 +1514,65 @@
       "lon": -43.6,
       "lat": -24.4,
       "zoomMin": 1.2
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Pantanal",
+      "lon": -56.6,
+      "lat": -17.9,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Pampa",
+      "lon": -54.6,
+      "lat": -30.9,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Sertão",
+      "lon": -39.6,
+      "lat": -7.0,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Campos Gerais",
+      "lon": -50.9,
+      "lat": -24.5,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Zona da Mata",
+      "lon": -35.9,
+      "lat": -7.6,
+      "zoomMin": 1.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Madeira",
+      "lon": -62.3,
+      "lat": -7.4,
+      "angulo": -40,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Paraguai",
+      "lon": -58.0,
+      "lat": -20.6,
+      "angulo": -80,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Uruguai",
+      "lon": -55.2,
+      "lat": -28.3,
+      "angulo": -25,
+      "zoomMin": 0.9
     }
   ],
   "projetos": [
@@ -990,10 +1580,10 @@
       "id": "ef118",
       "nome": "EF-118 Vitória–Rio",
       "emoji": "conectar",
-      "custo": 40000,
+      "custo": 150000,
       "minutos": 5,
       "requer": {
-        "linhasCompletas": 3
+        "linhasCompletas": 6
       },
       "descricao": "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão."
     },
@@ -1001,10 +1591,10 @@
       "id": "transnordestina",
       "nome": "Transnordestina",
       "emoji": "carga_graos",
-      "custo": 120000,
+      "custo": 400000,
       "minutos": 10,
       "requer": {
-        "linhasCompletas": 4
+        "linhasCompletas": 9
       },
       "descricao": "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta."
     },
@@ -1012,7 +1602,7 @@
       "id": "ramal_suape",
       "nome": "Ramal Salgueiro–Suape",
       "emoji": "carga_mercadorias",
-      "custo": 90000,
+      "custo": 300000,
       "minutos": 8,
       "requer": {
         "projeto": "transnordestina"
@@ -1023,7 +1613,7 @@
       "id": "ferrograo",
       "nome": "Ferrogrão (EF-170)",
       "emoji": "carga_graos",
-      "custo": 250000,
+      "custo": 800000,
       "minutos": 15,
       "requer": {
         "era": "diesel"
@@ -1034,7 +1624,7 @@
       "id": "fico",
       "nome": "Transcontinental (FICO)",
       "emoji": "mapa_mundo",
-      "custo": 400000,
+      "custo": 1500000,
       "minutos": 20,
       "requer": {
         "projeto": "ferrograo"
@@ -1045,7 +1635,7 @@
       "id": "tav",
       "nome": "Trem-bala Rio–SP–Campinas",
       "emoji": "era_alta",
-      "custo": 1500000,
+      "custo": 5000000,
       "minutos": 30,
       "requer": {
         "era": "diesel",
@@ -1053,5 +1643,12 @@
       },
       "descricao": "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai."
     }
+  ],
+  "foco": [
+    "maua",
+    "dpedro2",
+    "spr",
+    "paulista",
+    "vitoria_minas"
   ]
 }

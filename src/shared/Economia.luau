@@ -9,7 +9,7 @@ Economia.DINHEIRO_INICIAL = 2500
 -- O prazo cresce a cada "degrau" de linha (as linhas mais novas demoram mais para se pagar),
 -- e a era seguinte volta a acelerar tudo.
 Economia.PAYBACK_SEGUNDOS = 30
-Economia.CRESCIMENTO_PAYBACK = 1.8
+Economia.CRESCIMENTO_PAYBACK = 2.5
 Economia.FATOR_CUSTO_TREM = 0.4 -- trem custa 40% do custo médio dos trechos da linha
 Economia.OFFLINE_MAX_SEGUNDOS = 2 * 60 * 60
 
@@ -43,7 +43,7 @@ Economia.TITULOS = {
 }
 
 -- Produção das cidades produtoras, por dia de jogo, por ponto de porte.
-Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200 }
+Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200, acucar = 500, madeira = 600, gado = 150, borracha = 80 }
 Economia.HORAS_DE_OPERACAO = 18 -- os trens rodam 18 h por dia
 
 -- Cargas: cada cidade produtora ligada por trilho até um porto dá um bônus na renda da linha dela.
@@ -51,7 +51,13 @@ Economia.CARGAS = {
 	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25, unidade = "sacas" },
 	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6, unidade = "t" },
 	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4, unidade = "t" },
+	acucar = { nome = "Açúcar", emoji = "carga_acucar", bonus = 0.3, unidade = "sacas" },
+	madeira = { nome = "Madeira", emoji = "carga_madeira", bonus = 0.3, unidade = "t" },
+	gado = { nome = "Gado", emoji = "carga_gado", bonus = 0.3, unidade = "cabeças" },
+	borracha = { nome = "Borracha", emoji = "carga_borracha", bonus = 0.6, unidade = "t" },
 }
+-- Ordem em que as cargas aparecem nas listas.
+Economia.ORDEM_CARGAS = { "cafe", "acucar", "minerio", "madeira", "gado", "borracha", "graos" }
 
 -- Gabinete de Projetos: uma pesquisa por vez; acelerar custa até 60% do preço do projeto,
 -- proporcional ao tempo que ainda falta.
@@ -76,7 +82,7 @@ Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira
 -- Eras: a próxima libera com N linhas completas e multiplica a renda de tudo.
 Economia.ERAS = {
 	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350 },
-	{ id = "diesel", multiplicador = 2, custo = 60000, linhasCompletas = 4, capacidade = 700 },
+	{ id = "diesel", multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700 },
 }
 
 -- Estado salvo de um jogador em um mapa.
@@ -285,17 +291,29 @@ function Economia.custoAcelerar(p: any, restante: number): number
 	return math.max(1, math.ceil(p.custo * Economia.FATOR_ACELERAR * math.min(1, restante / p.segundos)))
 end
 
--- Linhas históricas abrem em ordem: a próxima só libera quando a anterior estiver completa.
--- Linhas de projeto abrem quando a pesquisa do projeto termina.
+-- Linhas históricas abrem em ondas (degraus): uma onda libera quando todas as linhas históricas
+-- da onda anterior estão completas. Linhas de projeto abrem quando a pesquisa do projeto termina.
+-- Devolve os nomes das linhas que ainda faltam completar (vazio = liberada).
+function Economia.faltaParaLiberar(estado: EstadoMapa, dados: any, indiceLinha: number): { string }
+	local linha = dados.linhas[indiceLinha]
+	local falta = {}
+	if not linha or linha.projeto or (linha.degrau or 0) <= 0 then
+		return falta
+	end
+	for _, outra in dados.linhas do
+		if not outra.projeto and outra.degrau == linha.degrau - 1 and not Economia.linhaCompleta(estado, outra) then
+			table.insert(falta, outra.nome)
+		end
+	end
+	return falta
+end
+
 function Economia.linhaLiberada(estado: EstadoMapa, dados: any, indiceLinha: number): boolean
 	local linha = dados.linhas[indiceLinha]
 	if linha and linha.projeto then
 		return Economia.projetoConcluido(estado, linha.projeto)
 	end
-	if indiceLinha <= 1 then
-		return true
-	end
-	return Economia.linhaCompleta(estado, dados.linhas[indiceLinha - 1])
+	return #Economia.faltaParaLiberar(estado, dados, indiceLinha) == 0
 end
 
 export type SituacaoTrecho = "construido" | "disponivel" | "bloqueado" | "projeto"
@@ -821,9 +839,7 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		linhasTotal = #dados.linhas,
 		estacoes = estacoes,
 		passageirosDia = math.round(passageiros),
-		cafeDia = math.round(carga.cafe),
-		minerioDia = math.round(carga.minerio),
-		graosDia = math.round(carga.graos),
+		cargaDia = carga, -- por tipo de carga
 		satisfacao = balanco.satisfacao,
 	}
 end
