@@ -77,12 +77,12 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     const degrau = l.ordemCusto ? l.ordemCusto - 1 : ordem;
     const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, degrau);
     L.push("\t\t{");
-    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, projeto = ${lua(l.projeto)},`);
+    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)},`);
     L.push("\t\t\ttrechos = {");
     l.trechos.forEach((t, i) => {
       const k = km(t.de, t.para);
       const custo = Math.round(k * fator * dados.terrenos[t.terreno].custo);
-      let s = `\t\t\t\t{ id = ${lua(`${l.id}_${i + 1}`)}, de = ${lua(t.de)}, para = ${lua(t.para)}, ano = ${lua(t.ano)}, km = ${k}, terreno = ${lua(t.terreno)}, custo = ${custo}`;
+      let s = `\t\t\t\t{ id = ${lua(`${l.id}_${i + 1}`)}, de = ${lua(t.de)}, para = ${lua(t.para)}, ano = ${lua(t.ano)}, km = ${k}, terreno = ${lua(t.terreno)}, custo = ${custo}, degrau = ${degrau}`;
       if (t.alternativas) {
         const alts = t.alternativas.map((a) => {
           const ka = Math.round(k * a.fatorKm);

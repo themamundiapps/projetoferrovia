@@ -4,8 +4,12 @@
 
 local Economia = {}
 
-Economia.DINHEIRO_INICIAL = 1500
-Economia.PAYBACK_SEGUNDOS = 25 -- receita bruta de um trecho entre cidades médias: o custo dele a cada 25 s
+Economia.DINHEIRO_INICIAL = 2500
+-- Receita bruta de um trecho entre cidades médias: o custo dele a cada PAYBACK segundos.
+-- O prazo cresce a cada "degrau" de linha (as linhas mais novas demoram mais para se pagar),
+-- e a era seguinte volta a acelerar tudo.
+Economia.PAYBACK_SEGUNDOS = 30
+Economia.CRESCIMENTO_PAYBACK = 1.8
 Economia.FATOR_CUSTO_TREM = 0.4 -- trem custa 40% do custo médio dos trechos da linha
 Economia.OFFLINE_MAX_SEGUNDOS = 2 * 60 * 60
 
@@ -19,9 +23,10 @@ Economia.PORTE_CIDADE_GRANDE = 3
 Economia.BONUS_REDE_POR_CIDADE = 0.03
 Economia.MAX_CIDADES_REDE = 15
 
--- Manutenção, por segundo: trecho custa 0,4% do preço dele; trem, 1,8% do preço dele.
-Economia.MANUTENCAO_TRECHO = 0.004
-Economia.MANUTENCAO_TREM = 0.018
+-- Manutenção, por segundo, em fração da receita bruta "normal" do degrau da linha:
+-- um trecho custa 10% do que rende; um trem custa 45% do preço dele dividido pelo prazo.
+Economia.MANUTENCAO_TRECHO = 0.10
+Economia.MANUTENCAO_TREM = 0.45
 Economia.REEMBOLSO_TREM = 0.5 -- vender um trem devolve metade do preço
 Economia.MAX_TRENS_LINHA = 30
 
@@ -94,16 +99,21 @@ end
 
 -- Receita bruta de um trecho por segundo (sem estações, rede, trens, cargas, era ou satisfação).
 -- Ligar cidades grandes rende mais que ligar vilas, para o mesmo custo.
+-- Prazo (segundos) em que um trecho médio deste degrau paga o próprio custo.
+function Economia.prazo(degrau: number?): number
+	return Economia.PAYBACK_SEGUNDOS * Economia.CRESCIMENTO_PAYBACK ^ (degrau or 0)
+end
+
 function Economia.rendaTrecho(dados: any, trecho: any, alternativaId: string?): number
 	local opcao = Economia.opcaoTrecho(trecho, alternativaId)
 	local demanda = opcao.fatorDemanda or 1
 	local tamanho = math.sqrt(Economia.pesoTrecho(dados, trecho) / Economia.PESO_REFERENCIA)
-	return opcao.custo / Economia.PAYBACK_SEGUNDOS * demanda * tamanho
+	return opcao.custo / Economia.prazo(trecho.degrau) * demanda * tamanho
 end
 
 -- Manutenção de um trecho construído, por segundo.
 function Economia.manutencaoTrecho(trecho: any, alternativaId: string?): number
-	return Economia.opcaoTrecho(trecho, alternativaId).custo * Economia.MANUTENCAO_TRECHO
+	return Economia.opcaoTrecho(trecho, alternativaId).custo / Economia.prazo(trecho.degrau) * Economia.MANUTENCAO_TRECHO
 end
 
 function Economia.trechosConstruidos(estado: EstadoMapa, linha: any): number
@@ -364,7 +374,7 @@ function Economia.valorVendaTrem(estado: EstadoMapa, linha: any): number
 end
 
 function Economia.manutencaoTrem(estado: EstadoMapa, linha: any): number
-	return Economia.custoTrem(estado, linha) * Economia.MANUTENCAO_TREM
+	return Economia.custoTrem(estado, linha) / Economia.prazo(linha.degrau) * Economia.MANUTENCAO_TREM
 end
 
 function Economia.trensFaltando(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
