@@ -164,7 +164,9 @@ local function montar(eraId: string)
 	end))
 	-- o painel do menu acompanha a altura do caixa (que cresce quando aparece o botão da era)
 	local function reposicionar()
-		menu:posicionarAbaixoDe(ui.hud.AbsolutePosition.Y + ui.hud.AbsoluteSize.Y)
+		-- posição relativa à tela do jogo (as posições absolutas vêm deslocadas pela barra do Roblox)
+		local origem = (ui.hud.Parent :: any).AbsolutePosition.Y
+		menu:posicionarAbaixoDe(ui.hud.AbsolutePosition.Y - origem + ui.hud.AbsoluteSize.Y)
 	end
 	table.insert(conexoesTela, ui.hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(reposicionar))
 	task.defer(reposicionar)

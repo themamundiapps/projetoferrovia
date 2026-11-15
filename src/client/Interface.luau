@@ -224,6 +224,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 			FontFace = f.display,
 			TextSize = 17,
 			TextColor3 = c.onAccent,
+			TextWrapped = true,
 			AutoButtonColor = true,
 			ZIndex = 32,
 		}, pai)
@@ -572,7 +573,7 @@ function Interface._preencher(self: Interface)
 	else
 		local linhaFrota = `{Emojis.trens} Frota: {trens} {if trens == 1 then "trem" else "trens"} · leva {fmt(capacidade)} de {fmt(demanda)} passageiros/h`
 		if faltando > 0 then
-			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"}.`
+			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"} (cada um custa {manutTrem}/s de manutenção).`
 			self.lblTrens.TextColor3 = c.negative
 		elseif sobrando > 0 then
 			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "trem rodando vazio" else "trens rodando vazios"}: cada um custa {manutTrem}/s de manutenção.`
@@ -584,7 +585,7 @@ function Interface._preencher(self: Interface)
 		self.btnTrem.Visible = faltando > 0
 		if faltando > 0 then
 			local podePagar = estado.dinheiro >= custoTrem
-			self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)} (manutenção {manutTrem}/s)`
+			self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`
 			self.btnTrem.Active = podePagar
 			self.btnTrem.AutoButtonColor = podePagar
 			self.btnTrem.BackgroundTransparency = if podePagar then 0 else 0.6
