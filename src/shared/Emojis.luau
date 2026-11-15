@@ -18,6 +18,7 @@ local Emojis = {
 	menu = "📜",
 	dinheiro = "💰",
 	renda = "📈",
+	manutencao = "🔧",
 	passageiros = "👥",
 	satisfacao = "😊",
 	relogio = "⏰",

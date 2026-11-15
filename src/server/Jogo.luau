@@ -189,8 +189,8 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	if Economia.trechosConstruidos(e, linha) == 0 then
 		return false, "Construa um trecho dessa linha primeiro."
 	end
-	if not Economia.podeComprarTrem(e, linha) then
-		return false, "Frota completa: esta linha já tem todos os trens de que precisa."
+	if not Economia.podeComprarTrem(e, dados, linha) then
+		return false, "Frota completa: os trens já levam todos os passageiros desta linha."
 	end
 	local custo = Economia.custoTrem(e, linha)
 	if e.dinheiro < custo then
@@ -198,6 +198,30 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	end
 	e.dinheiro -= custo
 	e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
+	return true, nil
+end
+
+-- Vende um trem (devolve metade do preço). A linha fica sempre com ao menos 1.
+function Acoes.venderTrem(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.linha) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local linha = nil
+	for _, l in dados.linhas do
+		if l.id == args.linha then
+			linha = l
+		end
+	end
+	if not linha then
+		return false, "Linha desconhecida."
+	end
+	if not Economia.podeVenderTrem(e, linha) then
+		return false, "Toda linha precisa de pelo menos 1 trem."
+	end
+	e.trens[linha.id] -= 1
+	e.dinheiro += Economia.valorVendaTrem(e, linha)
 	return true, nil
 end
 
@@ -263,7 +287,7 @@ function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 	local e = s.mapas[s.mapaAtual]
 	local comprados = 0
 	for _, linha in dados.linhas do
-		while Economia.podeComprarTrem(e, linha) and e.dinheiro >= Economia.custoTrem(e, linha) do
+		while Economia.podeComprarTrem(e, dados, linha) and e.dinheiro >= Economia.custoTrem(e, linha) do
 			e.dinheiro -= Economia.custoTrem(e, linha)
 			e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
 			comprados += 1
@@ -409,7 +433,7 @@ local function aoEntrar(jogador: Player)
 		Economia.ajustarFrota(e, dados)
 		if estadoSalvo then
 			local decorrido = math.clamp(os.time() - e.ultimoTick, 0, Economia.OFFLINE_MAX_SEGUNDOS)
-			local ganho = Economia.rendaTotal(e, dados) * decorrido
+			local ganho = math.max(-e.dinheiro, Economia.rendaTotal(e, dados) * decorrido)
 			e.dinheiro += ganho
 			if id == s.mapaAtual then
 				s.ganhoOffline = ganho
@@ -497,7 +521,8 @@ task.spawn(function()
 		for _, s in sessoes do
 			if s.carregado then
 				local e = s.mapas[s.mapaAtual]
-				e.dinheiro += Economia.rendaTotal(e, MAPAS[s.mapaAtual]) * dt
+				-- com prejuízo (manutenção maior que a receita) o caixa desce, mas nunca abaixo de zero
+				e.dinheiro = math.max(0, e.dinheiro + Economia.rendaTotal(e, MAPAS[s.mapaAtual]) * dt)
 				enviarEstado(s)
 			end
 		end

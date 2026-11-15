@@ -277,13 +277,17 @@ function Menu._abaLinhas(self: Menu)
 	bFrota.Activated:Connect(function()
 		self.aoAgir:Fire("completarFrotas", {})
 	end)
-	est:texto("fraco", "Construir tudo compra os trechos liberados do mais barato para o mais caro, até o dinheiro acabar.", r, 4)
+	est:texto("fraco", "Construir tudo compra os trechos liberados do mais barato para o mais caro. Completar frotas compra trens até todos os passageiros embarcarem.", r, 4)
 
+	local balanco = Economia.balanco(estado, dados)
+	local rede = Economia.rede(estado, dados)
 	for i, linha in dados.linhas do
 		local construidos = Economia.trechosConstruidos(estado, linha)
 		local liberada = Economia.linhaLiberada(estado, dados, i)
 		local completa = construidos == #linha.trechos
-		local faltando = Economia.trensFaltando(estado, linha)
+		local faltando = Economia.trensFaltando(estado, dados, linha, rede)
+		local sobrando = Economia.trensSobrando(estado, dados, linha, rede)
+		local bl = balanco.linhas[linha.id]
 		local cor = self.est.era.linhas[linha.cor] or est.c.ink
 
 		local linhaBtn = novo("TextButton", {
@@ -323,20 +327,24 @@ function Menu._abaLinhas(self: Menu)
 		elseif not liberada then
 			info = `{Emojis.cadeado} Libera ao completar {dados.linhas[i - 1].nome}`
 		else
-			local renda = Economia.formatar(Economia.rendaLinhaFinal(estado, dados, linha), simbolo, true)
-			info = `{construidos}/{#linha.trechos} trechos · {estado.trens[linha.id] or 0} trens · {renda}/s`
+			local lucro = if bl then bl.lucro else 0
+			local txtLucro = if lucro >= 0 then `lucro {Economia.formatar(lucro, simbolo, true)}/s`
+				else `prejuízo {Economia.formatar(-lucro, simbolo, true)}/s`
+			local txtRede = if bl and bl.rede > 0 then ` · rede +{math.round((bl.fatorRede - 1) * 100)}%` else ""
+			info = `{construidos}/{#linha.trechos} trechos · {estado.trens[linha.id] or 0} trens · {txtLucro}{txtRede}`
 		end
 		local l2 = est:texto("fraco", info, textos, 2)
 		l2.ZIndex = 33
 		local situacao = if not liberada then ""
-			elseif faltando > 0 then `{Emojis.alerta} Faltam {faltando} trem(ns): rende só {math.round(Economia.servico(estado, linha) * 100)}%`
+			elseif faltando > 0 then `{Emojis.alerta} Lotada: só {math.round((bl and bl.servico or 0) * 100)}% embarcam · faltam {faltando} trem(ns)`
+			elseif sobrando > 0 then `{Emojis.alerta} {sobrando} trem(ns) rodando vazio(s)`
 			elseif completa then `{Emojis.confirmar} Linha completa`
 			elseif construidos == 0 then `{Emojis.construir} Pronta para começar`
 			else `{Emojis.construir} Em construção`
 		if situacao ~= "" then
 			local l3 = est:texto("fraco", situacao, textos, 3)
 			l3.ZIndex = 33
-			if faltando > 0 then
+			if faltando > 0 or sobrando > 0 then
 				l3.TextColor3 = est.c.negative
 			elseif completa then
 				l3.TextColor3 = est.c.positive
@@ -508,11 +516,15 @@ function Menu._abaCompanhia(self: Menu)
 		BorderSizePixel = 0,
 		ZIndex = 33,
 	}, barra)
-	est:texto("fraco", `Vem do serviço das linhas (trens suficientes) e do nível das estações. Hoje mexe {if sat >= 50 then "+" else ""}{math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)}% na renda.`, r, 5)
+	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {if sat >= 50 then "+" else ""}{math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)}% na renda.`, r, 5)
 	est:divisor(r, 6)
 
 	local linhas = {
-		`{Emojis.renda} Renda: <b>{Economia.formatar(st.renda, simbolo, true)}/s</b>`,
+		`{Emojis.renda} Receita: <b>{Economia.formatar(st.receita, simbolo, true)}/s</b>`,
+		`{Emojis.manutencao} Manutenção: <b>− {Economia.formatar(st.manutencao, simbolo, true)}/s</b>`,
+		if st.renda >= 0 then `{Emojis.dinheiro} Lucro: <b>{Economia.formatar(st.renda, simbolo, true)}/s</b>`
+			else `{Emojis.alerta} Prejuízo: <b>{Economia.formatar(-st.renda, simbolo, true)}/s</b>`,
+		`{Emojis.trens} Trens: <b>{st.trens}</b>`,
 		`{Emojis.passageiros} Passageiros: <b>{numero(st.passageirosDia)}</b> por dia`,
 		`{Emojis.carga_cafe} Café: <b>{numero(st.cafeDia)}</b> sacas por dia`,
 		`{Emojis.carga_minerio} Minério: <b>{numero(st.minerioDia)}</b> t por dia`,

@@ -111,14 +111,17 @@ local function agir(tipo: string, args: any)
 			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
 		elseif tipo == "trem" then
 			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
+		elseif tipo == "venderTrem" then
+			ui:avisar(`{Emojis.dinheiro} Trem vendido.`, 2)
 		elseif tipo == "construir" then
 			ui:avisar(`{Emojis.construir} Trecho construído!`, 2)
 			-- se o trecho novo fez a linha precisar de mais trens, avisa
 			task.delay(0.4, function()
 				local linha = Economia.acharTrecho(DadosBrasil, args.trecho)
 				local estado = ui.estado
-				if linha and estado and Economia.trensFaltando(estado, linha) > 0 then
-					ui:avisar(`{Emojis.trens} A linha {linha.nome} cresceu e precisa de mais 1 trem para render 100%.`, 5)
+				local faltando = if linha and estado then Economia.trensFaltando(estado, DadosBrasil, linha) else 0
+				if linha and faltando > 0 then
+					ui:avisar(`{Emojis.trens} A linha {linha.nome} cresceu: faltam {faltando} trem(ns) para levar todos os passageiros.`, 5)
 				end
 			end)
 		end

@@ -243,8 +243,15 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.btnTrem.BackgroundColor3 = c.ink
 	self.btnTrem.TextColor3 = c.panel
 	self.btnTrem.Size = UDim2.new(1, 0, 0, 40)
-	self.divCarga = novo("Frame", { LayoutOrder = 10, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
-	self.lblCarga = texto(11, f.body, 15, c.ink)
+	self.btnVender = botao(10, corpo)
+	self.btnVender.Name = "BtnVenderTrem"
+	self.btnVender.BackgroundColor3 = c.bg
+	self.btnVender.TextColor3 = c.ink
+	self.btnVender.TextSize = 15
+	self.btnVender.Size = UDim2.new(1, 0, 0, 34)
+	novo("UIStroke", { Color = c.rule, Thickness = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, self.btnVender)
+	self.divCarga = novo("Frame", { LayoutOrder = 12, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
+	self.lblCarga = texto(13, f.body, 15, c.ink)
 	self.lblCarga.LineHeight = 1.2
 
 	self.btnFechar = novo("TextButton", {
@@ -271,6 +278,12 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		local linha = self.trechoAberto and Economia.acharTrecho(self.dados, self.trechoAberto)
 		if linha then
 			self.aoAgir:Fire("trem", { linha = linha.id })
+		end
+	end)
+	self.btnVender.Activated:Connect(function()
+		local linha = self.trechoAberto and Economia.acharTrecho(self.dados, self.trechoAberto)
+		if linha then
+			self.aoAgir:Fire("venderTrem", { linha = linha.id })
 		end
 	end)
 	self.btnFechar.Activated:Connect(function()
@@ -304,7 +317,14 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
-	self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
+	if estado.renda >= 0 then
+		self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
+		self.lblRenda.TextColor3 = self.era.cores.positive
+	else
+		-- manutenção maior que a receita
+		self.lblRenda.Text = `− {Economia.formatar(-estado.renda, simbolo, true)} por segundo (prejuízo)`
+		self.lblRenda.TextColor3 = self.era.cores.negative
+	end
 	local proxima, liberada = Economia.proximaEra(estado, self.dados)
 	local eraProx = proxima and self.eras and self.eras[proxima.id]
 	if proxima and liberada and eraProx then
@@ -332,6 +352,7 @@ function Interface._modoTrecho(self: Interface, sim: boolean)
 	self.lblTrens.Visible = sim
 	if not sim then
 		self.btnTrem.Visible = false
+		self.btnVender.Visible = false
 		self.opcoes.Visible = false
 		self.divCarga.Visible = false
 		self.lblCarga.Visible = false
@@ -431,10 +452,21 @@ function Interface._preencher(self: Interface)
 
 	self.lblCabecalho.Text = `{maiusculas(linha.nome)} · {trecho.ano}`
 	self.lblTitulo.Text = `{de} – {para}`
+	local fatorRede = Economia.bonusRede(estado, dados, linha)
+	local passageiros = Economia.passageirosTrecho(estado, dados, trecho, fatorRede)
+	if not estado.trechos[trecho.id] then
+		-- antes de construir: previsão com a escolha de traçado atual
+		local opcaoPrev = Economia.opcaoTrecho(trecho, escolhida)
+		passageiros = Economia.PASSAGEIROS_POR_PESO * Economia.pesoTrecho(dados, trecho) * (opcaoPrev.fatorDemanda or 1)
+	end
+	local era = Economia.multiplicadorEra(estado)
+	local estA, estB = dados.estacoes[trecho.de], dados.estacoes[trecho.para]
 	self.lblDetalhes.Text = table.concat({
 		`{Emojis.distancia} Extensão: {opcao.km} km`,
 		`{Emojis.terreno_montanha} Terreno: {terreno.nome} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`,
-		`{Emojis.renda} Renda: + {Economia.formatar(Economia.rendaTrecho(trecho, escolhida) * Economia.multiplicadorEra(estado), simbolo, true)}/s{if Economia.multiplicadorEra(estado) > 1 then ` (×{Economia.multiplicadorEra(estado)} da era)` else ""}`,
+		`{Emojis.passageiros} Demanda: {Economia.numero(passageiros)} passageiros/h (cidades de porte {estA.porte} e {estB.porte})`,
+		`{Emojis.renda} Receita: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} da era)` else ""}`,
+		`{Emojis.manutencao} Manutenção: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`,
 	}, "\n")
 
 	-- opções de traçado (só antes de construir). Só recria os botões quando algo muda,
@@ -521,31 +553,46 @@ function Interface._preencher(self: Interface)
 	end
 	self.lblMotivo.Visible = self.lblMotivo.Text ~= ""
 
-	-- trens da linha (a frota vai só até o necessário)
+	-- trens da linha: a frota tem que levar os passageiros; trem a mais só custa manutenção
 	local construidos = Economia.trechosConstruidos(estado, linha)
 	local trens = estado.trens[linha.id] or 0
-	local necessarios = Economia.trensNecessarios(estado, linha)
-	local faltando = Economia.trensFaltando(estado, linha)
-	local servico = math.round(Economia.servico(estado, linha) * 100)
+	local faltando = Economia.trensFaltando(estado, dados, linha)
+	local sobrando = Economia.trensSobrando(estado, dados, linha)
+	local demanda = Economia.passageirosLinha(estado, dados, linha)
+	local capacidade = trens * Economia.capacidadeTrem(estado)
+	local servico = math.round(Economia.servico(estado, dados, linha) * 100)
+	local custoTrem = Economia.custoTrem(estado, linha)
+	local manutTrem = Economia.formatar(Economia.manutencaoTrem(estado, linha), simbolo, true)
+	local fmt = Economia.numero
+	self.btnVender.Visible = false
 	if construidos == 0 then
-		self.lblTrens.Text = `{Emojis.trens} O primeiro trem vem junto com o primeiro trecho. Cada 2 trechos pedem mais 1 trem.`
+		self.lblTrens.Text = `{Emojis.trens} O primeiro trem vem junto com o primeiro trecho. Cada trem leva {fmt(Economia.capacidadeTrem(estado))} passageiros/h.`
 		self.lblTrens.TextColor3 = c.inkMuted
 		self.btnTrem.Visible = false
-	elseif faltando > 0 then
-		local plural = if faltando == 1 then "trem" else "trens"
-		self.lblTrens.Text = `{Emojis.alerta} Frota: {trens} de {necessarios} trens. Faltam {faltando} {plural}: esta linha rende só {servico}%.`
-		self.lblTrens.TextColor3 = c.negative
-		local custoTrem = Economia.custoTrem(estado, linha)
-		local podePagar = estado.dinheiro >= custoTrem
-		self.btnTrem.Visible = true
-		self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`
-		self.btnTrem.Active = podePagar
-		self.btnTrem.AutoButtonColor = podePagar
-		self.btnTrem.BackgroundTransparency = if podePagar then 0 else 0.6
 	else
-		self.lblTrens.Text = `{Emojis.confirmar} Frota completa: {trens} de {necessarios} trens · rendendo 100%.`
-		self.lblTrens.TextColor3 = c.positive
-		self.btnTrem.Visible = false
+		local linhaFrota = `{Emojis.trens} Frota: {trens} {if trens == 1 then "trem" else "trens"} · leva {fmt(capacidade)} de {fmt(demanda)} passageiros/h`
+		if faltando > 0 then
+			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"}.`
+			self.lblTrens.TextColor3 = c.negative
+		elseif sobrando > 0 then
+			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "trem rodando vazio" else "trens rodando vazios"}: cada um custa {manutTrem}/s de manutenção.`
+			self.lblTrens.TextColor3 = c.negative
+		else
+			self.lblTrens.Text = `{linhaFrota}\n{Emojis.confirmar} Todos os passageiros embarcam.`
+			self.lblTrens.TextColor3 = c.positive
+		end
+		self.btnTrem.Visible = faltando > 0
+		if faltando > 0 then
+			local podePagar = estado.dinheiro >= custoTrem
+			self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)} (manutenção {manutTrem}/s)`
+			self.btnTrem.Active = podePagar
+			self.btnTrem.AutoButtonColor = podePagar
+			self.btnTrem.BackgroundTransparency = if podePagar then 0 else 0.6
+		end
+		if Economia.podeVenderTrem(estado, linha) then
+			self.btnVender.Visible = true
+			self.btnVender.Text = `Vender 1 trem · + {Economia.formatar(Economia.valorVendaTrem(estado, linha), simbolo)}`
+		end
 	end
 
 	-- cargas desta linha

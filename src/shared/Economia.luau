@@ -4,11 +4,26 @@
 
 local Economia = {}
 
-Economia.DINHEIRO_INICIAL = 1000
-Economia.PAYBACK_SEGUNDOS = 30 -- um trecho paga o próprio custo em ~30 s com serviço em 100%
-Economia.TRECHOS_POR_TREM = 2 -- cada linha precisa de 1 trem a cada 2 trechos construídos
+Economia.DINHEIRO_INICIAL = 1500
+Economia.PAYBACK_SEGUNDOS = 25 -- receita bruta de um trecho entre cidades médias: o custo dele a cada 25 s
 Economia.FATOR_CUSTO_TREM = 0.4 -- trem custa 40% do custo médio dos trechos da linha
 Economia.OFFLINE_MAX_SEGUNDOS = 2 * 60 * 60
+
+-- Demanda: cada cidade "pesa" pelo porte; um trecho gera passageiros pela soma dos pesos das pontas.
+Economia.PESO_PORTE = { 1, 2, 3, 5, 8 }
+Economia.PESO_REFERENCIA = 6 -- duas cidades de porte 3: receita "normal" do trecho
+Economia.PASSAGEIROS_POR_PESO = 60 -- passageiros por hora, por ponto de peso
+
+-- Efeito rede: cada cidade grande (porte 3+) alcançável pelos trilhos, fora da própria linha, dá +3%.
+Economia.PORTE_CIDADE_GRANDE = 3
+Economia.BONUS_REDE_POR_CIDADE = 0.03
+Economia.MAX_CIDADES_REDE = 15
+
+-- Manutenção, por segundo: trecho custa 0,4% do preço dele; trem, 1,8% do preço dele.
+Economia.MANUTENCAO_TRECHO = 0.004
+Economia.MANUTENCAO_TREM = 0.018
+Economia.REEMBOLSO_TREM = 0.5 -- vender um trem devolve metade do preço
+Economia.MAX_TRENS_LINHA = 30
 
 -- Cargas: cada cidade produtora ligada por trilho até um porto dá um bônus na renda da linha dela.
 Economia.CARGAS = {
@@ -39,8 +54,8 @@ Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira
 
 -- Eras: a próxima libera com N linhas completas e multiplica a renda de tudo.
 Economia.ERAS = {
-	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0 },
-	{ id = "diesel", multiplicador = 2, custo = 60000, linhasCompletas = 4 },
+	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350 },
+	{ id = "diesel", multiplicador = 2, custo = 60000, linhasCompletas = 4, capacidade = 700 },
 }
 
 -- Estado salvo de um jogador em um mapa.
@@ -71,10 +86,24 @@ function Economia.opcaoTrecho(trecho: any, alternativaId: string?): any
 	return trecho
 end
 
-function Economia.rendaTrecho(trecho: any, alternativaId: string?): number
+-- Soma dos pesos das duas cidades de um trecho.
+function Economia.pesoTrecho(dados: any, trecho: any): number
+	local a, b = dados.estacoes[trecho.de], dados.estacoes[trecho.para]
+	return Economia.PESO_PORTE[a.porte] + Economia.PESO_PORTE[b.porte]
+end
+
+-- Receita bruta de um trecho por segundo (sem estações, rede, trens, cargas, era ou satisfação).
+-- Ligar cidades grandes rende mais que ligar vilas, para o mesmo custo.
+function Economia.rendaTrecho(dados: any, trecho: any, alternativaId: string?): number
 	local opcao = Economia.opcaoTrecho(trecho, alternativaId)
 	local demanda = opcao.fatorDemanda or 1
-	return opcao.custo / Economia.PAYBACK_SEGUNDOS * demanda
+	local tamanho = math.sqrt(Economia.pesoTrecho(dados, trecho) / Economia.PESO_REFERENCIA)
+	return opcao.custo / Economia.PAYBACK_SEGUNDOS * demanda * tamanho
+end
+
+-- Manutenção de um trecho construído, por segundo.
+function Economia.manutencaoTrecho(trecho: any, alternativaId: string?): number
+	return Economia.opcaoTrecho(trecho, alternativaId).custo * Economia.MANUTENCAO_TRECHO
 end
 
 function Economia.trechosConstruidos(estado: EstadoMapa, linha: any): number
@@ -200,16 +229,125 @@ function Economia.situacaoTrecho(estado: EstadoMapa, dados: any, indiceLinha: nu
 	return "disponivel"
 end
 
-function Economia.trensNecessarios(estado: EstadoMapa, linha: any): number
-	return math.ceil(Economia.trechosConstruidos(estado, linha) / Economia.TRECHOS_POR_TREM)
+-- ---------------------------------------------------------------- rede
+
+export type Rede = {
+	componente: { [string]: number }, -- estação -> pedaço da rede (ilha de trilhos ligados)
+	grandes: { [number]: { string } }, -- pedaço -> cidades grandes nele
+}
+
+-- Separa a rede em pedaços ligados e lista as cidades grandes de cada um.
+function Economia.rede(estado: EstadoMapa, dados: any): Rede
+	local vizinhos: { [string]: { string } } = {}
+	for _, linha in dados.linhas do
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] then
+				vizinhos[t.de] = vizinhos[t.de] or {}
+				vizinhos[t.para] = vizinhos[t.para] or {}
+				table.insert(vizinhos[t.de], t.para)
+				table.insert(vizinhos[t.para], t.de)
+			end
+		end
+	end
+	local componente: { [string]: number } = {}
+	local grandes: { [number]: { string } } = {}
+	local n = 0
+	for inicio in vizinhos do
+		if not componente[inicio] then
+			n += 1
+			grandes[n] = {}
+			local fila = { inicio }
+			componente[inicio] = n
+			local i = 1
+			while i <= #fila do
+				local id = fila[i]
+				if dados.estacoes[id].porte >= Economia.PORTE_CIDADE_GRANDE then
+					table.insert(grandes[n], id)
+				end
+				for _, v in vizinhos[id] do
+					if not componente[v] then
+						componente[v] = n
+						table.insert(fila, v)
+					end
+				end
+				i += 1
+			end
+		end
+	end
+	return { componente = componente, grandes = grandes }
 end
 
-function Economia.servico(estado: EstadoMapa, linha: any): number
-	local necessarios = Economia.trensNecessarios(estado, linha)
-	if necessarios == 0 then
+-- Bônus de rede de uma linha: cidades grandes ligadas a ela por trilho que não estão na própria linha.
+function Economia.bonusRede(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): (number, number)
+	local r = rede or Economia.rede(estado, dados)
+	local proprias: { [string]: boolean } = {}
+	local comp: number? = nil
+	for _, t in linha.trechos do
+		if estado.trechos[t.id] then
+			proprias[t.de], proprias[t.para] = true, true
+			comp = r.componente[t.de]
+		end
+	end
+	if not comp then
+		return 1, 0
+	end
+	local n = 0
+	for _, id in r.grandes[comp] do
+		if not proprias[id] then
+			n += 1
+		end
+	end
+	n = math.min(n, Economia.MAX_CIDADES_REDE)
+	return 1 + n * Economia.BONUS_REDE_POR_CIDADE, n
+end
+
+-- ---------------------------------------------------------------- passageiros e trens
+
+local function fatorEstacoesTrecho(estado: EstadoMapa, t: any): number
+	return 1 + Economia.BONUS_POR_NIVEL * ((estado.estacoes[t.de] or 0) + (estado.estacoes[t.para] or 0))
+end
+
+-- Passageiros por hora que um trecho construído gera (estações e rede aumentam; o traçado pode diminuir).
+function Economia.passageirosTrecho(estado: EstadoMapa, dados: any, t: any, fatorRede: number): number
+	local opcao = Economia.opcaoTrecho(t, estado.trechos[t.id])
+	return Economia.PASSAGEIROS_POR_PESO
+		* Economia.pesoTrecho(dados, t)
+		* fatorEstacoesTrecho(estado, t)
+		* (opcao.fatorDemanda or 1)
+		* fatorRede
+end
+
+function Economia.passageirosLinha(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
+	local fatorRede = Economia.bonusRede(estado, dados, linha, rede)
+	local total = 0
+	for _, t in linha.trechos do
+		if estado.trechos[t.id] then
+			total += Economia.passageirosTrecho(estado, dados, t, fatorRede)
+		end
+	end
+	return math.round(total)
+end
+
+-- Lugares por hora que cada trem oferece (trens maiores e mais rápidos a cada era).
+function Economia.capacidadeTrem(estado: EstadoMapa): number
+	return Economia.ERAS[Economia.indiceEra(estado)].capacidade
+end
+
+-- Trens para levar todos os passageiros da linha.
+function Economia.trensNecessarios(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
+	if Economia.trechosConstruidos(estado, linha) == 0 then
 		return 0
 	end
-	return math.min(1, (estado.trens[linha.id] or 0) / necessarios)
+	return math.max(1, math.ceil(Economia.passageirosLinha(estado, dados, linha, rede) / Economia.capacidadeTrem(estado)))
+end
+
+-- Fração dos passageiros que a frota consegue levar (0 a 1).
+function Economia.servico(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
+	local passageiros = Economia.passageirosLinha(estado, dados, linha, rede)
+	if passageiros <= 0 then
+		return 0
+	end
+	return math.min(1, (estado.trens[linha.id] or 0) * Economia.capacidadeTrem(estado) / passageiros)
 end
 
 -- Preço fixo por linha: 40% do custo médio dos trechos dela.
@@ -221,24 +359,44 @@ function Economia.custoTrem(_estado: EstadoMapa, linha: any): number
 	return math.round(soma / #linha.trechos * Economia.FATOR_CUSTO_TREM)
 end
 
--- Quantos trens faltam para a linha rodar a 100%. A frota nunca passa disso.
-function Economia.trensFaltando(estado: EstadoMapa, linha: any): number
-	return math.max(0, Economia.trensNecessarios(estado, linha) - (estado.trens[linha.id] or 0))
+function Economia.valorVendaTrem(estado: EstadoMapa, linha: any): number
+	return math.round(Economia.custoTrem(estado, linha) * Economia.REEMBOLSO_TREM)
 end
 
-function Economia.podeComprarTrem(estado: EstadoMapa, linha: any): boolean
-	return Economia.trechosConstruidos(estado, linha) > 0 and Economia.trensFaltando(estado, linha) > 0
+function Economia.manutencaoTrem(estado: EstadoMapa, linha: any): number
+	return Economia.custoTrem(estado, linha) * Economia.MANUTENCAO_TREM
 end
 
--- Corrige a frota salva: nunca acima do necessário, e ao menos 1 trem se a linha tem trechos.
+function Economia.trensFaltando(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
+	return math.max(0, Economia.trensNecessarios(estado, dados, linha, rede) - (estado.trens[linha.id] or 0))
+end
+
+-- Trens sem passageiro (depois de mudar de era, por exemplo): só custam manutenção.
+function Economia.trensSobrando(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
+	return math.max(0, (estado.trens[linha.id] or 0) - Economia.trensNecessarios(estado, dados, linha, rede))
+end
+
+-- Compra só até levar todo mundo: trem a mais não dá passageiro.
+function Economia.podeComprarTrem(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): boolean
+	local trens = estado.trens[linha.id] or 0
+	return Economia.trechosConstruidos(estado, linha) > 0
+		and trens < Economia.MAX_TRENS_LINHA
+		and Economia.trensFaltando(estado, dados, linha, rede) > 0
+end
+
+-- Toda linha com trecho fica com ao menos 1 trem.
+function Economia.podeVenderTrem(estado: EstadoMapa, linha: any): boolean
+	return (estado.trens[linha.id] or 0) > 1
+end
+
+-- Corrige a frota salva: entre 1 e o máximo, e nenhum trem em linha sem trecho.
 function Economia.ajustarFrota(estado: EstadoMapa, dados: any)
 	for _, linha in dados.linhas do
-		local necessarios = Economia.trensNecessarios(estado, linha)
 		local atual = estado.trens[linha.id] or 0
-		if necessarios == 0 then
+		if Economia.trechosConstruidos(estado, linha) == 0 then
 			estado.trens[linha.id] = nil
 		else
-			estado.trens[linha.id] = math.clamp(atual, 1, necessarios)
+			estado.trens[linha.id] = math.clamp(atual, 1, Economia.MAX_TRENS_LINHA)
 		end
 	end
 end
@@ -317,21 +475,20 @@ function Economia.custoMelhoria(estado: EstadoMapa, dados: any, id: string): num
 	return math.round(base * (2 ^ nivel))
 end
 
-local function fatorEstacoes(estado: EstadoMapa, t: any): number
-	return 1 + Economia.BONUS_POR_NIVEL * (Economia.nivelEstacao(estado, t.de) + Economia.nivelEstacao(estado, t.para))
-end
+local fatorEstacoes = fatorEstacoesTrecho
 
 -- ---------------------------------------------------------------- satisfação
 
 -- 70% vem do serviço das linhas (trens), 30% do nível médio das estações da rede. Vai de 0 a 1.
-function Economia.satisfacao(estado: EstadoMapa, dados: any): number
+function Economia.satisfacao(estado: EstadoMapa, dados: any, rede: Rede?): number
+	rede = rede or Economia.rede(estado, dados)
 	local servicoPeso, peso = 0, 0
 	local niveis, nEst = 0, 0
 	local contada: { [string]: boolean } = {}
 	for _, linha in dados.linhas do
-		local n = Economia.trechosConstruidos(estado, linha)
+		local n = if Economia.trechosConstruidos(estado, linha) > 0 then Economia.passageirosLinha(estado, dados, linha, rede) else 0
 		if n > 0 then
-			servicoPeso += Economia.servico(estado, linha) * n
+			servicoPeso += Economia.servico(estado, dados, linha, rede) * n
 			peso += n
 			for _, t in linha.trechos do
 				if estado.trechos[t.id] then
@@ -355,8 +512,8 @@ function Economia.satisfacao(estado: EstadoMapa, dados: any): number
 end
 
 -- Satisfação mexe na renda de tudo: de -15% (0%) a +15% (100%).
-function Economia.fatorSatisfacao(estado: EstadoMapa, dados: any): number
-	return 0.85 + 0.3 * Economia.satisfacao(estado, dados)
+function Economia.fatorSatisfacao(estado: EstadoMapa, dados: any, rede: Rede?): number
+	return 0.85 + 0.3 * Economia.satisfacao(estado, dados, rede)
 end
 
 -- ---------------------------------------------------------------- cargas
@@ -432,48 +589,103 @@ end
 
 -- ---------------------------------------------------------------- renda
 
-function Economia.rendaLinha(estado: EstadoMapa, linha: any, cargas: { InfoCarga }?): number
+export type BalancoLinha = {
+	receita: number, -- já com satisfação
+	manutencao: number,
+	lucro: number,
+	passageiros: number,
+	capacidade: number,
+	servico: number,
+	rede: number, -- cidades grandes ligadas (efeito rede)
+	fatorRede: number,
+}
+
+export type Balanco = {
+	receita: number,
+	manutencao: number,
+	lucro: number,
+	satisfacao: number,
+	linhas: { [string]: BalancoLinha },
+}
+
+-- Receita bruta da linha (antes da satisfação): trechos × estações × rede × serviço × cargas × era.
+function Economia.receitaLinha(estado: EstadoMapa, dados: any, linha: any, cargas: { InfoCarga }?, rede: Rede?): number
+	local fatorRede = Economia.bonusRede(estado, dados, linha, rede)
 	local bruta = 0
 	for _, t in linha.trechos do
 		local alt = estado.trechos[t.id]
 		if alt then
-			bruta += Economia.rendaTrecho(t, alt) * fatorEstacoes(estado, t)
+			bruta += Economia.rendaTrecho(dados, t, alt) * fatorEstacoes(estado, t)
 		end
 	end
 	local bonus = if cargas then Economia.bonusCarga(cargas) else 0
-	return bruta * Economia.servico(estado, linha) * (1 + bonus) * Economia.multiplicadorEra(estado)
+	return bruta * fatorRede * Economia.servico(estado, dados, linha, rede) * (1 + bonus) * Economia.multiplicadorEra(estado)
 end
 
-function Economia.rendaTotal(estado: EstadoMapa, dados: any): number
-	local cargas = Economia.cargasPorLinha(estado, dados)
+function Economia.manutencaoLinha(estado: EstadoMapa, linha: any): number
 	local total = 0
-	for _, linha in dados.linhas do
-		total += Economia.rendaLinha(estado, linha, cargas[linha.id])
+	for _, t in linha.trechos do
+		local alt = estado.trechos[t.id]
+		if alt then
+			total += Economia.manutencaoTrecho(t, alt)
+		end
 	end
-	return total * Economia.fatorSatisfacao(estado, dados)
+	return total + (estado.trens[linha.id] or 0) * Economia.manutencaoTrem(estado, linha)
 end
 
--- Renda de uma linha já com a satisfação aplicada (para mostrar no painel).
-function Economia.rendaLinhaFinal(estado: EstadoMapa, dados: any, linha: any): number
+-- Contas da companhia: receita (com satisfação), manutenção e lucro, no total e por linha.
+function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
+	local rede = Economia.rede(estado, dados)
 	local cargas = Economia.cargasPorLinha(estado, dados)
-	return Economia.rendaLinha(estado, linha, cargas[linha.id]) * Economia.fatorSatisfacao(estado, dados)
+	local satisfacao = Economia.satisfacao(estado, dados, rede)
+	local fatorSat = 0.85 + 0.3 * satisfacao
+	local b: Balanco = { receita = 0, manutencao = 0, lucro = 0, satisfacao = satisfacao, linhas = {} }
+	for _, linha in dados.linhas do
+		if Economia.trechosConstruidos(estado, linha) > 0 then
+			local fatorRede, nRede = Economia.bonusRede(estado, dados, linha, rede)
+			local receita = Economia.receitaLinha(estado, dados, linha, cargas[linha.id], rede) * fatorSat
+			local manutencao = Economia.manutencaoLinha(estado, linha)
+			b.linhas[linha.id] = {
+				receita = receita,
+				manutencao = manutencao,
+				lucro = receita - manutencao,
+				passageiros = Economia.passageirosLinha(estado, dados, linha, rede),
+				capacidade = (estado.trens[linha.id] or 0) * Economia.capacidadeTrem(estado),
+				servico = Economia.servico(estado, dados, linha, rede),
+				rede = nRede,
+				fatorRede = fatorRede,
+			}
+			b.receita += receita
+			b.manutencao += manutencao
+		end
+	end
+	b.lucro = b.receita - b.manutencao
+	return b
+end
+
+-- Quanto o caixa muda por segundo (pode ser negativo).
+function Economia.rendaTotal(estado: EstadoMapa, dados: any): number
+	return Economia.balanco(estado, dados).lucro
 end
 
 -- ---------------------------------------------------------------- estatísticas (para o painel da companhia)
 
 function Economia.estatisticas(estado: EstadoMapa, dados: any): any
+	local balanco = Economia.balanco(estado, dados)
 	local trechos, total = 0, 0
-	local passageiros = 0
+	local passageiros, trens = 0, 0
 	for _, linha in dados.linhas do
-		local servico = Economia.servico(estado, linha)
 		for _, t in linha.trechos do
 			total += 1
 			if estado.trechos[t.id] then
 				trechos += 1
-				local a, b = dados.estacoes[t.de], dados.estacoes[t.para]
-				local opcao = Economia.opcaoTrecho(t, estado.trechos[t.id])
-				passageiros += (a.porte + b.porte) * opcao.km * 15 * (opcao.fatorDemanda or 1) * fatorEstacoes(estado, t) * servico
 			end
+		end
+		local bl = balanco.linhas[linha.id]
+		if bl then
+			-- passageiros levados por dia (a demanda é por hora; trens rodam ~18 h)
+			passageiros += math.min(bl.passageiros, bl.capacidade) * 18
+			trens += estado.trens[linha.id] or 0
 		end
 	end
 	local cafe, minerio, graos = 0, 0, 0
@@ -498,7 +710,10 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		end
 	end
 	return {
-		renda = Economia.rendaTotal(estado, dados),
+		renda = balanco.lucro,
+		receita = balanco.receita,
+		manutencao = balanco.manutencao,
+		trens = trens,
 		trechos = trechos,
 		trechosTotal = total,
 		linhasCompletas = Economia.linhasCompletas(estado, dados),
@@ -508,7 +723,7 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		cafeDia = cafe,
 		minerioDia = minerio,
 		graosDia = graos,
-		satisfacao = Economia.satisfacao(estado, dados),
+		satisfacao = balanco.satisfacao,
 	}
 end
 
@@ -544,6 +759,11 @@ function Economia.formatar(valor: number, simbolo: string?, decimais: boolean?):
 	local inteiro = tostring(math.floor(abs + 0.5))
 	local comPontos = inteiro:reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", "")
 	return `{sinal}{s} {comPontos}`
+end
+
+-- Número sem símbolo de moeda (1.234 · 2,5 mi).
+function Economia.numero(valor: number): string
+	return (Economia.formatar(valor, "", false):gsub("^%s+", ""):gsub("^%-%s+", "-"))
 end
 
 return Economia
