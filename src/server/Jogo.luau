@@ -1,5 +1,5 @@
 --!strict
--- Jogo (servidor): sessões dos jogadores, ações de compra, renda por segundo, ganho offline e save.
+-- Jogo (servidor): sessões dos jogadores, ações de compra, renda por segundo, ganho offline, metas e save.
 -- O servidor é a única autoridade sobre dinheiro; o cliente só pede ações e mostra o estado.
 
 local Players = game:GetService("Players")
@@ -9,6 +9,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
+local Metas = require(Shared:WaitForChild("Metas"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
@@ -27,6 +28,8 @@ type Sessao = {
 	podeSalvar: boolean,
 	ultimaAcao: number,
 	ganhoOffline: number,
+	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
+	rng: Random,
 }
 
 local sessoes: { [Player]: Sessao } = {}
@@ -47,6 +50,34 @@ remotePedirEstado.Parent = pastaRemotes
 pastaRemotes.Parent = ReplicatedStorage
 
 -- ---------------------------------------------------------------- estado
+
+local function numero(v: any): boolean
+	return type(v) == "number" and v == v -- descarta NaN
+end
+
+-- Contrato salvo: só aceita se todos os campos estiverem no lugar.
+local function sanearContrato(c: any): any?
+	if type(c) ~= "table" or type(c.tipo) ~= "string" then
+		return nil
+	end
+	for _, campo in { "id", "meta", "prazo", "premio", "xp", "progresso", "decorrido" } do
+		if not numero(c[campo]) then
+			return nil
+		end
+	end
+	return {
+		id = c.id,
+		tipo = c.tipo,
+		alvo = if type(c.alvo) == "string" then c.alvo else nil,
+		dificuldade = if type(c.dificuldade) == "string" then c.dificuldade else "facil",
+		meta = c.meta,
+		prazo = c.prazo,
+		premio = c.premio,
+		xp = c.xp,
+		progresso = c.progresso,
+		decorrido = c.decorrido,
+	}
+end
 
 local function sanear(salvo: any): EstadoMapa
 	local e = Economia.estadoNovo()
@@ -95,16 +126,67 @@ local function sanear(salvo: any): EstadoMapa
 	if type(salvo.ultimoTick) == "number" then
 		e.ultimoTick = salvo.ultimoTick
 	end
+	-- metas
+	if numero(salvo.xp) then
+		e.xp = math.max(0, salvo.xp)
+	end
+	for _, campo in { "medalhas", "contadores" } do
+		if type(salvo[campo]) == "table" then
+			for k, v in salvo[campo] do
+				if type(k) == "string" and numero(v) then
+					(e :: any)[campo][k] = v
+				end
+			end
+		end
+	end
+	e.contrato = sanearContrato(salvo.contrato)
+	if type(salvo.ofertas) == "table" then
+		for i = 1, 3 do
+			local c = sanearContrato(salvo.ofertas[i])
+			if c then
+				table.insert(e.ofertas, c)
+			end
+		end
+	end
+	if numero(salvo.ofertasEm) then
+		e.ofertasEm = salvo.ofertasEm
+	end
+	if type(salvo.missoes) == "table" and numero(salvo.missoes.dia) and type(salvo.missoes.lista) == "table" then
+		e.missoes.dia = salvo.missoes.dia
+		for i = 1, 3 do
+			local m = salvo.missoes.lista[i]
+			if type(m) == "table" and type(m.tipo) == "string" and numero(m.meta) and numero(m.progresso) and numero(m.premio) and numero(m.xp) then
+				table.insert(e.missoes.lista, {
+					tipo = m.tipo,
+					meta = m.meta,
+					progresso = m.progresso,
+					premio = m.premio,
+					xp = m.xp,
+					resgatada = m.resgatada == true,
+				})
+			end
+		end
+	end
+	e.tutorial = salvo.tutorial == true
 	return e
 end
 
-local function pacoteEstado(s: Sessao): any
+local function pacoteEstado(s: Sessao, renda: number?): any
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	return {
 		mapa = s.mapaAtual,
 		dinheiro = e.dinheiro,
-		renda = Economia.rendaTotal(e, dados),
+		renda = renda or Economia.rendaTotal(e, dados),
+		xp = e.xp,
+		medalhas = e.medalhas,
+		contadores = e.contadores,
+		contrato = e.contrato,
+		ofertas = e.ofertas,
+		ofertasEm = e.ofertasEm,
+		missoes = e.missoes,
+		tutorial = e.tutorial,
+		eventos = s.eventos,
 		trechos = e.trechos,
 		trens = e.trens,
 		era = e.era,
@@ -116,10 +198,55 @@ local function pacoteEstado(s: Sessao): any
 	}
 end
 
-local function enviarEstado(s: Sessao)
+local function enviarEstado(s: Sessao, renda: number?)
 	if s.carregado then
-		remoteEstado:FireClient(s.jogador, pacoteEstado(s))
+		remoteEstado:FireClient(s.jogador, pacoteEstado(s, renda))
 		s.ganhoOffline = 0 -- só avisa uma vez
+		s.eventos = {}
+	end
+end
+
+-- ---------------------------------------------------------------- metas (XP, contratos, missões, medalhas)
+
+local function ganharXp(s: Sessao, e: EstadoMapa, xp: number)
+	local antes = Economia.nivel(e)
+	e.xp += xp
+	local depois = Economia.nivel(e)
+	if depois > antes then
+		table.insert(s.eventos, { tipo = "nivel", nivel = depois, titulo = Economia.tituloNivel(depois) })
+	end
+end
+
+local function encerrarContrato(s: Sessao, e: EstadoMapa, cumprido: boolean)
+	local c = e.contrato
+	if not c then
+		return
+	end
+	e.contrato = nil
+	if cumprido then
+		e.dinheiro += c.premio
+		Metas.contar(e, "contratos", 1)
+		ganharXp(s, e, c.xp)
+	end
+	table.insert(s.eventos, { tipo = "contrato", cumprido = cumprido, premio = c.premio })
+end
+
+-- Missões do dia, ofertas de contrato e medalhas: mantém tudo em dia.
+local function atualizarMetas(s: Sessao, e: EstadoMapa, dados: any, ctx: Metas.Contexto)
+	local dia = Metas.diaAtual()
+	if e.missoes.dia ~= dia then
+		e.missoes = { dia = dia, lista = Metas.gerarMissoes(e, dados, ctx, s.rng) }
+	end
+	if not e.contrato and (#e.ofertas == 0 or os.time() - e.ofertasEm >= Metas.VALIDADE_OFERTAS_SEGUNDOS) then
+		e.ofertas = Metas.gerarOfertas(e, dados, ctx, s.rng)
+		if #e.ofertas > 0 then
+			e.ofertasEm = os.time()
+		end
+	end
+	for _, m in Metas.novasMedalhas(e, dados, ctx) do
+		e.medalhas[m.id] = os.time()
+		table.insert(s.eventos, { tipo = "medalha", id = m.id })
+		ganharXp(s, e, m.xp)
 	end
 end
 
@@ -168,6 +295,12 @@ function Acoes.construir(s: Sessao, args: any): (boolean, string?)
 	if (e.trens[linha.id] or 0) == 0 then
 		e.trens[linha.id] = 1 -- primeiro trem da linha é grátis
 	end
+	Metas.contar(e, "trechos", 1)
+	ganharXp(s, e, Metas.XP.trecho)
+	if Economia.linhaCompleta(e, linha) then
+		ganharXp(s, e, Metas.XP.linha)
+		table.insert(s.eventos, { tipo = "linha", nome = linha.nome })
+	end
 	return true, nil
 end
 
@@ -198,6 +331,8 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	end
 	e.dinheiro -= custo
 	e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
+	Metas.contar(e, "trens", 1)
+	ganharXp(s, e, Metas.XP.trem)
 	return true, nil
 end
 
@@ -246,6 +381,8 @@ function Acoes.melhorarEstacao(s: Sessao, args: any): (boolean, string?)
 	end
 	e.dinheiro -= custo
 	e.estacoes[args.estacao] = Economia.nivelEstacao(e, args.estacao) + 1
+	Metas.contar(e, "estacoes", 1)
+	ganharXp(s, e, Metas.XP.estacao)
 	return true, nil
 end
 
@@ -290,6 +427,8 @@ function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 		while Economia.podeComprarTrem(e, dados, linha) and e.dinheiro >= Economia.custoTrem(e, linha) do
 			e.dinheiro -= Economia.custoTrem(e, linha)
 			e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
+			Metas.contar(e, "trens", 1)
+			ganharXp(s, e, Metas.XP.trem)
 			comprados += 1
 		end
 	end
@@ -326,6 +465,8 @@ function Acoes.pesquisar(s: Sessao, args: any): (boolean, string?)
 	end
 	e.dinheiro -= p.custo
 	e.projetos[p.id] = os.time() + p.segundos
+	Metas.contar(e, "estudo", 1)
+	ganharXp(s, e, Metas.XP.projeto)
 	return true, `Estudos da {p.nome} começaram.`
 end
 
@@ -368,7 +509,102 @@ function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 	end
 	e.dinheiro -= proxima.custo
 	e.era = proxima.id
+	ganharXp(s, e, Metas.XP.era)
 	return true, nil
+end
+
+-- Contratos: aceitar uma das ofertas (uma por vez).
+function Acoes.aceitarContrato(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.id) ~= "number" then
+		return false, "Pedido inválido."
+	end
+	local e = s.mapas[s.mapaAtual]
+	if e.contrato then
+		return false, "Você já tem um contrato em andamento."
+	end
+	for i, oferta in e.ofertas do
+		if oferta.id == args.id then
+			table.remove(e.ofertas, i)
+			oferta.progresso, oferta.decorrido = 0, 0
+			e.contrato = oferta
+			return true, "Contrato assinado. O prazo já está correndo!"
+		end
+	end
+	return false, "Essa oferta não está mais disponível."
+end
+
+-- Desistir não tem multa, mas a oferta se perde.
+function Acoes.desistirContrato(s: Sessao, _args: any): (boolean, string?)
+	local e = s.mapas[s.mapaAtual]
+	if not e.contrato then
+		return false, "Não há contrato em andamento."
+	end
+	e.contrato = nil
+	return true, "Contrato cancelado."
+end
+
+function Acoes.trocarOfertas(s: Sessao, _args: any): (boolean, string?)
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	if e.contrato then
+		return false, "Termine o contrato em andamento primeiro."
+	end
+	local espera = Metas.TROCA_OFERTAS_SEGUNDOS - (os.time() - e.ofertasEm)
+	if #e.ofertas > 0 and espera > 0 then
+		return false, `Ofertas novas em {Metas.relogio(espera)}.`
+	end
+	local novas = Metas.gerarOfertas(e, dados, Metas.contexto(e, dados), s.rng)
+	if #novas == 0 then
+		return false, "Construa mais trechos para receber contratos."
+	end
+	e.ofertas = novas
+	e.ofertasEm = os.time()
+	return true, nil
+end
+
+-- Missão do dia: quando completa, o jogador resgata o prêmio.
+function Acoes.resgatarMissao(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.indice) ~= "number" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local m = e.missoes.lista[args.indice]
+	if not m then
+		return false, "Missão desconhecida."
+	end
+	if m.resgatada then
+		return false, "Essa missão já foi resgatada."
+	end
+	if m.progresso < m.meta then
+		return false, "Essa missão ainda não foi cumprida."
+	end
+	m.resgatada = true
+	e.dinheiro += m.premio
+	Metas.contar(e, "missoes", 1)
+	ganharXp(s, e, m.xp)
+	return true, `Missão cumprida: + {Economia.formatar(m.premio, dados.simbolo)}`
+end
+
+-- Tutorial: concluir (com prêmio, no último passo) ou pular.
+function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	if e.tutorial then
+		return false, "O tutorial já acabou."
+	end
+	if type(args) == "table" and args.pular == true then
+		e.tutorial = true
+		return true, nil
+	end
+	local passo = Metas.passoTutorial(e, dados)
+	if not passo or passo.id ~= "fim" then
+		return false, "Ainda falta um passo do tutorial."
+	end
+	e.tutorial = true
+	e.dinheiro += Metas.PREMIO_TUTORIAL
+	ganharXp(s, e, Metas.XP.tutorial)
+	return true, `Tutorial concluído: + {Economia.formatar(Metas.PREMIO_TUTORIAL, dados.simbolo)}`
 end
 
 remoteAcao.OnServerInvoke = function(jogador: Player, tipo: any, args: any)
@@ -403,6 +639,7 @@ remotePedirEstado.OnServerInvoke = function(jogador: Player)
 	end
 	local pacote = pacoteEstado(s)
 	s.ganhoOffline = 0
+	s.eventos = {}
 	return pacote
 end
 
@@ -417,6 +654,8 @@ local function aoEntrar(jogador: Player)
 		podeSalvar = false,
 		ultimaAcao = 0,
 		ganhoOffline = 0,
+		eventos = {},
+		rng = Random.new(),
 	}
 	sessoes[jogador] = s
 
@@ -498,6 +737,24 @@ if RunService:IsStudio() then
 				for id, fim in e.projetos do
 					e.projetos[id] = math.min(fim, os.time())
 				end
+			elseif comando == "xp" then
+				ganharXp(s, e, tonumber(valor) or 0)
+			elseif comando == "contrato" then
+				-- cumpre o contrato em andamento; com "falhar", estoura o prazo (vale no próximo segundo)
+				if e.contrato and valor == "falhar" then
+					e.contrato.decorrido = e.contrato.prazo
+				elseif e.contrato then
+					encerrarContrato(s, e, true)
+				end
+			elseif comando == "missoes" then
+				-- completa as missões de hoje; com "novas", sorteia de novo
+				if valor == "novas" then
+					e.missoes.dia = 0
+				else
+					for _, m in e.missoes.lista do
+						m.progresso = m.meta
+					end
+				end
 			elseif comando == "estado" then
 				return e
 			end
@@ -521,9 +778,20 @@ task.spawn(function()
 		for _, s in sessoes do
 			if s.carregado then
 				local e = s.mapas[s.mapaAtual]
+				local dados = MAPAS[s.mapaAtual]
+				local ctx = Metas.contexto(e, dados)
+				local lucro = ctx.balanco.lucro
 				-- com prejuízo (manutenção maior que a receita) o caixa desce, mas nunca abaixo de zero
-				e.dinheiro = math.max(0, e.dinheiro + Economia.rendaTotal(e, MAPAS[s.mapaAtual]) * dt)
-				enviarEstado(s)
+				e.dinheiro = math.max(0, e.dinheiro + lucro * dt)
+				-- 1 minuto de verdade = 1 dia da ferrovia
+				Metas.contar(e, "lucro", math.max(0, lucro) * dt)
+				Metas.contar(e, "passageiros", ctx.passageirosDia / Metas.SEGUNDOS_POR_DIA * dt)
+				local resultado = Metas.avancarContrato(e, dados, ctx, dt)
+				if resultado then
+					encerrarContrato(s, e, resultado == "cumprido")
+				end
+				atualizarMetas(s, e, dados, ctx)
+				enviarEstado(s, lucro)
 			end
 		end
 		if agora >= proximoSave then

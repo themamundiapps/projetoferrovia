@@ -10,11 +10,13 @@ local Theme = require(Shared:WaitForChild("Theme"))
 local Mapas = require(Shared:WaitForChild("Mapas"))
 local Assets = require(Shared:WaitForChild("Assets"))
 local Economia = require(Shared:WaitForChild("Economia"))
+local Metas = require(Shared:WaitForChild("Metas"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
 local Interface = require(script:WaitForChild("Interface"))
 local Menu = require(script:WaitForChild("Menu"))
+local Tutorial = require(script:WaitForChild("Tutorial"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -75,7 +77,8 @@ end
 local mapa: any = nil
 local ui: any = nil
 local menu: any = nil
-local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true }
+local tutorial: any = nil
+local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true }
 local eraAtual: string? = nil
 local ultimoEstado: any = nil
 local conexoesTela: { RBXScriptConnection } = {}
@@ -90,12 +93,59 @@ local function situacoes(estado: any): { [string]: string }
 	return s
 end
 
+-- Trens de cada linha para o mapa animar: a trilha são os trechos construídos, em ordem.
+local function trensDoMapa(estado: any): { any }
+	local lista = {}
+	local rede = Economia.rede(estado, DadosBrasil)
+	for _, linha in DadosBrasil.linhas do
+		local pontos: { Vector2 } = {}
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] then
+				if #pontos == 0 then
+					table.insert(pontos, DadosBrasil.estacoes[t.de].pos)
+				end
+				table.insert(pontos, DadosBrasil.estacoes[t.para].pos)
+			end
+		end
+		if #pontos >= 2 then
+			local situacao = if Economia.trensFaltando(estado, DadosBrasil, linha, rede) > 0 then "lotado"
+				elseif Economia.trensSobrando(estado, DadosBrasil, linha, rede) > 0 then "vazio"
+				else "normal"
+			table.insert(lista, { id = linha.id, pontos = pontos, n = estado.trens[linha.id] or 0, situacao = situacao })
+		end
+	end
+	return lista
+end
+
 local function aplicarNaTela(estado: any)
 	mapa:definirSituacao(situacoes(estado))
 	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
 	mapa:definirNiveis(estado.estacoes or {})
+	mapa:definirTrens(trensDoMapa(estado))
 	ui:atualizarEstado(estado)
 	menu:atualizarEstado(estado)
+	tutorial:atualizarEstado(estado)
+end
+
+-- Novidades que o servidor manda uma vez só (contrato, medalha, nível, linha completa): viram avisos em fila.
+local function avisarEventos(estado: any)
+	local simbolo = DadosBrasil.simbolo
+	for _, ev in estado.eventos or {} do
+		if ev.tipo == "contrato" and ev.cumprido then
+			ui:enfileirar(`{Emojis.contratos} Contrato cumprido! Prêmio: {Economia.formatar(ev.premio, simbolo)}`, 5)
+		elseif ev.tipo == "contrato" then
+			ui:enfileirar(`{Emojis.relogio} O prazo do contrato acabou. Há ofertas novas na aba Contratos.`, 5)
+		elseif ev.tipo == "medalha" then
+			local m = Metas.acharMedalha(ev.id)
+			if m then
+				ui:enfileirar(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, 4)
+			end
+		elseif ev.tipo == "nivel" then
+			ui:enfileirar(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, 5)
+		elseif ev.tipo == "linha" then
+			ui:enfileirar(`{Emojis.confirmar} Linha completa: {ev.nome}!`, 4)
+		end
+	end
 end
 
 local function agir(tipo: string, args: any)
@@ -111,6 +161,8 @@ local function agir(tipo: string, args: any)
 			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
 		elseif tipo == "trem" then
 			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
+		elseif tipo == "aceitarContrato" or tipo == "trocarOfertas" or tipo == "tutorial" then
+			-- sem aviso próprio: a tela já mostra o que mudou
 		elseif tipo == "venderTrem" then
 			ui:avisar(`{Emojis.dinheiro} Trem vendido.`, 2)
 		elseif tipo == "construir" then
@@ -145,6 +197,7 @@ local function montar(eraId: string)
 		table.clear(conexoesTela)
 		ui:destruir()
 		menu:destruir()
+		tutorial:destruir()
 		mapa:destruir()
 	end
 
@@ -152,6 +205,7 @@ local function montar(eraId: string)
 	ui = Interface.new(tela, era, DadosBrasil)
 	ui.eras = Theme.PorId
 	menu = Menu.new(tela, era, DadosBrasil)
+	tutorial = Tutorial.new(tela, era, DadosBrasil)
 	menu.ajustes = ajustesSalvos
 	for chave, valor in ajustesSalvos do
 		mapa:definirAjuste(chave, valor)
@@ -183,8 +237,8 @@ local function montar(eraId: string)
 			mapa:definirAjuste(chave, valor)
 		end
 	end))
-	table.insert(conexoesTela, menu.aoFocarLinha.Event:Connect(function(linhaId: string)
-		-- enquadra a linha e abre o próximo trecho a construir (ou o primeiro)
+	-- enquadra a linha e abre o próximo trecho a construir (ou o primeiro)
+	local function focarLinha(linhaId: string)
 		local mn = Vector2.new(math.huge, math.huge)
 		local mx = Vector2.new(-math.huge, -math.huge)
 		local alvo: string? = nil
@@ -207,6 +261,22 @@ local function montar(eraId: string)
 			mapa:focar(mn, mx, 140)
 			mapa:selecionar(alvo)
 			ui:abrir(alvo)
+		end
+	end
+	table.insert(conexoesTela, menu.aoFocarLinha.Event:Connect(focarLinha))
+	table.insert(conexoesTela, tutorial.aoAgir.Event:Connect(agir))
+	table.insert(conexoesTela, tutorial.aoAcao.Event:Connect(function(acao: string, alvo: string?)
+		if acao == "linha" and alvo then
+			focarLinha(alvo)
+		elseif acao == "estacao" and alvo then
+			local p = DadosBrasil.estacoes[alvo].pos
+			local folga = Vector2.new(60, 60)
+			mapa.interagiu = true
+			mapa:focar(p - folga, p + folga, 140)
+			mapa:selecionar(nil)
+			ui:abrirEstacao(alvo)
+		elseif acao == "aba" and alvo then
+			menu:abrirAba(alvo)
 		end
 	end))
 
@@ -266,21 +336,19 @@ local function aplicarEstado(estado: any)
 		montar(estado.era)
 		if trocou then
 			local era = Theme.PorId[estado.era]
-			ui:avisar(`{Emojis.era_diesel} Bem-vindo à {era and era.nome or "nova era"}! A renda de todas as linhas dobrou.`, 6)
+			ui:enfileirar(`{Emojis.era_diesel} Bem-vindo à {era and era.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
 		end
+		avisarEventos(estado)
 		return
 	end
 	aplicarNaTela(estado)
+	avisarEventos(estado)
 end
 
 montar("vapor")
 remoteEstado.OnClientEvent:Connect(aplicarEstado)
 task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())
-end)
-
-task.delay(1.5, function()
-	ui:avisar(`{Emojis.linhas} Toque num trilho para ver a concessão. Comece pela E.F. Mauá, perto do Rio.`, 6)
 end)
 
 print(`[Ferrovia] Cliente iniciado: mapa do Brasil com {#DadosBrasil.linhas} linhas.`)

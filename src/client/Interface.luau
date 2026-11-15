@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
+local Metas = require(Shared:WaitForChild("Metas"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 
 local Interface = {}
@@ -57,6 +58,8 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.alternativa = nil :: string?
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFechar = Instance.new("BindableEvent")
+	self._fila = {} :: { { msg: string, segundos: number } }
+	self._rodandoFila = false
 
 	local function caixa(props: { [string]: any }): Frame
 		local fr = novo("Frame", props, tela)
@@ -111,9 +114,34 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		ZIndex = 31,
 	}, hud)
 
+	-- nível da companhia e contrato em andamento
+	self.lblNivel = novo("TextLabel", {
+		Name = "Nivel",
+		LayoutOrder = 4,
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundTransparency = 1,
+		Text = "",
+		FontFace = f.body,
+		TextSize = 14,
+		TextColor3 = c.ink,
+		ZIndex = 31,
+	}, hud)
+	self.lblContrato = novo("TextLabel", {
+		Name = "Contrato",
+		LayoutOrder = 5,
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundTransparency = 1,
+		Text = "",
+		FontFace = f.body,
+		TextSize = 14,
+		TextColor3 = c.accent,
+		Visible = false,
+		ZIndex = 31,
+	}, hud)
+
 	self.btnEra = novo("TextButton", {
 		Name = "BtnEra",
-		LayoutOrder = 4,
+		LayoutOrder = 6,
 		Size = UDim2.fromOffset(250, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundColor3 = c.accent,
@@ -131,7 +159,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		novo("UICorner", { CornerRadius = UDim.new(0, era.forma.canto) }, self.btnEra)
 	end
 	self.lblEra = novo("TextLabel", {
-		LayoutOrder = 5,
+		LayoutOrder = 7,
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundTransparency = 1,
 		Text = `{era.nome} · {era.anos}`,
@@ -314,9 +342,33 @@ function Interface.avisar(self: Interface, msg: string, segundos: number?)
 	end)
 end
 
+-- Avisos em fila (contrato cumprido, medalha, nível...): um de cada vez, sem um apagar o outro.
+function Interface.enfileirar(self: Interface, msg: string, segundos: number?)
+	table.insert(self._fila, { msg = msg, segundos = segundos or 4 })
+	if self._rodandoFila then
+		return
+	end
+	self._rodandoFila = true
+	task.spawn(function()
+		while #self._fila > 0 and self.aviso.Parent do
+			local item = table.remove(self._fila, 1)
+			self:avisar(item.msg, item.segundos)
+			task.wait(item.segundos)
+		end
+		self._rodandoFila = false
+	end)
+end
+
 function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
+	local nivel = Economia.nivel(estado)
+	self.lblNivel.Text = `{Emojis.nivel} Nível {nivel} · {Economia.tituloNivel(nivel)}`
+	local contrato = estado.contrato
+	self.lblContrato.Visible = contrato ~= nil
+	if contrato then
+		self.lblContrato.Text = `{Emojis.contratos} {Metas.progressoContrato(contrato)} · {Metas.relogio(contrato.prazo - contrato.decorrido)}`
+	end
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	if estado.renda >= 0 then
 		self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`

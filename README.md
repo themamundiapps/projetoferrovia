@@ -72,4 +72,16 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Carga (café e minério até os portos) e escolha de traçado
 - [x] Duas eras (vapor e diesel), com troca de visual
 - [x] Save com DataStore e ganho offline (falta testar com as APIs ligadas no Studio)
+- [x] Menu com abas (Linhas, Gabinete, Contratos, Companhia, Ajustes), níveis de estação e estatísticas
+- [x] Gabinete de Projetos: 6 ferrovias planejadas do Brasil, liberadas por estudo com tempo real
+- [x] Economia com decisões: demanda por porte das cidades, lotação dos trens, efeito rede e manutenção
+- [x] Contratos com prazo, missões do dia, nível da companhia e medalhas (`src/shared/Metas.luau`)
+- [x] Trens andando no mapa e tutorial dos primeiros passos
+- [ ] Jornal da Companhia (eventos), ranking e mapas dos EUA e da Europa
 - [ ] Um gamepass e um developer product
+
+## Balanço
+
+`tools/balanco/simular.sh` roda um jogador "guloso" na economia (precisa do `luau` de linha de comando) e
+imprime em que minuto cada trecho, estudo e era acontece. Serve para conferir o ritmo depois de mexer nos
+números de `src/shared/Economia.luau`. No jogo, 1 minuto de verdade vale 1 dia da ferrovia.

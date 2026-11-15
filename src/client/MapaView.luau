@@ -6,6 +6,7 @@
 -- Ao mudar o zoom, reposicionamos os elementos (são poucos); ao arrastar, só movemos o conteúdo.
 
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
@@ -41,6 +42,11 @@ type Estacao = {
 	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
 }
 
+-- Trens animados: cada linha tem uma trilha (os pontos dos trechos construídos) e alguns trens indo e voltando.
+export type LinhaTrens = { id: string, pontos: { Vector2 }, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
+type Trilha = { pontos: { Vector2 }, acumulado: { number }, total: number, duracao: number }
+type Trem = { frame: Frame, trilha: Trilha, fase: number }
+
 type RotuloMapa = {
 	pos: Vector2,
 	zoomMin: number,
@@ -74,6 +80,9 @@ export type MapaView = typeof(setmetatable(
 		rotulosMapa: { RotuloMapa },
 		mostrarNomes: boolean,
 		mostrarRotulos: boolean,
+		mostrarTrens: boolean,
+		trens: { Trem },
+		assinaturaTrens: string,
 		conexoes: { RBXScriptConnection },
 		aoMudarCamera: BindableEvent,
 		aoTocar: BindableEvent,
@@ -102,9 +111,12 @@ local Z = {
 	rotuloMapa = 8, -- estados, regiões, rios, oceano (abaixo dos trilhos)
 	contorno = 9,
 	linha = 10,
-	estacao = 11,
-	rotulo = 12,
+	trem = 11,
+	estacao = 12,
+	rotulo = 13,
 }
+-- No máximo este tanto de trens desenhados por linha (a frota pode ser maior).
+local MAX_TRENS_VISIVEIS = 8
 
 -- Cor e camada de cada tipo de tile.
 local function estiloTile(camada: string, cores: any, detalhe: boolean): (Color3, number)
@@ -174,6 +186,9 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		rotulosMapa = {},
 		mostrarNomes = true,
 		mostrarRotulos = true,
+		mostrarTrens = true,
+		trens = {},
+		assinaturaTrens = "",
 		conexoes = {},
 		aoMudarCamera = Instance.new("BindableEvent"),
 		aoTocar = Instance.new("BindableEvent"),
@@ -187,6 +202,12 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 	self:_criarLinhas(dados)
 	self:_criarEstacoes(dados)
 	self:_conectarEntrada()
+	table.insert(
+		self.conexoes,
+		RunService.RenderStepped:Connect(function()
+			self:_moverTrens()
+		end)
+	)
 
 	table.insert(
 		self.conexoes,
@@ -514,8 +535,105 @@ function MapaView.definirAjuste(self: MapaView, chave: string, valor: boolean)
 		self.mostrarNomes = valor
 	elseif chave == "nomesMapa" then
 		self.mostrarRotulos = valor
+	elseif chave == "trens" then
+		self.mostrarTrens = valor
+		for _, t in self.trens do
+			t.frame.Visible = valor
+		end
 	end
 	self:_layout()
+end
+
+-- ---------------------------------------------------------------- trens
+
+local function espessuraLinha(zoom: number): number
+	return math.clamp(2 + zoom * 0.9, 4, 10)
+end
+
+function MapaView._tamanhoTrens(self: MapaView)
+	local altura = espessuraLinha(self.zoom) + 3
+	for _, t in self.trens do
+		t.frame.Size = UDim2.fromOffset(altura * 1.9, altura)
+	end
+end
+
+-- Define os trens de cada linha. Só recria os desenhos quando a frota, a trilha ou a lotação mudam.
+function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
+	local partes = {}
+	for _, l in lista do
+		table.insert(partes, `{l.id}:{#l.pontos}:{l.n}:{l.situacao}`)
+	end
+	local assinatura = table.concat(partes, "|")
+	if assinatura == self.assinaturaTrens then
+		return
+	end
+	self.assinaturaTrens = assinatura
+	for _, t in self.trens do
+		t.frame:Destroy()
+	end
+	table.clear(self.trens)
+	local cores = self.era.cores
+	for _, l in lista do
+		if #l.pontos < 2 or l.n <= 0 then
+			continue
+		end
+		local acumulado = { 0 }
+		for i = 2, #l.pontos do
+			acumulado[i] = acumulado[i - 1] + (l.pontos[i] - l.pontos[i - 1]).Magnitude
+		end
+		local trilha: Trilha = {
+			pontos = l.pontos,
+			acumulado = acumulado,
+			total = acumulado[#acumulado],
+			duracao = math.clamp(5 * (#l.pontos - 1), 7, 30), -- segundos de uma ponta à outra
+		}
+		local visiveis = math.min(l.n, MAX_TRENS_VISIVEIS)
+		for k = 1, visiveis do
+			local frame = novo("Frame", {
+				Name = `trem_{l.id}_{k}`,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				-- trem lotado fica vermelho; trem rodando vazio fica apagado
+				BackgroundColor3 = if l.situacao == "lotado" then cores.negative else cores.panel,
+				BackgroundTransparency = if l.situacao == "vazio" then 0.55 else 0,
+				BorderSizePixel = 0,
+				Visible = self.mostrarTrens,
+				ZIndex = Z.trem,
+			}, self.conteudo) :: Frame
+			novo("UICorner", { CornerRadius = UDim.new(0, 2) }, frame)
+			novo("UIStroke", { Color = cores.ink, Thickness = 1.5 }, frame)
+			table.insert(self.trens, { frame = frame, trilha = trilha, fase = (k - 1) / visiveis * 2 })
+		end
+	end
+	self:_tamanhoTrens()
+	self:_moverTrens()
+end
+
+-- Chamado a cada quadro: cada trem vai e volta pela trilha da linha, mais devagar perto das pontas.
+function MapaView._moverTrens(self: MapaView)
+	if not self.mostrarTrens or #self.trens == 0 then
+		return
+	end
+	local z = self.zoom
+	local agora = os.clock()
+	for _, t in self.trens do
+		local tr = t.trilha
+		local u = (agora / tr.duracao + t.fase) % 2
+		local voltando = u > 1
+		if voltando then
+			u = 2 - u
+		end
+		u = u * u * (3 - 2 * u)
+		local d = u * tr.total
+		local i = 1
+		while i < #tr.pontos - 1 and tr.acumulado[i + 1] < d do
+			i += 1
+		end
+		local a, b = tr.pontos[i], tr.pontos[i + 1]
+		local comprimento = tr.acumulado[i + 1] - tr.acumulado[i]
+		local p = a:Lerp(b, if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0) * z
+		t.frame.Position = UDim2.fromOffset(p.X, p.Y)
+		t.frame.Rotation = math.deg(math.atan2(b.Y - a.Y, b.X - a.X))
+	end
 end
 
 -- Estação mais perto de um ponto do mapa, dentro de um raio em pixels de TELA.
@@ -620,6 +738,7 @@ function MapaView._layout(self: MapaView)
 	end
 
 	local espessura = math.clamp(2 + z * 0.9, 4, 10)
+	self:_tamanhoTrens()
 	for _, s in self.segmentos do
 		local a, b = s.a * z, s.b * z
 		local d = b - a

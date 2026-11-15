@@ -1,5 +1,6 @@
 --!strict
--- Menu: barra inferior (Linhas, Companhia, Ajustes), o painel lateral de cada uma e os botões de zoom.
+-- Menu: barra inferior (Linhas, Gabinete, Contratos, Companhia, Ajustes), o painel lateral de cada uma
+-- e os botões de zoom.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
@@ -7,6 +8,7 @@ local HttpService = game:GetService("HttpService")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
+local Metas = require(Shared:WaitForChild("Metas"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -19,6 +21,7 @@ export type Menu = typeof(setmetatable({} :: any, Menu))
 local ABAS = {
 	{ id = "linhas", nome = "Linhas", emoji = "linhas" },
 	{ id = "projetos", nome = "Gabinete", emoji = "gabinete" },
+	{ id = "metas", nome = "Contratos", emoji = "contratos" },
 	{ id = "companhia", nome = "Companhia", emoji = "companhia" },
 	{ id = "ajustes", nome = "Ajustes", emoji = "configuracoes" },
 }
@@ -30,7 +33,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.dados = dados
 	self.estado = nil :: any
 	self.aba = nil :: string?
-	self.ajustes = { nomesEstacoes = true, nomesMapa = true }
+	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFocarLinha = Instance.new("BindableEvent") -- (linhaId)
 	self.aoAjuste = Instance.new("BindableEvent") -- (chave, valor)
@@ -157,8 +160,21 @@ function Menu._assinatura(self: Menu, estado: any): string
 	for _, p in self.dados.projetos or {} do
 		table.insert(situacoes, Economia.situacaoProjeto(estado, self.dados, p))
 	end
+	-- metas: contrato, ofertas, missões (só o que muda o desenho, não o progresso), medalhas e nível
+	local metas: { any } = { if estado.contrato then estado.contrato.id else 0, (Economia.nivel(estado)) }
+	for _, o in estado.ofertas or {} do
+		table.insert(metas, o.id)
+	end
+	for _, m in (estado.missoes or {}).lista or {} do
+		table.insert(metas, `{m.tipo}{m.meta}{m.progresso >= m.meta}{m.resgatada}`)
+	end
+	local medalhas = 0
+	for _ in estado.medalhas or {} do
+		medalhas += 1
+	end
+	table.insert(metas, medalhas)
 	local ok, txt = pcall(function()
-		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes })
+		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes, metas })
 	end)
 	return if ok then txt else tostring(os.clock())
 end
@@ -176,23 +192,34 @@ local function relogio(segundos: number): string
 	return string.format("%d:%02d", m, s)
 end
 
--- Texto das abas: o Gabinete mostra o cronômetro do estudo e uma bolinha quando um estudo termina.
+-- Texto das abas: o Gabinete mostra o cronômetro do estudo e uma bolinha quando um estudo termina;
+-- Contratos mostra o prazo do contrato e uma bolinha quando há missão para resgatar.
 function Menu._rotularAbas(self: Menu)
 	local b = self.botoesAba.projetos
-	if not b then
-		return
+	if b then
+		local txt = `{Emojis.gabinete} Gabinete`
+		local atual, restante = nil, 0
+		if self.estado then
+			atual, restante = Economia.pesquisaAtual(self.estado)
+		end
+		if atual then
+			txt ..= ` · {relogio(restante)}`
+		elseif self.avisoGabinete then
+			txt ..= " ●"
+		end
+		b.Text = txt
 	end
-	local txt = `{Emojis.gabinete} Gabinete`
-	local atual, restante = nil, 0
-	if self.estado then
-		atual, restante = Economia.pesquisaAtual(self.estado)
+	local bm = self.botoesAba.metas
+	if bm then
+		local txt = `{Emojis.contratos} Contratos`
+		local contrato = self.estado and self.estado.contrato
+		if contrato then
+			txt ..= ` · {relogio(contrato.prazo - contrato.decorrido)}`
+		elseif self.estado and Metas.missaoParaResgatar(self.estado) then
+			txt ..= " ●"
+		end
+		bm.Text = txt
 	end
-	if atual then
-		txt ..= ` · {relogio(restante)}`
-	elseif self.avisoGabinete then
-		txt ..= " ●"
-	end
-	b.Text = txt
 end
 
 function Menu.atualizarEstado(self: Menu, estado: any)
@@ -249,6 +276,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaLinhas()
 	elseif self.aba == "projetos" then
 		self:_abaProjetos()
+	elseif self.aba == "metas" then
+		self:_abaMetas()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	else
@@ -484,6 +513,173 @@ function Menu._abaProjetos(self: Menu)
 	end
 end
 
+-- ---------------------------------------------------------------- aba Contratos (contratos e missões do dia)
+
+local function novoCartao(est: any, pai: Instance, nome: string, ordem: number, destaque: boolean?): (Frame, (any, string, number) -> TextLabel)
+	local c = est.c
+	local cartao = novo("Frame", {
+		Name = nome,
+		LayoutOrder = ordem,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = c.bg,
+		ZIndex = 32,
+	}, pai)
+	est:cantos(cartao)
+	novo("UIStroke", {
+		Color = if destaque then c.accent else c.rule,
+		Thickness = if destaque then 2 else 1,
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	}, cartao)
+	est:padding(cartao, 10, 8)
+	est:lista(cartao, 4)
+	local function txt(tipo: any, conteudo: string, ordemTxt: number): TextLabel
+		local l = est:texto(tipo, conteudo, cartao, ordemTxt)
+		l.ZIndex = 33
+		return l
+	end
+	return cartao, txt
+end
+
+-- Barra de progresso; devolve a parte cheia (ajuste o Size.X.Scale de 0 a 1).
+local function novaBarra(est: any, pai: Instance, ordem: number): Frame
+	local fundo = novo("Frame", {
+		LayoutOrder = ordem,
+		Size = UDim2.new(1, 0, 0, 10),
+		BackgroundColor3 = est.c.panel,
+		BorderSizePixel = 0,
+		ZIndex = 33,
+	}, pai)
+	novo("UIStroke", { Color = est.c.ink, Thickness = 1 }, fundo)
+	return novo("Frame", {
+		Size = UDim2.fromScale(0, 1),
+		BackgroundColor3 = est.c.accent,
+		BorderSizePixel = 0,
+		ZIndex = 34,
+	}, fundo)
+end
+
+function Menu._abaMetas(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	est:texto("titulo", `{Emojis.contratos} Contratos`, r, 1)
+	if not estado then
+		return
+	end
+	local simbolo = dados.simbolo
+	local c = est.c
+	local contrato = estado.contrato
+	local ofertas = estado.ofertas or {}
+
+	if contrato then
+		local emoji, titulo, dica = Metas.descreverContrato(contrato, dados)
+		local dif = Metas.dificuldade(contrato.dificuldade)
+		local cartao, txt = novoCartao(est, r, "ContratoAtual", 10, true)
+		txt("subtitulo", `{(Emojis :: any)[emoji] or ""} {titulo}`, 1)
+		txt("rotulo", `{dif.caixaAlta} · PRÊMIO {Economia.formatar(contrato.premio, simbolo)} · +{contrato.xp} XP`, 2)
+		txt("fraco", dica, 3)
+		local cheio = novaBarra(est, cartao, 4)
+		local lProg = txt("corpo", "", 5)
+		local bDes = est:botao("discreto", "Desistir do contrato", cartao, 6)
+		bDes.Name = "BtnDesistir"
+		bDes.ZIndex = 33
+		bDes.Size = UDim2.new(1, 0, 0, 34)
+		bDes.Activated:Connect(function()
+			self.aoAgir:Fire("desistirContrato", {})
+		end)
+		local function atualizar()
+			local atual = self.estado.contrato
+			if not atual then
+				return
+			end
+			cheio.Size = UDim2.fromScale(math.clamp(atual.progresso / atual.meta, 0, 1), 1)
+			lProg.Text = `<b>{Metas.progressoContrato(atual)}</b> · {Emojis.relogio} faltam {relogio(atual.prazo - atual.decorrido)}`
+		end
+		atualizar()
+		table.insert(self.vivos, atualizar)
+	elseif #ofertas > 0 then
+		est:texto("fraco", "Escolha um contrato por vez. O prazo só corre com o jogo aberto, e não há multa se ele acabar.", r, 2)
+		for i, o in ofertas do
+			local emoji, titulo, dica = Metas.descreverContrato(o, dados)
+			local dif = Metas.dificuldade(o.dificuldade)
+			local cartao, txt = novoCartao(est, r, `Oferta_{i}`, 10 + i)
+			txt("subtitulo", `{(Emojis :: any)[emoji] or ""} {titulo}`, 1)
+			txt("rotulo", `{dif.caixaAlta} · PRAZO {relogio(o.prazo)}`, 2)
+			txt("fraco", dica, 3)
+			txt("corpo", `{Emojis.presente} Prêmio: <b>{Economia.formatar(o.premio, simbolo)}</b> · +{o.xp} XP`, 4)
+			local b = est:botao("principal", `{Emojis.assinar} Aceitar contrato`, cartao, 5)
+			b.Name = "BtnAceitar"
+			b.ZIndex = 33
+			b.Size = UDim2.new(1, 0, 0, 38)
+			b.Activated:Connect(function()
+				self.aoAgir:Fire("aceitarContrato", { id = o.id })
+			end)
+		end
+		local bTroca = est:botao("discreto", "", r, 30)
+		bTroca.Name = "BtnTrocarOfertas"
+		bTroca.Size = UDim2.new(1, 0, 0, 36)
+		bTroca.Activated:Connect(function()
+			self.aoAgir:Fire("trocarOfertas", {})
+		end)
+		local function atualizar()
+			local espera = Metas.TROCA_OFERTAS_SEGUNDOS - (Economia.relogio() - (self.estado.ofertasEm or 0))
+			if espera > 0 then
+				bTroca.Text = `{Emojis.auto} Trocar ofertas em {relogio(espera)}`
+				est:habilitar(bTroca, false)
+			else
+				bTroca.Text = `{Emojis.auto} Trocar ofertas`
+				est:habilitar(bTroca, true)
+			end
+		end
+		atualizar()
+		table.insert(self.vivos, atualizar)
+	else
+		est:texto("fraco", "Construa os primeiros trechos para começar a receber ofertas de contrato.", r, 2)
+	end
+
+	-- missões do dia
+	est:divisor(r, 40)
+	est:texto("subtitulo", `{Emojis.alvo} Missões de hoje`, r, 41)
+	local missoes = (estado.missoes or {}).lista or {}
+	for i, m in missoes do
+		local emoji, titulo = Metas.descreverMissao(m, simbolo)
+		local pronta = m.progresso >= m.meta
+		local cartao, txt = novoCartao(est, r, `Missao_{i}`, 41 + i, pronta and not m.resgatada)
+		local lTitulo = txt("corpo", `{(Emojis :: any)[emoji] or ""} <b>{titulo}</b>`, 1)
+		if m.resgatada then
+			lTitulo.TextColor3 = c.inkMuted
+			local l = txt("fraco", `{Emojis.confirmar} Resgatada`, 2)
+			l.TextColor3 = c.positive
+		elseif pronta then
+			local b = est:botao("principal", `{Emojis.presente} Resgatar · {Economia.formatar(m.premio, simbolo)} · +{m.xp} XP`, cartao, 2)
+			b.Name = "BtnResgatar"
+			b.ZIndex = 33
+			b.Size = UDim2.new(1, 0, 0, 38)
+			b.Activated:Connect(function()
+				self.aoAgir:Fire("resgatarMissao", { indice = i })
+			end)
+		else
+			local cheio = novaBarra(est, cartao, 2)
+			local lProg = txt("fraco", "", 3)
+			local function atualizar()
+				local atual = ((self.estado.missoes or {}).lista or {})[i]
+				if not atual or atual.tipo ~= m.tipo then
+					return
+				end
+				cheio.Size = UDim2.fromScale(math.clamp(atual.progresso / atual.meta, 0, 1), 1)
+				lProg.Text = `{numero(math.floor(atual.progresso))} de {numero(atual.meta)} · prêmio {Economia.formatar(atual.premio, simbolo)} · +{atual.xp} XP`
+			end
+			atualizar()
+			table.insert(self.vivos, atualizar)
+		end
+	end
+	local lVira = est:texto("fraco", "", r, 50)
+	local function atualizarVira()
+		lVira.Text = `Missões novas em {relogio(Metas.segundosAteVirar(Economia.relogio()))}.`
+	end
+	atualizarVira()
+	table.insert(self.vivos, atualizarVira)
+end
+
 -- ---------------------------------------------------------------- aba Companhia
 
 function Menu._abaCompanhia(self: Menu)
@@ -500,10 +696,25 @@ function Menu._abaCompanhia(self: Menu)
 	local era = self.est.era
 	est:texto("rotulo", string.upper(era.nome) .. " · " .. era.anos, r, 2)
 
+	-- nível da companhia
+	local nivel, xpNoNivel, xpDoNivel = Economia.nivel(estado)
+	est:texto("subtitulo", `{Emojis.nivel} Nível {nivel} · {Economia.tituloNivel(nivel)}`, r, 3)
+	local cheioXp = novaBarra(est, r, 4)
+	cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
+	local bonus = math.round((Economia.fatorNivel(estado) - 1) * 100)
+	est:texto(
+		"fraco",
+		(if xpDoNivel > 0 then `{numero(xpNoNivel)} de {numero(xpDoNivel)} XP para o próximo nível` else "Nível máximo")
+			.. ` · bônus de receita: +{bonus}%. Ganhe XP construindo, cumprindo contratos e missões e ganhando medalhas.`,
+		r,
+		5
+	)
+	est:divisor(r, 6)
+
 	local sat = math.round(st.satisfacao * 100)
-	est:texto("subtitulo", `{Emojis.satisfacao} Satisfação: {sat}%`, r, 3)
+	est:texto("subtitulo", `{Emojis.satisfacao} Satisfação: {sat}%`, r, 7)
 	local barra = novo("Frame", {
-		LayoutOrder = 4,
+		LayoutOrder = 8,
 		Size = UDim2.new(1, 0, 0, 10),
 		BackgroundColor3 = est.c.bg,
 		BorderSizePixel = 0,
@@ -516,8 +727,8 @@ function Menu._abaCompanhia(self: Menu)
 		BorderSizePixel = 0,
 		ZIndex = 33,
 	}, barra)
-	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {if sat >= 50 then "+" else ""}{math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)}% na renda.`, r, 5)
-	est:divisor(r, 6)
+	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {if sat >= 50 then "+" else ""}{math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)}% na renda.`, r, 9)
+	est:divisor(r, 10)
 
 	local linhas = {
 		`{Emojis.renda} Receita: <b>{Economia.formatar(st.receita, simbolo, true)}/s</b>`,
@@ -532,9 +743,26 @@ function Menu._abaCompanhia(self: Menu)
 		`{Emojis.linhas} Trechos: <b>{st.trechos}</b> de {st.trechosTotal}`,
 		`{Emojis.confirmar} Linhas completas: <b>{st.linhasCompletas}</b> de {st.linhasTotal}`,
 		`{Emojis.estacoes} Estações na rede: <b>{st.estacoes}</b>`,
+		`{Emojis.contratos} Contratos cumpridos: <b>{(estado.contadores or {}).contratos or 0}</b>`,
+		`{Emojis.carga_passageiros} Passageiros desde a fundação: <b>{numero(math.floor((estado.contadores or {}).passageiros or 0))}</b>`,
 	}
 	for i, txt in linhas do
 		est:texto("corpo", txt, r, 10 + i)
+	end
+
+	-- medalhas
+	local ganhas = estado.medalhas or {}
+	local nGanhas = 0
+	for _ in ganhas do
+		nGanhas += 1
+	end
+	est:divisor(r, 40)
+	est:texto("subtitulo", `{Emojis.medalha} Medalhas: {nGanhas} de {#Metas.MEDALHAS}`, r, 41)
+	for i, m in Metas.MEDALHAS do
+		local tem = ganhas[m.id] ~= nil
+		local emoji = if tem then (Emojis :: any)[m.emoji] or Emojis.medalha else Emojis.cadeado
+		local l = est:texto(if tem then "corpo" else "fraco", `{emoji} <b>{m.nome}</b> · {m.descricao}`, r, 41 + i)
+		l.Name = "Medalha_" .. m.id
 	end
 end
 
@@ -546,6 +774,7 @@ function Menu._abaAjustes(self: Menu)
 	local opcoes = {
 		{ chave = "nomesEstacoes", nome = "Nomes das cidades" },
 		{ chave = "nomesMapa", nome = "Nomes de estados, rios e regiões" },
+		{ chave = "trens", nome = "Trens andando no mapa" },
 	}
 	for i, op in opcoes do
 		local ligado = self.ajustes[op.chave]

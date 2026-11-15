@@ -30,11 +30,27 @@ Economia.MANUTENCAO_TREM = 0.45
 Economia.REEMBOLSO_TREM = 0.5 -- vender um trem devolve metade do preço
 Economia.MAX_TRENS_LINHA = 30
 
+-- Nível da companhia: sobe com experiência (XP) e dá +1% de receita por nível acima do 1.
+Economia.NIVEL_MAXIMO = 30
+Economia.BONUS_POR_NIVEL_COMPANHIA = 0.01
+Economia.TITULOS = {
+	{ nivel = 1, nome = "Companhia Local" },
+	{ nivel = 3, nome = "Companhia Regional" },
+	{ nivel = 6, nome = "Companhia Estadual" },
+	{ nivel = 10, nome = "Companhia Nacional" },
+	{ nivel = 15, nome = "Grande Companhia" },
+	{ nivel = 20, nome = "Império Ferroviário" },
+}
+
+-- Produção das cidades produtoras, por dia de jogo, por ponto de porte.
+Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200 }
+Economia.HORAS_DE_OPERACAO = 18 -- os trens rodam 18 h por dia
+
 -- Cargas: cada cidade produtora ligada por trilho até um porto dá um bônus na renda da linha dela.
 Economia.CARGAS = {
-	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25 },
-	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6 },
-	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4 },
+	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25, unidade = "sacas" },
+	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6, unidade = "t" },
+	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4, unidade = "t" },
 }
 
 -- Gabinete de Projetos: uma pesquisa por vez; acelerar custa até 60% do preço do projeto,
@@ -72,10 +88,35 @@ export type EstadoMapa = {
 	estacoes: { [string]: number }, -- id da estação -> nível (0 a 5)
 	projetos: { [string]: number }, -- id do projeto -> horário (os.time) em que a pesquisa termina
 	ultimoTick: number, -- os.time() do último cálculo de renda
+	-- metas (ver Metas.luau)
+	xp: number, -- experiência da companhia
+	medalhas: { [string]: number }, -- id da medalha -> horário em que foi ganha
+	contadores: { [string]: number }, -- totais da vida da companhia (trechos, trens, estacoes, contratos, missoes)
+	contrato: any?, -- contrato em andamento
+	ofertas: { any }, -- contratos oferecidos
+	ofertasEm: number, -- horário em que as ofertas foram geradas
+	missoes: { dia: number, lista: { any } }, -- missões do dia
+	tutorial: boolean, -- tutorial concluído ou pulado
 }
 
 function Economia.estadoNovo(): EstadoMapa
-	return { dinheiro = Economia.DINHEIRO_INICIAL, trechos = {}, trens = {}, era = "vapor", estacoes = {}, projetos = {}, ultimoTick = os.time() }
+	return {
+		dinheiro = Economia.DINHEIRO_INICIAL,
+		trechos = {},
+		trens = {},
+		era = "vapor",
+		estacoes = {},
+		projetos = {},
+		ultimoTick = os.time(),
+		xp = 0,
+		medalhas = {},
+		contadores = {},
+		contrato = nil,
+		ofertas = {},
+		ofertasEm = 0,
+		missoes = { dia = 0, lista = {} },
+		tutorial = false,
+	}
 end
 
 -- Custo e alternativa efetivos de um trecho (com a escolha de traçado, se houver).
@@ -128,6 +169,42 @@ end
 
 function Economia.linhaCompleta(estado: EstadoMapa, linha: any): boolean
 	return Economia.trechosConstruidos(estado, linha) == #linha.trechos
+end
+
+-- ---------------------------------------------------------------- nível da companhia
+
+-- XP total para chegar a um nível (nível 1 = 0).
+function Economia.xpDoNivel(nivel: number): number
+	return math.round(50 * (nivel - 1) ^ 1.7)
+end
+
+-- Nível atual, XP já ganho dentro do nível e XP que o nível pede (0 no nível máximo).
+function Economia.nivel(estado: EstadoMapa): (number, number, number)
+	local xp = estado.xp or 0
+	local n = 1
+	while n < Economia.NIVEL_MAXIMO and xp >= Economia.xpDoNivel(n + 1) do
+		n += 1
+	end
+	if n >= Economia.NIVEL_MAXIMO then
+		return n, 0, 0
+	end
+	local base = Economia.xpDoNivel(n)
+	return n, xp - base, Economia.xpDoNivel(n + 1) - base
+end
+
+function Economia.tituloNivel(nivel: number): string
+	local nome = Economia.TITULOS[1].nome
+	for _, t in Economia.TITULOS do
+		if nivel >= t.nivel then
+			nome = t.nome
+		end
+	end
+	return nome
+end
+
+function Economia.fatorNivel(estado: EstadoMapa): number
+	local n = Economia.nivel(estado)
+	return 1 + Economia.BONUS_POR_NIVEL_COMPANHIA * (n - 1)
 end
 
 -- ---------------------------------------------------------------- Gabinete de Projetos
@@ -600,7 +677,7 @@ end
 -- ---------------------------------------------------------------- renda
 
 export type BalancoLinha = {
-	receita: number, -- já com satisfação
+	receita: number, -- já com satisfação e nível da companhia
 	manutencao: number,
 	lucro: number,
 	passageiros: number,
@@ -618,7 +695,7 @@ export type Balanco = {
 	linhas: { [string]: BalancoLinha },
 }
 
--- Receita bruta da linha (antes da satisfação): trechos × estações × rede × serviço × cargas × era.
+-- Receita bruta da linha (antes da satisfação e do nível da companhia): trechos × estações × rede × serviço × cargas × era.
 function Economia.receitaLinha(estado: EstadoMapa, dados: any, linha: any, cargas: { InfoCarga }?, rede: Rede?): number
 	local fatorRede = Economia.bonusRede(estado, dados, linha, rede)
 	local bruta = 0
@@ -648,7 +725,7 @@ function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
 	local rede = Economia.rede(estado, dados)
 	local cargas = Economia.cargasPorLinha(estado, dados)
 	local satisfacao = Economia.satisfacao(estado, dados, rede)
-	local fatorSat = 0.85 + 0.3 * satisfacao
+	local fatorSat = (0.85 + 0.3 * satisfacao) * Economia.fatorNivel(estado)
 	local b: Balanco = { receita = 0, manutencao = 0, lucro = 0, satisfacao = satisfacao, linhas = {} }
 	for _, linha in dados.linhas do
 		if Economia.trechosConstruidos(estado, linha) > 0 then
@@ -673,6 +750,37 @@ function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
 	return b
 end
 
+-- Passageiros levados por dia de jogo (a demanda é por hora; quem não cabe no trem fica de fora).
+function Economia.passageirosPorDia(balanco: Balanco): number
+	local total = 0
+	for _, bl in balanco.linhas do
+		total += math.min(bl.passageiros, bl.capacidade) * Economia.HORAS_DE_OPERACAO
+	end
+	return total
+end
+
+-- Carga entregue no porto por dia de jogo, por tipo. Depende do porte e do nível da estação
+-- produtora e de quantos trens a linha dela tem (serviço).
+function Economia.cargaPorDia(estado: EstadoMapa, dados: any, balanco: Balanco?): { [string]: number }
+	local b = balanco or Economia.balanco(estado, dados)
+	local r: { [string]: number } = {}
+	for carga in Economia.PRODUCAO_POR_PORTE :: { [string]: number } do
+		r[carga] = 0
+	end
+	for linhaId, lista in Economia.cargasPorLinha(estado, dados) do
+		local bl = b.linhas[linhaId]
+		for _, info in lista do
+			local base = (Economia.PRODUCAO_POR_PORTE :: any)[info.carga]
+			if info.conectada and bl and base then
+				local e = dados.estacoes[info.estacao]
+				local nivel = 1 + Economia.BONUS_POR_NIVEL * Economia.nivelEstacao(estado, info.estacao)
+				r[info.carga] += e.porte * base * nivel * bl.servico
+			end
+		end
+	end
+	return r
+end
+
 -- Quanto o caixa muda por segundo (pode ser negativo).
 function Economia.rendaTotal(estado: EstadoMapa, dados: any): number
 	return Economia.balanco(estado, dados).lucro
@@ -683,7 +791,7 @@ end
 function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 	local balanco = Economia.balanco(estado, dados)
 	local trechos, total = 0, 0
-	local passageiros, trens = 0, 0
+	local passageiros, trens = Economia.passageirosPorDia(balanco), 0
 	for _, linha in dados.linhas do
 		for _, t in linha.trechos do
 			total += 1
@@ -691,28 +799,11 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 				trechos += 1
 			end
 		end
-		local bl = balanco.linhas[linha.id]
-		if bl then
-			-- passageiros levados por dia (a demanda é por hora; trens rodam ~18 h)
-			passageiros += math.min(bl.passageiros, bl.capacidade) * 18
+		if balanco.linhas[linha.id] then
 			trens += estado.trens[linha.id] or 0
 		end
 	end
-	local cafe, minerio, graos = 0, 0, 0
-	for _, lista in Economia.cargasPorLinha(estado, dados) do
-		for _, info in lista do
-			if info.conectada then
-				local porte = dados.estacoes[info.estacao].porte
-				if info.carga == "cafe" then
-					cafe += porte * 400
-				elseif info.carga == "minerio" then
-					minerio += porte * 900
-				elseif info.carga == "graos" then
-					graos += porte * 1200
-				end
-			end
-		end
-	end
+	local carga = Economia.cargaPorDia(estado, dados, balanco)
 	local estacoes = 0
 	for id in dados.estacoes do
 		if Economia.estacaoNaRede(estado, dados, id) then
@@ -730,9 +821,9 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		linhasTotal = #dados.linhas,
 		estacoes = estacoes,
 		passageirosDia = math.round(passageiros),
-		cafeDia = cafe,
-		minerioDia = minerio,
-		graosDia = graos,
+		cafeDia = math.round(carga.cafe),
+		minerioDia = math.round(carga.minerio),
+		graosDia = math.round(carga.graos),
 		satisfacao = balanco.satisfacao,
 	}
 end

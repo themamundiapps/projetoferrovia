@@ -41,6 +41,11 @@ local Emojis = {
 	auto = "🔄",
 	gabinete = "📐", -- Gabinete de Projetos (esquadro de desenhista)
 	pesquisa = "🔎",
+	contratos = "📜",
+	alvo = "🎯", -- missões do dia
+	medalha = "🏅",
+	nivel = "⭐",
+	dica = "💡", -- tutorial
 	-- carga
 	carga_cafe = "☕",
 	carga_minerio = "⛏️", -- picareta no lugar de minério
