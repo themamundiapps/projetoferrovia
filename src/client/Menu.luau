@@ -62,8 +62,20 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	est:padding(barra, 6)
 	est:lista(barra, 6, true)
 	table.insert(self.instancias, barra)
+	self.barra = barra
 	self.botoesAba = {} :: { [string]: TextButton }
+	self.medalhoes = {} :: { [string]: any } -- com o kit clássico, a barra vira uma fileira de medalhões
 	for i, aba in ABAS do
+		local m = est:medalhao((Emojis :: any)[aba.emoji], if aba.id == "ajustes" then "Ajustes" else aba.nome, barra, i)
+		if m then
+			m.botao.Name = "Aba_" .. aba.id
+			m.botao.Activated:Connect(function()
+				self:abrirAba(if self.aba == aba.id then nil else aba.id)
+			end)
+			self.botoesAba[aba.id] = m.botao
+			self.medalhoes[aba.id] = m
+			continue
+		end
 		-- Ajustes vira só o ícone, para a barra caber em telas menores
 		local rotulo = if aba.id == "ajustes" then (Emojis :: any)[aba.emoji] else `{(Emojis :: any)[aba.emoji]} {aba.nome}`
 		local b = est:aba(rotulo, barra, i)
@@ -145,7 +157,10 @@ function Menu.posicionarAbaixoDe(self: Menu, y: number)
 	-- com a moldura do kit, as caixas ganham uma borda por fora: o vão entre elas cresce junto
 	local b = self.est:bordaKit()
 	self.painel.Position = UDim2.fromOffset(16, y + 10 + 2 * b)
-	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10 + 2 * b) - 90 - b)
+	-- embaixo, para acima da barra do menu (que cresce com os medalhões)
+	local barra = self.barra
+	local alturaBarra = if barra then barra.AbsoluteSize.Y else 60
+	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10 + 2 * b) - (alturaBarra + 14 + 3 * b) - 10)
 end
 
 function Menu.abrirAba(self: Menu, aba: string?)
@@ -158,7 +173,12 @@ function Menu.abrirAba(self: Menu, aba: string?)
 	self:_rotularAbas()
 	self.painel.Visible = aba ~= nil
 	for id, b in self.botoesAba do
-		self.est:marcarAba(b, id == aba)
+		local m = self.medalhoes[id]
+		if m then
+			self.est:marcarMedalhao(m, id == aba)
+		else
+			self.est:marcarAba(b, id == aba)
+		end
 	end
 	self:_redesenhar()
 end
@@ -215,7 +235,42 @@ end
 
 -- Texto das abas: o Gabinete mostra o cronômetro do estudo e uma bolinha quando um estudo termina;
 -- Contratos mostra o prazo do contrato e uma bolinha quando há missão para resgatar.
+-- Com medalhões, o nome fica na placa e o extra (cronômetro, ●, contagem) vai numa etiqueta em cima.
+function Menu._etiquetar(self: Menu, id: string, nome: string, extra: string): boolean
+	local m = self.medalhoes[id]
+	if not m then
+		return false
+	end
+	m.nome.Text = nome
+	m.etiqueta.Text = extra
+	m.etiqueta.Visible = extra ~= ""
+	return true
+end
+
 function Menu._rotularAbas(self: Menu)
+	if next(self.medalhoes) then
+		local function extraGabinete(): string
+			local atual, restante = nil, 0
+			if self.estado then
+				atual, restante = Economia.pesquisaAtual(self.estado)
+			end
+			return if atual then relogio(restante) elseif self.avisoGabinete then "●" else ""
+		end
+		local function extraJornal(): string
+			local ativos = if self.estado then #Economia.eventosAtivos(self.estado) else 0
+			return if self.avisoJornal then "●" elseif ativos > 0 then tostring(ativos) else ""
+		end
+		local function extraMetas(): string
+			local contrato = self.estado and self.estado.contrato
+			return if contrato then relogio(contrato.prazo - contrato.decorrido)
+				elseif self.estado and Metas.missaoParaResgatar(self.estado) then "●"
+				else ""
+		end
+		self:_etiquetar("projetos", "Gabinete", extraGabinete())
+		self:_etiquetar("jornal", "Jornal", extraJornal())
+		self:_etiquetar("metas", "Contratos", extraMetas())
+		return
+	end
 	local b = self.botoesAba.projetos
 	if b then
 		local txt = `{Emojis.gabinete} Gabinete`

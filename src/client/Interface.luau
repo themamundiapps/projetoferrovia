@@ -10,7 +10,6 @@ local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
-local Assets = require(Shared:WaitForChild("Assets"))
 
 local Interface = {}
 Interface.__index = Interface
@@ -88,52 +87,17 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.hud = hud
 	padding(hud, 12)
 
-	-- selo do kit no canto do caixa (irmão do caixa, para não entrar na lista dele), com as iniciais
-	local kit = Assets.KitUI[era.kit or ""]
-	local pSelo = kit and kit.selo
-	self.lblIniciais = nil :: TextLabel?
-	if pSelo and pSelo.id ~= "rbxassetid://0" then
-		local selo = novo("ImageLabel", {
-			Name = "Selo",
-			Size = UDim2.fromOffset(62, 62),
-			BackgroundTransparency = 1,
-			Image = pSelo.id,
-			ZIndex = 32,
-		}, tela) :: ImageLabel
-		self.lblIniciais = novo("TextLabel", {
-			Name = "Iniciais",
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.5, 0.42),
-			BackgroundTransparency = 1,
-			Text = "",
-			FontFace = f.display,
-			TextScaled = true,
-			TextColor3 = c.ink,
-			ZIndex = 33,
-		}, selo) :: TextLabel
-		local function acompanhar()
-			local origem = tela.AbsolutePosition
-			selo.Position = UDim2.fromOffset(hud.AbsolutePosition.X - origem.X + hud.AbsoluteSize.X - 30, hud.AbsolutePosition.Y - origem.Y - 16)
-			selo.Visible = hud.Visible
-		end
-		hud:GetPropertyChangedSignal("AbsolutePosition"):Connect(acompanhar)
-		hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(acompanhar)
-		hud.Destroying:Connect(function()
-			selo:Destroy()
-		end)
-		acompanhar()
-	end
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, hud)
+	-- nome inteiro da companhia, em destaque no topo do caixa
 	self.lblNome = novo("TextLabel", {
 		Name = "NomeCompanhia",
 		LayoutOrder = 1,
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundTransparency = 1,
 		Text = "",
-		FontFace = f.label,
-		TextSize = 13,
-		TextColor3 = c.inkMuted,
+		FontFace = f.display,
+		TextSize = 17,
+		TextColor3 = c.ink,
 		ZIndex = 31,
 	}, hud)
 	self.lblDinheiro = novo("TextLabel", {
@@ -157,18 +121,43 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		ZIndex = 31,
 	}, hud)
 
-	-- nível da companhia e contrato em andamento
-	self.lblNivel = novo("TextLabel", {
-		Name = "Nivel",
-		LayoutOrder = 4,
-		AutomaticSize = Enum.AutomaticSize.XY,
+	-- título e nível da companhia: caixa própria no canto superior direito, com a barra de XP
+	local caixaNivel = caixa({
+		Name = "CaixaNivel",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -16, 0, 16),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		Size = UDim2.fromOffset(230, 0),
+	})
+	self.caixaNivel = caixaNivel
+	padding(caixaNivel, 12)
+	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 4), HorizontalAlignment = Enum.HorizontalAlignment.Center }, caixaNivel)
+	self.lblTitulo = novo("TextLabel", {
+		Name = "Titulo",
+		LayoutOrder = 1,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundTransparency = 1,
 		Text = "",
-		FontFace = f.body,
-		TextSize = 14,
+		FontFace = f.display,
+		TextSize = 18,
+		TextWrapped = true,
 		TextColor3 = c.ink,
 		ZIndex = 31,
-	}, hud)
+	}, caixaNivel)
+	self.lblNivel = novo("TextLabel", {
+		Name = "Nivel",
+		LayoutOrder = 2,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		Text = "",
+		FontFace = f.label,
+		TextSize = 13,
+		TextColor3 = c.inkMuted,
+		ZIndex = 31,
+	}, caixaNivel)
+	self.cheioXp = Estilo.new(era):barra(caixaNivel, 3)
 	self.lblContrato = novo("TextLabel", {
 		Name = "Contrato",
 		LayoutOrder = 5,
@@ -245,6 +234,23 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		Visible = false,
 	})
 	self.painel = painel
+
+	-- painéis da direita (concessão e ficha da cidade) ocupam o canto do nível: ele some enquanto estão abertos
+	local function ajustarCanto()
+		local ficha = tela:FindFirstChild("Ficha") :: GuiObject?
+		caixaNivel.Visible = not painel.Visible and not (ficha and ficha.Visible)
+	end
+	painel:GetPropertyChangedSignal("Visible"):Connect(ajustarCanto)
+	local function vigiarFicha(filho: Instance)
+		if filho.Name == "Ficha" and filho:IsA("GuiObject") then
+			filho:GetPropertyChangedSignal("Visible"):Connect(ajustarCanto)
+			ajustarCanto()
+		end
+	end
+	for _, filho in tela:GetChildren() do
+		vigiarFicha(filho)
+	end
+	tela.ChildAdded:Connect(vigiarFicha)
 	-- o conteúdo fica num frame interno com a lista; o botão de fechar fica solto no painel
 	local corpo = novo("Frame", {
 		Name = "Corpo",
@@ -409,23 +415,14 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
 	local nivel = Economia.nivel(estado)
-	self.lblNivel.Text = `{Emojis.nivel} {Idioma.T("nivel_titulo", nivel, Economia.tituloNivel(nivel, estado.era, Idioma.atual))}`
+	local _, xpNoNivel, xpDoNivel = Economia.nivel(estado)
+	self.lblTitulo.Text = Economia.tituloNivel(nivel, estado.era, Idioma.atual)
+	self.lblNivel.Text = if xpDoNivel > 0
+		then `{Emojis.nivel} NÍVEL {nivel} · {xpNoNivel} / {xpDoNivel} XP`
+		else `{Emojis.nivel} NÍVEL {nivel} · MÁXIMO`
+	self.cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
 	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
-	self.lblNome.Text = Idioma.maiusculas(nome)
-	if self.lblIniciais then
-		-- iniciais das duas primeiras palavras que contam (sem "de", "da", "do", "e")
-		local iniciais = ""
-		for palavra in string.gmatch(nome, "[^%s]+") do
-			local minus = string.lower(palavra)
-			if minus ~= "de" and minus ~= "da" and minus ~= "do" and minus ~= "dos" and minus ~= "das" and minus ~= "e" then
-				iniciais ..= Idioma.maiusculas(string.sub(palavra, 1, (utf8.offset(palavra, 2) or (#palavra + 1)) - 1))
-				if (utf8.len(iniciais) or 0) >= 2 then
-					break
-				end
-			end
-		end
-		self.lblIniciais.Text = iniciais
-	end
+	self.lblNome.Text = nome
 	self.lblEra.Text = `{self.era.nome} · {Economia.anoAtual(estado, self.dados)}`
 	local contrato = estado.contrato
 	self.lblContrato.Visible = contrato ~= nil

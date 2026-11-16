@@ -407,6 +407,110 @@ local function vestirBotao(b: TextButton, p: any)
 	end
 end
 
+-- Aba da barra do menu em forma de medalhão (como nos jogos de estratégia): botão redondo com o ícone,
+-- plaquinha com o nome embaixo e uma etiqueta em cima (cronômetro, ●). Só com o kit (botão redondo e
+-- aba); devolve nil sem ele. O botão devolvido é transparente: o visual fica nas filhas.
+export type Medalhao = { botao: TextButton, nome: TextLabel, etiqueta: TextLabel, placa: ImageLabel, disco: ImageLabel }
+function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instance, ordem: number?): Medalhao?
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local redondo, placa, placaAtiva = kit and kit.botao_redondo, kit and kit.aba, kit and kit.aba_ativa
+	if not (redondo and placa and placaAtiva) or redondo.id == "rbxassetid://0" or placa.id == "rbxassetid://0" then
+		return nil
+	end
+	local c, f = self.c, self.era.fontes
+	local b = novo("TextButton", {
+		LayoutOrder = ordem or 0,
+		Size = UDim2.fromOffset(84, 96),
+		BackgroundTransparency = 1,
+		Text = "",
+		AutoButtonColor = false,
+		ZIndex = 32,
+	}, pai) :: TextButton
+	local disco = novo("ImageLabel", {
+		Name = "Disco",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 8),
+		Size = UDim2.fromOffset(62, 62),
+		BackgroundTransparency = 1,
+		Image = redondo.id,
+		ZIndex = 33,
+	}, b) :: ImageLabel
+	novo("TextLabel", {
+		Name = "Icone",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Text = emoji,
+		TextSize = 27,
+		ZIndex = 34,
+	}, disco)
+	local pl = novo("ImageLabel", {
+		Name = "Placa",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, 0),
+		Size = UDim2.new(1, 0, 0, 24),
+		BackgroundTransparency = 1,
+		Image = placa.id,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = placa.slice,
+		SliceScale = 12 / placa.slice.Min.Y,
+		ZIndex = 35,
+	}, b) :: ImageLabel
+	local lNome = novo("TextLabel", {
+		Name = "Nome",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Text = nome,
+		FontFace = f.label,
+		TextSize = 13,
+		TextColor3 = c.ink,
+		ZIndex = 36,
+	}, pl) :: TextLabel
+	local etiqueta = novo("TextLabel", {
+		Name = "Etiqueta",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, -6),
+		AutomaticSize = Enum.AutomaticSize.X,
+		Size = UDim2.fromOffset(0, 18),
+		BackgroundColor3 = c.ink,
+		Text = "",
+		FontFace = f.number,
+		TextSize = 12,
+		TextColor3 = c.panel,
+		Visible = false,
+		ZIndex = 37,
+	}, b) :: TextLabel
+	novo("UICorner", { CornerRadius = UDim.new(0, 9) }, etiqueta)
+	novo("UIPadding", { PaddingLeft = UDim.new(0, 7), PaddingRight = UDim.new(0, 7) }, etiqueta)
+	-- passar o mouse e apertar mexem no disco
+	b.MouseEnter:Connect(function()
+		disco.ImageColor3 = Color3.fromRGB(255, 245, 225)
+	end)
+	b.MouseLeave:Connect(function()
+		disco.ImageColor3 = Color3.new(1, 1, 1)
+	end)
+	b.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			disco.ImageColor3 = Color3.fromRGB(205, 200, 190)
+		end
+	end)
+	b.InputEnded:Connect(function()
+		disco.ImageColor3 = Color3.new(1, 1, 1)
+	end)
+	return { botao = b, nome = lNome, etiqueta = etiqueta, placa = pl, disco = disco }
+end
+
+-- Marca o medalhão da aba aberta: disco maior e placa de madeira.
+function Estilo.marcarMedalhao(self: Estilo, m: Medalhao, ativo: boolean)
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = if ativo then kit.aba_ativa else kit.aba
+	m.placa.Image = p.id
+	m.placa.SliceCenter = p.slice
+	m.placa.SliceScale = 12 / p.slice.Min.Y
+	m.disco.Size = if ativo then UDim2.fromOffset(70, 70) else UDim2.fromOffset(62, 62)
+	m.disco.Position = if ativo then UDim2.new(0.5, 0, 0, 2) else UDim2.new(0.5, 0, 0, 8)
+	m.nome.TextColor3 = if ativo then self.c.accent else self.c.ink
+end
+
 -- Botão redondo (zoom): peça inteira do kit; sem ela, botão discreto.
 function Estilo.botaoRedondo(self: Estilo, txt: string, pai: Instance, ordem: number?): TextButton
 	local b = self:botao("discreto", txt, pai, ordem)
