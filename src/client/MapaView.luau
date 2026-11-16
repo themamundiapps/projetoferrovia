@@ -730,15 +730,17 @@ function MapaView._avisoProdutora(self: MapaView, id: string, agora: number)
 		BackgroundTransparency = 1,
 		Text = info.texto,
 		FontFace = self.era.fontes.display,
-		TextSize = 17,
+		TextSize = 19,
 		TextColor3 = cores.positive,
 		ZIndex = Z.rotulo + 1,
 	}, self.conteudo) :: TextLabel
 	local contorno = novo("UIStroke", { Color = cores.panel, Thickness = 2.5 }, lbl) :: UIStroke
-	local info2 = TweenInfo.new(1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	TweenService:Create(lbl, info2, { Position = UDim2.fromOffset(p.X, p.Y - 52), TextTransparency = 1 }):Play()
-	TweenService:Create(contorno, info2, { Transparency = 1 }):Play()
-	task.delay(1.7, function()
+	-- sobe o tempo todo; fica nítido na primeira metade e some na segunda
+	TweenService:Create(lbl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(p.X, p.Y - 56) }):Play()
+	local sumir = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In, 0, false, 1)
+	TweenService:Create(lbl, sumir, { TextTransparency = 1 }):Play()
+	TweenService:Create(contorno, sumir, { Transparency = 1 }):Play()
+	task.delay(2.1, function()
 		lbl:Destroy()
 	end)
 end
