@@ -100,26 +100,157 @@ Mapas.europa = {
 	},
 }
 
--- Regiões de detalhe: blocos de alta resolução que aparecem por cima do mapa base quando o zoom passa de ZOOM_DETALHE.
+-- Regiões de detalhe: blocos de 256 px do mapa base desenhados a 4x, só onde passam trilhos (gerados por
+-- tools/assetgen/render_detalhes.py e mapas_detalhe.py). Aparecem por cima do mapa base a partir de ZOOM_DETALHE.
 -- x0/y0/largura/altura em pixels do mapa base; escala = pixels do detalhe por pixel do mapa base.
 Mapas.brasil.detalhes = {
-	{
-		id = "sudeste", x0 = 1232, y0 = 1168, largura = 512, altura = 336, escala = 4,
-		tiles = {
-			{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://114039282288394", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_0.png" },
-			{ camada = "terra", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://135942309318603", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_0_1.png" },
-			{ camada = "terra", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://140430238835236", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_0.png" },
-			{ camada = "terra", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://115951286204902", arquivo = "mapas/brasil_sudeste/brasil_sudeste_terra_1_1.png" },
-			{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://138736905063154", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_0.png" },
-			{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://121945019881209", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_0_1.png" },
-			{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://94461657558360", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_0.png" },
-			{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://120458233669700", arquivo = "mapas/brasil_sudeste/brasil_sudeste_linhas_1_1.png" },
-			{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://107821848589072", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_0_0.png" },
-			{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://129704183138557", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_0_1.png" },
-			{ camada = "rios", x = 0, y = 1024, w = 1024, h = 320, id = "rbxassetid://89914409010938", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_1_0.png" },
-			{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 320, id = "rbxassetid://70697937447698", arquivo = "mapas/brasil_sudeste/brasil_sudeste_rios_1_1.png" },
-		},
-	},
+	{ id = "2_0", x0 = 720, y0 = 144, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_0_rios.png" },
+	} },
+	{ id = "3_0", x0 = 976, y0 = 144, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_0_rios.png" },
+	} },
+	{ id = "4_0", x0 = 1232, y0 = 144, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_0_linhas.png" },
+	} },
+	{ id = "2_1", x0 = 720, y0 = 400, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_1_rios.png" },
+	} },
+	{ id = "3_1", x0 = 976, y0 = 400, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_1_rios.png" },
+	} },
+	{ id = "4_1", x0 = 1232, y0 = 400, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_1_rios.png" },
+	} },
+	{ id = "5_1", x0 = 1488, y0 = 400, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_1_rios.png" },
+	} },
+	{ id = "6_1", x0 = 1744, y0 = 400, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_1_linhas.png" },
+	} },
+	{ id = "1_2", x0 = 464, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_2_rios.png" },
+	} },
+	{ id = "2_2", x0 = 720, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_2_rios.png" },
+	} },
+	{ id = "3_2", x0 = 976, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_2_rios.png" },
+	} },
+	{ id = "4_2", x0 = 1232, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_2_rios.png" },
+	} },
+	{ id = "5_2", x0 = 1488, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_2_rios.png" },
+	} },
+	{ id = "6_2", x0 = 1744, y0 = 656, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_2_rios.png" },
+	} },
+	{ id = "1_3", x0 = 464, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_1_3_rios.png" },
+	} },
+	{ id = "2_3", x0 = 720, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_3_rios.png" },
+	} },
+	{ id = "3_3", x0 = 976, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_3_rios.png" },
+	} },
+	{ id = "4_3", x0 = 1232, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_3_rios.png" },
+	} },
+	{ id = "5_3", x0 = 1488, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_3_rios.png" },
+	} },
+	{ id = "6_3", x0 = 1744, y0 = 912, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_6_3_rios.png" },
+	} },
+	{ id = "2_4", x0 = 720, y0 = 1168, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_4_rios.png" },
+	} },
+	{ id = "3_4", x0 = 976, y0 = 1168, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_4_rios.png" },
+	} },
+	{ id = "4_4", x0 = 1232, y0 = 1168, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://114039282288394", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://138736905063154", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://107821848589072", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_4_rios.png" },
+	} },
+	{ id = "5_4", x0 = 1488, y0 = 1168, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://135942309318603", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://121945019881209", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://129704183138557", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_4_rios.png" },
+	} },
+	{ id = "3_5", x0 = 976, y0 = 1424, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_5_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_5_rios.png" },
+	} },
+	{ id = "4_5", x0 = 1232, y0 = 1424, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_5_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_5_rios.png" },
+	} },
+	{ id = "5_5", x0 = 1488, y0 = 1424, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_5_5_linhas.png" },
+	} },
+	{ id = "2_6", x0 = 720, y0 = 1680, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_6_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_6_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_2_6_rios.png" },
+	} },
+	{ id = "3_6", x0 = 976, y0 = 1680, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_6_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_6_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_3_6_rios.png" },
+	} },
+	{ id = "4_6", x0 = 1232, y0 = 1680, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_6_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_6_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/brasil_detalhe/brasil_detalhe_4_6_rios.png" },
+	} },
 }
 
 return Mapas

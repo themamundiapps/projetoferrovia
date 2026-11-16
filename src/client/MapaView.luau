@@ -61,6 +61,7 @@ type Tile = {
 	h: number,
 	imagem: ImageLabel,
 	detalhe: boolean,
+	id: string?, -- imagem do bloco de detalhe; só fica carregada enquanto o bloco está na tela
 }
 
 export type MapaView = typeof(setmetatable(
@@ -250,6 +251,13 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 	-- Regiões de detalhe: um fundo da cor do mar esconde o contorno grosso do mapa base,
 	-- e por cima vêm os blocos de alta resolução (convertidos para coordenadas do mapa base).
 	for _, d in mapa.detalhes or {} do
+		local enviado = false
+		for _, t in d.tiles do
+			enviado = enviado or t.id ~= "rbxassetid://0"
+		end
+		if not enviado then
+			continue -- bloco ainda não enviado ao Roblox: fica o mapa base
+		end
 		local fundo = novo("ImageLabel", {
 			Name = "detalhe_" .. d.id,
 			BackgroundColor3 = cores.sea,
@@ -274,6 +282,7 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 				ScaleType = Enum.ScaleType.Stretch,
 				ZIndex = z,
 			}, self.conteudo) :: ImageLabel
+			imagem.Image = "" -- carrega quando entrar na tela (_recortar)
 			table.insert(self.tiles, {
 				x = d.x0 + t.x / d.escala,
 				y = d.y0 + t.y / d.escala,
@@ -281,6 +290,7 @@ function MapaView._criarTiles(self: MapaView, mapa: any)
 				h = t.h / d.escala,
 				imagem = imagem,
 				detalhe = true,
+				id = t.id,
 			})
 		end
 	end
@@ -703,6 +713,7 @@ function MapaView.definirCamera(self: MapaView, zoom: number, pan: Vector2)
 	if mudouZoom then
 		self:_layout()
 	end
+	self:_recortar()
 	self.aoMudarCamera:Fire(self.zoom)
 end
 
@@ -727,17 +738,38 @@ function MapaView.focar(self: MapaView, min: Vector2, max: Vector2, margem: numb
 	self:definirCamera(zoom, tela / 2 - centro * zoom)
 end
 
+-- Blocos de detalhe só existem de verdade quando estão na tela (com uma folga): fora dela,
+-- somem e soltam a imagem, para o celular não guardar o Brasil inteiro em alta resolução.
+function MapaView._recortar(self: MapaView)
+	local z = self.zoom
+	local mostrar = z >= ZOOM_DETALHE
+	local tela = self.raiz.AbsoluteSize
+	local folga = 128 / z
+	local x0, y0 = -self.pan.X / z - folga, -self.pan.Y / z - folga
+	local x1, y1 = (tela.X - self.pan.X) / z + folga, (tela.Y - self.pan.Y) / z + folga
+	for _, t in self.tiles do
+		if not t.detalhe then
+			continue
+		end
+		local ver = mostrar and t.x < x1 and t.x + t.w > x0 and t.y < y1 and t.y + t.h > y0
+		t.imagem.Visible = ver
+		if t.id then
+			local img = if ver then t.id else ""
+			if t.imagem.Image ~= img then
+				t.imagem.Image = img
+			end
+		end
+	end
+end
+
 function MapaView._layout(self: MapaView)
 	local z = self.zoom
 	self.conteudo.Size = UDim2.fromOffset(self.largura * z, self.altura * z)
 
 	local mostrarDetalhe = z >= ZOOM_DETALHE
 	for _, t in self.tiles do
-		if t.detalhe then
-			t.imagem.Visible = mostrarDetalhe
-			if not mostrarDetalhe then
-				continue
-			end
+		if t.detalhe and not mostrarDetalhe then
+			continue -- a visibilidade dos blocos de detalhe fica com _recortar
 		end
 		-- +1 px evita frestas finas entre os blocos
 		t.imagem.Position = UDim2.fromOffset(math.floor(t.x * z), math.floor(t.y * z))
