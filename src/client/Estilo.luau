@@ -326,7 +326,9 @@ local function vestirBotao(b: TextButton, p: any)
 		local escala = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
 		fundo.SliceScale = escala
 		-- o texto não entra nas pontas (rebites e arabescos)
-		local folga = math.max(0, cx * escala * 0.8 - l)
+		-- (botão que cresce com o texto, como as abas, não encolhe o rótulo: senão o texto quebra a linha)
+		local cresce = b.AutomaticSize == Enum.AutomaticSize.X or b.AutomaticSize == Enum.AutomaticSize.XY
+		local folga = if cresce then 0 else math.max(0, cx * escala * 0.8 - l)
 		rotulo.Position = UDim2.fromOffset(folga, 0)
 		rotulo.Size = UDim2.new(1, -2 * folga, 1, 0)
 	end

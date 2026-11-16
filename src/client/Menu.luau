@@ -490,20 +490,7 @@ function Menu._abaProjetos(self: Menu)
 				self.aoFocarLinha:Fire(p.linha)
 			end)
 		elseif situacao == "pesquisando" then
-			local fundo = novo("Frame", {
-				LayoutOrder = 4,
-				Size = UDim2.new(1, 0, 0, 10),
-				BackgroundColor3 = c.panel,
-				BorderSizePixel = 0,
-				ZIndex = 33,
-			}, cartao)
-			novo("UIStroke", { Color = c.ink, Thickness = 1 }, fundo)
-			local barra = novo("Frame", {
-				Size = UDim2.fromScale(0, 1),
-				BackgroundColor3 = c.accent,
-				BorderSizePixel = 0,
-				ZIndex = 34,
-			}, fundo)
+			local barra = est:barra(cartao, 4)
 			local lTempo = txt("corpo", "", 5)
 			local bAcel = est:botao("secundario", "", cartao, 6)
 			bAcel.Name = "BtnAcelerar"
@@ -954,20 +941,9 @@ function Menu._abaCompanhia(self: Menu)
 
 	local sat = math.round(st.satisfacao * 100)
 	est:texto("subtitulo", `{Emojis.satisfacao} Satisfação: {sat}%`, r, 7)
-	local barra = novo("Frame", {
-		LayoutOrder = 8,
-		Size = UDim2.new(1, 0, 0, 10),
-		BackgroundColor3 = est.c.bg,
-		BorderSizePixel = 0,
-		ZIndex = 32,
-	}, r)
-	novo("UIStroke", { Color = est.c.ink, Thickness = 1 }, barra)
-	novo("Frame", {
-		Size = UDim2.new(st.satisfacao, 0, 1, 0),
-		BackgroundColor3 = if sat >= 70 then est.c.positive elseif sat >= 40 then est.c.accent else est.c.negative,
-		BorderSizePixel = 0,
-		ZIndex = 33,
-	}, barra)
+	local cheioSat = est:barra(r, 8)
+	cheioSat.Size = UDim2.fromScale(st.satisfacao, 1)
+	cheioSat.BackgroundColor3 = if sat >= 70 then est.c.positive elseif sat >= 40 then est.c.accent else est.c.negative
 	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {(function()
 		local pct = math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)
 		return if pct > 0 then `+{pct}` else tostring(math.abs(pct) == 0 and 0 or pct)
