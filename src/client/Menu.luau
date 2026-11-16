@@ -418,7 +418,7 @@ function Menu._abaProjetos(self: Menu)
 	est:texto("titulo", `{Emojis.gabinete} Gabinete de Projetos`, r, 1)
 	est:texto(
 		"fraco",
-		"Ferrovias que o Brasil planejou e nunca terminou. Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.",
+		"Ferrovias que o Brasil planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.",
 		r,
 		2
 	)
@@ -468,7 +468,7 @@ function Menu._abaProjetos(self: Menu)
 		if situacao == "bloqueado" then
 			titulo.TextColor3 = c.inkMuted
 		end
-		txt("rotulo", `{if linha then #linha.trechos else 0} TRECHOS · {numero(km)} KM`, 2)
+		txt("rotulo", `{if p.ficticio then "E SE? · " else ""}{if linha then #linha.trechos else 0} TRECHOS · {numero(km)} KM`, 2)
 		txt("fraco", Idioma.t(p.descricao), 3)
 
 		if situacao == "concluido" then

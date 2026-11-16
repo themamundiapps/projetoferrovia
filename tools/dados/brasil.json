@@ -969,6 +969,163 @@
         "pt": "Fim da Madeira–Mamoré, de frente para a Bolívia, de onde vinha a borracha.",
         "en": "End of the Madeira–Mamoré, facing Bolivia, where the rubber came from."
       }
+    },
+    {
+      "id": "florianopolis",
+      "nome": "Florianópolis",
+      "lon": -48.55,
+      "lat": -27.6,
+      "porte": 3,
+      "porto": true,
+      "uf": "SC",
+      "historia": {
+        "pt": "Capital de Santa Catarina, numa ilha ligada ao continente pela ponte Hercílio Luz, de 1926.",
+        "en": "Capital of Santa Catarina, on an island linked to the mainland by the Hercílio Luz bridge, from 1926."
+      }
+    },
+    {
+      "id": "joinville",
+      "nome": "Joinville",
+      "lon": -48.85,
+      "lat": -26.3,
+      "porte": 2,
+      "paisagem": "sul",
+      "uf": "SC",
+      "historia": {
+        "pt": "Fundada em 1851 por imigrantes alemães, suíços e noruegueses; virou a maior cidade industrial catarinense.",
+        "en": "Founded in 1851 by German, Swiss and Norwegian immigrants; it became Santa Catarina's largest industrial city."
+      }
+    },
+    {
+      "id": "belem",
+      "nome": "Belém",
+      "lon": -48.5,
+      "lat": -1.46,
+      "porte": 4,
+      "porto": true,
+      "uf": "PA",
+      "historia": {
+        "pt": "Porta de entrada da Amazônia, na foz do rio. Enriqueceu com a borracha: é a cidade do Ver-o-Peso e do Theatro da Paz.",
+        "en": "Gateway to the Amazon, at the river's mouth. It grew rich on rubber: the city of the Ver-o-Peso market and the Theatro da Paz."
+      }
+    },
+    {
+      "id": "altamira",
+      "nome": "Altamira",
+      "lon": -52.21,
+      "lat": -3.2,
+      "porte": 2,
+      "paisagem": "amazonia",
+      "uf": "PA",
+      "historia": {
+        "pt": "Às margens do rio Xingu, no caminho da Transamazônica.",
+        "en": "On the banks of the Xingu river, along the Trans-Amazonian Highway."
+      }
+    },
+    {
+      "id": "santarem",
+      "nome": "Santarém",
+      "lon": -54.71,
+      "lat": -2.44,
+      "porte": 2,
+      "porto": true,
+      "paisagem": "amazonia",
+      "uf": "PA",
+      "historia": {
+        "pt": "No encontro das águas do Tapajós com o Amazonas, um dos portos mais antigos da região.",
+        "en": "Where the Tapajós meets the Amazon, one of the oldest ports in the region."
+      }
+    },
+    {
+      "id": "manaus",
+      "nome": "Manaus",
+      "lon": -60.02,
+      "lat": -3.12,
+      "porte": 4,
+      "porto": true,
+      "uf": "AM",
+      "historia": {
+        "pt": "No coração da floresta, foi a capital da borracha: o Teatro Amazonas abriu em 1896.",
+        "en": "In the heart of the rainforest, it was the rubber capital: the Amazon Theatre opened in 1896."
+      }
+    },
+    {
+      "id": "brasilia",
+      "nome": "Brasília",
+      "lon": -47.88,
+      "lat": -15.79,
+      "porte": 4,
+      "uf": "DF",
+      "historia": {
+        "pt": "A capital planejada no meio do cerrado, inaugurada em 1960. Nasceu para as estradas, não para os trilhos.",
+        "en": "The planned capital in the middle of the cerrado, opened in 1960. It was built for roads, not rails."
+      }
+    },
+    {
+      "id": "paracatu",
+      "nome": "Paracatu",
+      "lon": -46.88,
+      "lat": -17.22,
+      "porte": 2,
+      "paisagem": "cerrado",
+      "uf": "MG",
+      "historia": {
+        "pt": "Antiga cidade do ouro no noroeste de Minas, no caminho de Brasília.",
+        "en": "An old gold town in northwestern Minas, on the way to Brasília."
+      }
+    },
+    {
+      "id": "aracaju",
+      "nome": "Aracaju",
+      "lon": -37.07,
+      "lat": -10.91,
+      "porte": 2,
+      "porto": true,
+      "paisagem": "litoral",
+      "uf": "SE",
+      "historia": {
+        "pt": "Capital planejada de Sergipe, fundada em 1855 à beira do rio Sergipe.",
+        "en": "The planned capital of Sergipe, founded in 1855 on the Sergipe river."
+      }
+    },
+    {
+      "id": "maceio",
+      "nome": "Maceió",
+      "lon": -35.73,
+      "lat": -9.67,
+      "porte": 3,
+      "porto": true,
+      "uf": "AL",
+      "historia": {
+        "pt": "Capital de Alagoas, entre o mar e a lagoa Mundaú; cresceu com o porto do açúcar.",
+        "en": "Capital of Alagoas, between the sea and the Mundaú lagoon; it grew with its sugar port."
+      }
+    },
+    {
+      "id": "natal",
+      "nome": "Natal",
+      "lon": -35.21,
+      "lat": -5.79,
+      "porte": 3,
+      "porto": true,
+      "uf": "RN",
+      "historia": {
+        "pt": "A \"esquina do continente\": na Segunda Guerra, sua base aérea foi a ponte dos Aliados para a África.",
+        "en": "The \"corner of the continent\": in the Second World War its air base was the Allies' bridge to Africa."
+      }
+    },
+    {
+      "id": "fortaleza",
+      "nome": "Fortaleza",
+      "lon": -38.54,
+      "lat": -3.72,
+      "porte": 4,
+      "porto": true,
+      "uf": "CE",
+      "historia": {
+        "pt": "Capital do Ceará, cresceu em volta do forte holandês e do porto, à beira do Atlântico.",
+        "en": "Capital of Ceará, it grew around the Dutch fort and the port on the Atlantic."
+      }
     }
   ],
   "linhas": [
@@ -1610,6 +1767,158 @@
         "pt": "Levou os trilhos de Bauru ao rio Paraguai e abriu o sul de Mato Grosso. O último trecho, até Corumbá, só ficou pronto em 1952.",
         "en": "It carried the rails from Bauru to the Paraguay river and opened up southern Mato Grosso. The last section, to Corumbá, was only finished in 1952."
       }
+    },
+    {
+      "id": "litoranea_sul",
+      "nome": "Litorânea do Sul",
+      "ano": 1950,
+      "cor": 8,
+      "degrau": 5,
+      "projeto": "litoranea_sul",
+      "trechos": [
+        {
+          "de": "santos",
+          "para": "paranagua",
+          "ano": 1950,
+          "terreno": "baixada"
+        },
+        {
+          "de": "paranagua",
+          "para": "joinville",
+          "ano": 1950,
+          "terreno": "serra_leve"
+        },
+        {
+          "de": "joinville",
+          "para": "florianopolis",
+          "ano": 1950,
+          "terreno": "baixada"
+        }
+      ]
+    },
+    {
+      "id": "planalto",
+      "nome": "Ferrovia do Planalto",
+      "ano": 1975,
+      "cor": 2,
+      "degrau": 5,
+      "projeto": "planalto",
+      "trechos": [
+        {
+          "de": "bh",
+          "para": "paracatu",
+          "ano": 1975,
+          "terreno": "planalto"
+        },
+        {
+          "de": "paracatu",
+          "para": "brasilia",
+          "ano": 1975,
+          "terreno": "planalto"
+        },
+        {
+          "de": "brasilia",
+          "para": "campinorte",
+          "ano": 1975,
+          "terreno": "planalto"
+        }
+      ]
+    },
+    {
+      "id": "litoranea_ne",
+      "nome": "Litorânea do Nordeste",
+      "ano": 1985,
+      "cor": 4,
+      "degrau": 6,
+      "projeto": "litoranea_ne",
+      "trechos": [
+        {
+          "de": "salvador",
+          "para": "aracaju",
+          "ano": 1985,
+          "terreno": "baixada"
+        },
+        {
+          "de": "aracaju",
+          "para": "maceio",
+          "ano": 1985,
+          "terreno": "baixada"
+        },
+        {
+          "de": "maceio",
+          "para": "recife",
+          "ano": 1985,
+          "terreno": "baixada"
+        },
+        {
+          "de": "recife",
+          "para": "natal",
+          "ano": 1985,
+          "terreno": "baixada"
+        },
+        {
+          "de": "natal",
+          "para": "fortaleza",
+          "ano": 1985,
+          "terreno": "baixada"
+        }
+      ]
+    },
+    {
+      "id": "amazonia",
+      "nome": "Ferrovia da Amazônia",
+      "ano": 1990,
+      "cor": 5,
+      "degrau": 6,
+      "projeto": "amazonia",
+      "trechos": [
+        {
+          "de": "belem",
+          "para": "altamira",
+          "ano": 1990,
+          "terreno": "floresta"
+        },
+        {
+          "de": "altamira",
+          "para": "santarem",
+          "ano": 1990,
+          "terreno": "floresta"
+        },
+        {
+          "de": "santarem",
+          "para": "manaus",
+          "ano": 1990,
+          "terreno": "floresta"
+        }
+      ]
+    },
+    {
+      "id": "tav_sul",
+      "nome": "Trem-bala do Sul",
+      "ano": 2025,
+      "cor": 6,
+      "degrau": 8,
+      "projeto": "tav_sul",
+      "trechos": [
+        {
+          "de": "sao_paulo",
+          "para": "curitiba",
+          "ano": 2025,
+          "terreno": "serra"
+        },
+        {
+          "de": "curitiba",
+          "para": "florianopolis",
+          "ano": 2025,
+          "terreno": "serra_leve"
+        },
+        {
+          "de": "florianopolis",
+          "para": "porto_alegre",
+          "ano": 2025,
+          "terreno": "baixada"
+        }
+      ]
     }
   ],
   "rotulos": [
@@ -2067,6 +2376,85 @@
         "pt": "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai.",
         "en": "Announced in 2007, its auctions drew no bidders and it never left the drawing board. Here, it finally gets built."
       }
+    },
+    {
+      "id": "litoranea_sul",
+      "nome": "Litorânea do Sul",
+      "emoji": "terreno_ponte",
+      "custo": 800000,
+      "minutos": 20,
+      "ficticio": true,
+      "requer": {
+        "era": "diesel",
+        "linhasCompletas": 13
+      },
+      "descricao": {
+        "pt": "E se o litoral do Sul tivesse trem? Uma linha costeira de Santos a Florianópolis, pelos portos de Paranaguá e Joinville.",
+        "en": "What if the southern coast had a railway? A coastal line from Santos to Florianópolis, through the ports of Paranaguá and Joinville."
+      }
+    },
+    {
+      "id": "planalto",
+      "nome": "Ferrovia do Planalto",
+      "emoji": "estacoes",
+      "custo": 2500000,
+      "minutos": 25,
+      "ficticio": true,
+      "requer": {
+        "era": "eletrico"
+      },
+      "descricao": {
+        "pt": "E se Brasília tivesse nascido com ferrovia? A nova capital ligada a Belo Horizonte e ao norte de Goiás pelos trilhos.",
+        "en": "What if Brasília had been born with a railway? The new capital linked by rail to Belo Horizonte and northern Goiás."
+      }
+    },
+    {
+      "id": "litoranea_ne",
+      "nome": "Litorânea do Nordeste",
+      "emoji": "carga_acucar",
+      "custo": 4000000,
+      "minutos": 30,
+      "ficticio": true,
+      "requer": {
+        "era": "eletrico",
+        "projeto": "transnordestina"
+      },
+      "descricao": {
+        "pt": "E se as capitais do Nordeste fossem ligadas por trilhos? Uma linha de Salvador a Fortaleza pela costa.",
+        "en": "What if the capitals of the Northeast were linked by rail? A coastal line from Salvador to Fortaleza."
+      }
+    },
+    {
+      "id": "amazonia",
+      "nome": "Ferrovia da Amazônia",
+      "emoji": "terreno_floresta",
+      "custo": 6000000,
+      "minutos": 30,
+      "ficticio": true,
+      "requer": {
+        "era": "eletrico",
+        "projeto": "fico"
+      },
+      "descricao": {
+        "pt": "E se a Amazônia tivesse uma ferrovia de verdade? De Belém a Manaus, cruzando o Xingu e o Tapajós. Um sonho caro e polêmico.",
+        "en": "What if the Amazon had a real railway? From Belém to Manaus, across the Xingu and the Tapajós. An expensive and controversial dream."
+      }
+    },
+    {
+      "id": "tav_sul",
+      "nome": "Trem-bala do Sul",
+      "emoji": "era_alta",
+      "custo": 40000000,
+      "minutos": 40,
+      "ficticio": true,
+      "requer": {
+        "era": "alta",
+        "projeto": "tav"
+      },
+      "descricao": {
+        "pt": "E se o trem-bala chegasse ao Sul? São Paulo, Curitiba, Florianópolis e Porto Alegre em poucas horas.",
+        "en": "What if the bullet train reached the South? São Paulo, Curitiba, Florianópolis and Porto Alegre in a few hours."
+      }
     }
   ],
   "foco": [
@@ -2140,6 +2528,26 @@
     "PA": [
       "Pará",
       "n"
+    ],
+    "AM": [
+      "Amazonas",
+      "n"
+    ],
+    "DF": [
+      "Distrito Federal",
+      "co"
+    ],
+    "SE": [
+      "Sergipe",
+      "ne"
+    ],
+    "AL": [
+      "Alagoas",
+      "ne"
+    ],
+    "RN": [
+      "Rio Grande do Norte",
+      "ne"
     ]
   },
   "regioes": {

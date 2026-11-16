@@ -67,20 +67,21 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] GDD aprovado
 - [x] Pacote gráfico (v2, com emojis)
 - [x] Estrutura do projeto com Rojo
-- [x] Dados do Brasil (13 linhas históricas em 5 ondas e 6 projetos; 71 estações, 65 trechos; economia provisória)
+- [x] Dados do Brasil (13 linhas históricas em 5 ondas, 6 projetos reais e 5 linhas "E se?"; 83 estações, 82 trechos)
 - [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e Sudeste em alta resolução (falta testar no celular)
 - [x] Compra de trechos, desbloqueio histórico e renda por segundo
 - [x] Trens por linha e porcentagem de serviço
 - [x] Carga (café e minério até os portos) e escolha de traçado
-- [x] Duas eras (vapor e diesel), com troca de visual
+- [x] Quatro eras (vapor, diesel, elétrica e alta velocidade), com troca de visual
 - [x] Save com DataStore e ganho offline (falta testar com as APIs ligadas no Studio)
-- [x] Menu com abas (Linhas, Gabinete, Contratos, Companhia, Ajustes), níveis de estação e estatísticas
-- [x] Gabinete de Projetos: 6 ferrovias planejadas do Brasil, liberadas por estudo com tempo real
+- [x] Menu com abas (Linhas, Gabinete, Contratos, Jornal, Companhia, Ajustes), níveis de estação e estatísticas
+- [x] Gabinete de Projetos: 6 ferrovias planejadas do Brasil e 5 "E se?" (Litorânea do Sul, Planalto, Litorânea do Nordeste, Amazônia, Trem-bala do Sul)
 - [x] Economia com decisões: demanda por porte das cidades, lotação dos trens, efeito rede e manutenção
 - [x] Contratos com prazo, missões do dia, nível da companhia e medalhas (`src/shared/Metas.luau`)
 - [x] Trens andando no mapa e tutorial dos primeiros passos
-- [x] Fichas das cidades (71 cidades, história em português e inglês; imagens em `arte/cidades/`)
-- [ ] Jornal da Companhia (eventos), ranking e mapas dos EUA e da Europa
+- [x] Fichas das cidades (83 cidades, história em português e inglês; imagens em `arte/cidades/`)
+- [x] Jornal da Companhia: 16 eventos de época que mexem na economia (`src/shared/Jornal.luau`)
+- [ ] Ranking e mapas dos EUA e da Europa
 - [ ] Um gamepass e um developer product
 
 ## Balanço
@@ -88,3 +89,6 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 `tools/balanco/simular.sh` roda um jogador "guloso" na economia (precisa do `luau` de linha de comando) e
 imprime em que minuto cada trecho, estudo e era acontece. Serve para conferir o ritmo depois de mexer nos
 números de `src/shared/Economia.luau`. No jogo, 1 minuto de verdade vale 1 dia da ferrovia.
+
+Ritmo atual do jogador guloso: diesel aos ~32 min, elétrica aos ~76 min, alta velocidade aos ~192 min e
+trem-bala Rio–SP aos ~228 min. As linhas "E se?" ocupam o meio do jogo (de ~55 a ~200 min).

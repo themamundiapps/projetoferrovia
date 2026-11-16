@@ -126,7 +126,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     if (r.projeto && ordemProjeto[r.projeto] === undefined) throw new Error(`Projeto requer desconhecido "${r.projeto}"`);
     const linha = linhas.find((l) => l.projeto === p.id);
     if (!linha) throw new Error(`Projeto ${p.id} sem linha`);
-    L.push(`\t\t{ id = ${lua(p.id)}, nome = ${lua(p.nome)}, emoji = ${lua(p.emoji)}, linha = ${lua(linha.id)}, custo = ${lua(p.custo)}, segundos = ${lua(Math.round(p.minutos * 60))}, descricao = ${lua(p.descricao)}, requer = { linhasCompletas = ${lua(r.linhasCompletas)}, era = ${lua(r.era)}, projeto = ${lua(r.projeto)} } },`);
+    L.push(`\t\t{ id = ${lua(p.id)}, nome = ${lua(p.nome)}, emoji = ${lua(p.emoji)}, linha = ${lua(linha.id)}, custo = ${lua(p.custo)}, segundos = ${lua(Math.round(p.minutos * 60))}, ficticio = ${lua(!!p.ficticio)}, descricao = ${lua(p.descricao)}, requer = { linhasCompletas = ${lua(r.linhasCompletas)}, era = ${lua(r.era)}, projeto = ${lua(r.projeto)} } },`);
   }
   L.push("\t},");
   // Rótulos do mapa (estados, regiões, rios, oceano). Estados e oceano com letras espaçadas, estilo carta antiga.

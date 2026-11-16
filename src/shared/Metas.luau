@@ -512,6 +512,19 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
+		id = "sonhador", nome = "Sonhador", emoji = "pesquisa", xp = 100,
+		descricao = "Complete uma linha \"E se?\" do Gabinete.",
+		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
+			for _, linha in dados.linhas do
+				local p = linha.projeto and Economia.acharProjeto(dados, linha.projeto)
+				if p and p.ficticio and Economia.linhaCompleta(estado, linha) then
+					return true
+				end
+			end
+			return false
+		end,
+	},
+	{
 		id = "do_papel_ao_trilho", nome = "Do papel ao trilho", emoji = "gabinete", xp = 40,
 		descricao = "Conclua um estudo no Gabinete de Projetos.",
 		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
