@@ -142,8 +142,10 @@ end
 
 -- Coloca o painel lateral logo abaixo de uma posição Y da tela (abaixo do caixa da companhia).
 function Menu.posicionarAbaixoDe(self: Menu, y: number)
-	self.painel.Position = UDim2.fromOffset(16, y + 10)
-	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10) - 90)
+	-- com a moldura do kit, as caixas ganham uma borda por fora: o vão entre elas cresce junto
+	local b = self.est:bordaKit()
+	self.painel.Position = UDim2.fromOffset(16, y + 10 + 2 * b)
+	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10 + 2 * b) - 90 - b)
 end
 
 function Menu.abrirAba(self: Menu, aba: string?)

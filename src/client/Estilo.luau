@@ -90,6 +90,13 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 	return true
 end
 
+-- Quanto a moldura do kit sai para fora das caixas (0 se a era ainda não tem moldura).
+function Estilo.bordaKit(self: Estilo): number
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.painel
+	return if p and p.id ~= "rbxassetid://0" then p.borda else 0
+end
+
 -- Caixa de painel: fundo da era, contorno (ou a moldura do kit), bloqueia o mapa embaixo.
 function Estilo.caixa(self: Estilo, props: { [string]: any }, pai: Instance): Frame
 	local fr = novo("Frame", props, pai)
