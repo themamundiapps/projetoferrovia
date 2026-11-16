@@ -496,13 +496,13 @@ function Estilo.divisor(self: Estilo, pai: Instance, ordem: number?): Frame
 		local img = novo("ImageLabel", {
 			Name = "DivisorKit",
 			LayoutOrder = ordem or 0,
-			Size = UDim2.new(1, 0, 0, 0),
+			-- altura fixa e imagem inteira (Fit): na largura dos painéis (~300 px) a peça ocupa tudo
+			Size = UDim2.new(1, 0, 0, 20),
 			BackgroundTransparency = 1,
 			Image = p.id,
 			ScaleType = Enum.ScaleType.Fit,
 			ZIndex = 31,
 		}, pai)
-		novo("UIAspectRatioConstraint", { AspectRatio = p.largura / p.altura }, img)
 		return img
 	end
 	return novo("Frame", {
