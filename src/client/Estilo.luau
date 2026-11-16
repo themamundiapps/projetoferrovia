@@ -74,7 +74,11 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 	local function acompanhar()
 		local origem = (pai :: GuiBase2d).AbsolutePosition
 		img.Position = UDim2.fromOffset(fr.AbsolutePosition.X - origem.X - b, fr.AbsolutePosition.Y - origem.Y - b)
-		img.Size = UDim2.fromOffset(fr.AbsoluteSize.X + 2 * b, fr.AbsoluteSize.Y + 2 * b)
+		local w, h = fr.AbsoluteSize.X + 2 * b, fr.AbsoluteSize.Y + 2 * b
+		img.Size = UDim2.fromOffset(w, h)
+		-- caixa baixa ou estreita (a barra do menu): os cantos encolhem para caber
+		local cx, cy = p.slice.Min.X, p.slice.Min.Y
+		img.SliceScale = math.max(0.05, math.min(p.escala, h / (2 * cy) * 0.98, w / (2 * cx) * 0.98))
 		img.Visible = fr.Visible
 		img.ZIndex = fr.ZIndex - 1
 	end
