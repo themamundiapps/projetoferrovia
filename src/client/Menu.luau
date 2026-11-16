@@ -555,22 +555,13 @@ end
 -- ---------------------------------------------------------------- aba Contratos (contratos e missões do dia)
 
 local function novoCartao(est: any, pai: Instance, nome: string, ordem: number, destaque: boolean?): (Frame, (any, string, number) -> TextLabel)
-	local c = est.c
-	local cartao = novo("Frame", {
+	local cartao = est:cartao({
 		Name = nome,
 		LayoutOrder = ordem,
 		Size = UDim2.new(1, 0, 0, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = c.bg,
 		ZIndex = 32,
-	}, pai)
-	est:cantos(cartao)
-	novo("UIStroke", {
-		Color = if destaque then c.accent else c.rule,
-		Thickness = if destaque then 2 else 1,
-		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-	}, cartao)
-	est:padding(cartao, 10, 8)
+	}, pai, destaque)
 	est:lista(cartao, 4)
 	local function txt(tipo: any, conteudo: string, ordemTxt: number): TextLabel
 		local l = est:texto(tipo, conteudo, cartao, ordemTxt)

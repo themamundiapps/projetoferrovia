@@ -63,6 +63,7 @@ Assets.Cidades = {
 Assets.KitUI = {
 	classico = {
 		-- painel_3.png (mogno e dourado, 728 x 359); as outras opções ficam em arte/ui/classico/
+		cartao = { id = "rbxassetid://0", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
 		painel = { id = "rbxassetid://125486438020687", slice = Rect.new(160, 155, 568, 204), escala = 0.42, borda = 9 },
 	},
 	moderno = {},

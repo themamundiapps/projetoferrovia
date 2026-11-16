@@ -96,6 +96,42 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 	return true
 end
 
+-- Cartão (quadro dentro dos painéis): com a peça do kit, o próprio cartão é a imagem fatiada (ele tem
+-- lista e padding dentro, então a imagem não pode ser uma filha comum). Sem a peça, Frame com contorno.
+function Estilo.cartao(self: Estilo, props: { [string]: any }, pai: Instance, destaque: boolean?): any
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.cartao
+	local c = self.c
+	if p and p.id ~= "rbxassetid://0" then
+		local img = novo("ImageLabel", props, pai)
+		img.BackgroundTransparency = 1
+		img.Image = p.id
+		img.ScaleType = Enum.ScaleType.Slice
+		img.SliceCenter = p.slice
+		local function ajustar()
+			local lado = math.min(img.AbsoluteSize.X, img.AbsoluteSize.Y) * 0.25
+			img.SliceScale = math.max(0.05, math.min(p.escala, lado / p.slice.Min.X, lado / p.slice.Min.Y))
+		end
+		img:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
+		ajustar()
+		if destaque then
+			novo("UIStroke", { Color = c.accent, Thickness = 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, img)
+		end
+		self:padding(img, 16, 13)
+		return img
+	end
+	local fr = novo("Frame", props, pai)
+	fr.BackgroundColor3 = c.bg
+	self:cantos(fr)
+	novo("UIStroke", {
+		Color = if destaque then c.accent else c.rule,
+		Thickness = if destaque then 2 else 1,
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	}, fr)
+	self:padding(fr, 10, 8)
+	return fr
+end
+
 -- Quanto a moldura do kit sai para fora das caixas (0 se a era ainda não tem moldura).
 function Estilo.bordaKit(self: Estilo): number
 	local kit = Assets.KitUI[self.era.kit or ""]
