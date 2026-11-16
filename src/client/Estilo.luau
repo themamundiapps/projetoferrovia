@@ -2,6 +2,9 @@
 -- Estilo: peças de interface com o visual da era (caixas, textos, botões, listas).
 -- Todos os painéis usam isto, para o jogo inteiro trocar de cara junto com a era.
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
+
 local Estilo = {}
 Estilo.__index = Estilo
 
@@ -47,7 +50,47 @@ function Estilo.lista(_self: Estilo, pai: Instance, espaco: number, horizontal: 
 	}, pai)
 end
 
--- Caixa de painel: fundo da era, contorno, bloqueia o mapa embaixo.
+-- Moldura do kit de UI da era (imagem fatiada em 9) atrás de uma caixa: fica como irmã da caixa, um
+-- pouco maior que ela, e acompanha posição, tamanho e visibilidade. Assim o conteúdo e as listas da
+-- caixa não mudam. Devolve false se a era ainda não tem a peça enviada.
+function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.painel
+	local pai = fr.Parent
+	if not p or p.id == "rbxassetid://0" or not pai or not pai:IsA("GuiBase2d") then
+		return false
+	end
+	local b = p.borda
+	local img = novo("ImageLabel", {
+		Name = fr.Name .. "_Moldura",
+		BackgroundTransparency = 1,
+		Image = p.id,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = p.slice,
+		SliceScale = p.escala,
+		ZIndex = fr.ZIndex - 1,
+		Active = false,
+	}, pai) :: ImageLabel
+	local function acompanhar()
+		local origem = (pai :: GuiBase2d).AbsolutePosition
+		img.Position = UDim2.fromOffset(fr.AbsolutePosition.X - origem.X - b, fr.AbsolutePosition.Y - origem.Y - b)
+		img.Size = UDim2.fromOffset(fr.AbsoluteSize.X + 2 * b, fr.AbsoluteSize.Y + 2 * b)
+		img.Visible = fr.Visible
+		img.ZIndex = fr.ZIndex - 1
+	end
+	fr:GetPropertyChangedSignal("AbsolutePosition"):Connect(acompanhar)
+	fr:GetPropertyChangedSignal("AbsoluteSize"):Connect(acompanhar)
+	fr:GetPropertyChangedSignal("Visible"):Connect(acompanhar)
+	fr:GetPropertyChangedSignal("ZIndex"):Connect(acompanhar)
+	fr.Destroying:Connect(function()
+		img:Destroy()
+	end)
+	fr.BackgroundTransparency = 1
+	acompanhar()
+	return true
+end
+
+-- Caixa de painel: fundo da era, contorno (ou a moldura do kit), bloqueia o mapa embaixo.
 function Estilo.caixa(self: Estilo, props: { [string]: any }, pai: Instance): Frame
 	local fr = novo("Frame", props, pai)
 	fr.BackgroundColor3 = self.c.panel
@@ -55,8 +98,10 @@ function Estilo.caixa(self: Estilo, props: { [string]: any }, pai: Instance): Fr
 	if fr.ZIndex < 30 then
 		fr.ZIndex = 30
 	end
-	novo("UIStroke", { Color = self.c.ink, Thickness = self.era.forma.traco + 0.5 }, fr)
-	self:cantos(fr)
+	if not self:moldura(fr) then
+		novo("UIStroke", { Color = self.c.ink, Thickness = self.era.forma.traco + 0.5 }, fr)
+		self:cantos(fr)
+	end
 	return fr
 end
 

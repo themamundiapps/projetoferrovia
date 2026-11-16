@@ -9,7 +9,7 @@ end
 
 Theme.Eras = {
 	{
-		id = "vapor", nome = "Era do Vapor", anos = "1830–1930",
+		id = "vapor", kit = "classico", nome = "Era do Vapor", anos = "1830–1930",
 		cores = {
 			bg = Color3.fromHex("#EFE4CC"),
 			panel = Color3.fromHex("#F7F0DE"),
@@ -39,7 +39,7 @@ Theme.Eras = {
 		graoPapel = true,
 	},
 	{
-		id = "diesel", nome = "Era do Diesel", anos = "1930–1965",
+		id = "diesel", kit = "classico", nome = "Era do Diesel", anos = "1930–1965",
 		cores = {
 			bg = Color3.fromHex("#E9E2CF"),
 			panel = Color3.fromHex("#F5F0E1"),
@@ -69,7 +69,7 @@ Theme.Eras = {
 		graoPapel = true,
 	},
 	{
-		id = "eletrico", nome = "Era Elétrica", anos = "1965–2000",
+		id = "eletrico", kit = "moderno", nome = "Era Elétrica", anos = "1965–2000",
 		cores = {
 			bg = Color3.fromHex("#F4F2EC"),
 			panel = Color3.fromHex("#FFFFFF"),
@@ -99,7 +99,7 @@ Theme.Eras = {
 		graoPapel = false,
 	},
 	{
-		id = "alta", nome = "Era da Alta Velocidade", anos = "2000–",
+		id = "alta", kit = "moderno", nome = "Era da Alta Velocidade", anos = "2000–",
 		cores = {
 			bg = Color3.fromHex("#0C111C"),
 			panel = Color3.fromHex("#141D2E"),

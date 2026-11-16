@@ -58,6 +58,15 @@ Assets.Cidades = {
 	vitoria = "rbxassetid://101719837411189",
 	-- faltam: curitiba, campo_grande
 } :: { [string]: string } -- id da cidade -> imagem
+-- Kit de UI (imagens fatiadas em 9, arte/ui/<kit>/). slice = SliceCenter na imagem de 512 px;
+-- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).
+Assets.KitUI = {
+	classico = {
+		painel = { id = "rbxassetid://0", slice = Rect.new(120, 120, 392, 392), escala = 0.4, borda = 20 },
+	},
+	moderno = {},
+} :: { [string]: { [string]: { id: string, slice: Rect, escala: number, borda: number } } }
+
 -- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.
 Assets.Decisoes = {} :: { [string]: string } -- id da decisão -> imagem
 Assets.Paisagens = {

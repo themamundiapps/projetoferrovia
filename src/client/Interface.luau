@@ -9,6 +9,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
+local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local Interface = {}
 Interface.__index = Interface
@@ -67,9 +68,11 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		fr.BackgroundColor3 = c.panel
 		fr.Active = true -- bloqueia o mapa embaixo
 		fr.ZIndex = 30
-		novo("UIStroke", { Color = c.ink, Thickness = era.forma.traco + 0.5 }, fr)
-		if era.forma.canto > 0 then
-			novo("UICorner", { CornerRadius = UDim.new(0, era.forma.canto) }, fr)
+		if not Estilo.new(era):moldura(fr) then
+			novo("UIStroke", { Color = c.ink, Thickness = era.forma.traco + 0.5 }, fr)
+			if era.forma.canto > 0 then
+				novo("UICorner", { CornerRadius = UDim.new(0, era.forma.canto) }, fr)
+			end
 		end
 		return fr
 	end
