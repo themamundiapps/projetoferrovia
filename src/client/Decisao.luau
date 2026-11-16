@@ -75,7 +75,7 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	self.lblRotulo = est:texto("rotulo", "", caixa, 0)
 	self.lblTexto = est:texto("corpo", "", caixa, 2)
 	est:divisor(caixa, 3)
-	self.opcoes = novo("Frame", { LayoutOrder = 4, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, BackgroundTransparency = 1 }, caixa)
+	self.opcoes = novo("Frame", { Name = "Opcoes", LayoutOrder = 4, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, BackgroundTransparency = 1 }, caixa)
 	est:lista(self.opcoes, 8)
 	self.btnDepois = est:botao("discreto", "Decidir depois", caixa, 5)
 	self.btnDepois.Name = "BtnDepois"
