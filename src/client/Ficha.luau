@@ -88,9 +88,9 @@ function Ficha.new(tela: ScreenGui, era: any, dados: any): Ficha
 		self:fechar()
 	end)
 
-	-- o painel tem a altura do conteúdo, até o limite da tela (acima da barra do menu); daí em diante, rola
+	-- o painel tem a altura do conteúdo, até o limite da tela (acima dos botões de zoom); daí em diante, rola
 	local function ajustarAltura()
-		local limite = math.max(200, tela.AbsoluteSize.Y - 16 - 96)
+		local limite = math.max(200, tela.AbsoluteSize.Y - 16 - 132)
 		painel.Size = UDim2.fromOffset(LARGURA, math.min(lista.AbsoluteContentSize.Y + 2 * MARGEM, limite))
 	end
 	self.conexoes = {
