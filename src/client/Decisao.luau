@@ -10,6 +10,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
+local Assets = require(Shared:WaitForChild("Assets"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -60,6 +61,17 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	est:padding(caixa, 18, 16)
 	est:lista(caixa, 10)
 
+	-- ilustração (16:9), só quando a decisão tem imagem
+	self.imagem = novo("ImageLabel", {
+		Name = "Ilustracao",
+		LayoutOrder = -1,
+		Size = UDim2.fromScale(1, 0),
+		BackgroundColor3 = est.c.bg,
+		ScaleType = Enum.ScaleType.Crop,
+		Visible = false,
+	}, caixa) :: ImageLabel
+	novo("UIAspectRatioConstraint", { AspectRatio = 16 / 9 }, self.imagem)
+	est:cantos(self.imagem)
 	-- cabeçalho: emoji grande + título
 	local topo = novo("Frame", { LayoutOrder = 1, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, BackgroundTransparency = 1 }, caixa)
 	est:lista(topo, 12, true)
@@ -131,6 +143,13 @@ function Decisao._desenhar(self: Decisao, estado: any, def: Decisoes.Definicao)
 	local pend = estado.decisoes.pendente
 	local est = self.est
 	local titulo, texto = Decisoes.textos(def, pend.tipo, pend.alvo, self.dados, Idioma.atual)
+	local img = Assets.Decisoes[def.id]
+	self.imagem.Image = img or ""
+	self.imagem.Visible = img ~= nil
+	self.imagem.Size = UDim2.new(1, 0, 0, 0)
+	self.imagem.AutomaticSize = Enum.AutomaticSize.None
+	self.lblEmoji.Visible = img == nil
+	self.lblTitulo.Size = if img then UDim2.new(1, 0, 0, 0) else UDim2.new(1, -60, 0, 0)
 	self.lblEmoji.Text = (Emojis :: any)[def.emoji] or Emojis.contratos
 	self.lblTitulo.Text = titulo
 	self.lblRotulo.Text = `{Emojis.contratos} DECISÃO DA COMPANHIA`

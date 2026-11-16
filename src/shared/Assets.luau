@@ -58,6 +58,8 @@ Assets.Cidades = {
 	vitoria = "rbxassetid://101719837411189",
 	-- faltam: curitiba, campo_grande
 } :: { [string]: string } -- id da cidade -> imagem
+-- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.
+Assets.Decisoes = {} :: { [string]: string } -- id da decisão -> imagem
 Assets.Paisagens = {
 	cafe = "rbxassetid://89059490606207",
 	canavial = "rbxassetid://103359671020446",
