@@ -162,6 +162,32 @@ function Estilo.barra(self: Estilo, pai: Instance, ordem: number?): Frame
 			ClipsDescendants = true,
 			ZIndex = 34,
 		}, trilho)
+		local q = kit.barra_cheia
+		if q and q.id ~= "rbxassetid://0" then
+			-- cápsula esmaltada tingida pela cor que o código der ao preenchimento (BackgroundColor3)
+			local cheio = novo("ImageLabel", {
+				Name = "Cheio",
+				Size = UDim2.fromScale(0, 1),
+				BackgroundTransparency = 1,
+				BackgroundColor3 = c.accent,
+				Image = q.id,
+				ImageColor3 = c.accent,
+				ScaleType = Enum.ScaleType.Slice,
+				SliceCenter = q.slice,
+				ZIndex = 35,
+			}, canal) :: ImageLabel
+			local function ajustar()
+				local h = cheio.AbsoluteSize.Y
+				cheio.SliceScale = math.max(0.05, h / (2 * q.slice.Min.Y))
+				cheio.Visible = cheio.AbsoluteSize.X >= 2
+			end
+			cheio:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+				cheio.ImageColor3 = cheio.BackgroundColor3
+			end)
+			cheio:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
+			ajustar()
+			return cheio :: any
+		end
 		return novo("Frame", {
 			Size = UDim2.fromScale(0, 1),
 			BackgroundColor3 = c.accent,
