@@ -16,8 +16,7 @@ const CUSTO_POR_KM = 6;        // R$ por km no primeiro trecho do jogo
 const CRESCIMENTO_LINHA = 2.4; // cada degrau (onda de linhas) custa ~70% mais por km
 const SINUOSIDADE = 1.25;      // trilho real é mais longo que a linha reta
 
-// moedas: a moeda de época de cada era (ver Economia.formatar)
-const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$", moedas: { vapor: "reis", diesel: "cruzeiro", eletrico: "cruzeiro", alta: "real" } } };
+const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" } };
 
 function projecao(def) {
   const p = def.projecao;
@@ -75,7 +74,6 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push(`\tid = ${lua(id)},`);
   L.push(`\tmoeda = ${lua(cfg.moeda)},`);
   L.push(`\tsimbolo = ${lua(cfg.simbolo)},`);
-  L.push(`\tmoedas = { ${Object.entries(cfg.moedas).map(([k, v]) => `${k} = ${lua(v)}`).join(", ")} },`);
   L.push("\tterrenos = {");
   for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, custo = ${lua(t.custo)} },`);
   L.push("\t},");

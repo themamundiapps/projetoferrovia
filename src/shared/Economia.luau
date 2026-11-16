@@ -953,45 +953,13 @@ function Economia.acharTrecho(dados: any, trechoId: string): (any, number, any, 
 end
 
 -- Formata dinheiro no padrão brasileiro: R$ 7.195 / R$ 9,22 / R$ 1,2 mi
--- Moeda de época: o mapa diz qual moeda cada era usa (dados.moedas); sem isso, o símbolo do mapa.
-function Economia.moedaDe(dados: any, estado: EstadoMapa): string
-	return (dados.moedas and dados.moedas[estado.era]) or dados.simbolo or "R$"
+-- Símbolo da moeda do mapa (sempre no formato atual, para qualquer jogador entender: R$ 12.500).
+function Economia.moedaDe(dados: any, _estado: EstadoMapa): string
+	return dados.simbolo or "R$"
 end
 
-local function comPontos(n: number): string
-	local inteiro = tostring(math.floor(n + 0.5))
-	return (inteiro:reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", ""))
-end
-
--- Réis do Império: o valor do jogo é em mil-réis. 850 vira 850$000; 12.500 vira 12:500$000 (12 contos
--- e 500 mil-réis); de mil contos para cima, "1.500 contos" ou "2,3 mi de contos".
-local function formatarReis(valor: number, decimais: boolean?): string
-	local abs = math.abs(valor)
-	local sinal = if valor < 0 then "-" else ""
-	if abs >= 1e6 then
-		local contos = abs / 1000
-		if contos >= 1e9 then
-			return `{sinal}{(string.format("%.1f", contos / 1e9):gsub("%.", ","))} bi de contos`
-		elseif contos >= 1e6 then
-			return `{sinal}{(string.format("%.1f", contos / 1e6):gsub("%.", ","))} mi de contos`
-		end
-		return `{sinal}{comPontos(contos)} contos`
-	end
-	local reis = math.floor(abs * (if decimais then 1000 else 1) + 0.5) * (if decimais then 1 else 1000)
-	local mil = reis // 1000
-	local resto = reis % 1000
-	if mil >= 1000 then
-		return string.format("%s%s:%03d$%03d", sinal, comPontos(mil // 1000), mil % 1000, resto)
-	end
-	return string.format("%s%d$%03d", sinal, mil, resto)
-end
-
--- simbolo: "reis", "cruzeiro" ou "real" para a moeda de época; qualquer outro texto vai na frente do número.
 function Economia.formatar(valor: number, simbolo: string?, decimais: boolean?): string
-	if simbolo == "reis" then
-		return formatarReis(valor, decimais)
-	end
-	local s = if simbolo == "cruzeiro" then "Cr$" elseif simbolo == "real" then "R$" else simbolo or "R$"
+	local s = simbolo or "R$"
 	local abs = math.abs(valor)
 	local sinal = if valor < 0 then "-" else ""
 	local limites = { 1e12, 1e9, 1e6 }

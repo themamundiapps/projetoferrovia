@@ -6,7 +6,6 @@ return {
 	id = "brasil",
 	moeda = "BRL",
 	simbolo = "R$",
-	moedas = { vapor = "reis", diesel = "cruzeiro", eletrico = "cruzeiro", alta = "real" },
 	terrenos = {
 		planalto = { nome = "Planalto", custo = 1 },
 		baixada = { nome = "Baixada litorânea", custo = 1.1 },
