@@ -235,7 +235,12 @@ local function vestirBotao(b: TextButton, p: any)
 		local w, h = b.AbsoluteSize.X, b.AbsoluteSize.Y
 		local cx, cy = p.slice.Min.X, p.slice.Min.Y
 		-- as pontas arredondadas ocupam a altura toda do botão
-		fundo.SliceScale = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
+		local escala = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
+		fundo.SliceScale = escala
+		-- o texto não entra nas pontas (rebites e arabescos)
+		local folga = math.max(0, cx * escala * 0.8 - l)
+		rotulo.Position = UDim2.fromOffset(folga, 0)
+		rotulo.Size = UDim2.new(1, -2 * folga, 1, 0)
 	end
 	b.Changed:Connect(function(prop: string)
 		if PROPS_TEXTO[prop] then
