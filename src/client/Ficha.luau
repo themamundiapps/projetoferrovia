@@ -520,17 +520,19 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 			-- em qual linha a carga conta (a primeira linha construída que passa aqui) e se chega a um porto
 			local situacao = T("ficha_sem_porto")
 			local cor = c.inkMuted
-			for linhaId, lista in Economia.cargasPorLinha(estado, dados) do
-				for _, info in lista do
-					if info.estacao == id and info.conectada then
-						for _, linha in dados.linhas do
-							if linha.id == linhaId then
-								situacao = T("ficha_chega_ao_porto", math.round(carga.bonus * 100), linha.nome)
-								cor = c.positive
-							end
-						end
+			local v = (Economia.valorCargas(estado, dados))[id]
+			if v and v.conectada then
+				for _, linha in dados.linhas do
+					if linha.id == v.linha then
+						situacao = T("ficha_chega_ao_porto", math.round(carga.bonus * 100), linha.nome)
+						cor = c.positive
 					end
 				end
+				if v.unidadesDia > 0 then
+					situacao ..= "\n" .. T("ficha_frete", Economia.formatar(v.preco, simbolo, true), (carga.unidade:gsub("s$", "")), Economia.formatar(v.reaisDia, simbolo))
+				end
+			elseif v and v.reaisDia > 0 then
+				situacao ..= " " .. T("ficha_renderia", Economia.formatar(v.reaisDia, simbolo))
 			end
 			lProducao.Text = `{texto}\n<font color="#{cor:ToHex()}">{situacao}</font>`
 		end

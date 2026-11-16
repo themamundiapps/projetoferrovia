@@ -512,6 +512,13 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
+		id = "bom_pagador", nome = "Bom pagador", emoji = "banco", xp = 60,
+		descricao = "Termine de pagar um empréstimo do banco.",
+		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
+			return (estado.contadores.emprestimos or 0) >= 1
+		end,
+	},
+	{
 		id = "sonhador", nome = "Sonhador", emoji = "pesquisa", xp = 100,
 		descricao = "Complete uma linha \"E se?\" do Gabinete.",
 		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean

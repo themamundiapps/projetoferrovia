@@ -663,15 +663,22 @@ function Interface._preencher(self: Interface)
 
 	-- cargas desta linha
 	local cargas = Economia.cargasPorLinha(estado, dados)[linha.id]
+	local valores = Economia.valorCargas(estado, dados)
 	local linhasTexto = {}
 	for _, info in cargas do
 		local def = Economia.CARGAS[info.carga]
 		local emoji = (Emojis :: any)[def.emoji] or ""
 		local nome = dados.estacoes[info.estacao].nome
+		local v = valores[info.estacao]
+		local unidade = def.unidade:gsub("s$", "")
 		if info.conectada then
-			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda`)
+			local frete = if v and v.unidadesDia > 0
+				then ` · {Economia.formatar(v.preco, simbolo, true)} por {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/dia`
+				else ""
+			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda{frete}`)
 		else
-			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} ainda sem trilho até um porto`)
+			local renderia = if v and v.reaisDia > 0 then ` (renderia {Economia.formatar(v.reaisDia, simbolo)}/dia)` else ""
+			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} ainda sem trilho até um porto{renderia}`)
 		end
 	end
 	local temCarga = #linhasTexto > 0

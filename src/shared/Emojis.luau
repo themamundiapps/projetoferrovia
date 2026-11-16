@@ -43,6 +43,7 @@ local Emojis = {
 	pesquisa = "🔎",
 	contratos = "📜",
 	jornal = "📰",
+	banco = "🏦",
 	alvo = "🎯", -- missões do dia
 	medalha = "🏅",
 	nivel = "⭐",

@@ -148,6 +148,8 @@ local function avisarEventos(estado: any)
 			ui:enfileirar(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, 5)
 		elseif ev.tipo == "linha" then
 			ui:enfileirar(`{Emojis.confirmar} Linha completa: {ev.nome}!`, 4)
+		elseif ev.tipo == "banco" then
+			ui:enfileirar(`{Emojis.banco} Empréstimo quitado!`, 4)
 		elseif ev.tipo == "jornal" then
 			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, DadosBrasil, Idioma.atual)
 			ui:enfileirar(`{Emojis.jornal} EXTRA! {manchete}`, 6)

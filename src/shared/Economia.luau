@@ -134,6 +134,7 @@ export type EstadoMapa = {
 	missoes: { dia: number, lista: { any } }, -- missões do dia
 	tutorial: boolean, -- tutorial concluído ou pulado
 	nomeCompanhia: string?, -- nome escolhido pelo jogador (já passado pelo filtro do Roblox)
+	emprestimo: { valor: number, total: number, divida: number, classe: string, em: number }?, -- ver Banco.luau
 	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
 }
 
@@ -978,6 +979,46 @@ function Economia.cargaPorDia(estado: EstadoMapa, dados: any, balanco: Balanco?)
 	return r
 end
 
+-- Quanto cada carga rende. O bônus de carga é uma parte da receita da linha; aqui essa parte vira
+-- dinheiro por dia e preço por unidade (frete pago no porto), por estação produtora e por tipo.
+-- Estações sem trilho até um porto também aparecem (conectada = false), com o valor que renderiam.
+export type ValorCarga = { carga: string, unidadesDia: number, reaisDia: number, preco: number, conectada: boolean, linha: string }
+local SEGUNDOS_DIA = 60 -- 1 minuto de verdade = 1 dia (igual a Metas.SEGUNDOS_POR_DIA)
+function Economia.valorCargas(estado: EstadoMapa, dados: any, balanco: Balanco?): ({ [string]: ValorCarga }, { [string]: ValorCarga })
+	local b = balanco or Economia.balanco(estado, dados)
+	local porEstacao: { [string]: ValorCarga } = {}
+	local porCarga: { [string]: ValorCarga } = {}
+	for linhaId, lista in Economia.cargasPorLinha(estado, dados) do
+		local bl = b.linhas[linhaId]
+		if bl then
+			local base = bl.receita / (1 + Economia.bonusCarga(lista)) -- receita da linha sem as cargas
+			for _, info in lista do
+				local def = Economia.CARGAS[info.carga]
+				local e = dados.estacoes[info.estacao]
+				local nivel = 1 + Economia.BONUS_POR_NIVEL * Economia.nivelEstacao(estado, info.estacao)
+				local unidades = e.porte * ((Economia.PRODUCAO_POR_PORTE :: any)[info.carga] or 0) * nivel * bl.servico
+				local reais = base * def.bonus * SEGUNDOS_DIA
+				porEstacao[info.estacao] = {
+					carga = info.carga,
+					unidadesDia = unidades,
+					reaisDia = reais,
+					preco = if unidades > 0 then reais / unidades else 0,
+					conectada = info.conectada,
+					linha = linhaId,
+				}
+				if info.conectada then
+					local t: ValorCarga = porCarga[info.carga] or { carga = info.carga, unidadesDia = 0, reaisDia = 0, preco = 0, conectada = true, linha = linhaId } :: ValorCarga
+					t.unidadesDia += unidades
+					t.reaisDia += reais
+					t.preco = if t.unidadesDia > 0 then t.reaisDia / t.unidadesDia else 0
+					porCarga[info.carga] = t
+				end
+			end
+		end
+	end
+	return porEstacao, porCarga
+end
+
 -- Quanto o caixa muda por segundo (pode ser negativo).
 function Economia.rendaTotal(estado: EstadoMapa, dados: any): number
 	return Economia.balanco(estado, dados).lucro
@@ -1019,6 +1060,7 @@ function Economia.estatisticas(estado: EstadoMapa, dados: any): any
 		estacoes = estacoes,
 		passageirosDia = math.round(passageiros),
 		cargaDia = carga, -- por tipo de carga
+		cargaValor = select(2, Economia.valorCargas(estado, dados, balanco)), -- R$ por dia e preço, por tipo
 		satisfacao = balanco.satisfacao,
 	}
 end

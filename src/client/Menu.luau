@@ -11,6 +11,7 @@ local Emojis = require(Shared:WaitForChild("Emojis"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
+local Banco = require(Shared:WaitForChild("Banco"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -25,6 +26,7 @@ local ABAS = {
 	{ id = "projetos", nome = "Gabinete", emoji = "gabinete" },
 	{ id = "metas", nome = "Contratos", emoji = "contratos" },
 	{ id = "jornal", nome = "Jornal", emoji = "jornal" },
+	{ id = "banco", nome = "Banco", emoji = "banco" },
 	{ id = "companhia", nome = "Companhia", emoji = "companhia" },
 	{ id = "ajustes", nome = "Ajustes", emoji = "configuracoes" },
 }
@@ -186,6 +188,9 @@ function Menu._assinatura(self: Menu, estado: any): string
 		table.insert(metas, ev.id .. ev.inicio)
 	end
 	table.insert(metas, #((estado.jornal or {}).edicoes or {}))
+	-- banco: redesenha quando pega/quita empréstimo ou quando muda a classe de crédito
+	table.insert(metas, if estado.emprestimo then estado.emprestimo.em else 0)
+	table.insert(metas, Banco.classe(Banco.nota(estado, Economia.satisfacao(estado, self.dados))).id)
 	local ok, txt = pcall(function()
 		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes, metas })
 	end)
@@ -304,6 +309,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaMetas()
 	elseif self.aba == "jornal" then
 		self:_abaJornal()
+	elseif self.aba == "banco" then
+		self:_abaBanco()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	else
@@ -819,6 +826,101 @@ function Menu._abaJornal(self: Menu)
 	end
 end
 
+-- ---------------------------------------------------------------- aba Banco
+
+function Menu._abaBanco(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	local nomeBanco = Idioma.t(Banco.NOMES[if estado then estado.era else "vapor"] or Banco.NOMES.vapor)
+	est:texto("titulo", `{Emojis.banco} {nomeBanco}`, r, 1)
+	est:texto("fraco", `Empréstimos para construir mais cedo. O limite e os juros dependem do seu crédito: satisfação dos passageiros e nível da companhia. A dívida é paga sozinha com {math.round(Banco.PARCELA * 100)}% do lucro, e dá para quitar quando quiser.`, r, 2)
+	if not estado then
+		return
+	end
+	local simbolo = dados.simbolo
+	local function fmt(v: number): string
+		return Economia.formatar(v, simbolo)
+	end
+
+	-- crédito da companhia
+	local cartao, txt = novoCartao(est, r, "Credito", 3)
+	local lClasse = txt("subtitulo", "", 1)
+	local cheioNota = novaBarra(est, cartao, 2)
+	local lDetalhe = txt("fraco", "", 3)
+	local function atualizarCredito()
+		local b = Economia.balanco(self.estado, dados)
+		local limite, classe, nota = Banco.limite(self.estado, b.lucro, b.satisfacao)
+		lClasse.Text = `Crédito {classe.id} · {Idioma.t(classe.nome)}`
+		cheioNota.Size = UDim2.fromScale(nota, 1)
+		lDetalhe.Text = `Satisfação {math.round(b.satisfacao * 100)}% · nível {(Economia.nivel(self.estado))} · juros de {math.round(classe.juros * 100)}% · limite {fmt(limite)}`
+	end
+	atualizarCredito()
+	table.insert(self.vivos, atualizarCredito)
+	local dica = est:texto("fraco", `{Emojis.dica} Mais trens nas linhas lotadas e estações melhores aumentam a satisfação e baixam os juros.`, r, 4)
+	dica.TextSize = 13
+
+	local emp = estado.emprestimo
+	if emp then
+		local cartao2, txt2 = novoCartao(est, r, "Emprestimo", 10, true)
+		txt2("subtitulo", "Empréstimo em andamento", 1)
+		local lDivida = txt2("corpo", "", 2)
+		local cheio = novaBarra(est, cartao2, 3)
+		local lTempo = txt2("fraco", "", 4)
+		local bQuitar = est:botao("principal", "", cartao2, 5)
+		bQuitar.Name = "BtnQuitar"
+		bQuitar.ZIndex = 33
+		bQuitar.Size = UDim2.new(1, 0, 0, 38)
+		bQuitar.Activated:Connect(function()
+			self.aoAgir:Fire("quitarEmprestimo", {})
+		end)
+		local function atualizar()
+			local e = self.estado.emprestimo
+			if not e then
+				return
+			end
+			lDivida.Text = `Falta pagar <b>{fmt(e.divida)}</b> de {fmt(e.total)} (você pegou {fmt(e.valor)})`
+			cheio.Size = UDim2.fromScale(math.clamp(1 - e.divida / e.total, 0, 1), 1)
+			local resta = Banco.tempoRestante(self.estado, self.estado.renda or 0)
+			lTempo.Text = if resta == math.huge
+				then `{Emojis.alerta} Sem lucro, a dívida não diminui.`
+				else `{Emojis.relogio} Pagando {math.round(Banco.PARCELA * 100)}% do lucro, termina em ~{relogio(resta)}`
+			bQuitar.Text = `{Emojis.dinheiro} Quitar agora · {fmt(e.divida)}`
+			est:habilitar(bQuitar, self.estado.dinheiro >= e.divida)
+		end
+		atualizar()
+		table.insert(self.vivos, atualizar)
+		return
+	end
+
+	est:texto("subtitulo", "Ofertas do banco", r, 10)
+	local motivo = Banco.impedimento(estado)
+	local botoes: { TextButton } = {}
+	for i = 1, #Banco.OPCOES do
+		local b = est:botao(if i == #Banco.OPCOES then "principal" else "secundario", "", r, 10 + i)
+		b.Name = `BtnEmprestimo_{i}`
+		b.Size = UDim2.new(1, 0, 0, 40)
+		b.Activated:Connect(function()
+			self.aoAgir:Fire("tomarEmprestimo", { opcao = i })
+		end)
+		botoes[i] = b
+	end
+	local lMotivo = est:texto("fraco", motivo or "", r, 20)
+	lMotivo.Visible = motivo ~= nil
+	local function atualizarOfertas()
+		local b = Economia.balanco(self.estado, dados)
+		local ofertas = Banco.ofertas(self.estado, b.lucro, b.satisfacao)
+		local bloqueado = Banco.impedimento(self.estado) ~= nil
+		for i, o in ofertas do
+			local bt = botoes[i]
+			if bt then
+				bt.Text = `Pegar {fmt(o.valor)} · devolve {fmt(o.total)}`
+				est:habilitar(bt, not bloqueado)
+			end
+		end
+	end
+	atualizarOfertas()
+	table.insert(self.vivos, atualizarOfertas)
+end
+
 -- ---------------------------------------------------------------- aba Companhia
 
 function Menu._abaCompanhia(self: Menu)
@@ -885,16 +987,26 @@ function Menu._abaCompanhia(self: Menu)
 		`{Emojis.contratos} Contratos cumpridos: <b>{(estado.contadores or {}).contratos or 0}</b>`,
 		`{Emojis.carga_passageiros} Passageiros desde a fundação: <b>{numero(math.floor((estado.contadores or {}).passageiros or 0))}</b>`,
 	}
-	-- cargas que já chegam a algum porto
-	for _, id in Economia.ORDEM_CARGAS do
-		local porDia = st.cargaDia[id] or 0
-		if porDia > 0 then
-			local carga = (Economia.CARGAS :: any)[id]
-			table.insert(linhas, `{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(porDia))}</b> {carga.unidade} por dia`)
-		end
-	end
 	for i, txt in linhas do
 		est:texto("corpo", txt, r, 10 + i)
+	end
+
+	-- cargas: quanto chega ao porto, o frete pago por unidade e quanto rende por dia
+	est:divisor(r, 24)
+	est:texto("subtitulo", `{Emojis.cargas} Cargas e fretes`, r, 25)
+	local temCarga = false
+	for i, id in Economia.ORDEM_CARGAS do
+		local v = st.cargaValor[id]
+		if v and v.unidadesDia > 0 then
+			temCarga = true
+			local carga = (Economia.CARGAS :: any)[id]
+			local unidade = carga.unidade:gsub("s$", "") -- "sacas" -> "saca"; "t" e "cabeças" -> "cabeça"
+			est:texto("corpo", `{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(v.unidadesDia))}</b> {carga.unidade}/dia · `
+				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> por {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/dia`, r, 25 + i)
+		end
+	end
+	if not temCarga then
+		est:texto("fraco", "Nenhuma carga chega a um porto ainda. Ligue uma cidade produtora (café, minério…) a um porto pelos trilhos: o frete entra na renda da linha.", r, 26)
 	end
 
 	-- nome da companhia

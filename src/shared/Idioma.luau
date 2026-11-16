@@ -70,6 +70,8 @@ Idioma.TEXTOS = {
 	ficha_produz = { pt = "%s: %s %s por dia", en = "%s: %s %s per day" },
 	ficha_chega_ao_porto = { pt = "Chega a um porto: +%d%% na linha %s.", en = "Reaches a port: +%d%% on the %s line." },
 	ficha_sem_porto = { pt = "Ainda sem trilho até um porto.", en = "No rail link to a port yet." },
+	ficha_frete = { pt = "Frete: %s por %s · %s por dia.", en = "Freight: %s per %s · %s per day." },
+	ficha_renderia = { pt = "Ligada a um porto, renderia %s por dia.", en = "Linked to a port, it would earn %s per day." },
 	-- história
 	ficha_historia = { pt = "HISTÓRIA", en = "HISTORY" },
 	ficha_fechar = { pt = "Fechar", en = "Close" },

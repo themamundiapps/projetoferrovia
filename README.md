@@ -74,13 +74,15 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Carga (café e minério até os portos) e escolha de traçado
 - [x] Quatro eras (vapor, diesel, elétrica e alta velocidade), com troca de visual
 - [x] Save com DataStore e ganho offline (falta testar com as APIs ligadas no Studio)
-- [x] Menu com abas (Linhas, Gabinete, Contratos, Jornal, Companhia, Ajustes), níveis de estação e estatísticas
+- [x] Menu com abas (Linhas, Gabinete, Contratos, Jornal, Banco, Companhia, Ajustes), níveis de estação e estatísticas
 - [x] Gabinete de Projetos: 6 ferrovias planejadas do Brasil e 5 "E se?" (Litorânea do Sul, Planalto, Litorânea do Nordeste, Amazônia, Trem-bala do Sul)
 - [x] Economia com decisões: demanda por porte das cidades, lotação dos trens, efeito rede e manutenção
 - [x] Contratos com prazo, missões do dia, nível da companhia e medalhas (`src/shared/Metas.luau`)
 - [x] Trens andando no mapa e tutorial dos primeiros passos
 - [x] Fichas das cidades (83 cidades, história em português e inglês; imagens em `arte/cidades/`)
 - [x] Jornal da Companhia: 16 eventos de época que mexem na economia (`src/shared/Jornal.luau`)
+- [x] Banco: empréstimos com juros pelo crédito da companhia, pagos com parte do lucro (`src/shared/Banco.luau`)
+- [x] Preço do frete de cada carga (Companhia, painel da linha e ficha da cidade)
 - [ ] Ranking e mapas dos EUA e da Europa
 - [ ] Um gamepass e um developer product
 
