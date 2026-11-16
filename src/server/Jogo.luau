@@ -11,6 +11,7 @@ local TextService = game:GetService("TextService")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
+local Jornal = require(Shared:WaitForChild("Jornal"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
@@ -29,6 +30,7 @@ type Sessao = {
 	podeSalvar: boolean,
 	ultimaAcao: number,
 	ultimoNome: number, -- os.clock() da última troca de nome da companhia
+	proximaNoticia: number, -- os.time() da próxima notícia do Jornal (0 = ainda não marcado)
 	ganhoOffline: number,
 	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
 	rng: Random,
@@ -173,6 +175,34 @@ local function sanear(salvo: any): EstadoMapa
 	if type(salvo.nomeCompanhia) == "string" and #salvo.nomeCompanhia <= 64 then
 		e.nomeCompanhia = salvo.nomeCompanhia
 	end
+	-- jornal: o efeito de cada evento vem do catálogo, não do save
+	local j = salvo.jornal
+	if type(j) == "table" then
+		if type(j.ativos) == "table" then
+			for i = 1, Jornal.MAX_ATIVOS do
+				local ev = j.ativos[i]
+				local def = if type(ev) == "table" and type(ev.id) == "string" then Jornal.acharEvento(ev.id) else nil
+				if def and numero(ev.fim) and numero(ev.inicio) and ev.fim > os.time() then
+					table.insert(e.jornal.ativos, {
+						id = def.id,
+						tipo = def.tipo,
+						alvo = if type(ev.alvo) == "string" then ev.alvo else nil,
+						mult = def.mult,
+						inicio = ev.inicio,
+						fim = math.min(ev.fim, ev.inicio + def.duracao),
+					})
+				end
+			end
+		end
+		if type(j.edicoes) == "table" then
+			for i = 1, Jornal.MAX_EDICOES do
+				local ed = j.edicoes[i]
+				if type(ed) == "table" and type(ed.id) == "string" and Jornal.acharEvento(ed.id) and numero(ed.em) then
+					table.insert(e.jornal.edicoes, { id = ed.id, alvo = if type(ed.alvo) == "string" then ed.alvo else nil, em = ed.em })
+				end
+			end
+		end
+	end
 	return e
 end
 
@@ -192,6 +222,7 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		missoes = e.missoes,
 		tutorial = e.tutorial,
 		nomeCompanhia = e.nomeCompanhia,
+		jornal = e.jornal,
 		eventos = s.eventos,
 		trechos = e.trechos,
 		trens = e.trens,
@@ -223,6 +254,16 @@ local function ganharXp(s: Sessao, e: EstadoMapa, xp: number)
 	end
 end
 
+-- Põe um evento em vigor, guarda a manchete nas edições e avisa o cliente.
+local function publicar(s: Sessao, e: EstadoMapa, ev: any)
+	table.insert(e.jornal.ativos, ev)
+	table.insert(e.jornal.edicoes, 1, { id = ev.id, alvo = ev.alvo, em = ev.inicio })
+	while #e.jornal.edicoes > Jornal.MAX_EDICOES do
+		table.remove(e.jornal.edicoes)
+	end
+	table.insert(s.eventos, { tipo = "jornal", id = ev.id, alvo = ev.alvo, tipoEfeito = ev.tipo })
+end
+
 local function encerrarContrato(s: Sessao, e: EstadoMapa, cumprido: boolean)
 	local c = e.contrato
 	if not c then
@@ -247,6 +288,32 @@ local function atualizarMetas(s: Sessao, e: EstadoMapa, dados: any, ctx: Metas.C
 		e.ofertas = Metas.gerarOfertas(e, dados, ctx, s.rng)
 		if #e.ofertas > 0 then
 			e.ofertasEm = os.time()
+		end
+	end
+	-- jornal: tira os eventos vencidos e, de tempos em tempos, publica uma notícia nova
+	local agora = os.time()
+	local vigentes = {}
+	for _, ev in e.jornal.ativos do
+		if ev.fim > agora then
+			table.insert(vigentes, ev)
+		end
+	end
+	e.jornal.ativos = vigentes
+	local trechos = 0
+	for _ in e.trechos do
+		trechos += 1
+	end
+	if trechos >= Jornal.TRECHOS_MINIMOS then
+		if s.proximaNoticia == 0 then
+			s.proximaNoticia = agora + Jornal.PRIMEIRO_EVENTO
+		elseif agora >= s.proximaNoticia then
+			s.proximaNoticia = agora + s.rng:NextInteger(Jornal.INTERVALO_MIN, Jornal.INTERVALO_MAX)
+			if #e.jornal.ativos < Jornal.MAX_ATIVOS then
+				local ev = Jornal.sortear(e, dados, s.rng)
+				if ev then
+					publicar(s, e, ev)
+				end
+			end
 		end
 	end
 	for _, m in Metas.novasMedalhas(e, dados, ctx) do
@@ -593,6 +660,31 @@ function Acoes.resgatarMissao(s: Sessao, args: any): (boolean, string?)
 end
 
 -- Tutorial: concluir (com prêmio, no último passo) ou pular.
+-- Jornal: pagar para encerrar um evento ruim (enchente, greve, apagão).
+function Acoes.resolverEvento(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.id) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	for i, ev in e.jornal.ativos do
+		if ev.id == args.id and ev.fim > os.time() then
+			local def = Jornal.acharEvento(ev.id)
+			if not def or not def.resolvivel then
+				return false, "Esse acontecimento não tem como ser resolvido."
+			end
+			local custo = Jornal.custoResolver(Economia.rendaTotal(e, dados))
+			if e.dinheiro < custo then
+				return false, "Dinheiro insuficiente."
+			end
+			e.dinheiro -= custo
+			table.remove(e.jornal.ativos, i)
+			return true, "Problema resolvido."
+		end
+	end
+	return false, "Esse acontecimento já passou."
+end
+
 -- Nome da companhia: passa pelo filtro de texto do Roblox antes de ser guardado (obrigatório para texto
 -- digitado que outros jogadores podem ver, como no ranking).
 local NOME_MIN, NOME_MAX = 3, 32
@@ -689,6 +781,7 @@ local function aoEntrar(jogador: Player)
 		podeSalvar = false,
 		ultimaAcao = 0,
 		ultimoNome = -math.huge,
+		proximaNoticia = 0,
 		ganhoOffline = 0,
 		eventos = {},
 		rng = Random.new(),
@@ -791,6 +884,22 @@ if RunService:IsStudio() then
 						m.progresso = m.meta
 					end
 				end
+			elseif comando == "evento" then
+				-- publica uma notícia agora (valor = id do evento, ou nada para sortear)
+				local ev: any = nil
+				if type(valor) == "string" then
+					local def = Jornal.acharEvento(valor)
+					local alvo = def and def.alvo and def.alvo(e, MAPAS[s.mapaAtual], s.rng)
+					if def and alvo then
+						ev = { id = def.id, tipo = def.tipo, alvo = if alvo == "" then nil else alvo, mult = def.mult, inicio = os.time(), fim = os.time() + def.duracao }
+					end
+				else
+					ev = Jornal.sortear(e, MAPAS[s.mapaAtual], s.rng)
+				end
+				if ev then
+					publicar(s, e, ev)
+				end
+				return ev and ev.id
 			elseif comando == "estado" then
 				return e
 			end

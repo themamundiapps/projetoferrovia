@@ -42,6 +42,7 @@ local Emojis = {
 	gabinete = "📐", -- Gabinete de Projetos (esquadro de desenhista)
 	pesquisa = "🔎",
 	contratos = "📜",
+	jornal = "📰",
 	alvo = "🎯", -- missões do dia
 	medalha = "🏅",
 	nivel = "⭐",

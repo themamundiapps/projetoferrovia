@@ -10,6 +10,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
+local Jornal = require(Shared:WaitForChild("Jornal"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -23,6 +24,7 @@ local ABAS = {
 	{ id = "linhas", nome = "Linhas", emoji = "linhas" },
 	{ id = "projetos", nome = "Gabinete", emoji = "gabinete" },
 	{ id = "metas", nome = "Contratos", emoji = "contratos" },
+	{ id = "jornal", nome = "Jornal", emoji = "jornal" },
 	{ id = "companhia", nome = "Companhia", emoji = "companhia" },
 	{ id = "ajustes", nome = "Ajustes", emoji = "configuracoes" },
 }
@@ -44,6 +46,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.vivos = {} :: { () -> () } -- atualizações a cada segundo que não recriam o painel (cronômetros, botões)
 	self._concluidos = {} :: { [string]: boolean }
 	self.avisoGabinete = false -- bolinha na aba quando um estudo termina com a aba fechada
+	self.avisoJornal = false -- bolinha na aba quando sai notícia nova com a aba fechada
 
 	-- ---------------------------------------------------- barra inferior
 	local barra = est:caixa({
@@ -58,7 +61,9 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	table.insert(self.instancias, barra)
 	self.botoesAba = {} :: { [string]: TextButton }
 	for i, aba in ABAS do
-		local b = est:botao("discreto", `{(Emojis :: any)[aba.emoji]} {aba.nome}`, barra, i)
+		-- Ajustes vira só o ícone, para a barra caber em telas menores
+		local rotulo = if aba.id == "ajustes" then (Emojis :: any)[aba.emoji] else `{(Emojis :: any)[aba.emoji]} {aba.nome}`
+		local b = est:botao("discreto", rotulo, barra, i)
 		b.Name = "Aba_" .. aba.id
 		b.Size = UDim2.fromOffset(0, 44)
 		b.AutomaticSize = Enum.AutomaticSize.X
@@ -142,6 +147,8 @@ function Menu.abrirAba(self: Menu, aba: string?)
 	self.aba = aba
 	if aba == "projetos" then
 		self.avisoGabinete = false
+	elseif aba == "jornal" then
+		self.avisoJornal = false
 	end
 	self:_rotularAbas()
 	self.painel.Visible = aba ~= nil
@@ -175,6 +182,10 @@ function Menu._assinatura(self: Menu, estado: any): string
 	end
 	table.insert(metas, medalhas)
 	table.insert(metas, estado.nomeCompanhia or "")
+	for _, ev in Economia.eventosAtivos(estado) do
+		table.insert(metas, ev.id .. ev.inicio)
+	end
+	table.insert(metas, #((estado.jornal or {}).edicoes or {}))
 	local ok, txt = pcall(function()
 		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes, metas })
 	end)
@@ -210,6 +221,17 @@ function Menu._rotularAbas(self: Menu)
 			txt ..= " ●"
 		end
 		b.Text = txt
+	end
+	local bj = self.botoesAba.jornal
+	if bj then
+		local txt = `{Emojis.jornal} Jornal`
+		local ativos = if self.estado then #Economia.eventosAtivos(self.estado) else 0
+		if self.avisoJornal then
+			txt ..= " ●"
+		elseif ativos > 0 then
+			txt ..= ` · {ativos}`
+		end
+		bj.Text = txt
 	end
 	local bm = self.botoesAba.metas
 	if bm then
@@ -280,6 +302,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaProjetos()
 	elseif self.aba == "metas" then
 		self:_abaMetas()
+	elseif self.aba == "jornal" then
+		self:_abaJornal()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	else
@@ -680,6 +704,119 @@ function Menu._abaMetas(self: Menu)
 	end
 	atualizarVira()
 	table.insert(self.vivos, atualizarVira)
+end
+
+-- ---------------------------------------------------------------- aba Jornal
+
+-- Notícia nova chegou (o init avisa): bolinha na aba se ela não estiver aberta.
+function Menu.marcarJornal(self: Menu)
+	if self.aba ~= "jornal" then
+		self.avisoJornal = true
+	end
+	self:_rotularAbas()
+end
+
+-- Texto curto do efeito: "+60% · linhas do café", "manutenção +60%"...
+local function efeitoEvento(ev: any, dados: any): string
+	local pct = math.round((ev.mult - 1) * 100)
+	local sinal = if pct > 0 then "+" else "−"
+	local valor = `{sinal}{math.abs(pct)}%`
+	local nome = Jornal.nomeAlvo(ev, dados, Idioma.atual)
+	if ev.tipo == "geral" then
+		return `{valor} em toda a receita`
+	elseif ev.tipo == "manutencao" then
+		return `manutenção {valor}`
+	elseif ev.tipo == "linha" then
+		return `{valor} na linha {nome}`
+	elseif ev.tipo == "carga" then
+		return `{valor} nas linhas que levam {string.lower(nome)}`
+	elseif ev.tipo == "cidade" then
+		return `{valor} nas linhas de {nome}`
+	elseif ev.tipo == "regiao" then
+		return `{valor} nas linhas do {nome}`
+	end
+	return valor
+end
+
+local function ha(segundos: number): string
+	local m = math.floor(segundos / 60)
+	if m < 1 then
+		return "agora há pouco"
+	elseif m < 60 then
+		return `há {m} min`
+	end
+	local h = math.floor(m / 60)
+	if h < 24 then
+		return `há {h} h`
+	end
+	return `há {math.floor(h / 24)} dia(s)`
+end
+
+function Menu._abaJornal(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	local nomeJornal = Idioma.t(Jornal.NOMES[if estado then estado.era else "vapor"] or Jornal.NOMES.vapor)
+	est:texto("titulo", `{Emojis.jornal} {nomeJornal}`, r, 1)
+	est:texto("fraco", "Notícias da época mudam a economia por alguns minutos. As ruins que têm conserto podem ser resolvidas pagando.", r, 2)
+	if not estado then
+		return
+	end
+	local simbolo = dados.simbolo
+	local c = est.c
+	local ativos = Economia.eventosAtivos(estado)
+	if #ativos == 0 then
+		est:texto("corpo", "Nada de extraordinário nas manchetes de hoje.", r, 3)
+	end
+	for i, ev in ativos do
+		local def = Jornal.acharEvento(ev.id)
+		local titulo, texto = Jornal.textos(ev, dados, Idioma.atual)
+		local bom = ev.mult > 1 and ev.tipo ~= "manutencao"
+		local cartao, txt = novoCartao(est, r, `Evento_{ev.id}`, 10 + i, true)
+		local l = txt("subtitulo", titulo, 1)
+		l.TextColor3 = if bom then c.positive else c.negative
+		txt("fraco", texto, 2)
+		local lEfeito = txt("corpo", `<b>{efeitoEvento(ev, dados)}</b>`, 3)
+		lEfeito.TextColor3 = if bom then c.positive else c.negative
+		local cheio = novaBarra(est, cartao, 4)
+		local lTempo = txt("fraco", "", 5)
+		local bResolver: TextButton? = nil
+		if def and def.resolvivel then
+			local b = est:botao("principal", "", cartao, 6)
+			b.Name = "BtnResolver"
+			b.ZIndex = 33
+			b.Size = UDim2.new(1, 0, 0, 38)
+			b.Activated:Connect(function()
+				self.aoAgir:Fire("resolverEvento", { id = ev.id })
+			end)
+			bResolver = b
+		end
+		local function atualizar()
+			local agora = Economia.relogio()
+			local total = math.max(1, ev.fim - ev.inicio)
+			local resta = math.max(0, ev.fim - agora)
+			cheio.Size = UDim2.fromScale(math.clamp(resta / total, 0, 1), 1)
+			lTempo.Text = `{Emojis.relogio} termina em {relogio(resta)}`
+			if bResolver then
+				local custo = Jornal.custoResolver(self.estado.renda or 0)
+				bResolver.Text = `{Emojis.construir} Resolver agora · {Economia.formatar(custo, simbolo)}`
+				est:habilitar(bResolver, self.estado.dinheiro >= custo)
+			end
+		end
+		atualizar()
+		table.insert(self.vivos, atualizar)
+	end
+
+	-- edições anteriores
+	local edicoes = (estado.jornal or {}).edicoes or {}
+	if #edicoes > 0 then
+		est:divisor(r, 40)
+		est:texto("subtitulo", "Edições anteriores", r, 41)
+		local agora = Economia.relogio()
+		for i, ed in edicoes do
+			local ev = { id = ed.id, alvo = ed.alvo, tipo = ((Jornal.acharEvento(ed.id) :: any) or {}).tipo or "" }
+			local titulo = Jornal.textos(ev, dados, Idioma.atual)
+			est:texto("fraco", `{titulo} · {ha(agora - ed.em)}`, r, 41 + i)
+		end
+	end
 end
 
 -- ---------------------------------------------------------------- aba Companhia

@@ -134,6 +134,7 @@ export type EstadoMapa = {
 	missoes: { dia: number, lista: { any } }, -- missões do dia
 	tutorial: boolean, -- tutorial concluído ou pulado
 	nomeCompanhia: string?, -- nome escolhido pelo jogador (já passado pelo filtro do Roblox)
+	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
 }
 
 function Economia.estadoNovo(): EstadoMapa
@@ -153,6 +154,7 @@ function Economia.estadoNovo(): EstadoMapa
 		ofertasEm = 0,
 		missoes = { dia = 0, lista = {} },
 		tutorial = false,
+		jornal = { ativos = {}, edicoes = {}, proximo = 0 },
 	}
 end
 
@@ -641,6 +643,69 @@ end
 
 local fatorEstacoes = fatorEstacoesTrecho
 
+-- ---------------------------------------------------------------- efeitos do Jornal
+
+-- Um evento em vigor guarda o próprio efeito, para a economia não depender do catálogo (Jornal.luau).
+-- tipo: "geral" (toda a receita), "linha", "carga" (linhas que levam essa carga a um porto),
+-- "regiao" (linhas com estação na região), "cidade" (linhas que passam pela cidade) ou "manutencao".
+export type EventoAtivo = { id: string, tipo: string, alvo: string?, mult: number, fim: number, inicio: number }
+export type Jornal = { ativos: { EventoAtivo }, edicoes: { { id: string, alvo: string?, em: number } }, proximo: number }
+
+function Economia.eventosAtivos(estado: EstadoMapa): { EventoAtivo }
+	local agora = Economia.relogio()
+	local lista = {}
+	for _, ev in ((estado.jornal or {}) :: any).ativos or {} do
+		if ev.fim > agora then
+			table.insert(lista, ev)
+		end
+	end
+	return lista
+end
+
+-- Multiplicador de receita que os eventos em vigor dão a uma linha.
+function Economia.fatorEventosLinha(estado: EstadoMapa, dados: any, linha: any, cargas: { InfoCarga }?, eventos: { EventoAtivo }?): number
+	local fator = 1
+	for _, ev in eventos or Economia.eventosAtivos(estado) do
+		local vale = false
+		if ev.tipo == "geral" then
+			vale = true
+		elseif ev.tipo == "linha" then
+			vale = ev.alvo == linha.id
+		elseif ev.tipo == "carga" then
+			local lista: { InfoCarga } = cargas or {}
+			for _, info in lista do
+				vale = vale or (info.carga == ev.alvo and info.conectada)
+			end
+		elseif ev.tipo == "regiao" or ev.tipo == "cidade" then
+			for _, t in linha.trechos do
+				if estado.trechos[t.id] then
+					for _, id in { t.de, t.para } do
+						if ev.tipo == "cidade" then
+							vale = vale or id == ev.alvo
+						else
+							vale = vale or dados.estacoes[id].regiao == ev.alvo
+						end
+					end
+				end
+			end
+		end
+		if vale then
+			fator *= ev.mult
+		end
+	end
+	return fator
+end
+
+function Economia.fatorEventosManutencao(estado: EstadoMapa, eventos: { EventoAtivo }?): number
+	local fator = 1
+	for _, ev in eventos or Economia.eventosAtivos(estado) do
+		if ev.tipo == "manutencao" then
+			fator *= ev.mult
+		end
+	end
+	return fator
+end
+
 -- ---------------------------------------------------------------- ficha da cidade
 
 function Economia.populacao(estado: EstadoMapa, dados: any, id: string): number
@@ -854,12 +919,16 @@ function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
 	local cargas = Economia.cargasPorLinha(estado, dados)
 	local satisfacao = Economia.satisfacao(estado, dados, rede)
 	local fatorSat = (0.85 + 0.3 * satisfacao) * Economia.fatorNivel(estado)
+	local eventos = Economia.eventosAtivos(estado)
+	local fatorManut = Economia.fatorEventosManutencao(estado, eventos)
 	local b: Balanco = { receita = 0, manutencao = 0, lucro = 0, satisfacao = satisfacao, linhas = {} }
 	for _, linha in dados.linhas do
 		if Economia.trechosConstruidos(estado, linha) > 0 then
 			local fatorRede, nRede = Economia.bonusRede(estado, dados, linha, rede)
-			local receita = Economia.receitaLinha(estado, dados, linha, cargas[linha.id], rede) * fatorSat
-			local manutencao = Economia.manutencaoLinha(estado, linha)
+			local receita = Economia.receitaLinha(estado, dados, linha, cargas[linha.id], rede)
+				* fatorSat
+				* Economia.fatorEventosLinha(estado, dados, linha, cargas[linha.id], eventos)
+			local manutencao = Economia.manutencaoLinha(estado, linha) * fatorManut
 			b.linhas[linha.id] = {
 				receita = receita,
 				manutencao = manutencao,

@@ -11,6 +11,8 @@ local Mapas = require(Shared:WaitForChild("Mapas"))
 local Assets = require(Shared:WaitForChild("Assets"))
 local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
+local Jornal = require(Shared:WaitForChild("Jornal"))
+local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
@@ -146,6 +148,10 @@ local function avisarEventos(estado: any)
 			ui:enfileirar(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, 5)
 		elseif ev.tipo == "linha" then
 			ui:enfileirar(`{Emojis.confirmar} Linha completa: {ev.nome}!`, 4)
+		elseif ev.tipo == "jornal" then
+			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, DadosBrasil, Idioma.atual)
+			ui:enfileirar(`{Emojis.jornal} EXTRA! {manchete}`, 6)
+			menu:marcarJornal()
 		end
 	end
 end
@@ -163,7 +169,7 @@ local function agir(tipo: string, args: any)
 			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
 		elseif tipo == "trem" then
 			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
-		elseif tipo == "aceitarContrato" or tipo == "trocarOfertas" or tipo == "tutorial" then
+		elseif tipo == "aceitarContrato" or tipo == "trocarOfertas" or tipo == "tutorial" or tipo == "resolverEvento" then
 			-- sem aviso próprio: a tela já mostra o que mudou
 		elseif tipo == "venderTrem" then
 			ui:avisar(`{Emojis.dinheiro} Trem vendido.`, 2)
