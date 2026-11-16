@@ -76,9 +76,11 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 		img.Position = UDim2.fromOffset(fr.AbsolutePosition.X - origem.X - b, fr.AbsolutePosition.Y - origem.Y - b)
 		local w, h = fr.AbsoluteSize.X + 2 * b, fr.AbsoluteSize.Y + 2 * b
 		img.Size = UDim2.fromOffset(w, h)
-		-- caixa baixa ou estreita (a barra do menu): os cantos encolhem para caber
+		-- caixa pequena (caixa da companhia, barra do menu): os cantos encolhem para não cobrir o texto;
+		-- nenhum canto passa de 1/4 do lado menor da caixa
 		local cx, cy = p.slice.Min.X, p.slice.Min.Y
-		img.SliceScale = math.max(0.05, math.min(p.escala, h / (2 * cy) * 0.98, w / (2 * cx) * 0.98))
+		local lado = math.min(w, h) * 0.25
+		img.SliceScale = math.max(0.05, math.min(p.escala, lado / cy, lado / cx))
 		img.Visible = fr.Visible
 		img.ZIndex = fr.ZIndex - 1
 	end
