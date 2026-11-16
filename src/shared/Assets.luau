@@ -62,7 +62,8 @@ Assets.Cidades = {
 -- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).
 Assets.KitUI = {
 	classico = {
-		painel = { id = "rbxassetid://74017723189606", slice = Rect.new(120, 120, 392, 392), escala = 0.36, borda = 16 },
+		-- painel_3.png (mogno e dourado, 728 x 359); as outras opções ficam em arte/ui/classico/
+		painel = { id = "rbxassetid://125486438020687", slice = Rect.new(160, 155, 568, 204), escala = 0.42, borda = 9 },
 	},
 	moderno = {},
 } :: { [string]: { [string]: { id: string, slice: Rect, escala: number, borda: number } } }
