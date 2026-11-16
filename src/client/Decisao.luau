@@ -24,7 +24,7 @@ local Z = 50
 
 local function subirZ(raiz: Instance, base: number)
 	for _, d in raiz:GetDescendants() do
-		if d:IsA("GuiObject") then
+		if d:IsA("GuiObject") and not string.find(d.Name, "Kit$") then
 			d.ZIndex = base + 1 + (if d:IsA("TextButton") then 1 else 0)
 		end
 	end

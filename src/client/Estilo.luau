@@ -188,6 +188,84 @@ end
 
 export type TipoBotao = "principal" | "secundario" | "discreto"
 
+-- Veste um botão com a peça do kit: a imagem fatiada fica atrás e o texto passa para um rótulo por
+-- cima dela (no modo Sibling, uma filha cobriria o texto do próprio botão). O botão continua um
+-- TextButton: o resto do código segue mudando b.Text, b.TextSize etc., e o rótulo copia.
+local PROPS_TEXTO = { Text = true, RichText = true, FontFace = true, TextSize = true, TextColor3 = true, TextWrapped = true, TextXAlignment = true, TextYAlignment = true, TextScaled = true }
+local function vestirBotao(b: TextButton, p: any)
+	b.BackgroundTransparency = 1
+	b.AutoButtonColor = false
+	b.TextTransparency = 1
+	local fundo = novo("ImageLabel", {
+		Name = "FundoKit",
+		BackgroundTransparency = 1,
+		Image = p.id,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = p.slice,
+		ZIndex = 1,
+		Active = false,
+	}, b) :: ImageLabel
+	local rotulo = novo("TextLabel", {
+		Name = "RotuloKit",
+		BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1),
+		ZIndex = 2,
+		Active = false,
+	}, b) :: TextLabel
+	local function copiar()
+		rotulo.Text = b.Text
+		rotulo.RichText = b.RichText
+		rotulo.FontFace = b.FontFace
+		rotulo.TextSize = b.TextSize
+		rotulo.TextColor3 = b.TextColor3
+		rotulo.TextWrapped = b.TextWrapped
+		rotulo.TextScaled = b.TextScaled
+		rotulo.TextXAlignment = b.TextXAlignment
+		rotulo.TextYAlignment = b.TextYAlignment
+	end
+	-- a imagem cobre o botão inteiro, mesmo quando ele tem padding (o rótulo fica dentro do padding)
+	local function ajustar()
+		local pad = b:FindFirstChildOfClass("UIPadding")
+		local l, r, t, d = 0, 0, 0, 0
+		if pad then
+			l, r, t, d = pad.PaddingLeft.Offset, pad.PaddingRight.Offset, pad.PaddingTop.Offset, pad.PaddingBottom.Offset
+		end
+		fundo.Position = UDim2.fromOffset(-l, -t)
+		fundo.Size = UDim2.new(1, l + r, 1, t + d)
+		local w, h = b.AbsoluteSize.X, b.AbsoluteSize.Y
+		local cx, cy = p.slice.Min.X, p.slice.Min.Y
+		-- as pontas arredondadas ocupam a altura toda do botão
+		fundo.SliceScale = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
+	end
+	b.Changed:Connect(function(prop: string)
+		if PROPS_TEXTO[prop] then
+			copiar()
+		end
+	end)
+	b:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
+	b.ChildAdded:Connect(function(filho)
+		if filho:IsA("UIPadding") then
+			task.defer(ajustar)
+		end
+	end)
+	-- apertado: a peça escurece um pouco
+	b.InputBegan:Connect(function(input)
+		if b.Active and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+			fundo.ImageColor3 = Color3.fromRGB(200, 200, 200)
+		end
+	end)
+	b.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			fundo.ImageColor3 = Color3.new(1, 1, 1)
+		end
+	end)
+	b.MouseLeave:Connect(function()
+		fundo.ImageColor3 = Color3.new(1, 1, 1)
+	end)
+	copiar()
+	ajustar()
+end
+
 function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance, ordem: number?): TextButton
 	local c, f = self.c, self.f
 	local b = novo("TextButton", {
@@ -202,6 +280,12 @@ function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance,
 		AutoButtonColor = true,
 		ZIndex = 32,
 	}, pai)
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local peca = kit and (if tipo == "principal" then kit.botao else kit.botao_discreto)
+	if peca and peca.id ~= "rbxassetid://0" then
+		vestirBotao(b, peca)
+		return b
+	end
 	self:cantos(b)
 	if tipo == "discreto" then
 		novo("UIStroke", { Color = c.rule, Thickness = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, b)
@@ -212,6 +296,13 @@ end
 -- Liga/desliga a aparência de um botão (sem dinheiro, travado...).
 function Estilo.habilitar(_self: Estilo, b: TextButton, sim: boolean)
 	b.Active = sim
+	local fundo = b:FindFirstChild("FundoKit") :: ImageLabel?
+	local rotulo = b:FindFirstChild("RotuloKit") :: TextLabel?
+	if fundo and rotulo then
+		fundo.ImageTransparency = if sim then 0 else 0.45
+		rotulo.TextTransparency = if sim then 0 else 0.35
+		return
+	end
 	b.AutoButtonColor = sim
 	b.BackgroundTransparency = if sim then 0 else 0.6
 end
