@@ -478,6 +478,21 @@ function Estilo.habilitar(_self: Estilo, b: TextButton, sim: boolean)
 end
 
 function Estilo.divisor(self: Estilo, pai: Instance, ordem: number?): Frame
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.divisor
+	if p and p.id ~= "rbxassetid://0" then
+		local img = novo("ImageLabel", {
+			Name = "DivisorKit",
+			LayoutOrder = ordem or 0,
+			Size = UDim2.new(1, 0, 0, 0),
+			BackgroundTransparency = 1,
+			Image = p.id,
+			ScaleType = Enum.ScaleType.Fit,
+			ZIndex = 31,
+		}, pai)
+		novo("UIAspectRatioConstraint", { AspectRatio = p.largura / p.altura }, img)
+		return img
+	end
 	return novo("Frame", {
 		LayoutOrder = ordem or 0,
 		Size = UDim2.new(1, 0, 0, 1),

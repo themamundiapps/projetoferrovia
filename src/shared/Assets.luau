@@ -72,6 +72,8 @@ Assets.KitUI = {
 			canal = { x = 44 / 714, topo = 13 / 82, base = 69 / 82 } }, -- miolo de papel entre os aros
 		-- barra_cheia.png (620 x 22): cápsula em tons de cinza, tingida no jogo com a cor da barra
 		barra_cheia = { id = "rbxassetid://72380358480744", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
+		-- divisor.png (710 x 47): não estica; entra inteiro na largura e a altura acompanha
+		divisor = { id = "rbxassetid://0", largura = 710, altura = 47 },
 		cabecalho = { id = "rbxassetid://0", slice = Rect.new(100, 114, 596, 117), escala = 1, borda = 0 },
 		botao_discreto = { id = "rbxassetid://79100120490162", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
