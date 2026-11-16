@@ -132,6 +132,59 @@ function Estilo.cartao(self: Estilo, props: { [string]: any }, pai: Instance, de
 	return fr
 end
 
+-- Barra de progresso: com o kit, o trilho é a imagem fatiada e o preenchimento corre no canal dela.
+-- Devolve o preenchimento (o código muda o Size dele em escala, de 0 a 1, e a cor).
+function Estilo.barra(self: Estilo, pai: Instance, ordem: number?): Frame
+	local c = self.c
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.barra_fundo
+	if p and p.id ~= "rbxassetid://0" then
+		local altura = 18
+		local trilho = novo("ImageLabel", {
+			Name = "BarraKit",
+			LayoutOrder = ordem or 0,
+			Size = UDim2.new(1, 0, 0, altura),
+			BackgroundTransparency = 1,
+			Image = p.id,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = p.slice,
+			SliceScale = altura / (2 * p.slice.Min.Y),
+			ZIndex = 33,
+		}, pai) :: ImageLabel
+		local escala = altura / (2 * p.slice.Min.Y)
+		-- o canal fica entre as pontas de latão (largura da peça em pixels, vezes a escala na tela)
+		local inset = math.floor(p.canal.x * p.largura * escala + 0.5)
+		local canal = novo("Frame", {
+			Name = "Canal",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, inset, p.canal.topo, 0),
+			Size = UDim2.new(1, -2 * inset, p.canal.base - p.canal.topo, 0),
+			ClipsDescendants = true,
+			ZIndex = 34,
+		}, trilho)
+		return novo("Frame", {
+			Size = UDim2.fromScale(0, 1),
+			BackgroundColor3 = c.accent,
+			BorderSizePixel = 0,
+			ZIndex = 35,
+		}, canal)
+	end
+	local fundo = novo("Frame", {
+		LayoutOrder = ordem or 0,
+		Size = UDim2.new(1, 0, 0, 10),
+		BackgroundColor3 = c.panel,
+		BorderSizePixel = 0,
+		ZIndex = 33,
+	}, pai)
+	novo("UIStroke", { Color = c.ink, Thickness = 1 }, fundo)
+	return novo("Frame", {
+		Size = UDim2.fromScale(0, 1),
+		BackgroundColor3 = c.accent,
+		BorderSizePixel = 0,
+		ZIndex = 34,
+	}, fundo)
+end
+
 -- Quanto a moldura do kit sai para fora das caixas (0 se a era ainda não tem moldura).
 function Estilo.bordaKit(self: Estilo): number
 	local kit = Assets.KitUI[self.era.kit or ""]

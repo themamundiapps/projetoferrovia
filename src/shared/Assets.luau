@@ -67,12 +67,15 @@ Assets.KitUI = {
 		botao = { id = "rbxassetid://129345331580728", slice = Rect.new(130, 78, 556, 81), escala = 1, borda = 0 },
 		aba = { id = "rbxassetid://0", slice = Rect.new(90, 98, 594, 101), escala = 1, borda = 0 },
 		aba_ativa = { id = "rbxassetid://0", slice = Rect.new(90, 85, 594, 87), escala = 1, borda = 0 },
+		-- barra_fundo.png (714 x 82): o preenchimento enche o miolo de papel entre os aros (canal = frações da peça)
+		barra_fundo = { id = "rbxassetid://0", slice = Rect.new(100, 40, 614, 42), escala = 1, borda = 0, largura = 714,
+			canal = { x = 44 / 714, topo = 13 / 82, base = 69 / 82 } }, -- miolo de papel entre os aros
 		botao_discreto = { id = "rbxassetid://0", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
 		painel = { id = "rbxassetid://116203976251217", slice = Rect.new(160, 155, 568, 204), escala = 0.42, borda = 9 },
 	},
 	moderno = {},
-} :: { [string]: { [string]: { id: string, slice: Rect, escala: number, borda: number } } }
+} :: { [string]: { [string]: any } }
 
 -- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.
 Assets.Decisoes = {} :: { [string]: string } -- id da decisão -> imagem

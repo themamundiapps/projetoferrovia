@@ -570,20 +570,7 @@ end
 
 -- Barra de progresso; devolve a parte cheia (ajuste o Size.X.Scale de 0 a 1).
 local function novaBarra(est: any, pai: Instance, ordem: number): Frame
-	local fundo = novo("Frame", {
-		LayoutOrder = ordem,
-		Size = UDim2.new(1, 0, 0, 10),
-		BackgroundColor3 = est.c.panel,
-		BorderSizePixel = 0,
-		ZIndex = 33,
-	}, pai)
-	novo("UIStroke", { Color = est.c.ink, Thickness = 1 }, fundo)
-	return novo("Frame", {
-		Size = UDim2.fromScale(0, 1),
-		BackgroundColor3 = est.c.accent,
-		BorderSizePixel = 0,
-		ZIndex = 34,
-	}, fundo)
+	return est:barra(pai, ordem)
 end
 
 function Menu._abaMetas(self: Menu)
