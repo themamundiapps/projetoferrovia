@@ -729,7 +729,10 @@ function Menu._abaCompanhia(self: Menu)
 		BorderSizePixel = 0,
 		ZIndex = 33,
 	}, barra)
-	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {if sat >= 50 then "+" else ""}{math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)}% na renda.`, r, 9)
+	est:texto("fraco", `Vem dos passageiros que conseguem embarcar (trens suficientes) e do nível das estações. Hoje mexe {(function()
+		local pct = math.round((Economia.fatorSatisfacao(estado, dados) - 1) * 100)
+		return if pct > 0 then `+{pct}` else tostring(math.abs(pct) == 0 and 0 or pct)
+	end)()}% na renda.`, r, 9)
 	est:divisor(r, 10)
 
 	local linhas = {
