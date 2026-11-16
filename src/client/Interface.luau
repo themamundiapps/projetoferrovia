@@ -390,7 +390,9 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	if proxima and liberada and eraProx then
 		local podePagar = estado.dinheiro >= proxima.custo
 		self.btnEra.Visible = true
-		self.btnEra.Text = `{Emojis.era_diesel} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{proxima.multiplicador} nas linhas · {Economia.formatar(proxima.custo, simbolo)}`
+		local fator = math.round(proxima.multiplicador / Economia.multiplicadorEra(estado))
+		local emoji = (Emojis :: any)["era_" .. proxima.id] or Emojis.era_diesel
+		self.btnEra.Text = `{emoji} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{fator} nas linhas · {Economia.formatar(proxima.custo, simbolo)}`
 		self.btnEra.Active = podePagar
 		self.btnEra.AutoButtonColor = podePagar
 		self.btnEra.BackgroundTransparency = if podePagar then 0 else 0.55

@@ -2004,7 +2004,7 @@
       "custo": 400000,
       "minutos": 10,
       "requer": {
-        "linhasCompletas": 9
+        "era": "diesel"
       },
       "descricao": {
         "pt": "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta.",
@@ -2032,7 +2032,7 @@
       "custo": 800000,
       "minutos": 15,
       "requer": {
-        "era": "diesel"
+        "era": "eletrico"
       },
       "descricao": {
         "pt": "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel.",
@@ -2060,7 +2060,7 @@
       "custo": 5000000,
       "minutos": 30,
       "requer": {
-        "era": "diesel",
+        "era": "alta",
         "projeto": "ef118"
       },
       "descricao": {

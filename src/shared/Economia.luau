@@ -54,6 +54,15 @@ Economia.TITULOS = {
 		{ nivel = 20, pt = "Rei dos Trilhos", en = "Railway King" },
 		{ nivel = 25, pt = "Lenda Ferroviária", en = "Railway Legend" },
 	},
+	alta = {
+		{ nivel = 1, pt = "Empreendedor", en = "Entrepreneur" },
+		{ nivel = 3, pt = "Executivo", en = "Executive" },
+		{ nivel = 6, pt = "Diretor-executivo", en = "CEO" },
+		{ nivel = 10, pt = "Presidente do Conselho", en = "Chairman" },
+		{ nivel = 15, pt = "Magnata", en = "Tycoon" },
+		{ nivel = 20, pt = "Bilionário dos Trilhos", en = "Rail Billionaire" },
+		{ nivel = 25, pt = "Lenda Ferroviária", en = "Railway Legend" },
+	},
 } :: { [string]: { { nivel: number, pt: string, en: string } } }
 
 -- População das cidades (número do jogo, não censo): pelo porte, vezes 4 a cada era, e cresce com a estação.
@@ -99,8 +108,11 @@ Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira
 
 -- Eras: a próxima libera com N linhas completas e multiplica a renda de tudo.
 Economia.ERAS = {
-	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350, anoInicio = 1852, anoFim = 1930 },
-	{ id = "diesel", multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700, anoInicio = 1930, anoFim = 1965 },
+	-- cada era dobra a receita e o tamanho dos trens; o custo e as linhas completas pedidas sobem
+	{ id = "vapor", nome = { pt = "Era do Vapor", en = "Steam Era" }, multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350, anoInicio = 1852, anoFim = 1930 },
+	{ id = "diesel", nome = { pt = "Era do Diesel", en = "Diesel Era" }, multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700, anoInicio = 1930, anoFim = 1965 },
+	{ id = "eletrico", nome = { pt = "Era Elétrica", en = "Electric Era" }, multiplicador = 4, custo = 6000000, linhasCompletas = 14, capacidade = 1400, anoInicio = 1965, anoFim = 2000 },
+	{ id = "alta", nome = { pt = "Era da Alta Velocidade", en = "High-Speed Era" }, multiplicador = 8, custo = 60000000, linhasCompletas = 17, capacidade = 2800, anoInicio = 2000, anoFim = 2030 },
 }
 
 -- Estado salvo de um jogador em um mapa.
@@ -237,19 +249,20 @@ function Economia.tituloNivel(nivel: number, eraId: string?, idioma: string?): s
 	return if idioma == "en" then t.en else t.pt
 end
 
--- Ano mostrado no caixa: o ano do trecho histórico mais recente já construído, dentro dos anos da era.
+-- Ano mostrado no caixa: avança com o trecho mais recente construído e com as linhas completas,
+-- sempre dentro dos anos da era (o Vapor vai de 1852 a 1930, o Diesel de 1930 a 1965...).
 function Economia.anoAtual(estado: EstadoMapa, dados: any): number
 	local era = Economia.ERAS[Economia.indiceEra(estado)]
 	local ano = era.anoInicio
 	for _, linha in dados.linhas do
-		if not linha.projeto then
-			for _, t in linha.trechos do
-				if estado.trechos[t.id] and t.ano > ano then
-					ano = t.ano
-				end
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] and t.ano > ano then
+				ano = t.ano
 			end
 		end
 	end
+	local progresso = Economia.linhasCompletas(estado, dados) / math.max(1, #dados.linhas)
+	ano = math.max(ano, era.anoInicio + math.floor((era.anoFim - era.anoInicio) * progresso))
 	return math.min(ano, era.anoFim)
 end
 
@@ -301,7 +314,8 @@ function Economia.requisitosProjeto(estado: EstadoMapa, dados: any, p: any): (bo
 			end
 		end
 		if atual < precisa then
-			return false, `Chegue à era {r.era == "diesel" and "do Diesel" or r.era}.`
+			local alvo = Economia.ERAS[precisa]
+			return false, `Chegue à {if alvo then alvo.nome.pt else r.era}.`
 		end
 	end
 	if r.linhasCompletas and Economia.linhasCompletas(estado, dados) < r.linhasCompletas then

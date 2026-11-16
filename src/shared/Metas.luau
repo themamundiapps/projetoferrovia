@@ -498,6 +498,20 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
+		id = "fio_no_trilho", nome = "Fio no trilho", emoji = "era_eletrico", xp = 80,
+		descricao = "Chegue à Era Elétrica.",
+		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
+			return Economia.indiceEra(estado) >= 3
+		end,
+	},
+	{
+		id = "bala_de_prata", nome = "Bala de prata", emoji = "era_alta", xp = 120,
+		descricao = "Chegue à Era da Alta Velocidade.",
+		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
+			return Economia.indiceEra(estado) >= 4
+		end,
+	},
+	{
 		id = "do_papel_ao_trilho", nome = "Do papel ao trilho", emoji = "gabinete", xp = 40,
 		descricao = "Conclua um estudo no Gabinete de Projetos.",
 		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean

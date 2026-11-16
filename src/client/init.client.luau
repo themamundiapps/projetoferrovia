@@ -352,7 +352,8 @@ local function aplicarEstado(estado: any)
 		montar(estado.era)
 		if trocou then
 			local era = Theme.PorId[estado.era]
-			ui:enfileirar(`{Emojis.era_diesel} Bem-vindo à {era and era.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
+			local emoji = (Emojis :: any)["era_" .. estado.era] or Emojis.era_diesel
+			ui:enfileirar(`{emoji} Bem-vindo à {era and era.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
 		end
 		avisarEventos(estado)
 		return

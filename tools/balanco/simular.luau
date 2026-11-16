@@ -43,7 +43,7 @@ for passo = 1, 4 * 3600 do
 		end
 	end
 	local ne, ok = E.proximaEra(e, D)
-	if ne and ok and e.dinheiro >= ne.custo then e.dinheiro -= ne.custo; e.era = ne.id; table.insert(log, string.format("%6.1fmin DIESEL", t / 60)) end
+	if ne and ok and e.dinheiro >= ne.custo then e.dinheiro -= ne.custo; e.era = ne.id; table.insert(log, string.format("%6.1fmin ERA %s", t / 60, string.upper(ne.id))) end
 	e.dinheiro = math.max(0, e.dinheiro + lucro())
 	t += 1
 end
