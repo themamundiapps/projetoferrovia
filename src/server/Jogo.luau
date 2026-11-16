@@ -540,7 +540,7 @@ function Acoes.pesquisar(s: Sessao, args: any): (boolean, string?)
 	e.projetos[p.id] = os.time() + p.segundos
 	Metas.contar(e, "estudo", 1)
 	ganharXp(s, e, Metas.XP.projeto)
-	return true, `Estudos da {p.nome} começaram.`
+	return true, `Estudo iniciado: {p.nome}.`
 end
 
 -- Paga para terminar agora a pesquisa em andamento.

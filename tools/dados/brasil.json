@@ -1800,7 +1800,7 @@
       "id": "planalto",
       "nome": "Ferrovia do Planalto",
       "ano": 1975,
-      "cor": 2,
+      "cor": 1,
       "degrau": 5,
       "projeto": "planalto",
       "trechos": [
@@ -1828,7 +1828,7 @@
       "id": "litoranea_ne",
       "nome": "Litorânea do Nordeste",
       "ano": 1985,
-      "cor": 4,
+      "cor": 3,
       "degrau": 6,
       "projeto": "litoranea_ne",
       "trechos": [

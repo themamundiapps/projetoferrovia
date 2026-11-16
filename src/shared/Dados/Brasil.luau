@@ -282,7 +282,7 @@ return {
 			},
 		},
 		{
-			id = "planalto", nome = "Ferrovia do Planalto", ano = 1975, cor = 2, ordem = 21, degrau = 5, projeto = "planalto", nota = nil,
+			id = "planalto", nome = "Ferrovia do Planalto", ano = 1975, cor = 1, ordem = 21, degrau = 5, projeto = "planalto", nota = nil,
 			trechos = {
 				{ id = "planalto_1", de = "bh", para = "paracatu", ano = 1975, km = 539, terreno = "planalto", custo = 257511, degrau = 5 },
 				{ id = "planalto_2", de = "paracatu", para = "brasilia", ano = 1975, km = 239, terreno = "planalto", custo = 114184, degrau = 5 },
@@ -290,7 +290,7 @@ return {
 			},
 		},
 		{
-			id = "litoranea_ne", nome = "Litorânea do Nordeste", ano = 1985, cor = 4, ordem = 22, degrau = 6, projeto = "litoranea_ne", nota = nil,
+			id = "litoranea_ne", nome = "Litorânea do Nordeste", ano = 1985, cor = 3, ordem = 22, degrau = 6, projeto = "litoranea_ne", nota = nil,
 			trechos = {
 				{ id = "litoranea_ne_1", de = "salvador", para = "aracaju", ano = 1985, km = 346, terreno = "baixada", custo = 436403, degrau = 6 },
 				{ id = "litoranea_ne_2", de = "aracaju", para = "maceio", ano = 1985, km = 252, terreno = "baixada", custo = 317842, degrau = 6 },
