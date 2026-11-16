@@ -74,6 +74,8 @@ Assets.KitUI = {
 		barra_cheia = { id = "rbxassetid://72380358480744", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
 		-- divisor.png (710 x 47): não estica; entra inteiro na largura e a altura acompanha
 		divisor = { id = "rbxassetid://0", largura = 710, altura = 47 },
+		-- botao_redondo.png (256 x 256): inteiro, sem fatiar (zoom)
+		botao_redondo = { id = "rbxassetid://0", slice = Rect.new(1, 1, 255, 255), escala = 1, borda = 0, redondo = true },
 		cabecalho = { id = "rbxassetid://0", slice = Rect.new(100, 114, 596, 117), escala = 1, borda = 0 },
 		botao_discreto = { id = "rbxassetid://79100120490162", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },

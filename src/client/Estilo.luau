@@ -401,9 +401,21 @@ local function vestirBotao(b: TextButton, p: any)
 	trocarPeca[b] = function(nova: any)
 		p = nova
 		fundo.Image = nova.id
+		fundo.ScaleType = if nova.redondo then Enum.ScaleType.Fit else Enum.ScaleType.Slice
 		fundo.SliceCenter = nova.slice
 		ajustar()
 	end
+end
+
+-- Botão redondo (zoom): peça inteira do kit; sem ela, botão discreto.
+function Estilo.botaoRedondo(self: Estilo, txt: string, pai: Instance, ordem: number?): TextButton
+	local b = self:botao("discreto", txt, pai, ordem)
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local troca = trocarPeca[b]
+	if troca and kit and kit.botao_redondo and kit.botao_redondo.id ~= "rbxassetid://0" then
+		troca(kit.botao_redondo)
+	end
+	return b
 end
 
 -- Aba da barra do menu: peça própria do kit (normal e ativa); sem ela, botão discreto.

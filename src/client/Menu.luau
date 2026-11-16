@@ -92,7 +92,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	local rotulos = { "+", "–" }
 	local fatores = { 1.4, 1 / 1.4 }
 	for i, rotulo in rotulos do
-		local b = est:botao("discreto", rotulo, zoom, i)
+		local b = est:botaoRedondo(rotulo, zoom, i)
 		b.Name = if i == 1 then "ZoomMais" else "ZoomMenos"
 		b.Size = UDim2.fromOffset(46, 46)
 		b.BackgroundColor3 = est.c.panel
