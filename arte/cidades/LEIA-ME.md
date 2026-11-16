@@ -44,3 +44,9 @@ as outras usam uma das 8 paisagens genéricas. Esta lista sai de `tools/dados/br
 | `generica_sul.png` | Interior do Sul: araucárias, campos e pampa | Alegrete, Cachoeira do Sul, Itararé, Marcelino Ramos, Passo Fundo, União da Vitória, Uruguaiana |
 | `generica_cerrado.png` | Centro-Oeste: cerrado e Pantanal | Campinorte, Corumbá, Lucas do Rio Verde, Porto Esperança, Sinop, Três Lagoas, Vilhena, Água Boa |
 | `generica_amazonia.png` | Amazônia: vila na beira do rio e da floresta | Abunã, Guajará-Mirim, Matupá, Miritituba, Novo Progresso, Porto Velho |
+
+## Versão do jogo
+
+`arte/cidades_jogo/` guarda as imagens prontas para o Roblox: tarjas pretas cortadas, recorte em 16:9,
+1024 × 576 px, JPG. Elas são geradas a partir desta pasta; é delas que sai o upload.
+
