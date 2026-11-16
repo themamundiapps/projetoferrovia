@@ -65,14 +65,14 @@ Assets.KitUI = {
 		-- painel_3.png (mogno e dourado, 728 x 359); as outras opções ficam em arte/ui/classico/
 		-- botao.png (686 x 159): pílula; os cantos verticais ocupam a altura toda, as pontas ficam fixas
 		botao = { id = "rbxassetid://129345331580728", slice = Rect.new(130, 78, 556, 81), escala = 1, borda = 0 },
-		aba = { id = "rbxassetid://0", slice = Rect.new(90, 98, 594, 101), escala = 1, borda = 0 },
-		aba_ativa = { id = "rbxassetid://0", slice = Rect.new(90, 85, 594, 87), escala = 1, borda = 0 },
+		aba = { id = "rbxassetid://136913156478333", slice = Rect.new(90, 98, 594, 101), escala = 1, borda = 0 },
+		aba_ativa = { id = "rbxassetid://126520576895217", slice = Rect.new(90, 85, 594, 87), escala = 1, borda = 0 },
 		-- barra_fundo.png (714 x 82): o preenchimento enche o miolo de papel entre os aros (canal = frações da peça)
-		barra_fundo = { id = "rbxassetid://0", slice = Rect.new(100, 40, 614, 42), escala = 1, borda = 0, largura = 714,
+		barra_fundo = { id = "rbxassetid://139803880663244", slice = Rect.new(100, 40, 614, 42), escala = 1, borda = 0, largura = 714,
 			canal = { x = 44 / 714, topo = 13 / 82, base = 69 / 82 } }, -- miolo de papel entre os aros
 		-- barra_cheia.png (620 x 22): cápsula em tons de cinza, tingida no jogo com a cor da barra
-		barra_cheia = { id = "rbxassetid://0", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
-		botao_discreto = { id = "rbxassetid://0", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
+		barra_cheia = { id = "rbxassetid://72380358480744", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
+		botao_discreto = { id = "rbxassetid://79100120490162", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
 		painel = { id = "rbxassetid://116203976251217", slice = Rect.new(160, 155, 568, 204), escala = 0.42, borda = 9 },
 	},
