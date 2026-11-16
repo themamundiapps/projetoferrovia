@@ -4,9 +4,9 @@ ERAS = [
  {
   "id": "vapor", "nome": "Era do Vapor", "anos": "1830–1930",
   "fonts": {  # (nome do arquivo .json do Roblox, peso usado)
-   "display": ("Merriweather", "Bold"), "label": ("SpecialElite", "Regular"),
-   "body": ("SourceSansPro", "Regular"), "number": ("SpecialElite", "Regular")},
-  "preview_fonts": {"display": ("Merriweather", 900), "label": ("Special Elite", 400), "body": ("Source Sans Pro", 400), "number": ("Special Elite", 400)},
+   "display": ("AccanthisADFStd", "Bold"), "label": ("AccanthisADFStd", "Regular"),
+   "body": ("Merriweather", "Regular"), "number": ("AccanthisADFStd", "Bold")},
+  "preview_fonts": {"display": ("Accanthis ADF Std", 700), "label": ("Accanthis ADF Std", 400), "body": ("Merriweather", 400), "number": ("Accanthis ADF Std", 700)},
   "colors": {
    "bg": "#EFE4CC", "panel": "#F7F0DE", "ink": "#3B2A1A", "inkMuted": "#6B5640", "rule": "#B8A27A",
    "land": "#E4D2AA", "sea": "#D9CBAA", "seaPattern": "#C9B992", "coast": "#3B2A1A", "rio": "#4E6A78",
@@ -17,8 +17,8 @@ ERAS = [
  },
  {
   "id": "diesel", "nome": "Era do Diesel", "anos": "1930–1965",
-  "fonts": {"display": ("Oswald", "Bold"), "label": ("Oswald", "Medium"), "body": ("SourceSansPro", "Regular"), "number": ("RobotoMono", "Medium")},
-  "preview_fonts": {"display": ("Oswald", 700), "label": ("Oswald", 500), "body": ("Source Sans Pro", 400), "number": ("Roboto Mono", 500)},
+  "fonts": {"display": ("JosefinSans", "Bold"), "label": ("JosefinSans", "SemiBold"), "body": ("Merriweather", "Regular"), "number": ("JosefinSans", "Bold")},
+  "preview_fonts": {"display": ("Josefin Sans", 700), "label": ("Josefin Sans", 600), "body": ("Merriweather", 400), "number": ("Josefin Sans", 700)},
   "colors": {
    "bg": "#E9E2CF", "panel": "#F5F0E1", "ink": "#1F2B33", "inkMuted": "#4E5B63", "rule": "#B9B39C",
    "land": "#D9D4AE", "sea": "#BFD3D0", "seaPattern": "#A9C2BF", "coast": "#1F2B33", "rio": "#2F6E86",

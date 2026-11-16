@@ -132,7 +132,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.caixaNivel = caixaNivel
 	padding(caixaNivel, 12)
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 4), HorizontalAlignment = Enum.HorizontalAlignment.Center }, caixaNivel)
-	self.lblTitulo = novo("TextLabel", {
+	self.lblCargo = novo("TextLabel", {
 		Name = "Titulo",
 		LayoutOrder = 1,
 		Size = UDim2.new(1, 0, 0, 0),
@@ -416,7 +416,7 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	local simbolo = self.dados.simbolo
 	local nivel = Economia.nivel(estado)
 	local _, xpNoNivel, xpDoNivel = Economia.nivel(estado)
-	self.lblTitulo.Text = Economia.tituloNivel(nivel, estado.era, Idioma.atual)
+	self.lblCargo.Text = Economia.tituloNivel(nivel, estado.era, Idioma.atual)
 	self.lblNivel.Text = if xpDoNivel > 0
 		then `{Emojis.nivel} NÍVEL {nivel} · {xpNoNivel} / {xpDoNivel} XP`
 		else `{Emojis.nivel} NÍVEL {nivel} · MÁXIMO`
