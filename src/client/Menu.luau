@@ -326,7 +326,7 @@ end
 
 function Menu._abaLinhas(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:texto("titulo", `{Emojis.linhas} Linhas`, r, 1)
+	est:titulo(`{Emojis.linhas} Linhas`, r, 1)
 	if not estado then
 		return
 	end
@@ -425,7 +425,7 @@ end
 
 function Menu._abaProjetos(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:texto("titulo", `{Emojis.gabinete} Gabinete de Projetos`, r, 1)
+	est:titulo(`{Emojis.gabinete} Gabinete de Projetos`, r, 1)
 	est:texto(
 		"fraco",
 		"Ferrovias que o Brasil planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.",
@@ -562,7 +562,7 @@ end
 
 function Menu._abaMetas(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:texto("titulo", `{Emojis.contratos} Contratos`, r, 1)
+	est:titulo(`{Emojis.contratos} Contratos`, r, 1)
 	if not estado then
 		return
 	end
@@ -730,7 +730,7 @@ end
 function Menu._abaJornal(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	local nomeJornal = Idioma.t(Jornal.NOMES[if estado then estado.era else "vapor"] or Jornal.NOMES.vapor)
-	est:texto("titulo", `{Emojis.jornal} {nomeJornal}`, r, 1)
+	est:titulo(`{Emojis.jornal} {nomeJornal}`, r, 1)
 	est:texto("fraco", "Notícias da época mudam a economia por alguns minutos. As ruins que têm conserto podem ser resolvidas pagando.", r, 2)
 	if not estado then
 		return
@@ -818,7 +818,7 @@ end
 function Menu._abaBanco(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	local nomeBanco = Idioma.t(Banco.NOMES[if estado then estado.era else "vapor"] or Banco.NOMES.vapor)
-	est:texto("titulo", `{Emojis.banco} {nomeBanco}`, r, 1)
+	est:titulo(`{Emojis.banco} {nomeBanco}`, r, 1)
 	est:texto("fraco", `Empréstimos para construir mais cedo. O limite e os juros dependem do seu crédito: satisfação dos passageiros e nível da companhia. A dívida é paga sozinha com {math.round(Banco.PARCELA * 100)}% do lucro, e dá para quitar quando quiser.`, r, 2)
 	if not estado then
 		return
@@ -912,7 +912,7 @@ end
 
 function Menu._abaCompanhia(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:texto("titulo", `{Emojis.companhia} Companhia`, r, 1)
+	est:titulo(`{Emojis.companhia} Companhia`, r, 1)
 	if not estado then
 		return
 	end
@@ -1035,7 +1035,7 @@ end
 
 function Menu._abaAjustes(self: Menu)
 	local est, r = self.est, self.rolagem
-	est:texto("titulo", `{Emojis.configuracoes} Ajustes`, r, 1)
+	est:titulo(`{Emojis.configuracoes} Ajustes`, r, 1)
 	local opcoes = {
 		{ chave = "nomesEstacoes", nome = "Nomes das cidades" },
 		{ chave = "nomesMapa", nome = "Nomes de estados, rios e regiões" },

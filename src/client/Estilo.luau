@@ -211,6 +211,42 @@ function Estilo.barra(self: Estilo, pai: Instance, ordem: number?): Frame
 	}, fundo)
 end
 
+-- Título de painel: com o kit, o texto vai centralizado numa placa (cabeçalho); sem ele, texto simples.
+function Estilo.titulo(self: Estilo, txt: string, pai: Instance, ordem: number?): TextLabel
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.cabecalho
+	if p and p.id ~= "rbxassetid://0" then
+		local altura = 52
+		local escala = (altura / 2) / p.slice.Min.Y
+		local placa = novo("ImageLabel", {
+			Name = "Cabecalho",
+			LayoutOrder = ordem or 0,
+			Size = UDim2.new(1, 0, 0, altura),
+			BackgroundTransparency = 1,
+			Image = p.id,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = p.slice,
+			SliceScale = escala,
+			ZIndex = 31,
+		}, pai)
+		local ponta = math.ceil(p.slice.Min.X * escala) + 4
+		local l = self:texto("titulo", txt, placa, 0)
+		l.AutomaticSize = Enum.AutomaticSize.None
+		l.Position = UDim2.fromOffset(ponta, 0)
+		l.Size = UDim2.new(1, -2 * ponta, 1, 0)
+		l.TextXAlignment = Enum.TextXAlignment.Center
+		l.TextYAlignment = Enum.TextYAlignment.Center
+		-- nomes longos (o banco e o jornal mudam com a era) encolhem em vez de quebrar a linha
+		l.TextWrapped = false
+		l.TextScaled = true
+		novo("UITextSizeConstraint", { MaxTextSize = 21, MinTextSize = 12 }, l)
+		novo("UIPadding", { PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 12) }, l)
+		l.ZIndex = 32
+		return l
+	end
+	return self:texto("titulo", txt, pai, ordem)
+end
+
 -- Quanto a moldura do kit sai para fora das caixas (0 se a era ainda não tem moldura).
 function Estilo.bordaKit(self: Estilo): number
 	local kit = Assets.KitUI[self.era.kit or ""]
