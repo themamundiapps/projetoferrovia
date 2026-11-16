@@ -41,8 +41,33 @@ Assets.Ids = {
 
 -- Imagens das fichas das cidades (arte/cidades/). Cidades grandes têm a sua; as outras usam a paisagem
 -- genérica indicada em "paisagem" nos dados. Sem id, a ficha mostra um espaço reservado.
-Assets.Cidades = {} :: { [string]: string } -- id da cidade -> rbxassetid://...
-Assets.Paisagens = {} :: { [string]: string } -- cafe, serra, litoral, canavial, sertao, sul, cerrado, amazonia
+Assets.Cidades = {
+	bh = "rbxassetid://123305865514688",
+	campinas = "rbxassetid://134173839324956",
+	juiz_de_fora = "rbxassetid://114880616786848",
+	ponta_grossa = "rbxassetid://79031387184703",
+	porto_alegre = "rbxassetid://95754414027158",
+	recife = "rbxassetid://75128127492856",
+	rio = "rbxassetid://76051103728708",
+	salvador = "rbxassetid://83326118671292",
+	santa_maria = "rbxassetid://137804371375076",
+	santos = "rbxassetid://120632001864198",
+	sao_jose_campos = "rbxassetid://98597069519831",
+	sao_paulo = "rbxassetid://132099806211623",
+	sorocaba = "rbxassetid://124503637752148",
+	vitoria = "rbxassetid://101719837411189",
+	-- faltam: curitiba, campo_grande
+} :: { [string]: string } -- id da cidade -> imagem
+Assets.Paisagens = {
+	cafe = "rbxassetid://89059490606207",
+	canavial = "rbxassetid://103359671020446",
+	cerrado = "rbxassetid://70621750823885",
+	litoral = "rbxassetid://102904556810309",
+	serra = "rbxassetid://115932616309235",
+	sertao = "rbxassetid://90123016159292",
+	sul = "rbxassetid://85172850577106",
+	-- falta: amazonia
+} :: { [string]: string } -- paisagem genérica (campo "paisagem" das cidades) -> imagem
 
 -- Configuração de 9-slice e tiles.
 Assets.Slice = {
