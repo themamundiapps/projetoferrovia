@@ -81,6 +81,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Trens andando no mapa e tutorial dos primeiros passos
 - [x] Fichas das cidades (83 cidades, história em português e inglês; imagens em `arte/cidades/`)
 - [x] Jornal da Companhia: 16 eventos de época que mexem na economia (`src/shared/Jornal.luau`)
+- [x] Decisões estilo Victoria: 60 eventos com escolha (15 por era), uma a cada ~10 min (`src/shared/Decisoes.luau`)
 - [x] Banco: empréstimos com juros pelo crédito da companhia, pagos com parte do lucro (`src/shared/Banco.luau`)
 - [x] Preço do frete de cada carga (Companhia, painel da linha e ficha da cidade)
 - [ ] Ranking e mapas dos EUA e da Europa

@@ -136,6 +136,7 @@ export type EstadoMapa = {
 	nomeCompanhia: string?, -- nome escolhido pelo jogador (já passado pelo filtro do Roblox)
 	emprestimo: { valor: number, total: number, divida: number, classe: string, em: number }?, -- ver Banco.luau
 	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
+	decisoes: EstadoDecisoes, -- eventos com escolha (ver Decisoes.luau)
 }
 
 function Economia.estadoNovo(): EstadoMapa
@@ -156,6 +157,7 @@ function Economia.estadoNovo(): EstadoMapa
 		missoes = { dia = 0, lista = {} },
 		tutorial = false,
 		jornal = { ativos = {}, edicoes = {}, proximo = 0 },
+		decisoes = { pendente = nil, efeitos = {}, vistas = {}, historico = {} },
 	}
 end
 
@@ -651,6 +653,25 @@ local fatorEstacoes = fatorEstacoesTrecho
 -- "regiao" (linhas com estação na região), "cidade" (linhas que passam pela cidade) ou "manutencao".
 export type EventoAtivo = { id: string, tipo: string, alvo: string?, mult: number, fim: number, inicio: number }
 export type Jornal = { ativos: { EventoAtivo }, edicoes: { { id: string, alvo: string?, em: number } }, proximo: number }
+-- pendente: decisão esperando escolha (tipo/alvo = alvo resolvido); efeitos: modificadores das escolhas feitas
+export type EstadoDecisoes = {
+	pendente: { id: string, tipo: string?, alvo: string?, em: number }?,
+	efeitos: { EventoAtivo },
+	vistas: { [string]: boolean },
+	historico: { { id: string, opcao: number, em: number, sorte: boolean? } },
+}
+
+-- Efeitos em vigor das escolhas feitas nas decisões (mesmo formato dos eventos do Jornal).
+function Economia.efeitosDecisoes(estado: EstadoMapa): { EventoAtivo }
+	local agora = Economia.relogio()
+	local lista = {}
+	for _, ev in ((estado.decisoes or {}) :: any).efeitos or {} do
+		if ev.fim > agora then
+			table.insert(lista, ev)
+		end
+	end
+	return lista
+end
 
 function Economia.eventosAtivos(estado: EstadoMapa): { EventoAtivo }
 	local agora = Economia.relogio()
@@ -921,6 +942,9 @@ function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
 	local satisfacao = Economia.satisfacao(estado, dados, rede)
 	local fatorSat = (0.85 + 0.3 * satisfacao) * Economia.fatorNivel(estado)
 	local eventos = Economia.eventosAtivos(estado)
+	for _, ev in Economia.efeitosDecisoes(estado) do
+		table.insert(eventos, ev)
+	end
 	local fatorManut = Economia.fatorEventosManutencao(estado, eventos)
 	local b: Balanco = { receita = 0, manutencao = 0, lucro = 0, satisfacao = satisfacao, linhas = {} }
 	for _, linha in dados.linhas do

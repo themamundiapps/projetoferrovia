@@ -13,6 +13,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
+local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
@@ -32,6 +33,7 @@ type Sessao = {
 	ultimaAcao: number,
 	ultimoNome: number, -- os.clock() da última troca de nome da companhia
 	proximaNoticia: number, -- os.time() da próxima notícia do Jornal (0 = ainda não marcado)
+	proximaDecisao: number, -- os.time() da próxima decisão (0 = ainda não marcado)
 	ganhoOffline: number,
 	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
 	rng: Random,
@@ -188,6 +190,51 @@ local function sanear(salvo: any): EstadoMapa
 			em = if type(emp.em) == "number" then emp.em else os.time(),
 		}
 	end
+	-- decisões: pendente só se existir no catálogo; efeitos com números dentro dos limites
+	local dc = salvo.decisoes
+	if type(dc) == "table" then
+		local p = dc.pendente
+		if type(p) == "table" and type(p.id) == "string" and Decisoes.acharDecisao(p.id) then
+			e.decisoes.pendente = {
+				id = p.id,
+				tipo = if type(p.tipo) == "string" then p.tipo else "",
+				alvo = if type(p.alvo) == "string" then p.alvo else nil,
+				em = if numero(p.em) then p.em else os.time(),
+			}
+		end
+		if type(dc.efeitos) == "table" then
+			for i = 1, 8 do
+				local ev = dc.efeitos[i]
+				if type(ev) == "table" and type(ev.id) == "string" and type(ev.tipo) == "string" and numero(ev.mult)
+					and ev.mult >= 0.3 and ev.mult <= 2 and numero(ev.fim) and numero(ev.inicio) and ev.fim > os.time()
+					and ev.fim - ev.inicio <= 30 * 60 then
+					table.insert(e.decisoes.efeitos, {
+						id = ev.id,
+						tipo = ev.tipo,
+						alvo = if type(ev.alvo) == "string" then ev.alvo else nil,
+						mult = ev.mult,
+						inicio = ev.inicio,
+						fim = ev.fim,
+					})
+				end
+			end
+		end
+		if type(dc.vistas) == "table" then
+			for id, v in dc.vistas do
+				if type(id) == "string" and v == true and Decisoes.acharDecisao(id) then
+					e.decisoes.vistas[id] = true
+				end
+			end
+		end
+		if type(dc.historico) == "table" then
+			for i = 1, Decisoes.MAX_HISTORICO do
+				local h = dc.historico[i]
+				if type(h) == "table" and type(h.id) == "string" and Decisoes.acharDecisao(h.id) and numero(h.opcao) and numero(h.em) then
+					table.insert(e.decisoes.historico, { id = h.id, opcao = h.opcao, em = h.em, sorte = if type(h.sorte) == "boolean" then h.sorte else nil })
+				end
+			end
+		end
+	end
 	-- jornal: o efeito de cada evento vem do catálogo, não do save
 	local j = salvo.jornal
 	if type(j) == "table" then
@@ -236,6 +283,7 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		tutorial = e.tutorial,
 		nomeCompanhia = e.nomeCompanhia,
 		emprestimo = e.emprestimo,
+		decisoes = e.decisoes,
 		jornal = e.jornal,
 		eventos = s.eventos,
 		trechos = e.trechos,
@@ -327,6 +375,26 @@ local function atualizarMetas(s: Sessao, e: EstadoMapa, dados: any, ctx: Metas.C
 				if ev then
 					publicar(s, e, ev)
 				end
+			end
+		end
+	end
+	-- decisões: tira os efeitos vencidos; sem decisão pendente, de tempos em tempos chega uma nova
+	local efeitos = {}
+	for _, ev in e.decisoes.efeitos do
+		if ev.fim > agora then
+			table.insert(efeitos, ev)
+		end
+	end
+	e.decisoes.efeitos = efeitos
+	if not e.decisoes.pendente and trechos >= Decisoes.TRECHOS_MINIMOS then
+		if s.proximaDecisao == 0 then
+			s.proximaDecisao = agora + Decisoes.PRIMEIRA
+		elseif agora >= s.proximaDecisao then
+			s.proximaDecisao = agora + s.rng:NextInteger(Decisoes.INTERVALO_MIN, Decisoes.INTERVALO_MAX)
+			local def, tipo, alvo = Decisoes.sortear(e, dados, e.decisoes.vistas, s.rng)
+			if def then
+				e.decisoes.pendente = { id = def.id, tipo = tipo, alvo = alvo, em = agora }
+				table.insert(s.eventos, { tipo = "decisao", id = def.id })
 			end
 		end
 	end
@@ -699,6 +767,68 @@ function Acoes.resolverEvento(s: Sessao, args: any): (boolean, string?)
 	return false, "Esse acontecimento já passou."
 end
 
+-- Decisões: escolhe uma das opções da decisão pendente (args.opcao = índice).
+local TIPOS_COM_ALVO = { linha = true, cidade = true, regiao = true, carga = true }
+function Acoes.escolherDecisao(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.opcao) ~= "number" then
+		return false, "Pedido inválido."
+	end
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	local pend = e.decisoes.pendente
+	local def = pend and Decisoes.acharDecisao(pend.id)
+	if not pend or not def then
+		return false, "Não há decisão esperando."
+	end
+	local op = def.opcoes[math.floor(args.opcao)]
+	if not op then
+		return false, "Pedido inválido."
+	end
+	local lucro = Economia.rendaTotal(e, dados)
+	local custo = Decisoes.custo(e, lucro, op)
+	if e.dinheiro < custo then
+		return false, "Dinheiro insuficiente para essa escolha."
+	end
+	local r = Decisoes.resolver(op, e, lucro, s.rng)
+	e.dinheiro = math.max(0, e.dinheiro + r.dinheiro)
+	local agora = os.time()
+	for _, m in r.mods do
+		table.insert(e.decisoes.efeitos, {
+			id = def.id,
+			tipo = m.tipo,
+			alvo = if TIPOS_COM_ALVO[m.tipo] then pend.alvo else nil,
+			mult = m.mult,
+			inicio = agora,
+			fim = agora + m.min * 60,
+		})
+	end
+	if r.xp > 0 then
+		ganharXp(s, e, r.xp)
+	end
+	if r.trens > 0 and pend.tipo == "linha" and pend.alvo then
+		e.trens[pend.alvo] = math.min(Economia.MAX_TRENS_LINHA, (e.trens[pend.alvo] or 0) + r.trens)
+	end
+	if r.pesquisa > 0 then
+		local id = Economia.pesquisaAtual(e)
+		if id then
+			e.projetos[id] -= r.pesquisa * 60
+		end
+	end
+	e.decisoes.vistas[def.id] = true
+	table.insert(e.decisoes.historico, 1, { id = def.id, opcao = math.floor(args.opcao), em = agora, sorte = r.sorteOk })
+	while #e.decisoes.historico > Decisoes.MAX_HISTORICO do
+		table.remove(e.decisoes.historico)
+	end
+	e.decisoes.pendente = nil
+	s.proximaDecisao = agora + s.rng:NextInteger(Decisoes.INTERVALO_MIN, Decisoes.INTERVALO_MAX)
+	if r.sorteOk == true then
+		return true, "Deu certo!"
+	elseif r.sorteOk == false then
+		return true, "Não deu certo desta vez."
+	end
+	return true, "Decisão tomada."
+end
+
 -- Banco: pega um dos empréstimos oferecidos (args.opcao = 1, 2 ou 3).
 function Acoes.tomarEmprestimo(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.opcao) ~= "number" then
@@ -834,6 +964,7 @@ local function aoEntrar(jogador: Player)
 		ultimaAcao = 0,
 		ultimoNome = -math.huge,
 		proximaNoticia = 0,
+		proximaDecisao = 0,
 		ganhoOffline = 0,
 		eventos = {},
 		rng = Random.new(),
@@ -962,6 +1093,26 @@ if RunService:IsStudio() then
 					publicar(s, e, ev)
 				end
 				return ev and ev.id
+			elseif comando == "decisao" then
+				-- traz uma decisão agora (valor = id, ou nada para sortear da era)
+				local def, tipo, alvo
+				if type(valor) == "string" then
+					def = Decisoes.acharDecisao(valor)
+					if def then
+						tipo, alvo = Decisoes.resolverAlvo(def, e, MAPAS[s.mapaAtual], s.rng)
+						if not tipo then
+							return "alvo indisponível"
+						end
+					end
+				else
+					def, tipo, alvo = Decisoes.sortear(e, MAPAS[s.mapaAtual], e.decisoes.vistas, s.rng)
+				end
+				if def then
+					e.decisoes.pendente = { id = def.id, tipo = tipo, alvo = alvo, em = os.time() }
+					table.insert(s.eventos, { tipo = "decisao", id = def.id })
+				end
+				enviarEstado(s)
+				return def and def.id
 			elseif comando == "estado" then
 				return e
 			end

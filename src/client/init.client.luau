@@ -19,6 +19,7 @@ local MapaView = require(script:WaitForChild("MapaView"))
 local Interface = require(script:WaitForChild("Interface"))
 local Menu = require(script:WaitForChild("Menu"))
 local Tutorial = require(script:WaitForChild("Tutorial"))
+local Decisao = require(script:WaitForChild("Decisao"))
 local Ficha = require(script:WaitForChild("Ficha"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -80,6 +81,7 @@ local mapa: any = nil
 local ui: any = nil
 local menu: any = nil
 local tutorial: any = nil
+local decisao: any = nil
 local ficha: any = nil
 local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true }
 local eraAtual: string? = nil
@@ -140,6 +142,7 @@ local function aplicarNaTela(estado: any)
 	ui:atualizarEstado(estado)
 	menu:atualizarEstado(estado)
 	tutorial:atualizarEstado(estado)
+	decisao:atualizarEstado(estado)
 	ficha:atualizarEstado(estado)
 end
 
@@ -223,6 +226,7 @@ local function montar(eraId: string)
 		ui:destruir()
 		menu:destruir()
 		tutorial:destruir()
+		decisao:destruir()
 		mapa:destruir()
 	end
 
@@ -231,6 +235,7 @@ local function montar(eraId: string)
 	ui.eras = Theme.PorId
 	menu = Menu.new(telaUI, era, DadosBrasil)
 	tutorial = Tutorial.new(telaUI, era, DadosBrasil)
+	decisao = Decisao.new(telaUI, era, DadosBrasil)
 	ficha = Ficha.new(telaUI, era, DadosBrasil)
 	menu.ajustes = ajustesSalvos
 	for chave, valor in ajustesSalvos do
@@ -300,6 +305,7 @@ local function montar(eraId: string)
 	table.insert(conexoesTela, ficha.aoFocarLinha.Event:Connect(focarLinha))
 	table.insert(conexoesTela, menu.aoFocarLinha.Event:Connect(focarLinha))
 	table.insert(conexoesTela, tutorial.aoAgir.Event:Connect(agir))
+	table.insert(conexoesTela, decisao.aoAgir.Event:Connect(agir))
 	table.insert(conexoesTela, tutorial.aoAcao.Event:Connect(function(acao: string, alvo: string?)
 		if acao == "linha" and alvo then
 			focarLinha(alvo)

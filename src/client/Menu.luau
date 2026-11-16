@@ -12,6 +12,7 @@ local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
+local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -186,6 +187,9 @@ function Menu._assinatura(self: Menu, estado: any): string
 	table.insert(metas, estado.nomeCompanhia or "")
 	for _, ev in Economia.eventosAtivos(estado) do
 		table.insert(metas, ev.id .. ev.inicio)
+	end
+	for _, ev in Economia.efeitosDecisoes(estado) do
+		table.insert(metas, ev.id .. ev.tipo .. ev.inicio)
 	end
 	table.insert(metas, #((estado.jornal or {}).edicoes or {}))
 	-- banco: redesenha quando pega/quita empréstimo ou quando muda a classe de crédito
@@ -810,6 +814,25 @@ function Menu._abaJornal(self: Menu)
 		end
 		atualizar()
 		table.insert(self.vivos, atualizar)
+	end
+
+	-- efeitos em vigor das escolhas feitas nas decisões
+	local efeitos = Economia.efeitosDecisoes(estado)
+	if #efeitos > 0 then
+		est:divisor(r, 30)
+		est:texto("subtitulo", `{Emojis.contratos} Efeitos das suas decisões`, r, 31)
+		for i, ev in efeitos do
+			local def = Decisoes.acharDecisao(ev.id)
+			local nome = if def then (Decisoes.textos(def, ev.tipo, ev.alvo, dados, Idioma.atual)) else ev.id
+			local bom = (ev.mult > 1) ~= (ev.tipo == "manutencao")
+			local l = est:texto("corpo", "", r, 31 + i)
+			l.TextColor3 = if bom then est.c.positive else est.c.negative
+			local function atualizar()
+				l.Text = `<b>{efeitoEvento(ev, dados)}</b> · {nome} · {relogio(math.max(0, ev.fim - Economia.relogio()))}`
+			end
+			atualizar()
+			table.insert(self.vivos, atualizar)
+		end
 	end
 
 	-- edições anteriores
