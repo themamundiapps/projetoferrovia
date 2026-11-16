@@ -42,6 +42,10 @@ Economia.TITULOS = {
 	{ nivel = 20, nome = "Império Ferroviário" },
 }
 
+-- População das cidades (número do jogo, não censo): pelo porte, vezes 4 a cada era, e cresce com a estação.
+Economia.POPULACAO_POR_PORTE = { 4000, 12000, 35000, 90000, 280000 }
+Economia.CRESCIMENTO_POPULACAO_ERA = 4
+
 -- Produção das cidades produtoras, por dia de jogo, por ponto de porte.
 Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200, acucar = 500, madeira = 600, gado = 150, borracha = 80 }
 Economia.HORAS_DE_OPERACAO = 18 -- os trens rodam 18 h por dia
@@ -581,6 +585,57 @@ function Economia.custoMelhoria(estado: EstadoMapa, dados: any, id: string): num
 end
 
 local fatorEstacoes = fatorEstacoesTrecho
+
+-- ---------------------------------------------------------------- ficha da cidade
+
+function Economia.populacao(estado: EstadoMapa, dados: any, id: string): number
+	local e = dados.estacoes[id]
+	local base = Economia.POPULACAO_POR_PORTE[e.porte] * Economia.CRESCIMENTO_POPULACAO_ERA ^ (Economia.indiceEra(estado) - 1)
+	return base * (1 + Economia.BONUS_POR_NIVEL * Economia.nivelEstacao(estado, id))
+end
+
+export type MovimentoEstacao = {
+	passageiros: number, -- passageiros por hora que a cidade gera nos trechos construídos
+	servico: number, -- pior serviço entre as linhas que passam aqui (1 = todos embarcam)
+	linhaLotada: any?, -- a linha mais lotada que passa aqui, se houver
+	trensFaltando: number,
+	cidadesLigadas: number, -- cidades grandes ao alcance dos trilhos (sem contar esta)
+}
+
+-- O movimento de uma cidade: quanto ela gera de passageiros, se eles embarcam e a quem está ligada.
+function Economia.movimentoEstacao(estado: EstadoMapa, dados: any, id: string, rede: Rede?): MovimentoEstacao
+	local r = rede or Economia.rede(estado, dados)
+	local e = dados.estacoes[id]
+	local m: MovimentoEstacao = { passageiros = 0, servico = 1, linhaLotada = nil, trensFaltando = 0, cidadesLigadas = 0 }
+	for _, linha in dados.linhas do
+		local passa = false
+		local fatorRede = Economia.bonusRede(estado, dados, linha, r)
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] and (t.de == id or t.para == id) then
+				passa = true
+				local parte = Economia.PESO_PORTE[e.porte] / Economia.pesoTrecho(dados, t)
+				m.passageiros += Economia.passageirosTrecho(estado, dados, t, fatorRede) * parte
+			end
+		end
+		if passa then
+			local servico = Economia.servico(estado, dados, linha, r)
+			if servico < m.servico then
+				m.servico = servico
+				m.linhaLotada = linha
+				m.trensFaltando = Economia.trensFaltando(estado, dados, linha, r)
+			end
+		end
+	end
+	local comp = r.componente[id]
+	if comp then
+		for _, outra in r.grandes[comp] do
+			if outra ~= id then
+				m.cidadesLigadas += 1
+			end
+		end
+	end
+	return m
+end
 
 -- ---------------------------------------------------------------- satisfação
 

@@ -17,6 +17,7 @@ local MapaView = require(script:WaitForChild("MapaView"))
 local Interface = require(script:WaitForChild("Interface"))
 local Menu = require(script:WaitForChild("Menu"))
 local Tutorial = require(script:WaitForChild("Tutorial"))
+local Ficha = require(script:WaitForChild("Ficha"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -67,6 +68,7 @@ local mapa: any = nil
 local ui: any = nil
 local menu: any = nil
 local tutorial: any = nil
+local ficha: any = nil
 local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true }
 local eraAtual: string? = nil
 local ultimoEstado: any = nil
@@ -114,6 +116,7 @@ local function aplicarNaTela(estado: any)
 	ui:atualizarEstado(estado)
 	menu:atualizarEstado(estado)
 	tutorial:atualizarEstado(estado)
+	ficha:atualizarEstado(estado)
 end
 
 -- Novidades que o servidor manda uma vez só (contrato, medalha, nível, linha completa): viram avisos em fila.
@@ -177,9 +180,12 @@ local function montar(eraId: string)
 
 	local camera: { zoom: number, pan: Vector2 }? = nil
 	local selecionado: string? = nil
+	local cidadeAberta: string? = nil
 	if mapa then
 		camera = { zoom = mapa.zoom, pan = mapa.pan }
 		selecionado = ui.trechoAberto
+		cidadeAberta = ficha.aberta
+		ficha:destruir()
 		for _, c in conexoesTela do
 			c:Disconnect()
 		end
@@ -195,6 +201,7 @@ local function montar(eraId: string)
 	ui.eras = Theme.PorId
 	menu = Menu.new(tela, era, DadosBrasil)
 	tutorial = Tutorial.new(tela, era, DadosBrasil)
+	ficha = Ficha.new(tela, era, DadosBrasil)
 	menu.ajustes = ajustesSalvos
 	for chave, valor in ajustesSalvos do
 		mapa:definirAjuste(chave, valor)
@@ -246,12 +253,21 @@ local function montar(eraId: string)
 			end
 		end
 		if alvo then
+			ficha:fechar()
 			mapa.interagiu = true
 			mapa:focar(mn, mx, 140)
 			mapa:selecionar(alvo)
 			ui:abrir(alvo)
 		end
 	end
+	-- a ficha da cidade e o painel do trecho ocupam o mesmo canto: só um aberto por vez
+	local function abrirCidade(id: string)
+		ui:fechar()
+		mapa:selecionar(nil)
+		ficha:abrir(id)
+	end
+	table.insert(conexoesTela, ficha.aoAgir.Event:Connect(agir))
+	table.insert(conexoesTela, ficha.aoFocarLinha.Event:Connect(focarLinha))
 	table.insert(conexoesTela, menu.aoFocarLinha.Event:Connect(focarLinha))
 	table.insert(conexoesTela, tutorial.aoAgir.Event:Connect(agir))
 	table.insert(conexoesTela, tutorial.aoAcao.Event:Connect(function(acao: string, alvo: string?)
@@ -262,8 +278,7 @@ local function montar(eraId: string)
 			local folga = Vector2.new(60, 60)
 			mapa.interagiu = true
 			mapa:focar(p - folga, p + folga, 140)
-			mapa:selecionar(nil)
-			ui:abrirEstacao(alvo)
+			abrirCidade(alvo)
 		elseif acao == "aba" and alvo then
 			menu:abrirAba(alvo)
 		end
@@ -273,10 +288,10 @@ local function montar(eraId: string)
 		-- estação tem prioridade sobre trecho quando o toque cai em cima dela
 		local estacao = mapa:estacaoProxima(pontoMapa, 14)
 		if estacao then
-			mapa:selecionar(nil)
-			ui:abrirEstacao(estacao)
+			abrirCidade(estacao)
 			return
 		end
+		ficha:fechar()
 		local id = mapa:trechoProximo(pontoMapa, 22)
 		mapa:selecionar(id)
 		if id then
@@ -309,6 +324,8 @@ local function montar(eraId: string)
 		if selecionado then
 			mapa:selecionar(selecionado)
 			ui:abrir(selecionado)
+		elseif cidadeAberta then
+			ficha:abrir(cidadeAberta)
 		end
 	end
 end

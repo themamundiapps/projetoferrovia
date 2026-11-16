@@ -637,7 +637,7 @@ function Metas.passoTutorial(estado: any, dados: any): PassoTutorial?
 		end
 		return {
 			id = "estacao", indice = 4, total = total, acao = "estacao", alvo = maior, botao = "Mostrar no mapa",
-			texto = "Toque numa estação (a bolinha de uma cidade) e melhore: ela passa a dar mais passageiros e mais renda.",
+			texto = "Toque numa cidade (a bolinha no mapa) para abrir a ficha dela e melhore a estação: mais passageiros e mais renda.",
 		}
 	end
 	if not estado.contrato and ((estado.contadores or {}).contratos or 0) == 0 then

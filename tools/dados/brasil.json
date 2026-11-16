@@ -37,7 +37,12 @@
       "lon": -43.18,
       "lat": -22.69,
       "porte": 1,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Ponto de partida da primeira ferrovia do Brasil, em 1854: os passageiros vinham de barco do Rio e seguiam de trem rumo a Petrópolis.",
+        "en": "Starting point of Brazil's first railway, in 1854: passengers came by boat from Rio and went on by train towards Petrópolis."
+      }
     },
     {
       "id": "fragoso",
@@ -45,7 +50,12 @@
       "lon": -43.13,
       "lat": -22.6,
       "porte": 1,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Fim da linha da E.F. Mauá em 1854, ao pé da serra de Petrópolis.",
+        "en": "End of the Mauá line in 1854, at the foot of the Petrópolis mountains."
+      }
     },
     {
       "id": "rio",
@@ -53,7 +63,12 @@
       "lon": -43.19,
       "lat": -22.9,
       "porte": 5,
-      "porto": true
+      "porto": true,
+      "uf": "RJ",
+      "historia": {
+        "pt": "Capital do Império e depois da República. Da Estação da Corte partiu, em 1858, o primeiro trem da Dom Pedro II.",
+        "en": "Capital of the Empire and later of the Republic. In 1858 the first Dom Pedro II train left from the Court Station."
+      }
     },
     {
       "id": "japeri",
@@ -61,7 +76,12 @@
       "lon": -43.65,
       "lat": -22.64,
       "porte": 1,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Antiga Belém, onde os trens da Dom Pedro II começavam a subir a Serra do Mar.",
+        "en": "Formerly called Belém, where the Dom Pedro II trains began the climb up the Serra do Mar."
+      }
     },
     {
       "id": "barra_pirai",
@@ -70,14 +90,24 @@
       "lat": -22.47,
       "porte": 2,
       "produz": "cafe",
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Entroncamento do Vale do Paraíba: daqui a Dom Pedro II se dividia rumo a São Paulo e a Minas, carregada de café.",
+        "en": "The junction of the Paraíba Valley: here the Dom Pedro II split towards São Paulo and Minas, loaded with coffee."
+      }
     },
     {
       "id": "juiz_de_fora",
       "nome": "Juiz de Fora",
       "lon": -43.35,
       "lat": -21.76,
-      "porte": 3
+      "porte": 3,
+      "uf": "MG",
+      "historia": {
+        "pt": "A \"Manchester Mineira\": a primeira cidade industrial de Minas cresceu com o café e os trilhos.",
+        "en": "The \"Manchester of Minas\": the state's first industrial city grew with coffee and the railway."
+      }
     },
     {
       "id": "barbacena",
@@ -85,14 +115,24 @@
       "lon": -43.77,
       "lat": -21.22,
       "porte": 2,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "MG",
+      "historia": {
+        "pt": "Cidade serrana da Mantiqueira, no caminho dos trilhos para o interior de Minas.",
+        "en": "A highland town in the Mantiqueira range, on the railway's way into Minas."
+      }
     },
     {
       "id": "bh",
       "nome": "Belo Horizonte",
       "lon": -43.94,
       "lat": -19.92,
-      "porte": 4
+      "porte": 4,
+      "uf": "MG",
+      "historia": {
+        "pt": "Capital planejada de Minas, inaugurada em 1897 para substituir Ouro Preto.",
+        "en": "The planned capital of Minas, opened in 1897 to replace Ouro Preto."
+      }
     },
     {
       "id": "santos",
@@ -100,7 +140,12 @@
       "lon": -46.33,
       "lat": -23.96,
       "porte": 3,
-      "porto": true
+      "porto": true,
+      "uf": "SP",
+      "historia": {
+        "pt": "O maior porto do café: quase tudo o que São Paulo colhia descia a serra para embarcar aqui.",
+        "en": "The greatest coffee port: nearly everything São Paulo harvested came down the mountains to be shipped from here."
+      }
     },
     {
       "id": "paranapiacaba",
@@ -108,14 +153,24 @@
       "lon": -46.3,
       "lat": -23.78,
       "porte": 1,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "SP",
+      "historia": {
+        "pt": "Vila ferroviária inglesa no alto da Serra do Mar, onde os trens da São Paulo Railway eram puxados por cabos.",
+        "en": "An English railway village at the top of the Serra do Mar, where São Paulo Railway trains were hauled by cables."
+      }
     },
     {
       "id": "sao_paulo",
       "nome": "São Paulo",
       "lon": -46.635,
       "lat": -23.535,
-      "porte": 5
+      "porte": 5,
+      "uf": "SP",
+      "historia": {
+        "pt": "De vila de tropeiros a capital do café: os trilhos de Santos e do interior se encontram aqui.",
+        "en": "From a muleteers' town to the coffee capital: the rails from Santos and from the interior meet here."
+      }
     },
     {
       "id": "jundiai",
@@ -124,7 +179,12 @@
       "lat": -23.19,
       "porte": 2,
       "produz": "cafe",
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "Fim da linha dos ingleses e começo da Companhia Paulista, que os fazendeiros fundaram para ir além.",
+        "en": "End of the English line and start of the Paulista Company, founded by coffee planters to go further."
+      }
     },
     {
       "id": "campinas",
@@ -132,7 +192,12 @@
       "lon": -47.06,
       "lat": -22.91,
       "porte": 3,
-      "produz": "cafe"
+      "produz": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "A \"Princesa do Oeste\", centro do café paulista e entroncamento da Paulista com a Mogiana.",
+        "en": "The \"Princess of the West\", heart of São Paulo coffee and junction of the Paulista and Mogiana railways."
+      }
     },
     {
       "id": "rio_claro",
@@ -141,7 +206,12 @@
       "lat": -22.41,
       "porte": 2,
       "produz": "cafe",
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "A Companhia Paulista chegou em 1876 e instalou aqui as suas oficinas.",
+        "en": "The Paulista Company arrived in 1876 and set up its workshops here."
+      }
     },
     {
       "id": "sao_carlos",
@@ -150,7 +220,12 @@
       "lat": -22.02,
       "porte": 2,
       "produz": "cafe",
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "Cidade do café no planalto paulista, alcançada pelos trilhos em 1884.",
+        "en": "A coffee town on the São Paulo plateau, reached by rail in 1884."
+      }
     },
     {
       "id": "araraquara",
@@ -159,7 +234,12 @@
       "lat": -21.79,
       "porte": 2,
       "produz": "cafe",
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "A \"Morada do Sol\", no coração do café paulista; daqui partia a Estrada de Ferro Araraquara.",
+        "en": "The \"Home of the Sun\", in the heart of coffee country; the Araraquara Railway started here."
+      }
     },
     {
       "id": "bauru",
@@ -167,7 +247,12 @@
       "lon": -49.06,
       "lat": -22.32,
       "porte": 2,
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "Entroncamento do sertão paulista: aqui se encontravam a Paulista, a Sorocabana e a Noroeste.",
+        "en": "The junction of the São Paulo backlands: the Paulista, the Sorocabana and the Noroeste met here."
+      }
     },
     {
       "id": "vitoria",
@@ -175,7 +260,12 @@
       "lon": -40.34,
       "lat": -20.32,
       "porte": 3,
-      "porto": true
+      "porto": true,
+      "uf": "ES",
+      "historia": {
+        "pt": "Capital capixaba numa ilha; seu porto cresceu com o café e, depois, com o minério de Minas.",
+        "en": "The island capital of Espírito Santo; its port grew with coffee and, later, with ore from Minas."
+      }
     },
     {
       "id": "colatina",
@@ -183,7 +273,12 @@
       "lon": -40.63,
       "lat": -19.54,
       "porte": 1,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "ES",
+      "historia": {
+        "pt": "Às margens do rio Doce, cresceu com a chegada da Vitória–Minas no começo do século XX.",
+        "en": "On the banks of the Doce river, it grew when the Vitória–Minas railway arrived in the early 1900s."
+      }
     },
     {
       "id": "valadares",
@@ -191,7 +286,12 @@
       "lon": -41.95,
       "lat": -18.85,
       "porte": 2,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "MG",
+      "historia": {
+        "pt": "Nasceu como Figueira, porto do rio Doce, e cresceu com a ferrovia.",
+        "en": "Born as Figueira, a port on the Doce river, it grew with the railway."
+      }
     },
     {
       "id": "itabira",
@@ -200,7 +300,12 @@
       "lat": -19.62,
       "porte": 1,
       "produz": "minerio",
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "MG",
+      "historia": {
+        "pt": "Terra do Pico do Cauê e do minério de ferro que deu origem à Vale, em 1942.",
+        "en": "Home of Cauê Peak and of the iron ore that gave rise to Vale, in 1942."
+      }
     },
     {
       "id": "porto_velho",
@@ -209,7 +314,12 @@
       "lat": -8.76,
       "porte": 2,
       "porto": true,
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "RO",
+      "historia": {
+        "pt": "Nasceu em 1907 como canteiro de obras da Madeira–Mamoré, à beira do rio Madeira.",
+        "en": "Born in 1907 as the construction camp of the Madeira–Mamoré, on the Madeira river."
+      }
     },
     {
       "id": "anchieta",
@@ -217,7 +327,12 @@
       "lon": -40.65,
       "lat": -20.8,
       "porte": 1,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "ES",
+      "historia": {
+        "pt": "Vila do litoral capixaba fundada pelos jesuítas, onde viveu e morreu o padre José de Anchieta.",
+        "en": "A coastal village founded by the Jesuits, where Father José de Anchieta lived and died."
+      }
     },
     {
       "id": "porto_acu",
@@ -226,7 +341,12 @@
       "lat": -21.64,
       "porte": 1,
       "porto": true,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Porto privado inaugurado em 2014 em São João da Barra, no norte fluminense.",
+        "en": "A private port opened in 2014 at São João da Barra, in northern Rio de Janeiro state."
+      }
     },
     {
       "id": "macae",
@@ -234,7 +354,12 @@
       "lon": -41.79,
       "lat": -22.37,
       "porte": 2,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Antiga vila de pescadores que virou a base do petróleo da Bacia de Campos.",
+        "en": "A former fishing village that became the base of the Campos Basin oil industry."
+      }
     },
     {
       "id": "eliseu_martins",
@@ -243,7 +368,12 @@
       "lat": -8.1,
       "porte": 1,
       "produz": "graos",
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "PI",
+      "historia": {
+        "pt": "No sul do Piauí, ponta da Transnordestina planejada para escoar os grãos do cerrado.",
+        "en": "In southern Piauí, the planned end of the Transnordestina, meant to carry grain from the cerrado."
+      }
     },
     {
       "id": "salgueiro",
@@ -251,7 +381,12 @@
       "lon": -39.12,
       "lat": -8.07,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "PE",
+      "historia": {
+        "pt": "No sertão pernambucano, onde a Transnordestina se divide rumo a Pecém e a Suape.",
+        "en": "In the Pernambuco backlands, where the Transnordestina splits towards Pecém and Suape."
+      }
     },
     {
       "id": "quixada",
@@ -259,7 +394,12 @@
       "lon": -39.02,
       "lat": -4.97,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "CE",
+      "historia": {
+        "pt": "No sertão central do Ceará, entre os monólitos e o açude do Cedro.",
+        "en": "In the central backlands of Ceará, among the monoliths and the Cedro reservoir."
+      }
     },
     {
       "id": "pecem",
@@ -268,7 +408,12 @@
       "lat": -3.55,
       "porte": 2,
       "porto": true,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "CE",
+      "historia": {
+        "pt": "Porto do Ceará inaugurado em 2002, ponto final da Transnordestina.",
+        "en": "A Ceará port opened in 2002, the final stop of the Transnordestina."
+      }
     },
     {
       "id": "arcoverde",
@@ -276,7 +421,12 @@
       "lon": -37.05,
       "lat": -8.42,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "PE",
+      "historia": {
+        "pt": "Porta do sertão pernambucano, no caminho do ramal para Suape.",
+        "en": "Gateway to the Pernambuco backlands, on the way of the Suape branch."
+      }
     },
     {
       "id": "suape",
@@ -285,7 +435,12 @@
       "lat": -8.39,
       "porte": 2,
       "porto": true,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "PE",
+      "historia": {
+        "pt": "Complexo industrial e portuário ao sul do Recife.",
+        "en": "An industrial and port complex south of Recife."
+      }
     },
     {
       "id": "sinop",
@@ -294,7 +449,12 @@
       "lat": -11.86,
       "porte": 2,
       "produz": "graos",
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MT",
+      "historia": {
+        "pt": "Cidade planejada do norte de Mato Grosso, fundada em 1974; hoje polo da soja e do milho.",
+        "en": "A planned city in northern Mato Grosso, founded in 1974; today a soy and corn hub."
+      }
     },
     {
       "id": "matupa",
@@ -302,7 +462,12 @@
       "lon": -54.93,
       "lat": -10.18,
       "porte": 1,
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "MT",
+      "historia": {
+        "pt": "No extremo norte de Mato Grosso, à beira da BR-163.",
+        "en": "In the far north of Mato Grosso, on the BR-163 highway."
+      }
     },
     {
       "id": "novo_progresso",
@@ -310,7 +475,12 @@
       "lon": -55.38,
       "lat": -7.05,
       "porte": 1,
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "PA",
+      "historia": {
+        "pt": "No sudoeste do Pará, à beira da BR-163, no caminho dos grãos para o Tapajós.",
+        "en": "In southwestern Pará, on the BR-163, on the grain route to the Tapajós."
+      }
     },
     {
       "id": "miritituba",
@@ -319,14 +489,24 @@
       "lat": -4.26,
       "porte": 1,
       "porto": true,
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "PA",
+      "historia": {
+        "pt": "Distrito de Itaituba, no rio Tapajós, onde os grãos passam dos caminhões para as barcaças.",
+        "en": "A district of Itaituba on the Tapajós river, where grain moves from trucks to barges."
+      }
     },
     {
       "id": "sao_jose_campos",
       "nome": "São José dos Campos",
       "lon": -45.89,
       "lat": -23.18,
-      "porte": 3
+      "porte": 3,
+      "uf": "SP",
+      "historia": {
+        "pt": "No Vale do Paraíba, entre Rio e São Paulo; virou polo da indústria aeronáutica.",
+        "en": "In the Paraíba Valley, between Rio and São Paulo; it became a hub of the aircraft industry."
+      }
     },
     {
       "id": "resende",
@@ -334,7 +514,12 @@
       "lon": -44.45,
       "lat": -22.47,
       "porte": 2,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "RJ",
+      "historia": {
+        "pt": "Cidade do Vale do Paraíba fluminense, aos pés das Agulhas Negras.",
+        "en": "A Paraíba Valley town at the foot of the Agulhas Negras peaks."
+      }
     },
     {
       "id": "campinorte",
@@ -342,7 +527,12 @@
       "lon": -49.15,
       "lat": -14.31,
       "porte": 1,
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "GO",
+      "historia": {
+        "pt": "No norte de Goiás, junto à Ferrovia Norte–Sul, ponto de partida planejado para a FICO.",
+        "en": "In northern Goiás, beside the North–South Railway, the planned starting point of the FICO."
+      }
     },
     {
       "id": "agua_boa",
@@ -351,7 +541,12 @@
       "lat": -14.05,
       "porte": 1,
       "produz": "graos",
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MT",
+      "historia": {
+        "pt": "No vale do Araguaia, em Mato Grosso, região de soja e gado.",
+        "en": "In the Araguaia valley of Mato Grosso, soy and cattle country."
+      }
     },
     {
       "id": "lucas_rv",
@@ -360,7 +555,12 @@
       "lat": -13.05,
       "porte": 2,
       "produz": "graos",
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MT",
+      "historia": {
+        "pt": "Polo de grãos do médio-norte de Mato Grosso.",
+        "en": "A grain hub in the mid-north of Mato Grosso."
+      }
     },
     {
       "id": "vilhena",
@@ -368,7 +568,12 @@
       "lon": -60.15,
       "lat": -12.74,
       "porte": 2,
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "RO",
+      "historia": {
+        "pt": "No sul de Rondônia, porta de entrada do estado pela BR-364.",
+        "en": "In southern Rondônia, the state's gateway on the BR-364 highway."
+      }
     },
     {
       "id": "recife",
@@ -376,7 +581,12 @@
       "lon": -34.88,
       "lat": -8.06,
       "porte": 4,
-      "porto": true
+      "porto": true,
+      "uf": "PE",
+      "historia": {
+        "pt": "Capital de Pernambuco e porto do açúcar. Daqui saiu, em 1858, a segunda ferrovia do Brasil.",
+        "en": "Capital of Pernambuco and sugar port. Brazil's second railway set out from here in 1858."
+      }
     },
     {
       "id": "cabo",
@@ -385,7 +595,12 @@
       "lat": -8.28,
       "porte": 1,
       "produz": "acucar",
-      "paisagem": "canavial"
+      "paisagem": "canavial",
+      "uf": "PE",
+      "historia": {
+        "pt": "Primeiro destino dos trilhos de Pernambuco, em 1858, no meio dos engenhos de açúcar.",
+        "en": "The first destination of Pernambuco's rails, in 1858, among the sugar mills."
+      }
     },
     {
       "id": "palmares",
@@ -394,7 +609,12 @@
       "lat": -8.68,
       "porte": 2,
       "produz": "acucar",
-      "paisagem": "canavial"
+      "paisagem": "canavial",
+      "uf": "PE",
+      "historia": {
+        "pt": "Antiga povoação de Una, alcançada pelos trilhos em 1862, na Mata Sul de Pernambuco.",
+        "en": "The former settlement of Una, reached by rail in 1862, in the southern sugar belt of Pernambuco."
+      }
     },
     {
       "id": "garanhuns",
@@ -402,7 +622,12 @@
       "lon": -36.49,
       "lat": -8.89,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "PE",
+      "historia": {
+        "pt": "Cidade serrana do agreste pernambucano; a estação foi inaugurada em 1887.",
+        "en": "A highland town in the Pernambuco agreste; its station opened in 1887."
+      }
     },
     {
       "id": "salvador",
@@ -410,7 +635,12 @@
       "lon": -38.5,
       "lat": -12.97,
       "porte": 4,
-      "porto": true
+      "porto": true,
+      "uf": "BA",
+      "historia": {
+        "pt": "Primeira capital do Brasil. Da estação da Calçada partiam os trens rumo ao rio São Francisco.",
+        "en": "Brazil's first capital. Trains bound for the São Francisco river left from Calçada station."
+      }
     },
     {
       "id": "alagoinhas",
@@ -418,7 +648,12 @@
       "lon": -38.42,
       "lat": -12.14,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "BA",
+      "historia": {
+        "pt": "A ferrovia chegou em 1863 e a cidade se mudou para junto da estação.",
+        "en": "The railway arrived in 1863 and the town moved to sit beside the station."
+      }
     },
     {
       "id": "senhor_bonfim",
@@ -426,7 +661,12 @@
       "lon": -40.19,
       "lat": -10.46,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "BA",
+      "historia": {
+        "pt": "Antiga Vila Nova da Rainha, no sertão baiano, no caminho dos trilhos para Juazeiro.",
+        "en": "Formerly Vila Nova da Rainha, in the Bahia backlands, on the rails' way to Juazeiro."
+      }
     },
     {
       "id": "juazeiro",
@@ -434,14 +674,24 @@
       "lon": -40.5,
       "lat": -9.42,
       "porte": 2,
-      "paisagem": "sertao"
+      "paisagem": "sertao",
+      "uf": "BA",
+      "historia": {
+        "pt": "Às margens do rio São Francisco, de frente para Petrolina. Os trilhos chegaram em 1896.",
+        "en": "On the banks of the São Francisco river, facing Petrolina. The rails arrived in 1896."
+      }
     },
     {
       "id": "sorocaba",
       "nome": "Sorocaba",
       "lon": -47.46,
       "lat": -23.5,
-      "porte": 3
+      "porte": 3,
+      "uf": "SP",
+      "historia": {
+        "pt": "Terra das feiras de muares dos tropeiros; a Sorocabana chegou em 1875.",
+        "en": "Home of the muleteers' fairs; the Sorocabana arrived in 1875."
+      }
     },
     {
       "id": "itapetininga",
@@ -449,7 +699,12 @@
       "lon": -48.05,
       "lat": -23.59,
       "porte": 2,
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "Cidade do sul paulista, no caminho da Sorocabana para o Paraná.",
+        "en": "A town in southern São Paulo state, on the Sorocabana's way to Paraná."
+      }
     },
     {
       "id": "itarare",
@@ -457,7 +712,12 @@
       "lon": -49.34,
       "lat": -24.11,
       "porte": 1,
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "SP",
+      "historia": {
+        "pt": "Na divisa de São Paulo com o Paraná, onde a Sorocabana se ligava à São Paulo–Rio Grande.",
+        "en": "On the São Paulo–Paraná border, where the Sorocabana met the São Paulo–Rio Grande."
+      }
     },
     {
       "id": "paranagua",
@@ -466,7 +726,12 @@
       "lat": -25.52,
       "porte": 2,
       "porto": true,
-      "paisagem": "litoral"
+      "paisagem": "litoral",
+      "uf": "PR",
+      "historia": {
+        "pt": "O porto do Paraná: por aqui saíam a erva-mate e a madeira do planalto.",
+        "en": "The port of Paraná: yerba mate and timber from the plateau left through here."
+      }
     },
     {
       "id": "morretes",
@@ -474,14 +739,24 @@
       "lon": -48.83,
       "lat": -25.48,
       "porte": 1,
-      "paisagem": "serra"
+      "paisagem": "serra",
+      "uf": "PR",
+      "historia": {
+        "pt": "Vila ao pé da Serra do Mar, onde começa a subida para Curitiba.",
+        "en": "A village at the foot of the Serra do Mar, where the climb to Curitiba begins."
+      }
     },
     {
       "id": "curitiba",
       "nome": "Curitiba",
       "lon": -49.27,
       "lat": -25.43,
-      "porte": 4
+      "porte": 4,
+      "uf": "PR",
+      "historia": {
+        "pt": "Capital do Paraná, no planalto. O trem de Paranaguá chegou em 1885, vencendo a Serra do Mar.",
+        "en": "Capital of Paraná, on the plateau. The train from Paranaguá arrived in 1885, conquering the Serra do Mar."
+      }
     },
     {
       "id": "ponta_grossa",
@@ -489,7 +764,12 @@
       "lon": -50.16,
       "lat": -25.09,
       "porte": 3,
-      "produz": "madeira"
+      "produz": "madeira",
+      "uf": "PR",
+      "historia": {
+        "pt": "Nos Campos Gerais, cruzamento da Estrada de Ferro do Paraná com a São Paulo–Rio Grande.",
+        "en": "In the Campos Gerais, where the Paraná Railway crossed the São Paulo–Rio Grande."
+      }
     },
     {
       "id": "uniao_vitoria",
@@ -498,7 +778,12 @@
       "lat": -26.23,
       "porte": 2,
       "produz": "madeira",
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "PR",
+      "historia": {
+        "pt": "No vale do Iguaçu, entre matas de araucária, na divisa do Paraná com Santa Catarina.",
+        "en": "In the Iguaçu valley, among araucaria forests, on the Paraná–Santa Catarina border."
+      }
     },
     {
       "id": "marcelino_ramos",
@@ -506,7 +791,12 @@
       "lon": -51.91,
       "lat": -27.46,
       "porte": 1,
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "RS",
+      "historia": {
+        "pt": "Às margens do rio Uruguai, onde a São Paulo–Rio Grande entrou no Rio Grande do Sul, em 1910.",
+        "en": "On the Uruguay river, where the São Paulo–Rio Grande entered Rio Grande do Sul in 1910."
+      }
     },
     {
       "id": "passo_fundo",
@@ -514,14 +804,24 @@
       "lon": -52.41,
       "lat": -28.26,
       "porte": 2,
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "RS",
+      "historia": {
+        "pt": "Cidade do planalto gaúcho, alcançada pelos trilhos em 1898.",
+        "en": "A town on the Rio Grande do Sul plateau, reached by rail in 1898."
+      }
     },
     {
       "id": "santa_maria",
       "nome": "Santa Maria",
       "lon": -53.81,
       "lat": -29.68,
-      "porte": 3
+      "porte": 3,
+      "uf": "RS",
+      "historia": {
+        "pt": "O coração ferroviário do Rio Grande do Sul: os trens para São Paulo passavam por aqui.",
+        "en": "The railway heart of Rio Grande do Sul: trains to São Paulo passed through here."
+      }
     },
     {
       "id": "porto_alegre",
@@ -529,7 +829,12 @@
       "lon": -51.23,
       "lat": -30.03,
       "porte": 4,
-      "porto": true
+      "porto": true,
+      "uf": "RS",
+      "historia": {
+        "pt": "Capital gaúcha, às margens do Guaíba, ponto de partida da linha para Uruguaiana.",
+        "en": "Capital of Rio Grande do Sul, on the Guaíba, starting point of the line to Uruguaiana."
+      }
     },
     {
       "id": "cachoeira_sul",
@@ -537,7 +842,12 @@
       "lon": -52.89,
       "lat": -30.04,
       "porte": 2,
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "RS",
+      "historia": {
+        "pt": "Às margens do rio Jacuí; os trilhos vindos da capital chegaram em 1883.",
+        "en": "On the Jacuí river; the rails from the capital arrived in 1883."
+      }
     },
     {
       "id": "alegrete",
@@ -546,7 +856,12 @@
       "lat": -29.78,
       "porte": 2,
       "produz": "gado",
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "RS",
+      "historia": {
+        "pt": "No pampa gaúcho, terra de estâncias de gado; a ferrovia chegou em 1907.",
+        "en": "In the pampa, land of cattle ranches; the railway arrived in 1907."
+      }
     },
     {
       "id": "uruguaiana",
@@ -554,7 +869,12 @@
       "lon": -57.09,
       "lat": -29.76,
       "porte": 2,
-      "paisagem": "sul"
+      "paisagem": "sul",
+      "uf": "RS",
+      "historia": {
+        "pt": "Na fronteira com a Argentina, à beira do rio Uruguai; fim da linha desde 1907.",
+        "en": "On the Argentine border, by the Uruguay river; end of the line since 1907."
+      }
     },
     {
       "id": "aracatuba",
@@ -562,7 +882,12 @@
       "lon": -50.43,
       "lat": -21.21,
       "porte": 2,
-      "paisagem": "cafe"
+      "paisagem": "cafe",
+      "uf": "SP",
+      "historia": {
+        "pt": "Nasceu em 1908 em volta da estação da Noroeste, no sertão paulista.",
+        "en": "Born in 1908 around the Noroeste station, in the São Paulo backlands."
+      }
     },
     {
       "id": "tres_lagoas",
@@ -570,7 +895,12 @@
       "lon": -51.7,
       "lat": -20.79,
       "porte": 2,
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MS",
+      "historia": {
+        "pt": "Cresceu com a chegada da Noroeste, junto ao rio Paraná.",
+        "en": "It grew with the arrival of the Noroeste, beside the Paraná river."
+      }
     },
     {
       "id": "campo_grande",
@@ -578,7 +908,12 @@
       "lon": -54.62,
       "lat": -20.44,
       "porte": 3,
-      "produz": "gado"
+      "produz": "gado",
+      "uf": "MS",
+      "historia": {
+        "pt": "A ferrovia chegou em 1914 e fez da vila a principal cidade do sul de Mato Grosso.",
+        "en": "The railway arrived in 1914 and made the village the main city of southern Mato Grosso."
+      }
     },
     {
       "id": "porto_esperanca",
@@ -587,7 +922,12 @@
       "lat": -19.61,
       "porte": 1,
       "porto": true,
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MS",
+      "historia": {
+        "pt": "Às margens do rio Paraguai, no Pantanal: foi o fim da Noroeste de 1914 até os trilhos cruzarem o rio.",
+        "en": "On the Paraguay river, in the Pantanal: the end of the Noroeste from 1914 until the rails crossed the river."
+      }
     },
     {
       "id": "corumba",
@@ -596,7 +936,12 @@
       "lat": -19.01,
       "porte": 2,
       "porto": true,
-      "paisagem": "cerrado"
+      "paisagem": "cerrado",
+      "uf": "MS",
+      "historia": {
+        "pt": "Porto do rio Paraguai na fronteira com a Bolívia; os trilhos só chegaram em 1952.",
+        "en": "A Paraguay river port on the Bolivian border; the rails only arrived in 1952."
+      }
     },
     {
       "id": "abuna",
@@ -604,7 +949,12 @@
       "lon": -65.33,
       "lat": -9.7,
       "porte": 1,
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "RO",
+      "historia": {
+        "pt": "Estação da Madeira–Mamoré no meio da floresta, perto da fronteira com a Bolívia.",
+        "en": "A Madeira–Mamoré station deep in the forest, near the Bolivian border."
+      }
     },
     {
       "id": "guajara_mirim",
@@ -613,7 +963,12 @@
       "lat": -10.78,
       "porte": 1,
       "produz": "borracha",
-      "paisagem": "amazonia"
+      "paisagem": "amazonia",
+      "uf": "RO",
+      "historia": {
+        "pt": "Fim da Madeira–Mamoré, de frente para a Bolívia, de onde vinha a borracha.",
+        "en": "End of the Madeira–Mamoré, facing Bolivia, where the rubber came from."
+      }
     }
   ],
   "linhas": [
@@ -1650,5 +2005,93 @@
     "spr",
     "paulista",
     "vitoria_minas"
-  ]
+  ],
+  "estados": {
+    "RJ": [
+      "Rio de Janeiro",
+      "se"
+    ],
+    "SP": [
+      "São Paulo",
+      "se"
+    ],
+    "MG": [
+      "Minas Gerais",
+      "se"
+    ],
+    "ES": [
+      "Espírito Santo",
+      "se"
+    ],
+    "PR": [
+      "Paraná",
+      "s"
+    ],
+    "RS": [
+      "Rio Grande do Sul",
+      "s"
+    ],
+    "SC": [
+      "Santa Catarina",
+      "s"
+    ],
+    "PE": [
+      "Pernambuco",
+      "ne"
+    ],
+    "BA": [
+      "Bahia",
+      "ne"
+    ],
+    "CE": [
+      "Ceará",
+      "ne"
+    ],
+    "PI": [
+      "Piauí",
+      "ne"
+    ],
+    "MS": [
+      "Mato Grosso do Sul",
+      "co"
+    ],
+    "MT": [
+      "Mato Grosso",
+      "co"
+    ],
+    "GO": [
+      "Goiás",
+      "co"
+    ],
+    "RO": [
+      "Rondônia",
+      "n"
+    ],
+    "PA": [
+      "Pará",
+      "n"
+    ]
+  },
+  "regioes": {
+    "se": {
+      "pt": "Sudeste",
+      "en": "Southeast"
+    },
+    "s": {
+      "pt": "Sul",
+      "en": "South"
+    },
+    "ne": {
+      "pt": "Nordeste",
+      "en": "Northeast"
+    },
+    "co": {
+      "pt": "Centro-Oeste",
+      "en": "Center-West"
+    },
+    "n": {
+      "pt": "Norte",
+      "en": "North"
+    }
+  }
 }

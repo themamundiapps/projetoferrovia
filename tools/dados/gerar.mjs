@@ -49,7 +49,11 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     // os trens andam pela linha de ponta a ponta: cada trecho tem que começar onde o anterior termina
     l.trechos.forEach((t, i) => { if (i > 0 && l.trechos[i - 1].para !== t.de) throw new Error(`Linha ${l.id}: trecho ${i + 1} não continua o anterior`); });
   }
-  for (const e of dados.estacoes) if (e.porte < 3 && !e.paisagem) throw new Error(`Estação ${e.id} sem "paisagem"`);
+  for (const e of dados.estacoes) {
+    if (e.porte < 3 && !e.paisagem) throw new Error(`Estação ${e.id} sem "paisagem"`);
+    if (!dados.estados[e.uf]) throw new Error(`Estação ${e.id} sem "uf" válida`);
+    if (!e.historia?.pt || !e.historia?.en) throw new Error(`Estação ${e.id} sem "historia" (pt e en)`);
+  }
 
   const km = (a, b) => Math.round(d3.geoDistance([est[a].lon, est[a].lat], [est[b].lon, est[b].lat]) * 6371 * SINUOSIDADE);
   // Linhas históricas em ordem de ano; depois, as do Gabinete de Projetos na ordem da lista de projetos.
@@ -74,7 +78,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push("\testacoes = {");
   for (const e of dados.estacoes) {
     const [x, y] = proj([e.lon, e.lat]);
-    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)} },`);
+    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)}, estado = ${lua(dados.estados[e.uf][0])}, regiao = ${lua(dados.estados[e.uf][1])}, historia = { pt = ${lua(e.historia.pt)}, en = ${lua(e.historia.en)} } },`);
   }
   L.push("\t},");
   // Enquadramento inicial da câmera: as estações das linhas listadas em "foco".
@@ -83,6 +87,10 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
     L.push(`\tfoco = { min = Vector2.new(${Math.min(...xs).toFixed(1)}, ${Math.min(...ys).toFixed(1)}), max = Vector2.new(${Math.max(...xs).toFixed(1)}, ${Math.max(...ys).toFixed(1)}) },`);
   }
+  // Regiões do país (nome em cada idioma), usadas nas fichas das cidades.
+  L.push("\tregioes = {");
+  for (const [k, v] of Object.entries(dados.regioes)) L.push(`\t\t${k} = { pt = ${lua(v.pt)}, en = ${lua(v.en)} },`);
+  L.push("\t},");
   L.push("\tlinhas = {");
   linhas.forEach((l, ordem) => {
     // o degrau (onda) da linha define o preço por km, o prazo de retorno e quando ela libera

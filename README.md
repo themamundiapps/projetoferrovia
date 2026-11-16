@@ -23,6 +23,8 @@ O código fica neste repositório e é sincronizado com o Roblox Studio pelo [Ro
 
 ## No dia a dia
 
+> Guia completo, com o que fazer em cada erro: [docs/LIGAR.md](docs/LIGAR.md).
+
 1. Na pasta do projeto, rode:
    ```
    rojo serve
@@ -77,6 +79,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Economia com decisões: demanda por porte das cidades, lotação dos trens, efeito rede e manutenção
 - [x] Contratos com prazo, missões do dia, nível da companhia e medalhas (`src/shared/Metas.luau`)
 - [x] Trens andando no mapa e tutorial dos primeiros passos
+- [x] Fichas das cidades (71 cidades, história em português e inglês; imagens em `arte/cidades/`)
 - [ ] Jornal da Companhia (eventos), ranking e mapas dos EUA e da Europa
 - [ ] Um gamepass e um developer product
 

@@ -39,6 +39,11 @@ Assets.Ids = {
 	trem_vapor = "rbxassetid://0",
 }
 
+-- Imagens das fichas das cidades (arte/cidades/). Cidades grandes têm a sua; as outras usam a paisagem
+-- genérica indicada em "paisagem" nos dados. Sem id, a ficha mostra um espaço reservado.
+Assets.Cidades = {} :: { [string]: string } -- id da cidade -> rbxassetid://...
+Assets.Paisagens = {} :: { [string]: string } -- cafe, serra, litoral, canavial, sertao, sul, cerrado, amazonia
+
 -- Configuração de 9-slice e tiles.
 Assets.Slice = {
 	moldura_dupla = Rect.new(12, 12, 116, 116),
