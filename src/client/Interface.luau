@@ -10,6 +10,7 @@ local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
+local Assets = require(Shared:WaitForChild("Assets"))
 
 local Interface = {}
 Interface.__index = Interface
@@ -86,6 +87,43 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	})
 	self.hud = hud
 	padding(hud, 12)
+
+	-- selo do kit no canto do caixa (irmão do caixa, para não entrar na lista dele), com as iniciais
+	local kit = Assets.KitUI[era.kit or ""]
+	local pSelo = kit and kit.selo
+	self.lblIniciais = nil :: TextLabel?
+	if pSelo and pSelo.id ~= "rbxassetid://0" then
+		local selo = novo("ImageLabel", {
+			Name = "Selo",
+			Size = UDim2.fromOffset(62, 62),
+			BackgroundTransparency = 1,
+			Image = pSelo.id,
+			ZIndex = 32,
+		}, tela) :: ImageLabel
+		self.lblIniciais = novo("TextLabel", {
+			Name = "Iniciais",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.5, 0.42),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = f.display,
+			TextScaled = true,
+			TextColor3 = c.ink,
+			ZIndex = 33,
+		}, selo) :: TextLabel
+		local function acompanhar()
+			local origem = tela.AbsolutePosition
+			selo.Position = UDim2.fromOffset(hud.AbsolutePosition.X - origem.X + hud.AbsoluteSize.X - 30, hud.AbsolutePosition.Y - origem.Y - 16)
+			selo.Visible = hud.Visible
+		end
+		hud:GetPropertyChangedSignal("AbsolutePosition"):Connect(acompanhar)
+		hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(acompanhar)
+		hud.Destroying:Connect(function()
+			selo:Destroy()
+		end)
+		acompanhar()
+	end
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, hud)
 	self.lblNome = novo("TextLabel", {
 		Name = "NomeCompanhia",
@@ -372,7 +410,22 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	local simbolo = self.dados.simbolo
 	local nivel = Economia.nivel(estado)
 	self.lblNivel.Text = `{Emojis.nivel} {Idioma.T("nivel_titulo", nivel, Economia.tituloNivel(nivel, estado.era, Idioma.atual))}`
-	self.lblNome.Text = Idioma.maiusculas(estado.nomeCompanhia or Idioma.T("companhia_padrao"))
+	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
+	self.lblNome.Text = Idioma.maiusculas(nome)
+	if self.lblIniciais then
+		-- iniciais das duas primeiras palavras que contam (sem "de", "da", "do", "e")
+		local iniciais = ""
+		for palavra in string.gmatch(nome, "[^%s]+") do
+			local minus = string.lower(palavra)
+			if minus ~= "de" and minus ~= "da" and minus ~= "do" and minus ~= "dos" and minus ~= "das" and minus ~= "e" then
+				iniciais ..= Idioma.maiusculas(string.sub(palavra, 1, (utf8.offset(palavra, 2) or (#palavra + 1)) - 1))
+				if (utf8.len(iniciais) or 0) >= 2 then
+					break
+				end
+			end
+		end
+		self.lblIniciais.Text = iniciais
+	end
 	self.lblEra.Text = `{self.era.nome} · {Economia.anoAtual(estado, self.dados)}`
 	local contrato = estado.contrato
 	self.lblContrato.Visible = contrato ~= nil

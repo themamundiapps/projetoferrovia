@@ -76,6 +76,8 @@ Assets.KitUI = {
 		divisor = { id = "rbxassetid://0", largura = 710, altura = 47 },
 		-- botao_redondo.png (256 x 256): inteiro, sem fatiar (zoom)
 		botao_redondo = { id = "rbxassetid://0", slice = Rect.new(1, 1, 255, 255), escala = 1, borda = 0, redondo = true },
+		-- selo.png (256 x 256): emblema com coroa de café, no canto do caixa, com as iniciais da companhia
+		selo = { id = "rbxassetid://0" },
 		cabecalho = { id = "rbxassetid://0", slice = Rect.new(100, 114, 596, 117), escala = 1, borda = 0 },
 		botao_discreto = { id = "rbxassetid://79100120490162", slice = Rect.new(70, 84, 614, 86), escala = 1, borda = 0 },
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
