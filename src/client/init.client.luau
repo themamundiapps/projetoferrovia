@@ -102,19 +102,22 @@ local function trensDoMapa(estado: any): { any }
 	local rede = Economia.rede(estado, DadosBrasil)
 	for _, linha in DadosBrasil.linhas do
 		local pontos: { Vector2 } = {}
+		local ids: { string } = {}
 		for _, t in linha.trechos do
 			if estado.trechos[t.id] then
 				if #pontos == 0 then
 					table.insert(pontos, DadosBrasil.estacoes[t.de].pos)
+					table.insert(ids, t.de)
 				end
 				table.insert(pontos, DadosBrasil.estacoes[t.para].pos)
+				table.insert(ids, t.para)
 			end
 		end
 		if #pontos >= 2 then
 			local situacao = if Economia.trensFaltando(estado, DadosBrasil, linha, rede) > 0 then "lotado"
 				elseif Economia.trensSobrando(estado, DadosBrasil, linha, rede) > 0 then "vazio"
 				else "normal"
-			table.insert(lista, { id = linha.id, pontos = pontos, n = estado.trens[linha.id] or 0, situacao = situacao })
+			table.insert(lista, { id = linha.id, pontos = pontos, ids = ids, n = estado.trens[linha.id] or 0, situacao = situacao })
 		end
 	end
 	return lista
@@ -125,6 +128,15 @@ local function aplicarNaTela(estado: any)
 	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
 	mapa:definirNiveis(estado.estacoes or {})
 	mapa:definirTrens(trensDoMapa(estado))
+	-- avisos de frete: o valor de cada aviso é o que a cidade rende no intervalo entre dois avisos (4 s)
+	local produtoras = {}
+	for id, v in (Economia.valorCargas(estado, DadosBrasil)) do
+		if v.conectada and v.reaisDia > 0 then
+			local carga = (Economia.CARGAS :: any)[v.carga]
+			produtoras[id] = { texto = `{(Emojis :: any)[carga.emoji] or ""} +{Economia.formatar(v.reaisDia * 4 / 60, DadosBrasil.simbolo)}` }
+		end
+	end
+	mapa:definirProdutoras(produtoras)
 	ui:atualizarEstado(estado)
 	menu:atualizarEstado(estado)
 	tutorial:atualizarEstado(estado)

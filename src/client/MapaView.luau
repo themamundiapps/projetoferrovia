@@ -7,6 +7,7 @@
 
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
@@ -40,12 +41,16 @@ type Estacao = {
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
 	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
+	terminal: boolean, -- ponta de alguma linha: aparece mesmo no zoom mais longe
 }
 
 -- Trens animados: cada linha tem uma trilha (os pontos dos trechos construídos) e alguns trens indo e voltando.
-export type LinhaTrens = { id: string, pontos: { Vector2 }, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
-type Trilha = { pontos: { Vector2 }, acumulado: { number }, total: number, duracao: number }
-type Trem = { frame: Frame, trilha: Trilha, fase: number }
+-- ids: estação de cada ponto (para saber por onde o trem passou)
+export type LinhaTrens = { id: string, pontos: { Vector2 }, ids: { string }?, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
+type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number }
+-- Aviso que sobe e some quando um trem passa por uma cidade produtora ligada a um porto.
+export type AvisoProdutora = { texto: string }
+type Trem = { frame: Frame, trilha: Trilha, fase: number, segmento: number?, voltando: boolean? }
 
 type RotuloMapa = {
 	pos: Vector2,
@@ -90,10 +95,18 @@ export type MapaView = typeof(setmetatable(
 		selecionado: string?,
 		foco: { min: Vector2, max: Vector2, margem: number }?,
 		interagiu: boolean,
+		produtoras: { [string]: AvisoProdutora },
+		ultimoAviso: { [string]: number },
 	},
 	MapaView
 ))
 
+-- Zoom mínimo para mostrar a bolinha da estação, por porte: no Brasil inteiro só as cidades grandes e as
+-- pontas de linha aparecem (as outras poluíam o mapa). A linha continua inteira.
+local ZOOM_PONTO = { [5] = 0, [4] = 0, [3] = 0.5, [2] = 0.8, [1] = 1.1 }
+-- Avisos das produtoras: só com o mapa perto o bastante, e no máximo um a cada tantos segundos por cidade.
+local ZOOM_AVISO = 0.9
+local INTERVALO_AVISO = 4 -- segundos (o valor do aviso é o frete desse intervalo)
 -- Zoom mínimo para mostrar o nome da estação, por porte (5 = metrópole, 1 = vila).
 local ZOOM_ROTULO = { [5] = 0, [4] = 0.8, [3] = 1.6, [2] = 2.6, [1] = 4 }
 local ZOOM_MAX = 8
@@ -196,6 +209,8 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		selecionado = nil,
 		foco = nil,
 		interagiu = false,
+		produtoras = {},
+		ultimoAviso = {},
 	}, MapaView)
 
 	self:_criarTiles(mapa)
@@ -386,6 +401,14 @@ end
 function MapaView._criarEstacoes(self: MapaView, dados: any)
 	local cores = self.era.cores
 	local fontes = self.era.fontes
+	local terminais: { [string]: boolean } = {}
+	for _, linha in dados.linhas do
+		local n = #linha.trechos
+		if n > 0 then
+			terminais[linha.trechos[1].de] = true
+			terminais[linha.trechos[n].para] = true
+		end
+	end
 	for id, e in dados.estacoes do
 		local tamanho = 10 + e.porte * 2
 		local ponto = novo("Frame", {
@@ -444,6 +467,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			rotulo = rotulo,
 			selo = selo,
 			apagada = false,
+			terminal = terminais[id] == true,
 		})
 	end
 end
@@ -600,6 +624,7 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 		end
 		local trilha: Trilha = {
 			pontos = l.pontos,
+			ids = l.ids or {},
 			acumulado = acumulado,
 			total = acumulado[#acumulado],
 			duracao = math.clamp(5 * (#l.pontos - 1), 7, 30), -- segundos de uma ponta à outra
@@ -645,6 +670,17 @@ function MapaView._moverTrens(self: MapaView)
 		while i < #tr.pontos - 1 and tr.acumulado[i + 1] < d do
 			i += 1
 		end
+		-- passou por uma estação? (mudou de trecho, ou deu meia-volta numa ponta)
+		local passou: string? = nil
+		if t.segmento and t.segmento ~= i then
+			passou = if i > t.segmento then tr.ids[i] else tr.ids[t.segmento]
+		elseif t.voltando ~= nil and t.voltando ~= voltando then
+			passou = if voltando then tr.ids[#tr.pontos] else tr.ids[1]
+		end
+		t.segmento, t.voltando = i, voltando
+		if passou then
+			self:_avisoProdutora(passou, agora)
+		end
 		local a, b = tr.pontos[i], tr.pontos[i + 1]
 		local comprimento = tr.acumulado[i + 1] - tr.acumulado[i]
 		local p = a:Lerp(b, if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0) * z
@@ -653,10 +689,67 @@ function MapaView._moverTrens(self: MapaView)
 	end
 end
 
+-- Cidades produtoras que rendem frete agora (id -> texto do aviso, ex.: "☕ +R$ 28").
+function MapaView.definirProdutoras(self: MapaView, produtoras: { [string]: AvisoProdutora })
+	self.produtoras = produtoras
+end
+
+-- Um trem passou por esta estação: se for produtora ligada a um porto, sobe um aviso que some.
+function MapaView._avisoProdutora(self: MapaView, id: string, agora: number)
+	local info = self.produtoras[id]
+	if not info or not self.mostrarTrens or self.zoom < ZOOM_AVISO then
+		return
+	end
+	if agora - (self.ultimoAviso[id] or -math.huge) < INTERVALO_AVISO then
+		return
+	end
+	local pos: Vector2? = nil
+	for _, e in self.estacoes do
+		if e.id == id then
+			pos = e.pos
+			break
+		end
+	end
+	if not pos then
+		return
+	end
+	local p = pos * self.zoom
+	local naTela = p + self.pan
+	local tela = self.raiz.AbsoluteSize
+	if naTela.X < -40 or naTela.Y < -40 or naTela.X > tela.X + 40 or naTela.Y > tela.Y + 40 then
+		return
+	end
+	self.ultimoAviso[id] = agora
+	local cores = self.era.cores
+	local lbl = novo("TextLabel", {
+		Name = "aviso_" .. id,
+		AnchorPoint = Vector2.new(0.5, 1),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		Size = UDim2.fromOffset(0, 0),
+		Position = UDim2.fromOffset(p.X, p.Y - 14),
+		BackgroundTransparency = 1,
+		Text = info.texto,
+		FontFace = self.era.fontes.display,
+		TextSize = 17,
+		TextColor3 = cores.positive,
+		ZIndex = Z.rotulo + 1,
+	}, self.conteudo) :: TextLabel
+	local contorno = novo("UIStroke", { Color = cores.panel, Thickness = 2.5 }, lbl) :: UIStroke
+	local info2 = TweenInfo.new(1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	TweenService:Create(lbl, info2, { Position = UDim2.fromOffset(p.X, p.Y - 52), TextTransparency = 1 }):Play()
+	TweenService:Create(contorno, info2, { Transparency = 1 }):Play()
+	task.delay(1.7, function()
+		lbl:Destroy()
+	end)
+end
+
 -- Estação mais perto de um ponto do mapa, dentro de um raio em pixels de TELA.
 function MapaView.estacaoProxima(self: MapaView, ponto: Vector2, raioTela: number): string?
 	local melhor, melhorDist = nil, raioTela / self.zoom
 	for _, e in self.estacoes do
+		if not e.ponto.Visible then
+			continue -- escondida no zoom longe
+		end
 		local d = (e.pos - ponto).Magnitude
 		if d < melhorDist then
 			melhor, melhorDist = e.id, d
@@ -815,9 +908,11 @@ function MapaView._layout(self: MapaView)
 	for _, e in self.estacoes do
 		local p = e.pos * z
 		local tam = self:_tamanhoEstacao(e)
+		local mostrarPonto = e.terminal or z >= (ZOOM_PONTO[e.porte] or 0)
+		e.ponto.Visible = mostrarPonto
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
 		e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
-		e.rotulo.Visible = self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
+		e.rotulo.Visible = mostrarPonto and self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)
 			e.selo.Visible = z >= 1.2
