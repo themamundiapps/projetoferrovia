@@ -60,6 +60,16 @@ tela.ResetOnSpawn = false
 tela.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 tela.Parent = playerGui
 
+-- Painéis, caixa e menu ficam numa segunda tela que respeita a barra do Roblox (botão do menu, chat):
+-- o mapa ocupa a tela inteira, mas nada clicável fica embaixo dos botões do Roblox.
+local telaUI = Instance.new("ScreenGui")
+telaUI.Name = "FerroviaUI"
+telaUI.ScreenInsets = Enum.ScreenInsets.CoreUISafeInsets
+telaUI.DisplayOrder = 1
+telaUI.ResetOnSpawn = false
+telaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+telaUI.Parent = playerGui
+
 -- Onde a câmera começa (e volta, em "Reenquadrar"): a região das primeiras linhas, definida nos dados.
 local minimo: Vector2 = DadosBrasil.foco.min
 local maximo: Vector2 = DadosBrasil.foco.max
@@ -199,11 +209,11 @@ local function montar(eraId: string)
 	end
 
 	mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
-	ui = Interface.new(tela, era, DadosBrasil)
+	ui = Interface.new(telaUI, era, DadosBrasil)
 	ui.eras = Theme.PorId
-	menu = Menu.new(tela, era, DadosBrasil)
-	tutorial = Tutorial.new(tela, era, DadosBrasil)
-	ficha = Ficha.new(tela, era, DadosBrasil)
+	menu = Menu.new(telaUI, era, DadosBrasil)
+	tutorial = Tutorial.new(telaUI, era, DadosBrasil)
+	ficha = Ficha.new(telaUI, era, DadosBrasil)
 	menu.ajustes = ajustesSalvos
 	for chave, valor in ajustesSalvos do
 		mapa:definirAjuste(chave, valor)
