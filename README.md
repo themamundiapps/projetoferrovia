@@ -57,7 +57,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 
 ## Pendências visuais (para depois)
 
-- [ ] Estender a região de detalhe do Sudeste para o sul (litoral do Paraná fica grosso fora dela)
+- [x] Detalhe em alta resolução no Brasil todo onde há trilhos (grade de 30 blocos, `tools/assetgen/render_detalhes.py`)
 - [ ] Afinar os rios do mapa base no zoom intermediário (1x a 1,8x)
 - [x] Estações encolherem com o zoom (no Brasil inteiro, as do Sudeste se amontoavam)
 - [ ] Posição manual dos nomes de estações muito próximas (Rio, Porto Mauá, Fragoso)
@@ -68,7 +68,7 @@ As 51 imagens de `arte/` precisam ser enviadas pelo **Asset Manager → Bulk Imp
 - [x] Pacote gráfico (v2, com emojis)
 - [x] Estrutura do projeto com Rojo
 - [x] Dados do Brasil (13 linhas históricas em 5 ondas, 6 projetos reais e 5 linhas "E se?"; 83 estações, 82 trechos)
-- [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e Sudeste em alta resolução (falta testar no celular)
+- [x] Mapa 2D com zoom e arrastar, rios, divisas, nomes e alta resolução no zoom (falta testar no celular)
 - [x] Compra de trechos, desbloqueio histórico e renda por segundo
 - [x] Trens por linha e porcentagem de serviço
 - [x] Carga (café e minério até os portos) e escolha de traçado
