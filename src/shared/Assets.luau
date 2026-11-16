@@ -76,6 +76,14 @@ Assets.KitUI = {
 		divisor = { id = "rbxassetid://113765996318309", largura = 710, altura = 47 },
 		-- botao_redondo.png (256 x 256): inteiro, sem fatiar (zoom)
 		botao_redondo = { id = "rbxassetid://103059791524567", slice = Rect.new(1, 1, 255, 255), escala = 1, borda = 0, redondo = true },
+		-- barra de medalhões (base_medalhoes 724 x 146, medalhao 684 x 684, placa_nome 693 x 146, icones/*.png 256 x 256)
+		base_medalhoes = { id = "rbxassetid://0", slice = Rect.new(150, 32, 574, 116), altura = 146 },
+		medalhao = { id = "rbxassetid://0" },
+		placa_nome = { id = "rbxassetid://0", slice = Rect.new(45, 22, 648, 124), altura = 146 },
+		icones = {
+			linhas = "rbxassetid://0", projetos = "rbxassetid://0", metas = "rbxassetid://0", jornal = "rbxassetid://0",
+			banco = "rbxassetid://0", companhia = "rbxassetid://0", ajustes = "rbxassetid://0",
+		},
 		-- selo.png (256 x 256): emblema com coroa de café, no canto do caixa, com as iniciais da companhia
 		selo = { id = "rbxassetid://124081081269666" },
 		cabecalho = { id = "rbxassetid://100328537844181", slice = Rect.new(100, 114, 596, 117), escala = 1, borda = 0 },

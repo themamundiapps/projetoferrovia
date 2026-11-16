@@ -411,48 +411,131 @@ end
 -- plaquinha com o nome embaixo e uma etiqueta em cima (cronômetro, ●). Só com o kit (botão redondo e
 -- aba); devolve nil sem ele. O botão devolvido é transparente: o visual fica nas filhas.
 export type Medalhao = { botao: TextButton, nome: TextLabel, etiqueta: TextLabel, placa: ImageLabel, disco: ImageLabel }
-function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instance, ordem: number?): Medalhao?
+
+local function peca(kit: any, nome: string): any
+	local p = kit and kit[nome]
+	if p and p.id and p.id ~= "rbxassetid://0" then
+		return p
+	end
+	return nil
+end
+
+-- Medidas do medalhão (com a peça própria) e da barra onde ele se apoia.
+local MED_LARG, MED_ALT, MED_DISCO, MED_GAP = 86, 96, 66, 2
+local BASE_ALT, BASE_PAD = 62, 46
+local NOME_CLARO, NOME_ATIVO = Color3.fromRGB(236, 222, 190), Color3.fromRGB(255, 206, 96)
+
+-- Barra de medalhões: base de mogno esticada (9-slice) e a fileira por cima.
+-- Devolve (barra, fileira); sem as peças do kit devolve nil.
+function Estilo.barraMedalhoes(self: Estilo, props: { [string]: any }, pai: Instance, n: number): (Frame?, Frame?)
 	local kit = Assets.KitUI[self.era.kit or ""]
-	local redondo, placa, placaAtiva = kit and kit.botao_redondo, kit and kit.aba, kit and kit.aba_ativa
-	if not (redondo and placa and placaAtiva) or redondo.id == "rbxassetid://0" or placa.id == "rbxassetid://0" then
+	local base = peca(kit, "base_medalhoes")
+	if not (base and peca(kit, "medalhao")) then
+		return nil, nil
+	end
+	local largFileira = n * MED_LARG + (n - 1) * MED_GAP
+	local barra = novo("Frame", {
+		Size = UDim2.fromOffset(largFileira + 2 * BASE_PAD, MED_ALT + 12),
+		BackgroundTransparency = 1,
+		ZIndex = 30,
+	}, pai) :: Frame
+	for k, v in props do
+		(barra :: any)[k] = v
+	end
+	local escala = BASE_ALT / base.altura
+	novo("ImageLabel", {
+		Name = "Base",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.fromScale(0.5, 1),
+		Size = UDim2.new(1, 0, 0, BASE_ALT),
+		BackgroundTransparency = 1,
+		Image = base.id,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = base.slice,
+		SliceScale = escala,
+		ZIndex = 30,
+	}, barra)
+	local fileira = novo("Frame", {
+		Name = "Fileira",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.fromScale(0.5, 0),
+		Size = UDim2.fromOffset(largFileira, MED_ALT),
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, barra) :: Frame
+	novo("UIListLayout", {
+		FillDirection = Enum.FillDirection.Horizontal,
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Padding = UDim.new(0, MED_GAP),
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+	}, fileira)
+	return barra, fileira
+end
+
+-- Medalhão de aba: disco com ícone, plaquinha com o nome e etiqueta (cronômetro, aviso).
+-- Usa as peças próprias (medalhao, placa_nome, icones) e, sem elas, o botão redondo e a aba.
+function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instance, ordem: number?, id: string?): Medalhao?
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local med, placaNome = peca(kit, "medalhao"), peca(kit, "placa_nome")
+	local disco0, placa0 = med or peca(kit, "botao_redondo"), placaNome or peca(kit, "aba")
+	if not (disco0 and placa0 and peca(kit, "aba_ativa")) then
 		return nil
 	end
+	local proprio = med ~= nil and placaNome ~= nil
 	local c, f = self.c, self.era.fontes
 	local b = novo("TextButton", {
 		LayoutOrder = ordem or 0,
-		Size = UDim2.fromOffset(84, 96),
+		Size = if proprio then UDim2.fromOffset(MED_LARG, MED_ALT) else UDim2.fromOffset(84, 96),
 		BackgroundTransparency = 1,
 		Text = "",
 		AutoButtonColor = false,
 		ZIndex = 32,
 	}, pai) :: TextButton
+	local tamDisco = if proprio then MED_DISCO else 62
 	local disco = novo("ImageLabel", {
 		Name = "Disco",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 8),
-		Size = UDim2.fromOffset(62, 62),
+		Position = UDim2.new(0.5, 0, 0, if proprio then 0 else 8),
+		Size = UDim2.fromOffset(tamDisco, tamDisco),
 		BackgroundTransparency = 1,
-		Image = redondo.id,
+		Image = disco0.id,
+		ScaleType = Enum.ScaleType.Fit,
 		ZIndex = 33,
 	}, b) :: ImageLabel
-	novo("TextLabel", {
-		Name = "Icone",
-		Size = UDim2.fromScale(1, 1),
-		BackgroundTransparency = 1,
-		Text = emoji,
-		TextSize = 27,
-		ZIndex = 34,
-	}, disco)
+	local icones = kit and kit.icones
+	local icone = icones and id and icones[id]
+	if proprio and icone and icone ~= "rbxassetid://0" then
+		novo("ImageLabel", {
+			Name = "Icone",
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.58, 0.58),
+			BackgroundTransparency = 1,
+			Image = icone,
+			ScaleType = Enum.ScaleType.Fit,
+			ZIndex = 34,
+		}, disco)
+	else
+		novo("TextLabel", {
+			Name = "Icone",
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Text = emoji,
+			TextSize = 27,
+			ZIndex = 34,
+		}, disco)
+	end
+	local altPlaca = if proprio then 22 else 24
 	local pl = novo("ImageLabel", {
 		Name = "Placa",
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.new(0.5, 0, 1, 0),
-		Size = UDim2.new(1, 0, 0, 24),
+		Size = if proprio then UDim2.new(1, -4, 0, altPlaca) else UDim2.new(1, 0, 0, altPlaca),
 		BackgroundTransparency = 1,
-		Image = placa.id,
+		Image = placa0.id,
 		ScaleType = Enum.ScaleType.Slice,
-		SliceCenter = placa.slice,
-		SliceScale = 12 / placa.slice.Min.Y,
+		SliceCenter = placa0.slice,
+		SliceScale = if proprio then altPlaca / placa0.altura else 12 / placa0.slice.Min.Y,
 		ZIndex = 35,
 	}, b) :: ImageLabel
 	local lNome = novo("TextLabel", {
@@ -460,18 +543,18 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		Text = nome,
-		FontFace = f.label,
+		FontFace = if proprio then f.number else f.label,
 		TextSize = 13,
-		TextColor3 = c.ink,
+		TextColor3 = if proprio then NOME_CLARO else c.ink,
 		ZIndex = 36,
 	}, pl) :: TextLabel
 	local etiqueta = novo("TextLabel", {
 		Name = "Etiqueta",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, -6),
+		Position = UDim2.new(0.5, 0, 0, -8),
 		AutomaticSize = Enum.AutomaticSize.X,
 		Size = UDim2.fromOffset(0, 18),
-		BackgroundColor3 = c.ink,
+		BackgroundColor3 = if proprio then c.accent else c.ink,
 		Text = "",
 		FontFace = f.number,
 		TextSize = 12,
@@ -481,6 +564,9 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 	}, b) :: TextLabel
 	novo("UICorner", { CornerRadius = UDim.new(0, 9) }, etiqueta)
 	novo("UIPadding", { PaddingLeft = UDim.new(0, 7), PaddingRight = UDim.new(0, 7) }, etiqueta)
+	if proprio then
+		novo("UIStroke", { Color = Color3.fromRGB(214, 172, 92), Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, etiqueta)
+	end
 	-- passar o mouse e apertar mexem no disco
 	b.MouseEnter:Connect(function()
 		disco.ImageColor3 = Color3.fromRGB(255, 245, 225)
@@ -499,9 +585,17 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 	return { botao = b, nome = lNome, etiqueta = etiqueta, placa = pl, disco = disco }
 end
 
--- Marca o medalhão da aba aberta: disco maior e placa de madeira.
+-- Marca o medalhão da aba aberta: disco maior e nome em destaque.
 function Estilo.marcarMedalhao(self: Estilo, m: Medalhao, ativo: boolean)
 	local kit = Assets.KitUI[self.era.kit or ""]
+	if peca(kit, "medalhao") and peca(kit, "placa_nome") then
+		local t = if ativo then MED_DISCO + 10 else MED_DISCO
+		m.disco.Size = UDim2.fromOffset(t, t)
+		m.disco.Position = UDim2.new(0.5, 0, 0, if ativo then -8 else 0)
+		m.nome.TextColor3 = if ativo then NOME_ATIVO else NOME_CLARO
+		m.placa.ImageColor3 = if ativo then Color3.fromRGB(255, 236, 200) else Color3.new(1, 1, 1)
+		return
+	end
 	local p = if ativo then kit.aba_ativa else kit.aba
 	m.placa.Image = p.id
 	m.placa.SliceCenter = p.slice

@@ -52,21 +52,30 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.avisoJornal = false -- bolinha na aba quando sai notícia nova com a aba fechada
 
 	-- ---------------------------------------------------- barra inferior
-	local barra = est:caixa({
+	-- com o kit clássico: base de mogno e medalhões; senão, a caixa com abas
+	local barra, fileira = est:barraMedalhoes({
 		Name = "BarraMenu",
 		AnchorPoint = Vector2.new(0.5, 1),
-		Position = UDim2.new(0.5, 0, 1, -14 - est:bordaKit()),
-		AutomaticSize = Enum.AutomaticSize.XY,
-		Size = UDim2.fromOffset(0, 0),
-	}, tela)
-	est:padding(barra, 6)
-	est:lista(barra, 6, true)
-	table.insert(self.instancias, barra)
+		Position = UDim2.new(0.5, 0, 1, -6),
+	}, tela, #ABAS)
+	if not barra then
+		local caixa = est:caixa({
+			Name = "BarraMenu",
+			AnchorPoint = Vector2.new(0.5, 1),
+			Position = UDim2.new(0.5, 0, 1, -14 - est:bordaKit()),
+			AutomaticSize = Enum.AutomaticSize.XY,
+			Size = UDim2.fromOffset(0, 0),
+		}, tela)
+		est:padding(caixa, 6)
+		est:lista(caixa, 6, true)
+		barra, fileira = caixa, caixa
+	end
+	table.insert(self.instancias, barra :: Frame)
 	self.barra = barra
 	self.botoesAba = {} :: { [string]: TextButton }
 	self.medalhoes = {} :: { [string]: any } -- com o kit clássico, a barra vira uma fileira de medalhões
 	for i, aba in ABAS do
-		local m = est:medalhao((Emojis :: any)[aba.emoji], if aba.id == "ajustes" then "Ajustes" else aba.nome, barra, i)
+		local m = est:medalhao((Emojis :: any)[aba.emoji], if aba.id == "ajustes" then "Ajustes" else aba.nome, fileira :: Frame, i, aba.id)
 		if m then
 			m.botao.Name = "Aba_" .. aba.id
 			m.botao.Activated:Connect(function()
@@ -78,7 +87,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 		end
 		-- Ajustes vira só o ícone, para a barra caber em telas menores
 		local rotulo = if aba.id == "ajustes" then (Emojis :: any)[aba.emoji] else `{(Emojis :: any)[aba.emoji]} {aba.nome}`
-		local b = est:aba(rotulo, barra, i)
+		local b = est:aba(rotulo, fileira :: Frame, i)
 		b.Name = "Aba_" .. aba.id
 		b.Size = UDim2.fromOffset(0, 44)
 		b.AutomaticSize = Enum.AutomaticSize.X
