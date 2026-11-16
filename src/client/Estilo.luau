@@ -212,6 +212,14 @@ local function vestirBotao(b: TextButton, p: any)
 		ZIndex = 2,
 		Active = false,
 	}, b) :: TextLabel
+	-- cor de fundo do botão vira o tom da peça: fundo escuro (aba selecionada) escurece a imagem
+	local base = Color3.new(1, 1, 1)
+	local function tingir()
+		local cor = b.BackgroundColor3
+		local lum = 0.299 * cor.R + 0.587 * cor.G + 0.114 * cor.B
+		base = if lum < 0.35 then cor:Lerp(Color3.new(1, 1, 1), 0.3) else Color3.new(1, 1, 1)
+		fundo.ImageColor3 = base
+	end
 	local function copiar()
 		rotulo.Text = b.Text
 		rotulo.RichText = b.RichText
@@ -245,6 +253,8 @@ local function vestirBotao(b: TextButton, p: any)
 	b.Changed:Connect(function(prop: string)
 		if PROPS_TEXTO[prop] then
 			copiar()
+		elseif prop == "BackgroundColor3" then
+			tingir()
 		end
 	end)
 	b:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
@@ -256,17 +266,18 @@ local function vestirBotao(b: TextButton, p: any)
 	-- apertado: a peça escurece um pouco
 	b.InputBegan:Connect(function(input)
 		if b.Active and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
-			fundo.ImageColor3 = Color3.fromRGB(200, 200, 200)
+			fundo.ImageColor3 = base:Lerp(Color3.new(0, 0, 0), 0.2)
 		end
 	end)
 	b.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			fundo.ImageColor3 = Color3.new(1, 1, 1)
+			fundo.ImageColor3 = base
 		end
 	end)
 	b.MouseLeave:Connect(function()
-		fundo.ImageColor3 = Color3.new(1, 1, 1)
+		fundo.ImageColor3 = base
 	end)
+	tingir()
 	copiar()
 	ajustar()
 end
@@ -288,6 +299,11 @@ function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance,
 	local kit = Assets.KitUI[self.era.kit or ""]
 	local peca = kit and (if tipo == "principal" then kit.botao else kit.botao_discreto)
 	if peca and peca.id ~= "rbxassetid://0" then
+		if tipo == "secundario" then
+			-- o secundário (escuro) usa a peça clara: texto escuro
+			b.BackgroundColor3 = c.bg
+			b.TextColor3 = c.ink
+		end
 		vestirBotao(b, peca)
 		return b
 	end
