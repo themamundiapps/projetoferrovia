@@ -66,7 +66,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	for i, aba in ABAS do
 		-- Ajustes vira só o ícone, para a barra caber em telas menores
 		local rotulo = if aba.id == "ajustes" then (Emojis :: any)[aba.emoji] else `{(Emojis :: any)[aba.emoji]} {aba.nome}`
-		local b = est:botao("discreto", rotulo, barra, i)
+		local b = est:aba(rotulo, barra, i)
 		b.Name = "Aba_" .. aba.id
 		b.Size = UDim2.fromOffset(0, 44)
 		b.AutomaticSize = Enum.AutomaticSize.X
@@ -157,11 +157,8 @@ function Menu.abrirAba(self: Menu, aba: string?)
 	end
 	self:_rotularAbas()
 	self.painel.Visible = aba ~= nil
-	local c = self.est.c
 	for id, b in self.botoesAba do
-		local ativo = id == aba
-		b.BackgroundColor3 = if ativo then c.ink else c.bg
-		b.TextColor3 = if ativo then c.panel else c.ink
+		self.est:marcarAba(b, id == aba)
 	end
 	self:_redesenhar()
 end

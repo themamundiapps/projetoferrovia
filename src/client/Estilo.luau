@@ -192,6 +192,7 @@ export type TipoBotao = "principal" | "secundario" | "discreto"
 -- cima dela (no modo Sibling, uma filha cobriria o texto do próprio botão). O botão continua um
 -- TextButton: o resto do código segue mudando b.Text, b.TextSize etc., e o rótulo copia.
 local PROPS_TEXTO = { Text = true, RichText = true, FontFace = true, TextSize = true, TextColor3 = true, TextWrapped = true, TextXAlignment = true, TextYAlignment = true, TextScaled = true }
+local trocarPeca = setmetatable({} :: { [TextButton]: (any) -> () }, { __mode = "k" })
 local function vestirBotao(b: TextButton, p: any)
 	b.BackgroundTransparency = 1
 	b.AutoButtonColor = false
@@ -242,7 +243,7 @@ local function vestirBotao(b: TextButton, p: any)
 		fundo.Size = UDim2.new(1, l + r, 1, t + d)
 		local w, h = b.AbsoluteSize.X, b.AbsoluteSize.Y
 		local cx, cy = p.slice.Min.X, p.slice.Min.Y
-		-- as pontas arredondadas ocupam a altura toda do botão
+		-- as pontas ocupam a altura toda do botão
 		local escala = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
 		fundo.SliceScale = escala
 		-- o texto não entra nas pontas (rebites e arabescos)
@@ -280,6 +281,37 @@ local function vestirBotao(b: TextButton, p: any)
 	tingir()
 	copiar()
 	ajustar()
+	trocarPeca[b] = function(nova: any)
+		p = nova
+		fundo.Image = nova.id
+		fundo.SliceCenter = nova.slice
+		ajustar()
+	end
+end
+
+-- Aba da barra do menu: peça própria do kit (normal e ativa); sem ela, botão discreto.
+function Estilo.aba(self: Estilo, txt: string, pai: Instance, ordem: number?): TextButton
+	local b = self:botao("discreto", txt, pai, ordem)
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local troca = trocarPeca[b]
+	if troca and kit and kit.aba and kit.aba.id ~= "rbxassetid://0" then
+		troca(kit.aba)
+	end
+	return b
+end
+
+-- Marca a aba aberta: com o kit, troca para a peça ativa (texto continua escuro sobre o papel).
+function Estilo.marcarAba(self: Estilo, b: TextButton, ativo: boolean)
+	local c = self.c
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local troca = trocarPeca[b]
+	if troca and kit and kit.aba and kit.aba_ativa and kit.aba.id ~= "rbxassetid://0" and kit.aba_ativa.id ~= "rbxassetid://0" then
+		troca(if ativo then kit.aba_ativa else kit.aba)
+		b.TextColor3 = c.ink
+		return
+	end
+	b.BackgroundColor3 = if ativo then c.ink else c.bg
+	b.TextColor3 = if ativo then c.panel else c.ink
 end
 
 function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance, ordem: number?): TextButton
