@@ -985,7 +985,11 @@
           "terreno": "baixada"
         }
       ],
-      "degrau": 0
+      "degrau": 0,
+      "nota": {
+        "pt": "A primeira ferrovia do Brasil, aberta em 1854 por Irineu Evangelista de Sousa, o futuro Visconde de Mauá. A locomotiva se chamava Baroneza.",
+        "en": "Brazil's first railway, opened in 1854 by Irineu Evangelista de Sousa, the future Viscount of Mauá. Its locomotive was named Baroneza."
+      }
     },
     {
       "id": "dpedro2",
@@ -1024,7 +1028,11 @@
           "terreno": "planalto"
         }
       ],
-      "degrau": 1
+      "degrau": 1,
+      "nota": {
+        "pt": "A ferrovia do governo imperial levou os trilhos do Rio ao café do Vale do Paraíba e a Minas. Na República, virou a Central do Brasil.",
+        "en": "The imperial government's railway carried the rails from Rio to the coffee of the Paraíba Valley and on to Minas. Under the Republic it became the Central do Brasil."
+      }
     },
     {
       "id": "spr",
@@ -1071,7 +1079,11 @@
           "terreno": "planalto"
         }
       ],
-      "degrau": 2
+      "degrau": 2,
+      "nota": {
+        "pt": "A São Paulo Railway, dos ingleses, venceu a Serra do Mar com planos inclinados puxados por cabos. Por ela descia quase todo o café paulista.",
+        "en": "The British-owned São Paulo Railway conquered the Serra do Mar with cable-hauled inclines. Nearly all of São Paulo's coffee came down this line."
+      }
     },
     {
       "id": "paulista",
@@ -1110,7 +1122,11 @@
           "terreno": "planalto"
         }
       ],
-      "degrau": 2
+      "degrau": 2,
+      "nota": {
+        "pt": "Fundada por fazendeiros de café em 1868, levou os trilhos de Jundiaí para dentro do oeste paulista.",
+        "en": "Founded by coffee planters in 1868, it carried the rails from Jundiaí into the west of São Paulo state."
+      }
     },
     {
       "id": "vitoria_minas",
@@ -1137,7 +1153,11 @@
           "terreno": "serra_leve"
         }
       ],
-      "degrau": 3
+      "degrau": 3,
+      "nota": {
+        "pt": "Aberta em 1904 para ligar Vitória ao vale do rio Doce, passou a levar o minério de Itabira e virou parte da Vale.",
+        "en": "Opened in 1904 to link Vitória to the Doce river valley, it went on to carry the iron ore of Itabira and became part of Vale."
+      }
     },
     {
       "id": "ef118",
@@ -1344,7 +1364,11 @@
           "ano": 1887,
           "terreno": "serra_leve"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Construída por ingleses, foi a segunda ferrovia do Brasil. O plano era chegar ao rio São Francisco, mas os trilhos pararam bem antes.",
+        "en": "Built by the British, it was Brazil's second railway. The plan was to reach the São Francisco river, but the rails stopped well short of it."
+      }
     },
     {
       "id": "bahia_sf",
@@ -1371,7 +1395,11 @@
           "ano": 1896,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Saiu de Salvador rumo ao rio São Francisco e só chegou lá, em Juazeiro, 33 anos depois do primeiro trecho.",
+        "en": "It left Salvador for the São Francisco river and only got there, at Juazeiro, 33 years after its first section opened."
+      }
     },
     {
       "id": "sorocabana",
@@ -1398,7 +1426,11 @@
           "ano": 1909,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Nasceu com o algodão de Sorocaba e cresceu com o café do oeste paulista, até chegar à divisa do Paraná.",
+        "en": "Born from the cotton trade of Sorocaba, it grew with the coffee of western São Paulo until it reached the Paraná border."
+      }
     },
     {
       "id": "poa_uruguaiana",
@@ -1431,7 +1463,11 @@
           "ano": 1907,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Ligou a capital gaúcha à fronteira com a Argentina, passando por Santa Maria, que virou o grande entroncamento do estado.",
+        "en": "It linked the capital of Rio Grande do Sul to the Argentine border through Santa Maria, which became the state's great railway junction."
+      }
     },
     {
       "id": "parana",
@@ -1458,7 +1494,11 @@
           "ano": 1894,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "A subida da Serra do Mar entre Paranaguá e Curitiba, com túneis e viadutos sobre o abismo, é uma das obras mais ousadas da engenharia brasileira do século XIX.",
+        "en": "The climb up the Serra do Mar between Paranaguá and Curitiba, with tunnels and viaducts over the abyss, is one of the boldest works of 19th-century Brazilian engineering."
+      }
     },
     {
       "id": "sp_rg",
@@ -1497,7 +1537,11 @@
           "ano": 1898,
           "terreno": "planalto"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Ligou São Paulo ao Rio Grande do Sul pelo interior do Paraná e de Santa Catarina. A disputa pelas terras ao longo dela foi uma das causas da Guerra do Contestado (1912–1916).",
+        "en": "It linked São Paulo to Rio Grande do Sul through inland Paraná and Santa Catarina. The dispute over the land along it was one of the causes of the Contestado War (1912–1916)."
+      }
     },
     {
       "id": "madeira_mamore",
@@ -1518,7 +1562,11 @@
           "ano": 1912,
           "terreno": "floresta"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "A \"Ferrovia do Diabo\": milhares de trabalhadores morreram de doenças na obra. Foi feita para levar a borracha da Bolívia, contornando as cachoeiras do rio Madeira.",
+        "en": "The \"Devil's Railway\": thousands of workers died of disease building it. It was made to carry Bolivian rubber around the rapids of the Madeira river."
+      }
     },
     {
       "id": "noroeste",
@@ -1557,7 +1605,11 @@
           "ano": 1952,
           "terreno": "pantanal"
         }
-      ]
+      ],
+      "nota": {
+        "pt": "Levou os trilhos de Bauru ao rio Paraguai e abriu o sul de Mato Grosso. O último trecho, até Corumbá, só ficou pronto em 1952.",
+        "en": "It carried the rails from Bauru to the Paraguay river and opened up southern Mato Grosso. The last section, to Corumbá, was only finished in 1952."
+      }
     }
   ],
   "rotulos": [
@@ -1940,7 +1992,10 @@
       "requer": {
         "linhasCompletas": 6
       },
-      "descricao": "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão."
+      "descricao": {
+        "pt": "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão.",
+        "en": "A planned link between Espírito Santo and Rio through Porto do Açu. It would close the Southeast Rail Ring and is still being tendered."
+      }
     },
     {
       "id": "transnordestina",
@@ -1951,7 +2006,10 @@
       "requer": {
         "linhasCompletas": 9
       },
-      "descricao": "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta."
+      "descricao": {
+        "pt": "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta.",
+        "en": "Work began in 2006 to carry grain from southern Piauí to the port of Pecém. Decades later, it is still unfinished."
+      }
     },
     {
       "id": "ramal_suape",
@@ -1962,7 +2020,10 @@
       "requer": {
         "projeto": "transnordestina"
       },
-      "descricao": "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade."
+      "descricao": {
+        "pt": "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade.",
+        "en": "The Transnordestina's second branch, to the port of Suape (PE). Work stopped around 2016 and never really resumed."
+      }
     },
     {
       "id": "ferrograo",
@@ -1973,7 +2034,10 @@
       "requer": {
         "era": "diesel"
       },
-      "descricao": "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel."
+      "descricao": {
+        "pt": "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel.",
+        "en": "About 933 km planned between Sinop (MT) and the port of Miritituba (PA), on the Tapajós, to carry grain. It never left the drawing board."
+      }
     },
     {
       "id": "fico",
@@ -1984,7 +2048,10 @@
       "requer": {
         "projeto": "ferrograo"
       },
-      "descricao": "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia."
+      "descricao": {
+        "pt": "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia.",
+        "en": "A stretch of the Transcontinental (EF-354), the dream of linking the Atlantic to the Pacific across the Center-West to Rondônia."
+      }
     },
     {
       "id": "tav",
@@ -1996,7 +2063,10 @@
         "era": "diesel",
         "projeto": "ef118"
       },
-      "descricao": "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai."
+      "descricao": {
+        "pt": "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai.",
+        "en": "Announced in 2007, its auctions drew no bidders and it never left the drawing board. Here, it finally gets built."
+      }
     }
   ],
   "foco": [

@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
+local TextService = game:GetService("TextService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
@@ -27,6 +28,7 @@ type Sessao = {
 	carregado: boolean,
 	podeSalvar: boolean,
 	ultimaAcao: number,
+	ultimoNome: number, -- os.clock() da última troca de nome da companhia
 	ganhoOffline: number,
 	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
 	rng: Random,
@@ -168,6 +170,9 @@ local function sanear(salvo: any): EstadoMapa
 		end
 	end
 	e.tutorial = salvo.tutorial == true
+	if type(salvo.nomeCompanhia) == "string" and #salvo.nomeCompanhia <= 64 then
+		e.nomeCompanhia = salvo.nomeCompanhia
+	end
 	return e
 end
 
@@ -186,6 +191,7 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		ofertasEm = e.ofertasEm,
 		missoes = e.missoes,
 		tutorial = e.tutorial,
+		nomeCompanhia = e.nomeCompanhia,
 		eventos = s.eventos,
 		trechos = e.trechos,
 		trens = e.trens,
@@ -213,7 +219,7 @@ local function ganharXp(s: Sessao, e: EstadoMapa, xp: number)
 	e.xp += xp
 	local depois = Economia.nivel(e)
 	if depois > antes then
-		table.insert(s.eventos, { tipo = "nivel", nivel = depois, titulo = Economia.tituloNivel(depois) })
+		table.insert(s.eventos, { tipo = "nivel", nivel = depois, titulo = Economia.tituloNivel(depois, e.era) })
 	end
 end
 
@@ -583,10 +589,39 @@ function Acoes.resgatarMissao(s: Sessao, args: any): (boolean, string?)
 	e.dinheiro += m.premio
 	Metas.contar(e, "missoes", 1)
 	ganharXp(s, e, m.xp)
-	return true, `Missão cumprida: + {Economia.formatar(m.premio, dados.simbolo)}`
+	return true, `Missão cumprida: + {Economia.formatar(m.premio, Economia.moedaDe(dados, e))}`
 end
 
 -- Tutorial: concluir (com prêmio, no último passo) ou pular.
+-- Nome da companhia: passa pelo filtro de texto do Roblox antes de ser guardado (obrigatório para texto
+-- digitado que outros jogadores podem ver, como no ranking).
+local NOME_MIN, NOME_MAX = 3, 32
+function Acoes.renomear(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.nome) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local nome = args.nome:gsub("%s+", " "):gsub("^ ", ""):gsub(" $", "")
+	if utf8.len(nome) == nil or utf8.len(nome) < NOME_MIN or utf8.len(nome) > NOME_MAX then
+		return false, `O nome precisa ter de {NOME_MIN} a {NOME_MAX} letras.`
+	end
+	if os.clock() - s.ultimoNome < 10 then
+		return false, "Espere alguns segundos para trocar o nome de novo."
+	end
+	s.ultimoNome = os.clock()
+	local ok, filtrado = pcall(function()
+		local resultado = TextService:FilterStringAsync(nome, s.jogador.UserId, Enum.TextFilterContext.PublicChat)
+		return resultado:GetNonChatStringForBroadcastAsync()
+	end)
+	if not ok then
+		return false, "Não deu para conferir o nome agora. Tente de novo daqui a pouco."
+	end
+	s.mapas[s.mapaAtual].nomeCompanhia = filtrado
+	if filtrado ~= nome then
+		return true, "Parte do nome foi bloqueada pelo filtro do Roblox."
+	end
+	return true, "Nome da companhia registrado."
+end
+
 function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -604,7 +639,7 @@ function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
 	e.tutorial = true
 	e.dinheiro += Metas.PREMIO_TUTORIAL
 	ganharXp(s, e, Metas.XP.tutorial)
-	return true, `Tutorial concluído: + {Economia.formatar(Metas.PREMIO_TUTORIAL, dados.simbolo)}`
+	return true, `Tutorial concluído: + {Economia.formatar(Metas.PREMIO_TUTORIAL, Economia.moedaDe(dados, e))}`
 end
 
 remoteAcao.OnServerInvoke = function(jogador: Player, tipo: any, args: any)
@@ -653,6 +688,7 @@ local function aoEntrar(jogador: Player)
 		carregado = false,
 		podeSalvar = false,
 		ultimaAcao = 0,
+		ultimoNome = -math.huge,
 		ganhoOffline = 0,
 		eventos = {},
 		rng = Random.new(),

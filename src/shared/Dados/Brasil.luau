@@ -6,6 +6,7 @@ return {
 	id = "brasil",
 	moeda = "BRL",
 	simbolo = "R$",
+	moedas = { vapor = "reis", diesel = "cruzeiro", eletrico = "cruzeiro", alta = "real" },
 	terrenos = {
 		planalto = { nome = "Planalto", custo = 1 },
 		baixada = { nome = "Baixada litorânea", custo = 1.1 },
@@ -98,13 +99,13 @@ return {
 	},
 	linhas = {
 		{
-			id = "maua", nome = "E.F. Mauá", ano = 1854, cor = 6, ordem = 1, degrau = 0, projeto = nil,
+			id = "maua", nome = "E.F. Mauá", ano = 1854, cor = 6, ordem = 1, degrau = 0, projeto = nil, nota = { pt = "A primeira ferrovia do Brasil, aberta em 1854 por Irineu Evangelista de Sousa, o futuro Visconde de Mauá. A locomotiva se chamava Baroneza.", en = "Brazil's first railway, opened in 1854 by Irineu Evangelista de Sousa, the future Viscount of Mauá. Its locomotive was named Baroneza." },
 			trechos = {
 				{ id = "maua_1", de = "porto_maua", para = "fragoso", ano = 1854, km = 14, terreno = "baixada", custo = 92, degrau = 0 },
 			},
 		},
 		{
-			id = "dpedro2", nome = "E.F. Dom Pedro II", ano = 1858, cor = 2, ordem = 2, degrau = 1, projeto = nil,
+			id = "dpedro2", nome = "E.F. Dom Pedro II", ano = 1858, cor = 2, ordem = 2, degrau = 1, projeto = nil, nota = { pt = "A ferrovia do governo imperial levou os trilhos do Rio ao café do Vale do Paraíba e a Minas. Na República, virou a Central do Brasil.", en = "The imperial government's railway carried the rails from Rio to the coffee of the Paraíba Valley and on to Minas. Under the Republic it became the Central do Brasil." },
 			trechos = {
 				{ id = "dpedro2_1", de = "rio", para = "japeri", ano = 1858, km = 69, terreno = "baixada", custo = 1093, degrau = 1 },
 				{ id = "dpedro2_2", de = "japeri", para = "barra_pirai", ano = 1864, km = 33, terreno = "serra_leve", custo = 760, degrau = 1 },
@@ -114,7 +115,7 @@ return {
 			},
 		},
 		{
-			id = "recife_sf", nome = "Recife–São Francisco", ano = 1858, cor = 4, ordem = 3, degrau = 1, projeto = nil,
+			id = "recife_sf", nome = "Recife–São Francisco", ano = 1858, cor = 4, ordem = 3, degrau = 1, projeto = nil, nota = { pt = "Construída por ingleses, foi a segunda ferrovia do Brasil. O plano era chegar ao rio São Francisco, mas os trilhos pararam bem antes.", en = "Built by the British, it was Brazil's second railway. The plan was to reach the São Francisco river, but the rails stopped well short of it." },
 			trechos = {
 				{ id = "recife_sf_1", de = "recife", para = "cabo", ano = 1858, km = 37, terreno = "baixada", custo = 586, degrau = 1 },
 				{ id = "recife_sf_2", de = "cabo", para = "palmares", ano = 1862, km = 95, terreno = "vale", custo = 1642, degrau = 1 },
@@ -122,7 +123,7 @@ return {
 			},
 		},
 		{
-			id = "bahia_sf", nome = "Bahia–São Francisco", ano = 1863, cor = 7, ordem = 4, degrau = 1, projeto = nil,
+			id = "bahia_sf", nome = "Bahia–São Francisco", ano = 1863, cor = 7, ordem = 4, degrau = 1, projeto = nil, nota = { pt = "Saiu de Salvador rumo ao rio São Francisco e só chegou lá, em Juazeiro, 33 anos depois do primeiro trecho.", en = "It left Salvador for the São Francisco river and only got there, at Juazeiro, 33 years after its first section opened." },
 			trechos = {
 				{ id = "bahia_sf_1", de = "salvador", para = "alagoinhas", ano = 1863, km = 116, terreno = "baixada", custo = 1837, degrau = 1 },
 				{ id = "bahia_sf_2", de = "alagoinhas", para = "senhor_bonfim", ano = 1887, km = 336, terreno = "planalto", custo = 4838, degrau = 1 },
@@ -130,7 +131,7 @@ return {
 			},
 		},
 		{
-			id = "spr", nome = "Santos–Jundiaí", ano = 1867, cor = 1, ordem = 5, degrau = 2, projeto = nil,
+			id = "spr", nome = "Santos–Jundiaí", ano = 1867, cor = 1, ordem = 5, degrau = 2, projeto = nil, nota = { pt = "A São Paulo Railway, dos ingleses, venceu a Serra do Mar com planos inclinados puxados por cabos. Por ela descia quase todo o café paulista.", en = "The British-owned São Paulo Railway conquered the Serra do Mar with cable-hauled inclines. Nearly all of São Paulo's coffee came down this line." },
 			trechos = {
 				{ id = "spr_1", de = "santos", para = "paranapiacaba", ano = 1867, km = 25, terreno = "serra", custo = 2074, degrau = 2,
 					alternativas = {
@@ -142,7 +143,7 @@ return {
 			},
 		},
 		{
-			id = "paulista", nome = "Cia. Paulista", ano = 1872, cor = 3, ordem = 6, degrau = 2, projeto = nil,
+			id = "paulista", nome = "Cia. Paulista", ano = 1872, cor = 3, ordem = 6, degrau = 2, projeto = nil, nota = { pt = "Fundada por fazendeiros de café em 1868, levou os trilhos de Jundiaí para dentro do oeste paulista.", en = "Founded by coffee planters in 1868, it carried the rails from Jundiaí into the west of São Paulo state." },
 			trechos = {
 				{ id = "paulista_1", de = "jundiai", para = "campinas", ano = 1872, km = 45, terreno = "planalto", custo = 1555, degrau = 2 },
 				{ id = "paulista_2", de = "campinas", para = "rio_claro", ano = 1876, km = 95, terreno = "planalto", custo = 3283, degrau = 2 },
@@ -152,7 +153,7 @@ return {
 			},
 		},
 		{
-			id = "sorocabana", nome = "E.F. Sorocabana", ano = 1875, cor = 8, ordem = 7, degrau = 2, projeto = nil,
+			id = "sorocabana", nome = "E.F. Sorocabana", ano = 1875, cor = 8, ordem = 7, degrau = 2, projeto = nil, nota = { pt = "Nasceu com o algodão de Sorocaba e cresceu com o café do oeste paulista, até chegar à divisa do Paraná.", en = "Born from the cotton trade of Sorocaba, it grew with the coffee of western São Paulo until it reached the Paraná border." },
 			trechos = {
 				{ id = "sorocabana_1", de = "sao_paulo", para = "sorocaba", ano = 1875, km = 105, terreno = "planalto", custo = 3629, degrau = 2 },
 				{ id = "sorocabana_2", de = "sorocaba", para = "itapetininga", ano = 1895, km = 76, terreno = "planalto", custo = 2627, degrau = 2 },
@@ -160,7 +161,7 @@ return {
 			},
 		},
 		{
-			id = "poa_uruguaiana", nome = "Porto Alegre–Uruguaiana", ano = 1883, cor = 1, ordem = 8, degrau = 3, projeto = nil,
+			id = "poa_uruguaiana", nome = "Porto Alegre–Uruguaiana", ano = 1883, cor = 1, ordem = 8, degrau = 3, projeto = nil, nota = { pt = "Ligou a capital gaúcha à fronteira com a Argentina, passando por Santa Maria, que virou o grande entroncamento do estado.", en = "It linked the capital of Rio Grande do Sul to the Argentine border through Santa Maria, which became the state's great railway junction." },
 			trechos = {
 				{ id = "poa_uruguaiana_1", de = "porto_alegre", para = "cachoeira_sul", ano = 1883, km = 200, terreno = "vale", custo = 19907, degrau = 3 },
 				{ id = "poa_uruguaiana_2", de = "cachoeira_sul", para = "santa_maria", ano = 1885, km = 122, terreno = "vale", custo = 12143, degrau = 3 },
@@ -169,7 +170,7 @@ return {
 			},
 		},
 		{
-			id = "parana", nome = "E.F. do Paraná", ano = 1885, cor = 6, ordem = 9, degrau = 3, projeto = nil,
+			id = "parana", nome = "E.F. do Paraná", ano = 1885, cor = 6, ordem = 9, degrau = 3, projeto = nil, nota = { pt = "A subida da Serra do Mar entre Paranaguá e Curitiba, com túneis e viadutos sobre o abismo, é uma das obras mais ousadas da engenharia brasileira do século XIX.", en = "The climb up the Serra do Mar between Paranaguá and Curitiba, with tunnels and viaducts over the abyss, is one of the boldest works of 19th-century Brazilian engineering." },
 			trechos = {
 				{ id = "parana_1", de = "paranagua", para = "morretes", ano = 1885, km = 41, terreno = "baixada", custo = 3741, degrau = 3 },
 				{ id = "parana_2", de = "morretes", para = "curitiba", ano = 1885, km = 56, terreno = "serra", custo = 11148, degrau = 3 },
@@ -177,7 +178,7 @@ return {
 			},
 		},
 		{
-			id = "vitoria_minas", nome = "Vitória–Minas", ano = 1904, cor = 5, ordem = 10, degrau = 3, projeto = nil,
+			id = "vitoria_minas", nome = "Vitória–Minas", ano = 1904, cor = 5, ordem = 10, degrau = 3, projeto = nil, nota = { pt = "Aberta em 1904 para ligar Vitória ao vale do rio Doce, passou a levar o minério de Itabira e virou parte da Vale.", en = "Opened in 1904 to link Vitória to the Doce river valley, it went on to carry the iron ore of Itabira and became part of Vale." },
 			trechos = {
 				{ id = "vitoria_minas_1", de = "vitoria", para = "colatina", ano = 1906, km = 115, terreno = "baixada", custo = 10492, degrau = 3 },
 				{ id = "vitoria_minas_2", de = "colatina", para = "valadares", ano = 1910, km = 198, terreno = "vale", custo = 19707, degrau = 3 },
@@ -185,7 +186,7 @@ return {
 			},
 		},
 		{
-			id = "sp_rg", nome = "São Paulo–Rio Grande", ano = 1910, cor = 2, ordem = 11, degrau = 4, projeto = nil,
+			id = "sp_rg", nome = "São Paulo–Rio Grande", ano = 1910, cor = 2, ordem = 11, degrau = 4, projeto = nil, nota = { pt = "Ligou São Paulo ao Rio Grande do Sul pelo interior do Paraná e de Santa Catarina. A disputa pelas terras ao longo dela foi uma das causas da Guerra do Contestado (1912–1916).", en = "It linked São Paulo to Rio Grande do Sul through inland Paraná and Santa Catarina. The dispute over the land along it was one of the causes of the Contestado War (1912–1916)." },
 			trechos = {
 				{ id = "sp_rg_1", de = "itarare", para = "ponta_grossa", ano = 1909, km = 171, terreno = "planalto", custo = 34040, degrau = 4 },
 				{ id = "sp_rg_2", de = "ponta_grossa", para = "uniao_vitoria", ano = 1905, km = 197, terreno = "planalto", custo = 39216, degrau = 4 },
@@ -195,14 +196,14 @@ return {
 			},
 		},
 		{
-			id = "madeira_mamore", nome = "Madeira–Mamoré", ano = 1912, cor = 5, ordem = 12, degrau = 4, projeto = nil,
+			id = "madeira_mamore", nome = "Madeira–Mamoré", ano = 1912, cor = 5, ordem = 12, degrau = 4, projeto = nil, nota = { pt = "A \"Ferrovia do Diabo\": milhares de trabalhadores morreram de doenças na obra. Foi feita para levar a borracha da Bolívia, contornando as cachoeiras do rio Madeira.", en = "The \"Devil's Railway\": thousands of workers died of disease building it. It was made to carry Bolivian rubber around the rapids of the Madeira river." },
 			trechos = {
 				{ id = "madeira_mamore_1", de = "porto_velho", para = "abuna", ano = 1911, km = 236, terreno = "floresta", custo = 84563, degrau = 4 },
 				{ id = "madeira_mamore_2", de = "abuna", para = "guajara_mirim", ano = 1912, km = 150, terreno = "floresta", custo = 53748, degrau = 4 },
 			},
 		},
 		{
-			id = "noroeste", nome = "Noroeste do Brasil", ano = 1914, cor = 3, ordem = 13, degrau = 4, projeto = nil,
+			id = "noroeste", nome = "Noroeste do Brasil", ano = 1914, cor = 3, ordem = 13, degrau = 4, projeto = nil, nota = { pt = "Levou os trilhos de Bauru ao rio Paraguai e abriu o sul de Mato Grosso. O último trecho, até Corumbá, só ficou pronto em 1952.", en = "It carried the rails from Bauru to the Paraguay river and opened up southern Mato Grosso. The last section, to Corumbá, was only finished in 1952." },
 			trechos = {
 				{ id = "noroeste_1", de = "bauru", para = "aracatuba", ano = 1908, km = 235, terreno = "planalto", custo = 46780, degrau = 4 },
 				{ id = "noroeste_2", de = "aracatuba", para = "tres_lagoas", ano = 1912, km = 175, terreno = "planalto", custo = 34836, degrau = 4 },
@@ -212,7 +213,7 @@ return {
 			},
 		},
 		{
-			id = "ef118", nome = "EF-118 Vitória–Rio", ano = 2026, cor = 7, ordem = 14, degrau = 5, projeto = "ef118",
+			id = "ef118", nome = "EF-118 Vitória–Rio", ano = 2026, cor = 7, ordem = 14, degrau = 5, projeto = "ef118", nota = nil,
 			trechos = {
 				{ id = "ef118_1", de = "vitoria", para = "anchieta", ano = 2026, km = 78, terreno = "baixada", custo = 40992, degrau = 5 },
 				{ id = "ef118_2", de = "anchieta", para = "porto_acu", ano = 2026, km = 128, terreno = "baixada", custo = 67268, degrau = 5 },
@@ -221,7 +222,7 @@ return {
 			},
 		},
 		{
-			id = "transnordestina", nome = "Transnordestina", ano = 2006, cor = 4, ordem = 15, degrau = 6, projeto = "transnordestina",
+			id = "transnordestina", nome = "Transnordestina", ano = 2006, cor = 4, ordem = 15, degrau = 6, projeto = "transnordestina", nota = nil,
 			trechos = {
 				{ id = "transnordestina_1", de = "eliseu_martins", para = "salgueiro", ano = 2006, km = 626, terreno = "planalto", custo = 717783, degrau = 6 },
 				{ id = "transnordestina_2", de = "salgueiro", para = "quixada", ano = 2006, km = 431, terreno = "planalto", custo = 494192, degrau = 6 },
@@ -229,14 +230,14 @@ return {
 			},
 		},
 		{
-			id = "ramal_suape", nome = "Ramal Salgueiro–Suape", ano = 2006, cor = 6, ordem = 16, degrau = 6, projeto = "ramal_suape",
+			id = "ramal_suape", nome = "Ramal Salgueiro–Suape", ano = 2006, cor = 6, ordem = 16, degrau = 6, projeto = "ramal_suape", nota = nil,
 			trechos = {
 				{ id = "ramal_suape_1", de = "salgueiro", para = "arcoverde", ano = 2006, km = 289, terreno = "planalto", custo = 331373, degrau = 6 },
 				{ id = "ramal_suape_2", de = "arcoverde", para = "suape", ano = 2006, km = 289, terreno = "serra_leve", custo = 530196, degrau = 6 },
 			},
 		},
 		{
-			id = "ferrograo", nome = "Ferrogrão (EF-170)", ano = 2017, cor = 3, ordem = 17, degrau = 6, projeto = "ferrograo",
+			id = "ferrograo", nome = "Ferrogrão (EF-170)", ano = 2017, cor = 3, ordem = 17, degrau = 6, projeto = "ferrograo", nota = nil,
 			trechos = {
 				{ id = "ferrograo_1", de = "sinop", para = "matupa", ano = 2017, km = 246, terreno = "planalto", custo = 282068, degrau = 6 },
 				{ id = "ferrograo_2", de = "matupa", para = "novo_progresso", ano = 2017, km = 439, terreno = "vale", custo = 604038, degrau = 6 },
@@ -244,7 +245,7 @@ return {
 			},
 		},
 		{
-			id = "fico", nome = "Transcontinental (FICO)", ano = 2008, cor = 5, ordem = 18, degrau = 7, projeto = "fico",
+			id = "fico", nome = "Transcontinental (FICO)", ano = 2008, cor = 5, ordem = 18, degrau = 7, projeto = "fico", nota = nil,
 			trechos = {
 				{ id = "fico_1", de = "campinorte", para = "agua_boa", ano = 2008, km = 407, terreno = "planalto", custo = 1120016, degrau = 7 },
 				{ id = "fico_2", de = "agua_boa", para = "lucas_rv", ano = 2008, km = 531, terreno = "planalto", custo = 1461250, degrau = 7 },
@@ -253,7 +254,7 @@ return {
 			},
 		},
 		{
-			id = "tav", nome = "Trem-bala Rio–SP–Campinas", ano = 2007, cor = 8, ordem = 19, degrau = 8, projeto = "tav",
+			id = "tav", nome = "Trem-bala Rio–SP–Campinas", ano = 2007, cor = 8, ordem = 19, degrau = 8, projeto = "tav", nota = nil,
 			trechos = {
 				{ id = "tav_1", de = "campinas", para = "sao_paulo", ano = 2007, km = 102, terreno = "planalto", custo = 673661, degrau = 8 },
 				{ id = "tav_2", de = "sao_paulo", para = "sao_jose_campos", ano = 2007, km = 107, terreno = "vale", custo = 848020, degrau = 8 },
@@ -263,12 +264,12 @@ return {
 		},
 	},
 	projetos = {
-		{ id = "ef118", nome = "EF-118 Vitória–Rio", emoji = "conectar", linha = "ef118", custo = 150000, segundos = 300, descricao = "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão.", requer = { linhasCompletas = 6, era = nil, projeto = nil } },
-		{ id = "transnordestina", nome = "Transnordestina", emoji = "carga_graos", linha = "transnordestina", custo = 400000, segundos = 600, descricao = "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta.", requer = { linhasCompletas = 9, era = nil, projeto = nil } },
-		{ id = "ramal_suape", nome = "Ramal Salgueiro–Suape", emoji = "carga_mercadorias", linha = "ramal_suape", custo = 300000, segundos = 480, descricao = "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade.", requer = { linhasCompletas = nil, era = nil, projeto = "transnordestina" } },
-		{ id = "ferrograo", nome = "Ferrogrão (EF-170)", emoji = "carga_graos", linha = "ferrograo", custo = 800000, segundos = 900, descricao = "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel.", requer = { linhasCompletas = nil, era = "diesel", projeto = nil } },
-		{ id = "fico", nome = "Transcontinental (FICO)", emoji = "mapa_mundo", linha = "fico", custo = 1500000, segundos = 1200, descricao = "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia.", requer = { linhasCompletas = nil, era = nil, projeto = "ferrograo" } },
-		{ id = "tav", nome = "Trem-bala Rio–SP–Campinas", emoji = "era_alta", linha = "tav", custo = 5000000, segundos = 1800, descricao = "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai.", requer = { linhasCompletas = nil, era = "diesel", projeto = "ef118" } },
+		{ id = "ef118", nome = "EF-118 Vitória–Rio", emoji = "conectar", linha = "ef118", custo = 150000, segundos = 300, descricao = { pt = "Ligação planejada entre o Espírito Santo e o Rio passando pelo Porto do Açu. Formaria o Anel Ferroviário do Sudeste e ainda está em fase de concessão.", en = "A planned link between Espírito Santo and Rio through Porto do Açu. It would close the Southeast Rail Ring and is still being tendered." }, requer = { linhasCompletas = 6, era = nil, projeto = nil } },
+		{ id = "transnordestina", nome = "Transnordestina", emoji = "carga_graos", linha = "transnordestina", custo = 400000, segundos = 600, descricao = { pt = "Obras iniciadas em 2006 para levar os grãos do sul do Piauí ao porto de Pecém. Décadas depois, segue incompleta.", en = "Work began in 2006 to carry grain from southern Piauí to the port of Pecém. Decades later, it is still unfinished." }, requer = { linhasCompletas = 9, era = nil, projeto = nil } },
+		{ id = "ramal_suape", nome = "Ramal Salgueiro–Suape", emoji = "carga_mercadorias", linha = "ramal_suape", custo = 300000, segundos = 480, descricao = { pt = "O segundo ramal da Transnordestina, até o porto de Suape (PE). As obras pararam por volta de 2016 e nunca foram retomadas de verdade.", en = "The Transnordestina's second branch, to the port of Suape (PE). Work stopped around 2016 and never really resumed." }, requer = { linhasCompletas = nil, era = nil, projeto = "transnordestina" } },
+		{ id = "ferrograo", nome = "Ferrogrão (EF-170)", emoji = "carga_graos", linha = "ferrograo", custo = 800000, segundos = 900, descricao = { pt = "Cerca de 933 km previstos entre Sinop (MT) e o porto de Miritituba (PA), no Tapajós, para escoar grãos. Nunca saiu do papel.", en = "About 933 km planned between Sinop (MT) and the port of Miritituba (PA), on the Tapajós, to carry grain. It never left the drawing board." }, requer = { linhasCompletas = nil, era = "diesel", projeto = nil } },
+		{ id = "fico", nome = "Transcontinental (FICO)", emoji = "mapa_mundo", linha = "fico", custo = 1500000, segundos = 1200, descricao = { pt = "Trecho da Transcontinental (EF-354), sonho de ligar o Atlântico ao Pacífico cruzando o Centro-Oeste até Rondônia.", en = "A stretch of the Transcontinental (EF-354), the dream of linking the Atlantic to the Pacific across the Center-West to Rondônia." }, requer = { linhasCompletas = nil, era = nil, projeto = "ferrograo" } },
+		{ id = "tav", nome = "Trem-bala Rio–SP–Campinas", emoji = "era_alta", linha = "tav", custo = 5000000, segundos = 1800, descricao = { pt = "Anunciado em 2007, teve leilões sem interessados e nunca saiu do papel. Aqui, ele finalmente sai.", en = "Announced in 2007, its auctions drew no bidders and it never left the drawing board. Here, it finally gets built." }, requer = { linhasCompletas = nil, era = "diesel", projeto = "ef118" } },
 	},
 	rotulos = {
 		{ tipo = "estado", texto = "A C R E", pos = Vector2.new(279.1, 726.8), angulo = 0, zoomMin = 0, zoomMax = 4 },

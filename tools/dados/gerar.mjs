@@ -16,7 +16,8 @@ const CUSTO_POR_KM = 6;        // R$ por km no primeiro trecho do jogo
 const CRESCIMENTO_LINHA = 2.4; // cada degrau (onda de linhas) custa ~70% mais por km
 const SINUOSIDADE = 1.25;      // trilho real é mais longo que a linha reta
 
-const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" } };
+// moedas: a moeda de época de cada era (ver Economia.formatar)
+const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$", moedas: { vapor: "reis", diesel: "cruzeiro", eletrico: "cruzeiro", alta: "real" } } };
 
 function projecao(def) {
   const p = def.projecao;
@@ -31,6 +32,8 @@ const lua = (v) => {
   if (typeof v === "string") return JSON.stringify(v);
   if (typeof v === "boolean") return v ? "true" : "false";
   if (typeof v === "number") return Number.isInteger(v) ? String(v) : String(Math.round(v * 1000) / 1000);
+  // texto nos dois idiomas
+  if (typeof v === "object" && typeof v.pt === "string") return `{ pt = ${lua(v.pt)}, en = ${lua(v.en)} }`;
   throw new Error("tipo não suportado: " + typeof v);
 };
 
@@ -72,6 +75,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push(`\tid = ${lua(id)},`);
   L.push(`\tmoeda = ${lua(cfg.moeda)},`);
   L.push(`\tsimbolo = ${lua(cfg.simbolo)},`);
+  L.push(`\tmoedas = { ${Object.entries(cfg.moedas).map(([k, v]) => `${k} = ${lua(v)}`).join(", ")} },`);
   L.push("\tterrenos = {");
   for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, custo = ${lua(t.custo)} },`);
   L.push("\t},");
@@ -97,7 +101,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     const degrau = l.degrau;
     const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, degrau);
     L.push("\t\t{");
-    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)},`);
+    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)}, nota = ${lua(l.nota)},`);
     L.push("\t\t\ttrechos = {");
     l.trechos.forEach((t, i) => {
       const k = km(t.de, t.para);

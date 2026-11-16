@@ -73,6 +73,12 @@ Idioma.TEXTOS = {
 	-- história
 	ficha_historia = { pt = "HISTÓRIA", en = "HISTORY" },
 	ficha_fechar = { pt = "Fechar", en = "Close" },
+	-- companhia
+	companhia_padrao = { pt = "Companhia Ferroviária", en = "Railway Company" },
+	companhia_nome = { pt = "NOME DA COMPANHIA", en = "COMPANY NAME" },
+	companhia_dica_nome = { pt = "De 3 a 32 letras. Aparece no caixa e, no futuro, no ranking.", en = "3 to 32 letters. Shown on your treasury and, later, on the leaderboard." },
+	companhia_salvar = { pt = "Registrar nome", en = "Register name" },
+	nivel_titulo = { pt = "Nível %d · %s", en = "Level %d · %s" },
 } :: { [string]: { pt: string, en: string } }
 
 -- Texto fixo pela chave, com os valores no lugar de %s e %d.

@@ -33,14 +33,28 @@ Economia.MAX_TRENS_LINHA = 30
 -- Nível da companhia: sobe com experiência (XP) e dá +1% de receita por nível acima do 1.
 Economia.NIVEL_MAXIMO = 30
 Economia.BONUS_POR_NIVEL_COMPANHIA = 0.01
+-- Título do dono da companhia, pelo nível. No Vapor (Império), títulos de nobreza; da República em diante,
+-- cargos de empresa. Eras sem lista própria usam a da era anterior.
 Economia.TITULOS = {
-	{ nivel = 1, nome = "Companhia Local" },
-	{ nivel = 3, nome = "Companhia Regional" },
-	{ nivel = 6, nome = "Companhia Estadual" },
-	{ nivel = 10, nome = "Companhia Nacional" },
-	{ nivel = 15, nome = "Grande Companhia" },
-	{ nivel = 20, nome = "Império Ferroviário" },
-}
+	vapor = {
+		{ nivel = 1, pt = "Negociante", en = "Merchant" },
+		{ nivel = 3, pt = "Comendador", en = "Commander" },
+		{ nivel = 6, pt = "Barão", en = "Baron" },
+		{ nivel = 10, pt = "Visconde", en = "Viscount" },
+		{ nivel = 15, pt = "Conde", en = "Count" },
+		{ nivel = 20, pt = "Marquês", en = "Marquis" },
+		{ nivel = 25, pt = "Duque", en = "Duke" },
+	},
+	diesel = {
+		{ nivel = 1, pt = "Sócio", en = "Partner" },
+		{ nivel = 3, pt = "Diretor", en = "Director" },
+		{ nivel = 6, pt = "Diretor-presidente", en = "Managing Director" },
+		{ nivel = 10, pt = "Industrial", en = "Industrialist" },
+		{ nivel = 15, pt = "Magnata", en = "Tycoon" },
+		{ nivel = 20, pt = "Rei dos Trilhos", en = "Railway King" },
+		{ nivel = 25, pt = "Lenda Ferroviária", en = "Railway Legend" },
+	},
+} :: { [string]: { { nivel: number, pt: string, en: string } } }
 
 -- População das cidades (número do jogo, não censo): pelo porte, vezes 4 a cada era, e cresce com a estação.
 Economia.POPULACAO_POR_PORTE = { 4000, 12000, 35000, 90000, 280000 }
@@ -85,8 +99,8 @@ Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira
 
 -- Eras: a próxima libera com N linhas completas e multiplica a renda de tudo.
 Economia.ERAS = {
-	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350 },
-	{ id = "diesel", multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700 },
+	{ id = "vapor", multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350, anoInicio = 1852, anoFim = 1930 },
+	{ id = "diesel", multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700, anoInicio = 1930, anoFim = 1965 },
 }
 
 -- Estado salvo de um jogador em um mapa.
@@ -107,6 +121,7 @@ export type EstadoMapa = {
 	ofertasEm: number, -- horário em que as ofertas foram geradas
 	missoes: { dia: number, lista: { any } }, -- missões do dia
 	tutorial: boolean, -- tutorial concluído ou pulado
+	nomeCompanhia: string?, -- nome escolhido pelo jogador (já passado pelo filtro do Roblox)
 }
 
 function Economia.estadoNovo(): EstadoMapa
@@ -202,14 +217,40 @@ function Economia.nivel(estado: EstadoMapa): (number, number, number)
 	return n, xp - base, Economia.xpDoNivel(n + 1) - base
 end
 
-function Economia.tituloNivel(nivel: number): string
-	local nome = Economia.TITULOS[1].nome
-	for _, t in Economia.TITULOS do
-		if nivel >= t.nivel then
-			nome = t.nome
+-- Título pelo nível e pela era, no idioma pedido ("pt" ou "en").
+function Economia.tituloNivel(nivel: number, eraId: string?, idioma: string?): string
+	local lista = Economia.TITULOS.vapor
+	for _, era in Economia.ERAS do
+		if Economia.TITULOS[era.id] then
+			lista = Economia.TITULOS[era.id]
+		end
+		if era.id == (eraId or "vapor") then
+			break
 		end
 	end
-	return nome
+	local t = lista[1]
+	for _, item in lista do
+		if nivel >= item.nivel then
+			t = item
+		end
+	end
+	return if idioma == "en" then t.en else t.pt
+end
+
+-- Ano mostrado no caixa: o ano do trecho histórico mais recente já construído, dentro dos anos da era.
+function Economia.anoAtual(estado: EstadoMapa, dados: any): number
+	local era = Economia.ERAS[Economia.indiceEra(estado)]
+	local ano = era.anoInicio
+	for _, linha in dados.linhas do
+		if not linha.projeto then
+			for _, t in linha.trechos do
+				if estado.trechos[t.id] and t.ano > ano then
+					ano = t.ano
+				end
+			end
+		end
+	end
+	return math.min(ano, era.anoFim)
 end
 
 function Economia.fatorNivel(estado: EstadoMapa): number
@@ -912,8 +953,45 @@ function Economia.acharTrecho(dados: any, trechoId: string): (any, number, any, 
 end
 
 -- Formata dinheiro no padrão brasileiro: R$ 7.195 / R$ 9,22 / R$ 1,2 mi
+-- Moeda de época: o mapa diz qual moeda cada era usa (dados.moedas); sem isso, o símbolo do mapa.
+function Economia.moedaDe(dados: any, estado: EstadoMapa): string
+	return (dados.moedas and dados.moedas[estado.era]) or dados.simbolo or "R$"
+end
+
+local function comPontos(n: number): string
+	local inteiro = tostring(math.floor(n + 0.5))
+	return (inteiro:reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", ""))
+end
+
+-- Réis do Império: o valor do jogo é em mil-réis. 850 vira 850$000; 12.500 vira 12:500$000 (12 contos
+-- e 500 mil-réis); de mil contos para cima, "1.500 contos" ou "2,3 mi de contos".
+local function formatarReis(valor: number, decimais: boolean?): string
+	local abs = math.abs(valor)
+	local sinal = if valor < 0 then "-" else ""
+	if abs >= 1e6 then
+		local contos = abs / 1000
+		if contos >= 1e9 then
+			return `{sinal}{(string.format("%.1f", contos / 1e9):gsub("%.", ","))} bi de contos`
+		elseif contos >= 1e6 then
+			return `{sinal}{(string.format("%.1f", contos / 1e6):gsub("%.", ","))} mi de contos`
+		end
+		return `{sinal}{comPontos(contos)} contos`
+	end
+	local reis = math.floor(abs * (if decimais then 1000 else 1) + 0.5) * (if decimais then 1 else 1000)
+	local mil = reis // 1000
+	local resto = reis % 1000
+	if mil >= 1000 then
+		return string.format("%s%s:%03d$%03d", sinal, comPontos(mil // 1000), mil % 1000, resto)
+	end
+	return string.format("%s%d$%03d", sinal, mil, resto)
+end
+
+-- simbolo: "reis", "cruzeiro" ou "real" para a moeda de época; qualquer outro texto vai na frente do número.
 function Economia.formatar(valor: number, simbolo: string?, decimais: boolean?): string
-	local s = simbolo or "R$"
+	if simbolo == "reis" then
+		return formatarReis(valor, decimais)
+	end
+	local s = if simbolo == "cruzeiro" then "Cr$" elseif simbolo == "real" then "R$" else simbolo or "R$"
 	local abs = math.abs(valor)
 	local sinal = if valor < 0 then "-" else ""
 	local limites = { 1e12, 1e9, 1e6 }

@@ -9,6 +9,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Metas = require(Shared:WaitForChild("Metas"))
+local Idioma = require(Shared:WaitForChild("Idioma"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -173,6 +174,7 @@ function Menu._assinatura(self: Menu, estado: any): string
 		medalhas += 1
 	end
 	table.insert(metas, medalhas)
+	table.insert(metas, estado.nomeCompanhia or "")
 	local ok, txt = pcall(function()
 		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes, metas })
 	end)
@@ -443,7 +445,7 @@ function Menu._abaProjetos(self: Menu)
 			titulo.TextColor3 = c.inkMuted
 		end
 		txt("rotulo", `{if linha then #linha.trechos else 0} TRECHOS · {numero(km)} KM`, 2)
-		txt("fraco", p.descricao, 3)
+		txt("fraco", Idioma.t(p.descricao), 3)
 
 		if situacao == "concluido" then
 			local l = txt("corpo", `{Emojis.confirmar} Projeto aprovado: a linha está aberta no mapa.`, 4)
@@ -694,11 +696,11 @@ function Menu._abaCompanhia(self: Menu)
 		return (Economia.formatar(n, "", false):gsub("^%s+", ""))
 	end
 	local era = self.est.era
-	est:texto("rotulo", string.upper(era.nome) .. " · " .. era.anos, r, 2)
+	est:texto("rotulo", Idioma.maiusculas(era.nome) .. " · " .. Economia.anoAtual(estado, self.dados), r, 2)
 
 	-- nível da companhia
 	local nivel, xpNoNivel, xpDoNivel = Economia.nivel(estado)
-	est:texto("subtitulo", `{Emojis.nivel} Nível {nivel} · {Economia.tituloNivel(nivel)}`, r, 3)
+	est:texto("subtitulo", `{Emojis.nivel} {Idioma.T("nivel_titulo", nivel, Economia.tituloNivel(nivel, estado.era, Idioma.atual))}`, r, 3)
 	local cheioXp = novaBarra(est, r, 4)
 	cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
 	local bonus = math.round((Economia.fatorNivel(estado) - 1) * 100)
@@ -754,6 +756,36 @@ function Menu._abaCompanhia(self: Menu)
 	for i, txt in linhas do
 		est:texto("corpo", txt, r, 10 + i)
 	end
+
+	-- nome da companhia
+	est:divisor(r, 30)
+	local lNome = est:texto("rotulo", Idioma.T("companhia_nome"), r, 31)
+	lNome.TextSize = 12
+	local caixaNome = novo("TextBox", {
+		Name = "CampoNome",
+		LayoutOrder = 32,
+		Size = UDim2.new(1, 0, 0, 38),
+		BackgroundColor3 = est.c.bg,
+		ClearTextOnFocus = false,
+		Text = estado.nomeCompanhia or "",
+		PlaceholderText = Idioma.T("companhia_padrao"),
+		PlaceholderColor3 = est.c.inkMuted,
+		FontFace = est.f.body,
+		TextSize = 16,
+		TextColor3 = est.c.ink,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		ZIndex = 32,
+	}, r)
+	novo("UIStroke", { Color = est.c.rule, Thickness = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, caixaNome)
+	novo("UIPadding", { PaddingLeft = UDim.new(0, 8), PaddingRight = UDim.new(0, 8) }, caixaNome)
+	est:cantos(caixaNome)
+	local bNome = est:botao("secundario", Idioma.T("companhia_salvar"), r, 33)
+	bNome.Name = "BtnRenomear"
+	bNome.Size = UDim2.new(1, 0, 0, 36)
+	bNome.Activated:Connect(function()
+		self.aoAgir:Fire("renomear", { nome = caixaNome.Text })
+	end)
+	est:texto("fraco", Idioma.T("companhia_dica_nome"), r, 34)
 
 	-- medalhas
 	local ganhas = estado.medalhas or {}

@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
+local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 
 local Interface = {}
@@ -83,11 +84,12 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.hud = hud
 	padding(hud, 12)
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, hud)
-	novo("TextLabel", {
+	self.lblNome = novo("TextLabel", {
+		Name = "NomeCompanhia",
 		LayoutOrder = 1,
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundTransparency = 1,
-		Text = "CAIXA DA COMPANHIA",
+		Text = "",
 		FontFace = f.label,
 		TextSize = 13,
 		TextColor3 = c.inkMuted,
@@ -281,6 +283,9 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	novo("UIStroke", { Color = c.rule, Thickness = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }, self.btnVender)
 	self.divCarga = novo("Frame", { LayoutOrder = 12, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = c.rule, BorderSizePixel = 0, ZIndex = 31 }, corpo)
 	self.lblCarga = texto(13, f.body, 15, c.ink)
+	-- nota histórica da linha, em itálico, no pé do painel
+	self.lblNota = texto(14, Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic), 14, c.inkMuted)
+	self.lblNota.Visible = false
 	self.lblCarga.LineHeight = 1.2
 
 	self.btnFechar = novo("TextButton", {
@@ -363,7 +368,9 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
 	local nivel = Economia.nivel(estado)
-	self.lblNivel.Text = `{Emojis.nivel} Nível {nivel} · {Economia.tituloNivel(nivel)}`
+	self.lblNivel.Text = `{Emojis.nivel} {Idioma.T("nivel_titulo", nivel, Economia.tituloNivel(nivel, estado.era, Idioma.atual))}`
+	self.lblNome.Text = Idioma.maiusculas(estado.nomeCompanhia or Idioma.T("companhia_padrao"))
+	self.lblEra.Text = `{self.era.nome} · {Economia.anoAtual(estado, self.dados)}`
 	local contrato = estado.contrato
 	self.lblContrato.Visible = contrato ~= nil
 	if contrato then
@@ -404,6 +411,7 @@ function Interface._modoTrecho(self: Interface, sim: boolean)
 	self.divTrens.Visible = sim
 	self.lblTrens.Visible = sim
 	if not sim then
+		self.lblNota.Visible = false
 		self.btnTrem.Visible = false
 		self.btnVender.Visible = false
 		self.opcoes.Visible = false
@@ -504,6 +512,9 @@ function Interface._preencher(self: Interface)
 	local de, para = dados.estacoes[trecho.de].nome, dados.estacoes[trecho.para].nome
 
 	self.lblCabecalho.Text = `{maiusculas(linha.nome)} · {trecho.ano}`
+	local nota = linha.nota or (linha.projeto and (Economia.acharProjeto(dados, linha.projeto) or {}).descricao)
+	self.lblNota.Text = Idioma.t(nota)
+	self.lblNota.Visible = self.lblNota.Text ~= ""
 	self.lblTitulo.Text = `{de} – {para}`
 	local fatorRede = Economia.bonusRede(estado, dados, linha)
 	local passageiros = Economia.passageirosTrecho(estado, dados, trecho, fatorRede)

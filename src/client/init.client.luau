@@ -175,6 +175,8 @@ end
 -- Monta (ou remonta, ao trocar de era) o mapa e a interface com o visual da era.
 local function montar(eraId: string)
 	local era = Theme.PorId[eraId] or Theme.PorId.vapor
+	-- moeda de época: todos os painéis leem DadosBrasil.simbolo (mil-réis no Vapor, cruzeiro no Diesel...)
+	DadosBrasil.simbolo = (DadosBrasil.moedas and DadosBrasil.moedas[eraId]) or "R$"
 	local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
 	era.marTextura = if idMar and idMar ~= "rbxassetid://0" then idMar else nil
 
