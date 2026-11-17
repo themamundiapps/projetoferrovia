@@ -117,7 +117,7 @@ Assets.KitUI = {
 		-- painel.png (468 x 692): aro de 21 px com parafusos nos cantos
 		painel = { id = "rbxassetid://104261795075604", slice = Rect.new(40, 40, 428, 652), escala = 0.7, borda = 6 },
 		-- cartao.png (489 x 687): aro + filete verde, miolo creme
-		cartao = { id = "rbxassetid://119690855507683", slice = Rect.new(70, 70, 419, 617), escala = 0.32 },
+		cartao = { id = "rbxassetid://119690855507683", slice = Rect.new(70, 70, 419, 617), escala = 0.2 },
 		-- cabecalho.png (698 x 149): faixa verde clara com bloco laranja à esquerda
 		cabecalho = { id = "rbxassetid://71783122573500", slice = Rect.new(60, 60, 638, 89), escala = 1, borda = 0 },
 		divisor = { id = "rbxassetid://70421255292879", largura = 683, altura = 98 },
@@ -152,7 +152,7 @@ Assets.KitUI = {
 		-- textos sobre as peças claras: barra de cima (alumínio) e plaquinhas/medalhões
 		coresTopo = { forte = Color3.fromHex("#1F2B2E"), fraco = Color3.fromHex("#4E6A6E"), verde = Color3.fromHex("#1E7D4F"),
 			vermelho = Color3.fromHex("#C0392B"), separador = Color3.fromHex("#2F6E73") },
-		coresMedalhao = { nome = Color3.fromHex("#1F2B2E"), ativo = Color3.fromHex("#E8661E"), simbolo = Color3.fromHex("#1F2B2E") },
+		coresMedalhao = { nome = Color3.fromHex("#1F2B2E"), ativo = Color3.fromHex("#E8661E"), simbolo = Color3.fromHex("#1F2B2E"), fonte = "label" },
 	},
 } :: { [string]: { [string]: any } }
 

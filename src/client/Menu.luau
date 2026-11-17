@@ -120,7 +120,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 		b.Name = if i == 1 then "ZoomMais" else "ZoomMenos"
 		b.Size = UDim2.fromOffset(52, 52)
 		b.BackgroundColor3 = est.c.panel
-		b.TextSize = 24
+		b.TextSize = 30
 		b.Activated:Connect(function()
 			self.aoZoom:Fire(fatores[i])
 		end)

@@ -163,8 +163,8 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 			ZIndex = 32,
 		}, pai)
 	end
-	local function separador(pai: Instance, ordem: number)
-		novo("Frame", {
+	local function separador(pai: Instance, ordem: number): Frame
+		return novo("Frame", {
 			Name = "Separador",
 			LayoutOrder = ordem,
 			Size = UDim2.fromOffset(2, 34),
@@ -206,7 +206,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 24, 36)
 	self.lblDinheiro, self.lblRenda = lblDinheiro, lblRenda
 	self.lblDinheiro.Text = "…"
-	separador(esquerda, 4)
+	local sepData = separador(esquerda, 4)
 	-- data do jogo (1 minuto = 1 dia) e era
 	local blocoData = bloco(esquerda, "Data", 5)
 	self.lblData = textoTopo(blocoData, 1, f.display, 19, CREME)
@@ -222,7 +222,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		{ "carga", "carga", Emojis.cargas or "📦", "carga/dia" },
 		{ "contrato", "decisao", Emojis.contratos, "contrato" },
 	}
-	separador(direita, 10)
+	local sepRecursos = separador(direita, 10)
 	for i, r in listaRecursos do
 		local q, v, l = item(direita, "Recurso_" .. r[1], 20 + i, r[2], r[3], 19, 32)
 		l.Text = r[4]
@@ -256,14 +256,26 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 			r.quadro.Visible = r ~= self.recursos.contrato or self.estado ~= nil and self.estado.contrato ~= nil
 		end
 		blocoData.Visible = true
+		-- um separador só aparece se o bloco depois dele aparece
+		local function separadores()
+			sepData.Visible = blocoData.Visible
+			local algum = false
+			for _, r in self.recursos do
+				algum = algum or r.quadro.Visible
+			end
+			sepRecursos.Visible = algum
+		end
+		separadores()
 		for _, id in ORDEM_ESCONDER do
 			if largura() <= conteudo.AbsoluteSize.X then
 				return
 			end
 			self.recursos[id].quadro.Visible = false
+			separadores()
 		end
 		if largura() > conteudo.AbsoluteSize.X then
 			blocoData.Visible = false
+			separadores()
 		end
 	end
 	self._caber = function()

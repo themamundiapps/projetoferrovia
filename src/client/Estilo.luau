@@ -402,7 +402,7 @@ local function vestirBotao(b: TextButton, p: any, semTinta: boolean?)
 		-- o texto não entra nas pontas (rebites e arabescos)
 		-- (botão que cresce com o texto, como as abas, não encolhe o rótulo: senão o texto quebra a linha)
 		local cresce = b.AutomaticSize == Enum.AutomaticSize.X or b.AutomaticSize == Enum.AutomaticSize.XY
-		local folga = if cresce then 0 else math.max(0, cx * escala * 0.8 - l)
+		local folga = if cresce or p.redondo then 0 else math.max(0, cx * escala * 0.8 - l)
 		rotulo.Position = UDim2.fromOffset(folga, 0)
 		rotulo.Size = UDim2.new(1, -2 * folga, 1, 0)
 	end
@@ -605,7 +605,7 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		Text = nome,
-		FontFace = if proprio then f.number else f.label,
+		FontFace = if proprio and not (kit.coresMedalhao and kit.coresMedalhao.fonte == "label") then f.number else f.label,
 		TextSize = 13,
 		TextColor3 = if proprio then (coresMedalhao(kit)) else self.cClaro.ink,
 		ZIndex = 36,
