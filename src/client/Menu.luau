@@ -1082,12 +1082,12 @@ function Menu._abaJornal(self: Menu)
 			local foto = novo("Frame", {
 				Name = "Foto",
 				LayoutOrder = 12,
-				Size = UDim2.new(1, 0, 0, 0),
+				-- altura fixa (a proporção automática não funciona dentro da lista)
+				Size = UDim2.new(1, 0, 0, 240),
 				BackgroundColor3 = TINTA,
 				BorderSizePixel = 0,
 				ZIndex = 33,
 			}, folha)
-			novo("UIAspectRatioConstraint", { AspectRatio = 16 / 8 }, foto)
 			novo("ImageLabel", {
 				Position = UDim2.fromOffset(2, 2),
 				Size = UDim2.new(1, -4, 1, -4),
