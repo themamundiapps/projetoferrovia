@@ -1087,6 +1087,7 @@ if RunService:IsStudio() then
 	-- Uso (barra de comandos, contexto Server):
 	--   game.ServerStorage.FerroviaDebug:Invoke("dinheiro", 100000)
 	--   game.ServerStorage.FerroviaDebug:Invoke("zerar")
+	--   game.ServerStorage.FerroviaDebug:Invoke("era", "eletrico")
 	local debug = Instance.new("BindableFunction")
 	debug.Name = "FerroviaDebug"
 	debug.OnInvoke = function(comando: string, valor: any)
@@ -1155,6 +1156,13 @@ if RunService:IsStudio() then
 				end
 				enviarEstado(s)
 				return def and def.id
+			elseif comando == "era" then
+				-- pula para uma era ("vapor", "diesel", "eletrico", "alta") para ver o visual dela
+				for _, era in Economia.ERAS do
+					if era.id == valor then
+						e.era = era.id
+					end
+				end
 			elseif comando == "estado" then
 				return e
 			end
