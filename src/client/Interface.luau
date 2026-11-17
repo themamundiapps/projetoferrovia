@@ -116,25 +116,21 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	end
 	desviar()
 	GuiService:GetPropertyChangedSignal("TopbarInset"):Connect(desviar)
-	local function grupo(nome: string, direita: boolean): Frame
-		local g = novo("Frame", {
-			Name = nome,
-			AnchorPoint = Vector2.new(if direita then 1 else 0, 0),
-			Position = UDim2.fromScale(if direita then 1 else 0, 0),
-			Size = UDim2.fromScale(0, 1),
-			AutomaticSize = Enum.AutomaticSize.X,
-			BackgroundTransparency = 1,
-			ZIndex = 31,
-		}, conteudo)
-		novo("UIListLayout", {
-			SortOrder = Enum.SortOrder.LayoutOrder,
-			FillDirection = Enum.FillDirection.Horizontal,
-			VerticalAlignment = Enum.VerticalAlignment.Center,
-			Padding = UDim.new(0, 14),
-		}, g)
-		return g
-	end
-	local esquerda, direita = grupo("Esquerda", false), grupo("Direita", true)
+	-- todos os itens numa fileira só, espalhados por igual pela barra (sem buraco no meio)
+	local itens = novo("Frame", {
+		Name = "Itens",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, conteudo)
+	novo("UIListLayout", {
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		FillDirection = Enum.FillDirection.Horizontal,
+		VerticalAlignment = Enum.VerticalAlignment.Center,
+		HorizontalFlex = Enum.UIFlexAlignment.SpaceEvenly,
+		Padding = UDim.new(0, 10),
+	}, itens)
+	local esquerda, direita = itens, itens
 	local function bloco(pai: Instance, nome: string, ordem: number, largura: number?): Frame
 		local b = novo("Frame", {
 			Name = nome,
@@ -194,26 +190,26 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		est:icone(icone, emoji, fr, tamIcone or 26, 1)
 		local col = bloco(fr, "Valores", 2)
 		local valor = textoTopo(col, 1, f.number, tamValor, CREME)
-		local legenda = textoTopo(col, 2, f.label, 11, FRACO)
+		local legenda = textoTopo(col, 2, f.label, 12, FRACO)
 		return fr, valor, legenda
 	end
 
 	-- companhia: nome inteiro e título do presidente
 	local blocoNome = bloco(esquerda, "Companhia", 1)
-	self.lblNome = textoTopo(blocoNome, 1, f.display, 18, CREME)
+	self.lblNome = textoTopo(blocoNome, 1, f.display, 20, CREME)
 	self.lblNome.Name = "NomeCompanhia"
-	self.lblCargo = textoTopo(blocoNome, 2, f.label, 12, FRACO)
+	self.lblCargo = textoTopo(blocoNome, 2, f.label, 13, FRACO)
 	self.lblCargo.Name = "Titulo"
 	separador(esquerda, 2)
 	-- caixa e renda
-	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 22, 30)
+	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 24, 36)
 	self.lblDinheiro, self.lblRenda = lblDinheiro, lblRenda
 	self.lblDinheiro.Text = "…"
 	separador(esquerda, 4)
 	-- data do jogo (1 minuto = 1 dia) e era
 	local blocoData = bloco(esquerda, "Data", 5)
-	self.lblData = textoTopo(blocoData, 1, f.display, 17, CREME)
-	self.lblEra = textoTopo(blocoData, 2, f.label, 12, FRACO)
+	self.lblData = textoTopo(blocoData, 1, f.display, 19, CREME)
+	self.lblEra = textoTopo(blocoData, 2, f.label, 13, FRACO)
 	self.lblEra.Text = era.nome
 
 	-- recursos
@@ -225,15 +221,16 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		{ "carga", "carga", Emojis.cargas or "📦", "carga/dia" },
 		{ "contrato", "decisao", Emojis.contratos, "contrato" },
 	}
+	separador(direita, 10)
 	for i, r in listaRecursos do
-		local q, v, l = item(direita, "Recurso_" .. r[1], i, r[2], r[3], 16)
+		local q, v, l = item(direita, "Recurso_" .. r[1], 20 + i, r[2], r[3], 19, 32)
 		l.Text = r[4]
 		self.recursos[r[1]] = { quadro = q, valor = v, legenda = l }
 	end
-	separador(direita, 10)
+	separador(direita, 30)
 	-- nível: título fica junto do nome; aqui o número, a barra e o XP
-	local blocoNivel = bloco(direita, "Nivel", 11, 150)
-	self.lblNivel = textoTopo(blocoNivel, 1, f.label, 13, CREME)
+	local blocoNivel = bloco(direita, "Nivel", 31, 170)
+	self.lblNivel = textoTopo(blocoNivel, 1, f.label, 14, CREME)
 	self.lblNivel.Name = "Nivel"
 	local trilho = novo("Frame", { Name = "Trilho", LayoutOrder = 2, Size = UDim2.new(1, 0, 0, 18), BackgroundTransparency = 1, ZIndex = 31 }, blocoNivel)
 	self.cheioXp = est:barra(trilho, 1)
@@ -241,18 +238,28 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 
 	-- se a tela for estreita, a faixa de recursos perde itens (o menos importante primeiro)
 	local ORDEM_ESCONDER = { "carga", "passageiros", "trens", "satisfacao" }
+	local function largura(): number
+		local total, n = 0, 0
+		for _, filho in itens:GetChildren() do
+			if filho:IsA("GuiObject") and filho.Visible then
+				total += filho.AbsoluteSize.X
+				n += 1
+			end
+		end
+		return total + 12 * n
+	end
 	local function caber()
 		for _, r in self.recursos do
 			r.quadro.Visible = r ~= self.recursos.contrato or self.estado ~= nil and self.estado.contrato ~= nil
 		end
 		blocoData.Visible = true
 		for _, id in ORDEM_ESCONDER do
-			if esquerda.AbsoluteSize.X + direita.AbsoluteSize.X + 24 <= conteudo.AbsoluteSize.X then
+			if largura() <= conteudo.AbsoluteSize.X then
 				return
 			end
 			self.recursos[id].quadro.Visible = false
 		end
-		if esquerda.AbsoluteSize.X + direita.AbsoluteSize.X + 24 > conteudo.AbsoluteSize.X then
+		if largura() > conteudo.AbsoluteSize.X then
 			blocoData.Visible = false
 		end
 	end
