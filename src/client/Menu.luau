@@ -1093,7 +1093,7 @@ function Menu._abaJornal(self: Menu)
 				Size = UDim2.new(1, -4, 1, -4),
 				BackgroundTransparency = 1,
 				Image = img,
-				ImageColor3 = Color3.fromRGB(228, 208, 172), -- tom sépia de foto antiga
+				ImageColor3 = Color3.fromRGB(226, 196, 150), -- tom sépia de foto antiga
 				ScaleType = Enum.ScaleType.Crop,
 				ZIndex = 34,
 			}, foto)
