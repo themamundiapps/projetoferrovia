@@ -610,7 +610,13 @@ function Estilo.botaoRedondo(self: Estilo, txt: string, pai: Instance, ordem: nu
 	local b = self:botao("discreto", txt, pai, ordem)
 	local kit = Assets.KitUI[self.era.kit or ""]
 	local troca = trocarPeca[b]
-	if troca and kit and kit.botao_redondo and kit.botao_redondo.id ~= "rbxassetid://0" then
+	local med = peca(kit, "medalhao")
+	if troca and med then
+		-- mesmo medalhão da barra de baixo: aro de latão, miolo esmaltado e símbolo dourado
+		troca({ id = med.id, slice = Rect.new(1, 1, 683, 683), redondo = true })
+		b.TextColor3 = NOME_ATIVO
+		b.FontFace = Font.new(self.era.fontes.display.Family, Enum.FontWeight.Bold)
+	elseif troca and kit and kit.botao_redondo and kit.botao_redondo.id ~= "rbxassetid://0" then
 		troca(kit.botao_redondo)
 	end
 	return b

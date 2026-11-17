@@ -115,7 +115,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	for i, rotulo in rotulos do
 		local b = est:botaoRedondo(rotulo, zoom, i)
 		b.Name = if i == 1 then "ZoomMais" else "ZoomMenos"
-		b.Size = UDim2.fromOffset(46, 46)
+		b.Size = UDim2.fromOffset(52, 52)
 		b.BackgroundColor3 = est.c.panel
 		b.TextSize = 24
 		b.Activated:Connect(function()
