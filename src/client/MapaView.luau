@@ -942,13 +942,16 @@ function MapaView._layout(self: MapaView)
 		local mostrarPonto = e.terminal or z >= (ZOOM_PONTO[e.porte] or 0)
 		e.ponto.Visible = mostrarPonto
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
-		e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
 		e.rotulo.Visible = mostrarPonto and self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
 		local placa = e.placa
 		if placa then
+			-- a placa começa logo depois da bolinha e o nome vai por dentro dela
 			placa.Visible = e.rotulo.Visible
-			placa.Position = UDim2.fromOffset(p.X + tam / 2 + 5 - PLACA_FOLGA, p.Y)
+			placa.Position = UDim2.fromOffset(p.X + tam / 2 + 3, p.Y)
 			placa.Size = UDim2.fromOffset(e.rotulo.TextBounds.X + 2 * PLACA_FOLGA, PLACA_ALTURA)
+			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 3 + PLACA_FOLGA, p.Y)
+		else
+			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
 		end
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)

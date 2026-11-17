@@ -850,8 +850,8 @@ function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Insta
 		Rotation = if dir then 90 else -90,
 		BackgroundTransparency = 1,
 		Text = texto,
-		FontFace = self.f.label,
-		TextSize = 15,
+		FontFace = self.f.display,
+		TextSize = 17,
 		TextColor3 = Estilo.CREME,
 		ZIndex = 30,
 	}, b)

@@ -67,7 +67,8 @@ tela.Parent = playerGui
 -- o mapa ocupa a tela inteira, mas nada clicável fica embaixo dos botões do Roblox.
 local telaUI = Instance.new("ScreenGui")
 telaUI.Name = "FerroviaUI"
-telaUI.ScreenInsets = Enum.ScreenInsets.CoreUISafeInsets
+-- a barra de cima vai até o topo da tela; ela mesma desvia dos botões do Roblox (GuiService.TopbarInset)
+telaUI.ScreenInsets = Enum.ScreenInsets.None
 telaUI.DisplayOrder = 1
 telaUI.ResetOnSpawn = false
 telaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -242,12 +243,21 @@ local function montar(eraId: string)
 		v.ZIndex = 100
 		v.Interactable = false
 		v.Parent = tela
+		-- segunda camada da mesma imagem: bordas mais escuras sem outra peça
+		local dupla = v:Clone()
+		dupla.Name = "Dupla"
+		dupla.Size = UDim2.fromScale(1, 1)
+		dupla.Parent = v
 		vinheta = v
 	end
 	local kitVinheta = (Assets.KitUI :: any)[era.kit or ""]
 	local idVinheta = kitVinheta and kitVinheta.vinheta and kitVinheta.vinheta.id
 	local imgVinheta = vinheta :: ImageLabel
 	imgVinheta.Image = if idVinheta and idVinheta ~= "rbxassetid://0" then idVinheta else ""
+	local dupla = imgVinheta:FindFirstChild("Dupla") :: ImageLabel?
+	if dupla then
+		dupla.Image = imgVinheta.Image
+	end
 	ui = Interface.new(telaUI, era, DadosBrasil)
 	ui.eras = Theme.PorId
 	menu = Menu.new(telaUI, era, DadosBrasil)

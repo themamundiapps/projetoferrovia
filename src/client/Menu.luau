@@ -221,6 +221,10 @@ function Menu.posicionarAbaixoDe(self: Menu, y: number)
 end
 
 function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
+	if aba ~= self.aba then
+		-- aba nova começa do topo (o redesenho guarda a rolagem só dentro da mesma aba)
+		self.rolagem.CanvasPosition = Vector2.zero
+	end
 	self.aba = aba
 	if aba then
 		self.ultimaAba = aba
@@ -1073,7 +1077,7 @@ function Menu._abaTarifas(self: Menu)
 	local function atualizarCusto()
 		local custo = Tarifas.custoServicos(self.estado.tarifas, era) * Economia.manutencaoTrens(self.estado, dados)
 		lCusto.Text = if custo > 0
-			then `Serviço de bordo custa {Economia.formatar(custo, simbolo)} por segundo.`
+			then `Serviço de bordo custa {Economia.formatar(custo, simbolo, true)} por segundo.`
 			else "Nenhum serviço de bordo contratado."
 	end
 	atualizarCusto()
@@ -1154,7 +1158,7 @@ function Menu._abaTarifas(self: Menu)
 		end
 		table.insert(efeitos, `satisfação +{math.round(sv.sat * 100)}`)
 		txt("corpo", table.concat(efeitos, " · "), 3)
-		txt("fraco", `Custo: {Economia.formatar(sv.custo * manutTrens, simbolo)}/s ({pct(sv.custo)} da manutenção dos trens)`, 4)
+		txt("fraco", `Custo: {Economia.formatar(sv.custo * manutTrens, simbolo, true)}/s ({pct(sv.custo)} da manutenção dos trens)`, 4)
 		local b = est:botao(if ativo then "secundario" else "principal", if ativo then "Dispensar" else "Contratar", cartao, 5)
 		b.Name = "BtnServico"
 		b.Size = UDim2.new(1, 0, 0, 36)
