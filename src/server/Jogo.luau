@@ -1088,10 +1088,10 @@ if RunService:IsStudio() then
 	--   game.ServerStorage.FerroviaDebug:Invoke("dinheiro", 100000)
 	--   game.ServerStorage.FerroviaDebug:Invoke("zerar")
 	--   game.ServerStorage.FerroviaDebug:Invoke("era", "eletrico")
-	local debug = Instance.new("BindableFunction")
-	debug.Name = "FerroviaDebug"
-	debug.OnInvoke = function(comando: string, valor: any)
-		for _, s in sessoes do
+	-- Também há o painel de debug do cliente (src/client/Debug.luau), que fala pelo RemoteFunction
+	-- Remotes.Debug: ele só é criado aqui dentro, então no jogo publicado nem existe.
+	local function executar(s: Sessao, comando: string, valor: any): any
+		do
 			local e = s.mapas[s.mapaAtual]
 			if comando == "dinheiro" then
 				e.dinheiro += tonumber(valor) or 0
@@ -1163,6 +1163,23 @@ if RunService:IsStudio() then
 						e.era = era.id
 					end
 				end
+			elseif comando == "tempo" then
+				-- adianta o relógio em `valor` minutos: lucro, pesquisas, contrato e efeitos do Jornal/decisões
+				local seg = (tonumber(valor) or 0) * 60
+				local b = Economia.balanco(e, MAPAS[s.mapaAtual])
+				e.dinheiro += math.max(0, b.lucro) * seg
+				for id, fim in e.projetos do
+					e.projetos[id] = fim - seg
+				end
+				if e.contrato then
+					e.contrato.decorrido = math.min(e.contrato.prazo, e.contrato.decorrido + seg)
+				end
+				for _, ev in ((e.jornal or {}) :: any).ativos or {} do
+					ev.fim -= seg
+				end
+				for _, ev in e.decisoes.efeitos do
+					ev.fim -= seg
+				end
 			elseif comando == "estado" then
 				return e
 			end
@@ -1170,7 +1187,27 @@ if RunService:IsStudio() then
 		end
 		return "ok"
 	end
+	local debug = Instance.new("BindableFunction")
+	debug.Name = "FerroviaDebug"
+	debug.OnInvoke = function(comando: string, valor: any)
+		local r: any = "ok"
+		for _, s in sessoes do
+			r = executar(s, comando, valor)
+		end
+		return r
+	end
 	debug.Parent = ServerStorage
+	local remoteDebug = Instance.new("RemoteFunction")
+	remoteDebug.Name = "Debug"
+	remoteDebug.OnServerInvoke = function(jogador: Player, comando: any, valor: any)
+		local s = sessoes[jogador]
+		if not RunService:IsStudio() or not s or not s.carregado or type(comando) ~= "string" or comando == "estado" then
+			return "indisponível"
+		end
+		local ok, r = pcall(executar, s, comando, valor)
+		return if ok then (if type(r) == "table" then "ok" else tostring(r or "ok")) else "erro: " .. tostring(r)
+	end
+	remoteDebug.Parent = pastaRemotes
 end
 
 -- ---------------------------------------------------------------- renda e autosave

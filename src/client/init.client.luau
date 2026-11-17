@@ -35,6 +35,16 @@ end
 local jogador = Players.LocalPlayer
 local playerGui = jogador:WaitForChild("PlayerGui")
 
+-- painel de debug (temporário): só existe no Studio, quando o servidor cria Remotes.Debug
+if game:GetService("RunService"):IsStudio() then
+	task.spawn(function()
+		local remoteDebug = Remotes:WaitForChild("Debug", 15)
+		if remoteDebug and remoteDebug:IsA("RemoteFunction") then
+			require(script:WaitForChild("Debug")).iniciar(remoteDebug, playerGui)
+		end
+	end)
+end
+
 -- O jogo é só interface: câmera parada e controles do personagem desligados.
 local camera = workspace.CurrentCamera
 if camera then
