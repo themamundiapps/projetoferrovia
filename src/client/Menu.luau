@@ -11,6 +11,7 @@ local Emojis = require(Shared:WaitForChild("Emojis"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
+local Assets = require(Shared:WaitForChild("Assets"))
 local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
@@ -217,7 +218,9 @@ function Menu.posicionarAbaixoDe(self: Menu, y: number)
 	-- embaixo, para acima da barra do menu (que cresce com os medalhões)
 	local barra = self.barra
 	local alturaBarra = if barra then barra.AbsoluteSize.Y else 60
-	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10 + 2 * b) - (alturaBarra + 14 + 3 * b) - 10)
+	-- o Jornal abre como uma página larga; as outras abas, na largura normal
+	local largura = if self.aba == "jornal" then 560 else 330
+	self.painel.Size = UDim2.new(0, largura, 1, -(y + 10 + 2 * b) - (alturaBarra + 14 + 3 * b) - 10)
 end
 
 function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
@@ -228,12 +231,9 @@ function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 	self.aba = aba
 	if aba then
 		self.ultimaAba = aba
-		local novoLado = lado or "esq"
-		if novoLado ~= self.lado then
-			self.lado = novoLado
-			if self._topoY then
-				self:posicionarAbaixoDe(self._topoY)
-			end
+		self.lado = lado or "esq"
+		if self._topoY then
+			self:posicionarAbaixoDe(self._topoY)
 		end
 	end
 	if aba == "projetos" then
@@ -861,52 +861,208 @@ local function ha(segundos: number): string
 	return `há {math.floor(h / 24)} dia(s)`
 end
 
+-- Foto da notícia: a cidade do alvo (ou uma da rede ligada a ele); sem cidade, a maior da rede.
+local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
+	local function imagem(id: string): string?
+		local e = dados.estacoes[id]
+		return (Assets.Cidades :: any)[id] or (e and (Assets.Paisagens :: any)[e.paisagem or ""])
+	end
+	local candidatas: { string } = {}
+	if ev.tipo == "cidade" and ev.alvo and dados.estacoes[ev.alvo] then
+		table.insert(candidatas, ev.alvo)
+	elseif ev.tipo == "linha" then
+		for _, linha in dados.linhas do
+			if linha.id == ev.alvo then
+				for _, t in linha.trechos do
+					table.insert(candidatas, t.para)
+					table.insert(candidatas, t.de)
+				end
+			end
+		end
+	else
+		for id, e in dados.estacoes do
+			local combina = (ev.tipo == "carga" and e.produz == ev.alvo) or (ev.tipo == "regiao" and e.regiao == ev.alvo)
+				or (ev.tipo ~= "carga" and ev.tipo ~= "regiao")
+			if combina and Economia.estacaoNaRede(estado, dados, id) then
+				table.insert(candidatas, id)
+			end
+		end
+	end
+	-- a maior cidade com imagem própria primeiro
+	table.sort(candidatas, function(a, b)
+		local pa, pb = dados.estacoes[a].porte, dados.estacoes[b].porte
+		local ia, ib = (Assets.Cidades :: any)[a] ~= nil, (Assets.Cidades :: any)[b] ~= nil
+		if ia ~= ib then
+			return ia
+		end
+		return pa > pb
+	end)
+	for _, id in candidatas do
+		local img = imagem(id)
+		if img then
+			return img, dados.estacoes[id].nome
+		end
+	end
+	return (Assets.Cidades :: any).rio, dados.estacoes.rio and dados.estacoes.rio.nome
+end
+
+local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = "grátis" }
+local MESES_JORNAL = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
+local PAPEL = Color3.fromRGB(238, 228, 204) -- papel de jornal
+local TINTA = Color3.fromRGB(38, 30, 22)
+local TINTA_FRACA = Color3.fromRGB(96, 82, 64)
+
+-- Aba Jornal: uma página de jornal da época (manchete com foto, outras notícias em colunas,
+-- notas da diretoria, movimento da companhia e edições anteriores).
 function Menu._abaJornal(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	local nomeJornal = Idioma.t(Jornal.NOMES[if estado then estado.era else "vapor"] or Jornal.NOMES.vapor)
-	est:titulo(`{Emojis.jornal} {nomeJornal}`, r, 1)
-	est:texto("fraco", "Notícias da época mudam a economia por alguns minutos. As ruins que têm conserto podem ser resolvidas pagando.", r, 2)
+	local eraId = if estado then estado.era else "vapor"
+	local nomeJornal = Idioma.t(Jornal.NOMES[eraId] or Jornal.NOMES.vapor)
+	local f = est.f
+	local gotica = Font.new("rbxasset://fonts/families/GrenzeGotisch.json", Enum.FontWeight.Bold)
+	local italico = Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic)
+
+	local folha = novo("Frame", {
+		Name = "Folha",
+		LayoutOrder = 1,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundColor3 = PAPEL,
+		BorderSizePixel = 0,
+		ZIndex = 32,
+	}, r)
+	novo("UIStroke", { Color = TINTA_FRACA, Thickness = 1 }, folha)
+	novo("UIPadding", {
+		PaddingLeft = UDim.new(0, 16), PaddingRight = UDim.new(0, 16),
+		PaddingTop = UDim.new(0, 12), PaddingBottom = UDim.new(0, 16),
+	}, folha)
+	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 6) }, folha)
+
+	local function t(pai: Instance, ordem: number, txt: string, fonte: Font, tam: number, cor: Color3?, centro: boolean?): TextLabel
+		return novo("TextLabel", {
+			LayoutOrder = ordem,
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			Text = txt,
+			RichText = true,
+			TextWrapped = true,
+			FontFace = fonte,
+			TextSize = tam,
+			TextColor3 = cor or TINTA,
+			TextXAlignment = if centro then Enum.TextXAlignment.Center else Enum.TextXAlignment.Left,
+			ZIndex = 33,
+		}, pai)
+	end
+	local function fio(pai: Instance, ordem: number, grossura: number, duplo: boolean?)
+		local fr = novo("Frame", {
+			LayoutOrder = ordem,
+			Size = UDim2.new(1, 0, 0, if duplo then grossura + 4 else grossura),
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, pai)
+		novo("Frame", { Size = UDim2.new(1, 0, 0, grossura), BackgroundColor3 = TINTA, BorderSizePixel = 0, ZIndex = 33 }, fr)
+		if duplo then
+			novo("Frame", { Position = UDim2.new(0, 0, 1, -1), Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = TINTA, BorderSizePixel = 0, ZIndex = 33 }, fr)
+		end
+	end
+	local function colunas(pai: Instance, ordem: number): Frame
+		local fr = novo("Frame", {
+			LayoutOrder = ordem,
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, pai)
+		novo("UIGridLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			CellSize = UDim2.new(0.5, -8, 0, 0),
+			CellPadding = UDim2.fromOffset(16, 10),
+			FillDirectionMaxCells = 2,
+		}, fr)
+		return fr
+	end
+	-- célula de coluna: o grid não cresce com o conteúdo, então cada coluna mede o próprio texto
+	local function materia(pai: Instance, ordem: number): Frame
+		local fr = novo("Frame", {
+			LayoutOrder = ordem,
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, pai)
+		local lista = novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 3) }, fr)
+		local function medir()
+			local grid = pai:FindFirstChildOfClass("UIGridLayout")
+			if not grid then
+				return
+			end
+			local maior = 0
+			for _, irma in pai:GetChildren() do
+				local l = irma:FindFirstChildOfClass("UIListLayout")
+				if irma:IsA("Frame") and l then
+					maior = math.max(maior, l.AbsoluteContentSize.Y)
+				end
+			end
+			grid.CellSize = UDim2.new(0.5, -8, 0, maior)
+		end
+		lista:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(medir)
+		task.defer(medir)
+		return fr
+	end
+
+	-- cabeçalho
+	t(folha, 1, nomeJornal, gotica, 40, TINTA, true)
+	fio(folha, 2, 2, true)
+	local linhaData = novo("Frame", { LayoutOrder = 3, Size = UDim2.new(1, 0, 0, 16), BackgroundTransparency = 1, ZIndex = 33 }, folha)
+	local edicoes = if estado then (estado.jornal or {}).edicoes or {} else {}
+	local dia = math.floor(workspace:GetServerTimeNow() / Metas.SEGUNDOS_POR_DIA)
+	local data = if estado
+		then `{dia % 30 + 1} de {MESES_JORNAL[(dia // 30) % 12 + 1]} de {Economia.anoAtual(estado, dados)}`
+		else ""
+	local function linha(txt: string, alinh: Enum.TextXAlignment)
+		novo("TextLabel", {
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Text = txt,
+			FontFace = f.label,
+			TextSize = 11,
+			TextColor3 = TINTA,
+			TextXAlignment = alinh,
+			ZIndex = 33,
+		}, linhaData)
+	end
+	linha("Rio de Janeiro", Enum.TextXAlignment.Left)
+	linha(data, Enum.TextXAlignment.Center)
+	linha(`Nº {#edicoes + 1} · {PRECO_JORNAL[eraId] or ""}`, Enum.TextXAlignment.Right)
+	fio(folha, 4, 1)
 	if not estado then
 		return
 	end
 	local simbolo = dados.simbolo
 	local c = est.c
 	local ativos = Economia.eventosAtivos(estado)
-	if #ativos == 0 then
-		est:texto("corpo", "Nada de extraordinário nas manchetes de hoje.", r, 3)
-	end
-	for i, ev in ativos do
+
+	-- relógio e botão de resolver de uma notícia
+	local function prazo(pai: Instance, ordem: number, ev: any)
 		local def = Jornal.acharEvento(ev.id)
-		local titulo, texto = Jornal.textos(ev, dados, Idioma.atual)
-		local bom = ev.mult > 1 and ev.tipo ~= "manutencao"
-		local cartao, txt = novoCartao(est, r, `Evento_{ev.id}`, 10 + i, true)
-		local l = txt("subtitulo", titulo, 1)
-		l.TextColor3 = if bom then c.positive else c.negative
-		txt("fraco", texto, 2)
-		local lEfeito = txt("corpo", `<b>{efeitoEvento(ev, dados)}</b>`, 3)
-		lEfeito.TextColor3 = if bom then c.positive else c.negative
-		local cheio = novaBarra(est, cartao, 4)
-		local lTempo = txt("fraco", "", 5)
+		local lTempo = t(pai, ordem, "", italico, 11, TINTA_FRACA)
 		local bResolver: TextButton? = nil
 		if def and def.resolvivel then
-			local b = est:botao("principal", "", cartao, 6)
+			local b = est:botao("principal", "", pai, ordem + 1)
 			b.Name = "BtnResolver"
-			b.ZIndex = 33
-			b.Size = UDim2.new(1, 0, 0, 38)
+			b.ZIndex = 34
+			b.Size = UDim2.new(1, 0, 0, 34)
+			b.TextSize = 14
 			b.Activated:Connect(function()
 				self.aoAgir:Fire("resolverEvento", { id = ev.id })
 			end)
 			bResolver = b
 		end
 		local function atualizar()
-			local agora = Economia.relogio()
-			local total = math.max(1, ev.fim - ev.inicio)
-			local resta = math.max(0, ev.fim - agora)
-			cheio.Size = UDim2.fromScale(math.clamp(resta / total, 0, 1), 1)
-			lTempo.Text = `{Emojis.relogio} termina em {relogio(resta)}`
+			local resta = math.max(0, ev.fim - Economia.relogio())
+			lTempo.Text = `{Emojis.relogio} vale por mais {relogio(resta)}`
 			if bResolver then
 				local custo = Jornal.custoResolver(self.estado.renda or 0)
-				bResolver.Text = `{Emojis.construir} Resolver agora · {Economia.formatar(custo, simbolo)}`
+				bResolver.Text = `Resolver agora · {Economia.formatar(custo, simbolo)}`
 				est:habilitar(bResolver, self.estado.dinheiro >= custo)
 			end
 		end
@@ -914,35 +1070,109 @@ function Menu._abaJornal(self: Menu)
 		table.insert(self.vivos, atualizar)
 	end
 
-	-- efeitos em vigor das escolhas feitas nas decisões
-	local efeitos = Economia.efeitosDecisoes(estado)
-	if #efeitos > 0 then
-		est:divisor(r, 30)
-		est:texto("subtitulo", `{Emojis.contratos} Efeitos das suas decisões`, r, 31)
-		for i, ev in efeitos do
-			local def = Decisoes.acharDecisao(ev.id)
-			local nome = if def then (Decisoes.textos(def, ev.tipo, ev.alvo, dados, Idioma.atual)) else ev.id
-			local bom = (ev.mult > 1) ~= (ev.tipo == "manutencao")
-			local l = est:texto("corpo", "", r, 31 + i)
-			l.TextColor3 = if bom then est.c.positive else est.c.negative
-			local function atualizar()
-				l.Text = `<b>{efeitoEvento(ev, dados)}</b> · {nome} · {relogio(math.max(0, ev.fim - Economia.relogio()))}`
+	-- manchete: a notícia mais nova, com foto
+	local principal = ativos[#ativos]
+	if principal then
+		local titulo, texto = Jornal.textos(principal, dados, Idioma.atual)
+		local bom = principal.mult > 1 and principal.tipo ~= "manutencao"
+		t(folha, 10, Idioma.maiusculas(titulo), f.display, 24, TINTA, true)
+		t(folha, 11, efeitoEvento(principal, dados), italico, 14, if bom then c.positive else c.negative, true)
+		local img, cidade = fotoEvento(principal, estado, dados)
+		if img then
+			local foto = novo("Frame", {
+				Name = "Foto",
+				LayoutOrder = 12,
+				Size = UDim2.new(1, 0, 0, 0),
+				BackgroundColor3 = TINTA,
+				BorderSizePixel = 0,
+				ZIndex = 33,
+			}, folha)
+			novo("UIAspectRatioConstraint", { AspectRatio = 16 / 8 }, foto)
+			novo("ImageLabel", {
+				Position = UDim2.fromOffset(2, 2),
+				Size = UDim2.new(1, -4, 1, -4),
+				BackgroundTransparency = 1,
+				Image = img,
+				ImageColor3 = Color3.fromRGB(228, 208, 172), -- tom sépia de foto antiga
+				ScaleType = Enum.ScaleType.Crop,
+				ZIndex = 34,
+			}, foto)
+			if cidade then
+				t(folha, 13, `Vista de {cidade}. Gravura da redação.`, italico, 11, TINTA_FRACA, true)
 			end
-			atualizar()
-			table.insert(self.vivos, atualizar)
+		end
+		t(folha, 14, texto, f.body, 14, TINTA)
+		prazo(folha, 15, principal)
+	else
+		t(folha, 10, "CALMARIA NOS TRILHOS", f.display, 24, TINTA, true)
+		t(folha, 11, "Nada de extraordinário nas notícias de hoje. Os trens correm no horário e o comércio segue seu curso.", italico, 14, TINTA_FRACA, true)
+	end
+
+	-- outras notícias, em duas colunas
+	if #ativos > 1 then
+		fio(folha, 20, 1)
+		local grade = colunas(folha, 21)
+		for i = #ativos - 1, 1, -1 do
+			local ev = ativos[i]
+			local titulo, texto = Jornal.textos(ev, dados, Idioma.atual)
+			local bom = ev.mult > 1 and ev.tipo ~= "manutencao"
+			local m = materia(grade, #ativos - i)
+			t(m, 1, titulo, f.display, 15, TINTA)
+			t(m, 2, efeitoEvento(ev, dados), italico, 12, if bom then c.positive else c.negative)
+			t(m, 3, texto, f.body, 12, TINTA)
+			prazo(m, 4, ev)
 		end
 	end
 
+	-- colunas fixas: notas da diretoria (decisões) e movimento da companhia
+	fio(folha, 30, 1)
+	local fixas = colunas(folha, 31)
+	local mov = materia(fixas, 1)
+	t(mov, 1, "Movimento da Companhia", f.display, 15, TINTA)
+	local lMov = t(mov, 2, "", f.body, 12, TINTA)
+	local function atualizarMovimento()
+		local b = Economia.balanco(self.estado, dados)
+		local carga = 0
+		for _, v in Economia.cargaPorDia(self.estado, dados, b) do
+			carga += v
+		end
+		local nome = self.estado.nomeCompanhia or Idioma.T("companhia_padrao")
+		lMov.Text = `A {nome} levou ontem <b>{numero(Economia.passageirosPorDia(b))}</b> passageiros`
+			.. (if carga > 0 then ` e <b>{numero(carga)}</b> unidades de carga` else "")
+			.. `. Em caixa, {Economia.formatar(self.estado.dinheiro, simbolo)}; a satisfação dos viajantes está em {math.round(b.satisfacao * 100)}%.`
+	end
+	atualizarMovimento()
+	table.insert(self.vivos, atualizarMovimento)
+	local notas = materia(fixas, 2)
+	t(notas, 1, "Notas da Diretoria", f.display, 15, TINTA)
+	local efeitos = Economia.efeitosDecisoes(estado)
+	if #efeitos == 0 then
+		t(notas, 2, "A diretoria não tem comunicados em vigor.", italico, 12, TINTA_FRACA)
+	end
+	for i, ev in efeitos do
+		local def = Decisoes.acharDecisao(ev.id)
+		local nome = if def then (Decisoes.textos(def, ev.tipo, ev.alvo, dados, Idioma.atual)) else ev.id
+		local bom = (ev.mult > 1) ~= (ev.tipo == "manutencao")
+		local l = t(notas, 1 + i, "", f.body, 12, if bom then c.positive else c.negative)
+		local function atualizar()
+			l.Text = `<b>{efeitoEvento(ev, dados)}</b> · {nome} · {relogio(math.max(0, ev.fim - Economia.relogio()))}`
+		end
+		atualizar()
+		table.insert(self.vivos, atualizar)
+	end
+
 	-- edições anteriores
-	local edicoes = (estado.jornal or {}).edicoes or {}
 	if #edicoes > 0 then
-		est:divisor(r, 40)
-		est:texto("subtitulo", "Edições anteriores", r, 41)
+		fio(folha, 40, 1)
+		t(folha, 41, "Edições anteriores", f.display, 14, TINTA, true)
+		local grade = colunas(folha, 42)
 		local agora = Economia.relogio()
 		for i, ed in edicoes do
 			local ev = { id = ed.id, alvo = ed.alvo, tipo = ((Jornal.acharEvento(ed.id) :: any) or {}).tipo or "" }
 			local titulo = Jornal.textos(ev, dados, Idioma.atual)
-			est:texto("fraco", `{titulo} · {ha(agora - ed.em)}`, r, 41 + i)
+			local m = materia(grade, i)
+			t(m, 1, `<b>{titulo}</b>`, f.body, 12, TINTA)
+			t(m, 2, ha(agora - ed.em), italico, 11, TINTA_FRACA)
 		end
 	end
 end
