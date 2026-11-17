@@ -11,6 +11,10 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
+local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
+
+-- placa (cartucho) atrás do nome das capitais e metrópoles
+local PLACA_ALTURA, PLACA_FOLGA = 26, 15
 
 local MapaView = {}
 MapaView.__index = MapaView
@@ -40,6 +44,7 @@ type Estacao = {
 	nivel: number,
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
+	placa: ImageLabel?, -- cartucho atrás do nome (capitais e metrópoles, com o kit clássico)
 	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
 	terminal: boolean, -- ponta de alguma linha: aparece mesmo no zoom mais longe
 }
@@ -433,11 +438,31 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			TextColor3 = cores.ink,
 			ZIndex = Z.rotulo,
 		}, self.conteudo) :: TextLabel
-		novo("UIStroke", {
+		local contorno = novo("UIStroke", {
 			Color = cores.panel,
 			Thickness = 2,
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual,
-		}, rotulo)
+		}, rotulo) :: UIStroke
+
+		-- capitais e metrópoles: o nome vai numa placa de pergaminho (só com a peça do kit)
+		local placa: ImageLabel? = nil
+		local kit = (Assets.KitUI :: any)[self.era.kit or ""]
+		local pc = kit and kit.placa_cidade
+		if e.porte >= 4 and pc and pc.id ~= "rbxassetid://0" then
+			placa = novo("ImageLabel", {
+				Name = id .. "_placa",
+				AnchorPoint = Vector2.new(0, 0.5),
+				Size = UDim2.fromOffset(0, PLACA_ALTURA),
+				BackgroundTransparency = 1,
+				Image = pc.id,
+				ScaleType = Enum.ScaleType.Slice,
+				SliceCenter = pc.slice,
+				SliceScale = PLACA_ALTURA / pc.altura,
+				ZIndex = Z.rotulo,
+			}, self.conteudo) :: ImageLabel
+			rotulo.ZIndex = Z.rotulo + 1
+			contorno.Enabled = false
+		end
 
 		local selo: TextLabel? = nil
 		if e.produz then
@@ -466,6 +491,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			nivel = 0,
 			rotulo = rotulo,
 			selo = selo,
+			placa = placa,
 			apagada = false,
 			terminal = terminais[id] == true,
 		})
@@ -529,6 +555,9 @@ function MapaView.definirSituacao(self: MapaView, situacoes: { [string]: string 
 			local contorno = e.rotulo:FindFirstChildOfClass("UIStroke")
 			if contorno then
 				contorno.Transparency = if apagada then 0.5 else 0
+			end
+			if e.placa then
+				e.placa.ImageTransparency = if apagada then 0.45 else 0
 			end
 		end
 	end
@@ -915,6 +944,12 @@ function MapaView._layout(self: MapaView)
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
 		e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
 		e.rotulo.Visible = mostrarPonto and self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
+		local placa = e.placa
+		if placa then
+			placa.Visible = e.rotulo.Visible
+			placa.Position = UDim2.fromOffset(p.X + tam / 2 + 5 - PLACA_FOLGA, p.Y)
+			placa.Size = UDim2.fromOffset(e.rotulo.TextBounds.X + 2 * PLACA_FOLGA, PLACA_ALTURA)
+		end
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)
 			e.selo.Visible = z >= 1.2

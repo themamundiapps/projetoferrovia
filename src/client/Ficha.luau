@@ -50,7 +50,7 @@ function Ficha.new(tela: ScreenGui, era: any, dados: any): Ficha
 	local painel = est:caixa({
 		Name = "Ficha",
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -16, 0, 16),
+		Position = UDim2.new(1, -Estilo.MARGEM_LATERAL, 0, Estilo.ALTURA_TOPO + 12),
 		Size = UDim2.fromOffset(LARGURA, 300),
 		Visible = false,
 		ClipsDescendants = true,
@@ -90,7 +90,7 @@ function Ficha.new(tela: ScreenGui, era: any, dados: any): Ficha
 
 	-- o painel tem a altura do conteúdo, até o limite da tela (acima dos botões de zoom); daí em diante, rola
 	local function ajustarAltura()
-		local limite = math.max(200, tela.AbsoluteSize.Y - 16 - 132)
+		local limite = math.max(200, tela.AbsoluteSize.Y - (Estilo.ALTURA_TOPO + 12) - 132)
 		painel.Size = UDim2.fromOffset(LARGURA, math.min(lista.AbsoluteContentSize.Y + 2 * MARGEM, limite))
 	end
 	self.conexoes = {

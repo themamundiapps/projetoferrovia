@@ -125,10 +125,48 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 		end)
 	end
 
+	-- ---------------------------------------------------- gavetas (puxadores nas bordas da tela)
+	-- esquerda: a companhia (ou a última aba aberta); direita: as linhas, com o painel do lado direito
+	self.lado = "esq"
+	self.ultimaAba = "companhia"
+	local gavetaEsq = est:abaLateral("Companhia", "esq", tela)
+	local gavetaDir = est:abaLateral("Linhas", "dir", tela)
+	table.insert(self.instancias, gavetaEsq)
+	table.insert(self.instancias, gavetaDir)
+	self.gavetas = { esq = gavetaEsq, dir = gavetaDir }
+	gavetaEsq.Activated:Connect(function()
+		if self.aba and self.lado == "esq" then
+			self:abrirAba(nil)
+		else
+			self:abrirAba(if self.ultimaAba == "linhas" or self.ultimaAba == "metas" then "companhia" else self.ultimaAba, "esq")
+		end
+	end)
+	gavetaDir.Activated:Connect(function()
+		if self.aba and self.lado == "dir" then
+			self:abrirAba(nil)
+		else
+			self:abrirAba("linhas", "dir")
+		end
+	end)
+	-- a ficha da cidade e a concessão abrem à direita: o painel da direita sai da frente
+	local function vigiar(filho: Instance)
+		if (filho.Name == "Ficha" or filho.Name == "Concessao") and filho:IsA("GuiObject") then
+			filho:GetPropertyChangedSignal("Visible"):Connect(function()
+				if filho.Visible and self.aba and self.lado == "dir" then
+					self:abrirAba(nil)
+				end
+			end)
+		end
+	end
+	for _, filho in tela:GetChildren() do
+		vigiar(filho)
+	end
+	self._vigiaTela = tela.ChildAdded:Connect(vigiar)
+
 	-- ---------------------------------------------------- painel lateral (conteúdo da aba)
 	local painel = est:caixa({
 		Name = "PainelMenu",
-		Position = UDim2.fromOffset(16, 150),
+		Position = UDim2.fromOffset(Estilo.MARGEM_LATERAL, 150),
 		Size = UDim2.new(0, 330, 1, -240),
 		Visible = false,
 	}, tela)
@@ -157,6 +195,9 @@ function Menu.destruir(self: Menu)
 		inst:Destroy()
 	end
 	self.aoAgir:Destroy()
+	if self._vigiaTela then
+		self._vigiaTela:Disconnect()
+	end
 	self.aoFocarLinha:Destroy()
 	self.aoAjuste:Destroy()
 	self.aoZoom:Destroy()
@@ -165,17 +206,32 @@ end
 
 -- Coloca o painel lateral logo abaixo de uma posição Y da tela (abaixo do caixa da companhia).
 function Menu.posicionarAbaixoDe(self: Menu, y: number)
+	self._topoY = y
 	-- com a moldura do kit, as caixas ganham uma borda por fora: o vão entre elas cresce junto
 	local b = self.est:bordaKit()
-	self.painel.Position = UDim2.fromOffset(16, y + 10 + 2 * b)
+	-- o painel encosta na gaveta do lado em que foi aberto
+	local dir = self.lado == "dir"
+	local margem = Estilo.MARGEM_LATERAL + b
+	self.painel.AnchorPoint = Vector2.new(if dir then 1 else 0, 0)
+	self.painel.Position = UDim2.new(if dir then 1 else 0, if dir then -margem else margem, 0, y + 10 + 2 * b)
 	-- embaixo, para acima da barra do menu (que cresce com os medalhões)
 	local barra = self.barra
 	local alturaBarra = if barra then barra.AbsoluteSize.Y else 60
 	self.painel.Size = UDim2.new(0, 330, 1, -(y + 10 + 2 * b) - (alturaBarra + 14 + 3 * b) - 10)
 end
 
-function Menu.abrirAba(self: Menu, aba: string?)
+function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 	self.aba = aba
+	if aba then
+		self.ultimaAba = aba
+		local novoLado = lado or "esq"
+		if novoLado ~= self.lado then
+			self.lado = novoLado
+			if self._topoY then
+				self:posicionarAbaixoDe(self._topoY)
+			end
+		end
+	end
 	if aba == "projetos" then
 		self.avisoGabinete = false
 	elseif aba == "jornal" then

@@ -83,7 +83,19 @@ Assets.KitUI = {
 		icones = {
 			linhas = "rbxassetid://124616010697030", projetos = "rbxassetid://139710033315937", metas = "rbxassetid://94651761536153", jornal = "rbxassetid://89354465281414",
 			banco = "rbxassetid://86039982344484", companhia = "rbxassetid://124510769365600", ajustes = "rbxassetid://109103751111585",
+			tarifas = "rbxassetid://0",
+			-- faixa de recursos da barra de cima
+			trens = "rbxassetid://0", passageiros = "rbxassetid://0", satisfacao = "rbxassetid://0", carga = "rbxassetid://0",
+			decisao = "rbxassetid://0", dinheiro = "rbxassetid://0",
 		},
+		-- barra de cima: pontas (76 x 117) e miolo que se repete (324 x 117, rebites a cada ~65 px)
+		barra_topo = { esq = "rbxassetid://0", meio = "rbxassetid://0", dir = "rbxassetid://0", altura = 117, ponta = 76, largMeio = 324 },
+		-- aba das gavetas laterais (179 x 685): reta à esquerda, arredondada à direita; a da direita gira 180°
+		aba_lateral = { id = "rbxassetid://0", slice = Rect.new(40, 96, 140, 590), largura = 179 },
+		-- placa das capitais no mapa (691 x 218)
+		placa_cidade = { id = "rbxassetid://0", slice = Rect.new(110, 50, 581, 168), altura = 218 },
+		-- vinheta sobre o mapa (512 x 512, bordas escuras)
+		vinheta = { id = "rbxassetid://0" },
 		-- selo.png (256 x 256): emblema com coroa de café, no canto do caixa, com as iniciais da companhia
 		selo = { id = "rbxassetid://124081081269666" },
 		cabecalho = { id = "rbxassetid://100328537844181", slice = Rect.new(100, 114, 596, 117), escala = 1, borda = 0 },

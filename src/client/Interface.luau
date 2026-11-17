@@ -49,6 +49,12 @@ end
 
 export type Interface = typeof(setmetatable({} :: any, Interface))
 
+local MESES = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
+
+local function numero(n: number): string
+	return (Economia.formatar(n, "", false):gsub("^%s+", ""))
+end
+
 function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local c, f = era.cores, era.fontes
 	local self = setmetatable({}, Interface)
@@ -77,129 +83,198 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		return fr
 	end
 
-	-- ---------------------------------------------------- caixa da companhia (canto superior esquerdo)
-	local hud = caixa({
-		Name = "Caixa",
-		Position = UDim2.fromOffset(16, 16),
-		AutomaticSize = Enum.AutomaticSize.XY,
-		Size = UDim2.fromOffset(0, 0),
-	})
+	-- ---------------------------------------------------- barra de cima (de ponta a ponta)
+	-- esquerda: companhia, caixa e data; direita: recursos e nível. Embaixo dela, o botão da era.
+	local est = Estilo.new(era)
+	local ALT = Estilo.ALTURA_TOPO
+	local CREME, FRACO = Estilo.CREME, Estilo.CREME_FRACO
+	local hud = novo("Frame", {
+		Name = "Topo",
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		ZIndex = 28,
+	}, tela)
+	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, hud)
 	self.hud = hud
-	padding(hud, 12)
-
-	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 2) }, hud)
-	-- nome inteiro da companhia, em destaque no topo do caixa
-	self.lblNome = novo("TextLabel", {
-		Name = "NomeCompanhia",
-		LayoutOrder = 1,
-		AutomaticSize = Enum.AutomaticSize.XY,
+	local barra = est:barraTopo(hud)
+	barra.LayoutOrder = 1
+	local ponta = math.round(76 * ALT / 117) + 6
+	local conteudo = novo("Frame", {
+		Name = "Conteudo",
+		Position = UDim2.fromOffset(ponta, 6),
+		Size = UDim2.new(1, -2 * ponta, 0, ALT - 18),
 		BackgroundTransparency = 1,
-		Text = "",
-		FontFace = f.display,
-		TextSize = 17,
-		TextColor3 = c.ink,
 		ZIndex = 31,
-	}, hud)
-	self.lblDinheiro = novo("TextLabel", {
-		LayoutOrder = 2,
-		AutomaticSize = Enum.AutomaticSize.XY,
-		BackgroundTransparency = 1,
-		Text = "…",
-		FontFace = f.display,
-		TextSize = 32,
-		TextColor3 = c.ink,
-		ZIndex = 31,
-	}, hud)
-	self.lblRenda = novo("TextLabel", {
-		LayoutOrder = 3,
-		AutomaticSize = Enum.AutomaticSize.XY,
-		BackgroundTransparency = 1,
-		Text = "",
-		FontFace = f.number,
-		TextSize = 15,
-		TextColor3 = c.positive,
-		ZIndex = 31,
-	}, hud)
-
-	-- título e nível da companhia: caixa própria no canto superior direito, com a barra de XP
-	local caixaNivel = caixa({
-		Name = "CaixaNivel",
-		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -16, 0, 16),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		Size = UDim2.fromOffset(230, 0),
-	})
-	self.caixaNivel = caixaNivel
-	padding(caixaNivel, 12)
-	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 4), HorizontalAlignment = Enum.HorizontalAlignment.Center }, caixaNivel)
-	self.lblCargo = novo("TextLabel", {
-		Name = "Titulo",
-		LayoutOrder = 1,
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		Text = "",
-		FontFace = f.display,
-		TextSize = 18,
-		TextWrapped = true,
-		TextColor3 = c.ink,
-		ZIndex = 31,
-	}, caixaNivel)
-	self.lblNivel = novo("TextLabel", {
-		Name = "Nivel",
-		LayoutOrder = 2,
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		Text = "",
-		FontFace = f.label,
-		TextSize = 13,
-		TextColor3 = c.inkMuted,
-		ZIndex = 31,
-	}, caixaNivel)
-	self.cheioXp = Estilo.new(era):barra(caixaNivel, 3)
-	self.lblContrato = novo("TextLabel", {
-		Name = "Contrato",
-		LayoutOrder = 5,
-		AutomaticSize = Enum.AutomaticSize.XY,
-		BackgroundTransparency = 1,
-		Text = "",
-		FontFace = f.body,
-		TextSize = 14,
-		TextColor3 = c.accent,
-		Visible = false,
-		ZIndex = 31,
-	}, hud)
-
-	self.btnEra = novo("TextButton", {
-		Name = "BtnEra",
-		LayoutOrder = 6,
-		Size = UDim2.fromOffset(250, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundColor3 = c.accent,
-		TextColor3 = c.onAccent,
-		FontFace = f.display,
-		TextSize = 15,
-		TextWrapped = true,
-		RichText = true,
-		Text = "",
-		Visible = false,
-		ZIndex = 32,
-	}, hud)
-	padding(self.btnEra, 8)
-	if era.forma.canto > 0 then
-		novo("UICorner", { CornerRadius = UDim.new(0, era.forma.canto) }, self.btnEra)
+	}, barra)
+	local function grupo(nome: string, direita: boolean): Frame
+		local g = novo("Frame", {
+			Name = nome,
+			AnchorPoint = Vector2.new(if direita then 1 else 0, 0),
+			Position = UDim2.fromScale(if direita then 1 else 0, 0),
+			Size = UDim2.fromScale(0, 1),
+			AutomaticSize = Enum.AutomaticSize.X,
+			BackgroundTransparency = 1,
+			ZIndex = 31,
+		}, conteudo)
+		novo("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			FillDirection = Enum.FillDirection.Horizontal,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			Padding = UDim.new(0, 14),
+		}, g)
+		return g
 	end
-	self.lblEra = novo("TextLabel", {
-		LayoutOrder = 7,
-		AutomaticSize = Enum.AutomaticSize.XY,
+	local esquerda, direita = grupo("Esquerda", false), grupo("Direita", true)
+	local function bloco(pai: Instance, nome: string, ordem: number, largura: number?): Frame
+		local b = novo("Frame", {
+			Name = nome,
+			LayoutOrder = ordem,
+			Size = UDim2.new(0, largura or 0, 1, 0),
+			AutomaticSize = if largura then Enum.AutomaticSize.None else Enum.AutomaticSize.X,
+			BackgroundTransparency = 1,
+			ZIndex = 31,
+		}, pai)
+		novo("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			HorizontalAlignment = if largura then Enum.HorizontalAlignment.Center else Enum.HorizontalAlignment.Left,
+			Padding = UDim.new(0, 1),
+		}, b)
+		return b
+	end
+	local function textoTopo(pai: Instance, ordem: number, fonte: Font, tam: number, cor: Color3): TextLabel
+		return novo("TextLabel", {
+			LayoutOrder = ordem,
+			AutomaticSize = Enum.AutomaticSize.XY,
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = fonte,
+			TextSize = tam,
+			TextColor3 = cor,
+			ZIndex = 32,
+		}, pai)
+	end
+	local function separador(pai: Instance, ordem: number)
+		novo("Frame", {
+			Name = "Separador",
+			LayoutOrder = ordem,
+			Size = UDim2.fromOffset(2, 34),
+			BackgroundColor3 = Color3.fromRGB(196, 156, 84),
+			BackgroundTransparency = 0.35,
+			BorderSizePixel = 0,
+			ZIndex = 31,
+		}, pai)
+	end
+	-- item com ícone, valor e legenda (faixa de recursos e caixa)
+	local function item(pai: Instance, nome: string, ordem: number, icone: string, emoji: string, tamValor: number, tamIcone: number?): (Frame, TextLabel, TextLabel)
+		local fr = novo("Frame", {
+			Name = nome,
+			LayoutOrder = ordem,
+			Size = UDim2.fromScale(0, 1),
+			AutomaticSize = Enum.AutomaticSize.X,
+			BackgroundTransparency = 1,
+			ZIndex = 31,
+		}, pai)
+		novo("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			FillDirection = Enum.FillDirection.Horizontal,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			Padding = UDim.new(0, 6),
+		}, fr)
+		est:icone(icone, emoji, fr, tamIcone or 26, 1)
+		local col = bloco(fr, "Valores", 2)
+		local valor = textoTopo(col, 1, f.number, tamValor, CREME)
+		local legenda = textoTopo(col, 2, f.label, 11, FRACO)
+		return fr, valor, legenda
+	end
+
+	-- companhia: nome inteiro e título do presidente
+	local blocoNome = bloco(esquerda, "Companhia", 1)
+	self.lblNome = textoTopo(blocoNome, 1, f.display, 18, CREME)
+	self.lblNome.Name = "NomeCompanhia"
+	self.lblNome.TextTruncate = Enum.TextTruncate.AtEnd
+	novo("UISizeConstraint", { MaxSize = Vector2.new(250, math.huge) }, self.lblNome)
+	self.lblCargo = textoTopo(blocoNome, 2, f.label, 12, FRACO)
+	self.lblCargo.Name = "Titulo"
+	separador(esquerda, 2)
+	-- caixa e renda
+	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 22, 30)
+	self.lblDinheiro, self.lblRenda = lblDinheiro, lblRenda
+	self.lblDinheiro.Text = "…"
+	separador(esquerda, 4)
+	-- data do jogo (1 minuto = 1 dia) e era
+	local blocoData = bloco(esquerda, "Data", 5)
+	self.lblData = textoTopo(blocoData, 1, f.display, 17, CREME)
+	self.lblEra = textoTopo(blocoData, 2, f.label, 12, FRACO)
+	self.lblEra.Text = era.nome
+
+	-- recursos
+	self.recursos = {} :: { [string]: { quadro: Frame, valor: TextLabel, legenda: TextLabel } }
+	local listaRecursos = {
+		{ "trens", "trens", Emojis.trens, "trens" },
+		{ "passageiros", "passageiros", Emojis.passageiros or "🧳", "passageiros/dia" },
+		{ "satisfacao", "satisfacao", Emojis.satisfacao, "satisfação" },
+		{ "carga", "carga", Emojis.cargas or "📦", "carga/dia" },
+		{ "contrato", "decisao", Emojis.contratos, "contrato" },
+	}
+	for i, r in listaRecursos do
+		local q, v, l = item(direita, "Recurso_" .. r[1], i, r[2], r[3], 16)
+		l.Text = r[4]
+		self.recursos[r[1]] = { quadro = q, valor = v, legenda = l }
+	end
+	separador(direita, 10)
+	-- nível: título fica junto do nome; aqui o número, a barra e o XP
+	local blocoNivel = bloco(direita, "Nivel", 11, 150)
+	self.lblNivel = textoTopo(blocoNivel, 1, f.label, 13, CREME)
+	self.lblNivel.Name = "Nivel"
+	local trilho = novo("Frame", { Name = "Trilho", LayoutOrder = 2, Size = UDim2.new(1, 0, 0, 18), BackgroundTransparency = 1, ZIndex = 31 }, blocoNivel)
+	self.cheioXp = est:barra(trilho, 1)
+	self.lblXp = textoTopo(blocoNivel, 3, f.label, 11, FRACO)
+
+	-- se a tela for estreita, a faixa de recursos perde itens (o menos importante primeiro)
+	local ORDEM_ESCONDER = { "carga", "passageiros", "trens", "satisfacao" }
+	local function caber()
+		for _, r in self.recursos do
+			r.quadro.Visible = r ~= self.recursos.contrato or self.estado ~= nil and self.estado.contrato ~= nil
+		end
+		blocoData.Visible = true
+		for _, id in ORDEM_ESCONDER do
+			if esquerda.AbsoluteSize.X + direita.AbsoluteSize.X + 24 <= conteudo.AbsoluteSize.X then
+				return
+			end
+			self.recursos[id].quadro.Visible = false
+		end
+		if esquerda.AbsoluteSize.X + direita.AbsoluteSize.X + 24 > conteudo.AbsoluteSize.X then
+			blocoData.Visible = false
+		end
+	end
+	self._caber = function()
+		task.defer(caber)
+	end
+	conteudo:GetPropertyChangedSignal("AbsoluteSize"):Connect(self._caber)
+
+	-- botão da era (aparece embaixo da barra quando a próxima era é liberada)
+	local linhaEra = novo("Frame", {
+		Name = "LinhaEra",
+		LayoutOrder = 2,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
 		BackgroundTransparency = 1,
-		Text = `{era.nome} · {era.anos}`,
-		FontFace = f.label,
-		TextSize = 13,
-		TextColor3 = c.inkMuted,
-		ZIndex = 31,
+		Visible = false,
+		ZIndex = 30,
 	}, hud)
+	novo("UIPadding", { PaddingLeft = UDim.new(0, Estilo.MARGEM_LATERAL) }, linhaEra)
+	self.linhaEra = linhaEra
+	self.btnEra = est:botao("principal", "", linhaEra, 1)
+	self.btnEra.Name = "BtnEra"
+	self.btnEra.Size = UDim2.fromOffset(300, 0)
+	self.btnEra.AutomaticSize = Enum.AutomaticSize.Y
+	self.btnEra.TextSize = 15
+	self.btnEra.TextWrapped = true
+	self.btnEra.RichText = true
+	self.btnEra.ZIndex = 32
+	est:padding(self.btnEra, 22, 8)
 	self.btnEra.Activated:Connect(function()
 		self.aoAgir:Fire("modernizar", {})
 	end)
@@ -208,7 +283,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.aviso = caixa({
 		Name = "Aviso",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, 16),
+		Position = UDim2.new(0.5, 0, 0, Estilo.ALTURA_TOPO + 12),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
 		Visible = false,
@@ -228,29 +303,13 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local painel = caixa({
 		Name = "Concessao",
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -16, 0, 16),
+		Position = UDim2.new(1, -Estilo.MARGEM_LATERAL, 0, Estilo.ALTURA_TOPO + 12),
 		Size = UDim2.fromOffset(300, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Visible = false,
 	})
 	self.painel = painel
 
-	-- painéis da direita (concessão e ficha da cidade) ocupam o canto do nível: ele some enquanto estão abertos
-	local function ajustarCanto()
-		local ficha = tela:FindFirstChild("Ficha") :: GuiObject?
-		caixaNivel.Visible = not painel.Visible and not (ficha and ficha.Visible)
-	end
-	painel:GetPropertyChangedSignal("Visible"):Connect(ajustarCanto)
-	local function vigiarFicha(filho: Instance)
-		if filho.Name == "Ficha" and filho:IsA("GuiObject") then
-			filho:GetPropertyChangedSignal("Visible"):Connect(ajustarCanto)
-			ajustarCanto()
-		end
-	end
-	for _, filho in tela:GetChildren() do
-		vigiarFicha(filho)
-	end
-	tela.ChildAdded:Connect(vigiarFicha)
 	-- o conteúdo fica num frame interno com a lista; o botão de fechar fica solto no painel
 	local corpo = novo("Frame", {
 		Name = "Corpo",
@@ -414,43 +473,56 @@ end
 function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
-	local nivel = Economia.nivel(estado)
-	local _, xpNoNivel, xpDoNivel = Economia.nivel(estado)
+	local nivel, xpNoNivel, xpDoNivel = Economia.nivel(estado)
 	self.lblCargo.Text = Economia.tituloNivel(nivel, estado.era, Idioma.atual)
-	self.lblNivel.Text = if xpDoNivel > 0
-		then `{Emojis.nivel} NÍVEL {nivel} · {xpNoNivel} / {xpDoNivel} XP`
-		else `{Emojis.nivel} NÍVEL {nivel} · MÁXIMO`
+	self.lblNivel.Text = `{Emojis.nivel} NÍVEL {nivel}`
+	self.lblXp.Text = if xpDoNivel > 0 then `{numero(xpNoNivel)} / {numero(xpDoNivel)} XP` else "nível máximo"
 	self.cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
-	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
-	self.lblNome.Text = nome
-	self.lblEra.Text = `{self.era.nome} · {Economia.anoAtual(estado, self.dados)}`
-	local contrato = estado.contrato
-	self.lblContrato.Visible = contrato ~= nil
-	if contrato then
-		self.lblContrato.Text = `{Emojis.contratos} {Metas.progressoContrato(contrato)} · {Metas.relogio(contrato.prazo - contrato.decorrido)}`
-	end
+	self.lblNome.Text = estado.nomeCompanhia or Idioma.T("companhia_padrao")
+	-- data: 1 minuto de verdade = 1 dia do jogo; o ano acompanha o progresso da era
+	local dia = math.floor(workspace:GetServerTimeNow() / Metas.SEGUNDOS_POR_DIA)
+	self.lblData.Text = `{dia % 30 + 1} de {MESES[(dia // 30) % 12 + 1]} de {Economia.anoAtual(estado, self.dados)}`
+	self.lblEra.Text = self.era.nome
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	if estado.renda >= 0 then
 		self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
-		self.lblRenda.TextColor3 = self.era.cores.positive
+		self.lblRenda.TextColor3 = Estilo.VERDE_CLARO
 	else
 		-- manutenção maior que a receita
-		self.lblRenda.Text = `− {Economia.formatar(-estado.renda, simbolo, true)} por segundo (prejuízo)`
-		self.lblRenda.TextColor3 = self.era.cores.negative
+		self.lblRenda.Text = `− {Economia.formatar(-estado.renda, simbolo, true)} por segundo`
+		self.lblRenda.TextColor3 = Color3.fromRGB(240, 130, 110)
 	end
+	-- faixa de recursos
+	local b = Economia.balanco(estado, self.dados)
+	local trens = 0
+	for _, n in estado.trens do
+		trens += n
+	end
+	local carga = 0
+	for _, v in Economia.cargaPorDia(estado, self.dados, b) do
+		carga += v
+	end
+	local r = self.recursos
+	r.trens.valor.Text = numero(trens)
+	r.passageiros.valor.Text = numero(Economia.passageirosPorDia(b))
+	r.satisfacao.valor.Text = `{math.round(b.satisfacao * 100)}%`
+	r.carga.valor.Text = numero(carga)
+	local contrato = estado.contrato
+	if contrato then
+		r.contrato.valor.Text = `{Metas.progressoContrato(contrato)} · {Metas.relogio(contrato.prazo - contrato.decorrido)}`
+	end
+	self._caber()
 	local proxima, liberada = Economia.proximaEra(estado, self.dados)
 	local eraProx = proxima and self.eras and self.eras[proxima.id]
 	if proxima and liberada and eraProx then
 		local podePagar = estado.dinheiro >= proxima.custo
-		self.btnEra.Visible = true
+		self.linhaEra.Visible = true
 		local fator = math.round(proxima.multiplicador / Economia.multiplicadorEra(estado))
 		local emoji = (Emojis :: any)["era_" .. proxima.id] or Emojis.era_diesel
 		self.btnEra.Text = `{emoji} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{fator} nas linhas · {Economia.formatar(proxima.custo, simbolo)}`
-		self.btnEra.Active = podePagar
-		self.btnEra.AutoButtonColor = podePagar
-		self.btnEra.BackgroundTransparency = if podePagar then 0 else 0.55
+		Estilo.new(self.era):habilitar(self.btnEra, podePagar)
 	else
-		self.btnEra.Visible = false
+		self.linhaEra.Visible = false
 	end
 	if estado.ganhoOffline and estado.ganhoOffline > 0.5 then
 		self:avisar(`{Emojis.relogio} Enquanto você esteve fora, seus trens renderam {Economia.formatar(estado.ganhoOffline, simbolo)}`, 6)

@@ -718,4 +718,154 @@ function Estilo.divisor(self: Estilo, pai: Instance, ordem: number?): Frame
 	}, pai)
 end
 
+-- ---------------------------------------------------------------- moldura da tela (barra de cima, gavetas)
+
+Estilo.ALTURA_TOPO = 70 -- barra de cima
+Estilo.LARGURA_ABA_LATERAL = 34 -- puxador das gavetas, colado nas bordas
+Estilo.MARGEM_LATERAL = 34 + 10 -- onde começam os painéis encostados nas gavetas
+Estilo.CREME = Color3.fromRGB(240, 226, 196) -- texto sobre a madeira
+Estilo.CREME_FRACO = Color3.fromRGB(205, 184, 150)
+Estilo.VERDE_CLARO = Color3.fromRGB(150, 205, 130)
+
+-- Barra de cima de ponta a ponta: pontas de latão e miolo de mogno que se repete (os rebites não
+-- esticam). Sem as peças, uma faixa escura simples. Devolve o frame (o conteúdo vai dentro dele).
+function Estilo.barraTopo(self: Estilo, pai: Instance): Frame
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.barra_topo
+	local h = Estilo.ALTURA_TOPO
+	local barra = novo("Frame", {
+		Name = "BarraTopo",
+		Size = UDim2.new(1, 0, 0, h),
+		BackgroundColor3 = self.c.ink,
+		BackgroundTransparency = 0,
+		BorderSizePixel = 0,
+		Active = true,
+		ZIndex = 28,
+	}, pai) :: Frame
+	if p and p.meio ~= "rbxassetid://0" then
+		barra.BackgroundTransparency = 1
+		local escala = h / p.altura
+		local ponta = math.round(p.ponta * escala)
+		novo("ImageLabel", {
+			Name = "Esq",
+			Size = UDim2.fromOffset(ponta, h),
+			BackgroundTransparency = 1,
+			Image = p.esq,
+			ZIndex = 29,
+		}, barra)
+		novo("ImageLabel", {
+			Name = "Meio",
+			Position = UDim2.fromOffset(ponta, 0),
+			Size = UDim2.new(1, -2 * ponta, 0, h),
+			BackgroundTransparency = 1,
+			Image = p.meio,
+			ScaleType = Enum.ScaleType.Tile,
+			TileSize = UDim2.fromOffset(math.round(p.largMeio * escala), h),
+			ZIndex = 28,
+		}, barra)
+		novo("ImageLabel", {
+			Name = "Dir",
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.fromScale(1, 0),
+			Size = UDim2.fromOffset(ponta, h),
+			BackgroundTransparency = 1,
+			Image = p.dir,
+			ZIndex = 29,
+		}, barra)
+	else
+		novo("UIStroke", { Color = self.c.rule, Thickness = 2 }, barra)
+	end
+	return barra
+end
+
+-- Ícone desenhado do kit (imagem) ou, sem ele, o emoji.
+function Estilo.icone(self: Estilo, nome: string, emoji: string, pai: Instance, tamanho: number, ordem: number?): GuiObject
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local id = kit and kit.icones and kit.icones[nome]
+	if id and id ~= "rbxassetid://0" then
+		return novo("ImageLabel", {
+			Name = "Icone",
+			LayoutOrder = ordem or 0,
+			Size = UDim2.fromOffset(tamanho, tamanho),
+			BackgroundTransparency = 1,
+			Image = id,
+			ScaleType = Enum.ScaleType.Fit,
+			ZIndex = 31,
+		}, pai)
+	end
+	return novo("TextLabel", {
+		Name = "Icone",
+		LayoutOrder = ordem or 0,
+		Size = UDim2.fromOffset(tamanho, tamanho),
+		BackgroundTransparency = 1,
+		Text = emoji,
+		TextSize = math.round(tamanho * 0.8),
+		ZIndex = 31,
+	}, pai)
+end
+
+-- Puxador de gaveta, colado na borda da tela (lado "esq" ou "dir"), com o nome escrito de pé.
+function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Instance): TextButton
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local p = kit and kit.aba_lateral
+	local w, h = Estilo.LARGURA_ABA_LATERAL, 230
+	local dir = lado == "dir"
+	local b = novo("TextButton", {
+		Name = if dir then "GavetaDir" else "GavetaEsq",
+		AnchorPoint = Vector2.new(if dir then 1 else 0, 0.5),
+		Position = UDim2.new(if dir then 1 else 0, 0, 0.5, 0),
+		Size = UDim2.fromOffset(w, h),
+		BackgroundColor3 = self.c.ink,
+		BackgroundTransparency = 0,
+		BorderSizePixel = 0,
+		AutoButtonColor = false,
+		Text = "",
+		ZIndex = 29,
+	}, pai) :: TextButton
+	local fundo: GuiObject = b
+	if p and p.id ~= "rbxassetid://0" then
+		b.BackgroundTransparency = 1
+		fundo = novo("ImageLabel", {
+			Name = "Fundo",
+			-- a peça é reta à esquerda e redonda à direita; a da direita gira meia volta
+			Rotation = if dir then 180 else 0,
+			Size = UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			Image = p.id,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = p.slice,
+			SliceScale = w / p.largura,
+			ZIndex = 29,
+		}, b)
+	else
+		novo("UICorner", { CornerRadius = UDim.new(0, 8) }, b)
+	end
+	local _ = fundo
+	-- texto de pé: um rótulo deitado (largura = altura do puxador) girado 90°
+	novo("TextLabel", {
+		Name = "Rotulo",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5),
+		Size = UDim2.fromOffset(h - 40, w - 8),
+		Rotation = if dir then 90 else -90,
+		BackgroundTransparency = 1,
+		Text = texto,
+		FontFace = self.f.label,
+		TextSize = 15,
+		TextColor3 = Estilo.CREME,
+		ZIndex = 30,
+	}, b)
+	b.MouseEnter:Connect(function()
+		if fundo:IsA("ImageLabel") then
+			(fundo :: ImageLabel).ImageColor3 = Color3.fromRGB(255, 240, 220)
+		end
+	end)
+	b.MouseLeave:Connect(function()
+		if fundo:IsA("ImageLabel") then
+			(fundo :: ImageLabel).ImageColor3 = Color3.new(1, 1, 1)
+		end
+	end)
+	return b
+end
+
 return Estilo

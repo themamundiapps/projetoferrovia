@@ -231,6 +231,23 @@ local function montar(eraId: string)
 	end
 
 	mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
+	-- vinheta: bordas do mapa escurecidas (só com o kit clássico); não pega cliques
+	local vinheta = tela:FindFirstChild("Vinheta") :: ImageLabel?
+	if not vinheta then
+		local v = Instance.new("ImageLabel")
+		v.Name = "Vinheta"
+		v.Size = UDim2.fromScale(1, 1)
+		v.BackgroundTransparency = 1
+		v.ScaleType = Enum.ScaleType.Stretch
+		v.ZIndex = 100
+		v.Interactable = false
+		v.Parent = tela
+		vinheta = v
+	end
+	local kitVinheta = (Assets.KitUI :: any)[era.kit or ""]
+	local idVinheta = kitVinheta and kitVinheta.vinheta and kitVinheta.vinheta.id
+	local imgVinheta = vinheta :: ImageLabel
+	imgVinheta.Image = if idVinheta and idVinheta ~= "rbxassetid://0" then idVinheta else ""
 	ui = Interface.new(telaUI, era, DadosBrasil)
 	ui.eras = Theme.PorId
 	menu = Menu.new(telaUI, era, DadosBrasil)
