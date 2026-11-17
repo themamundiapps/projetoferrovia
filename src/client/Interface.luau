@@ -202,8 +202,6 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local blocoNome = bloco(esquerda, "Companhia", 1)
 	self.lblNome = textoTopo(blocoNome, 1, f.display, 18, CREME)
 	self.lblNome.Name = "NomeCompanhia"
-	self.lblNome.TextTruncate = Enum.TextTruncate.AtEnd
-	novo("UISizeConstraint", { MaxSize = Vector2.new(250, math.huge) }, self.lblNome)
 	self.lblCargo = textoTopo(blocoNome, 2, f.label, 12, FRACO)
 	self.lblCargo.Name = "Titulo"
 	separador(esquerda, 2)
@@ -487,7 +485,12 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.lblNivel.Text = `{Emojis.nivel} NÍVEL {nivel}`
 	self.lblXp.Text = if xpDoNivel > 0 then `{numero(xpNoNivel)} / {numero(xpDoNivel)} XP` else "nível máximo"
 	self.cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
-	self.lblNome.Text = estado.nomeCompanhia or Idioma.T("companhia_padrao")
+	-- nome muito comprido é cortado à mão (o corte automático do Roblox mede antes de a fonte carregar)
+	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
+	if utf8.len(nome) and (utf8.len(nome) :: number) > 28 then
+		nome = string.sub(nome, 1, (utf8.offset(nome, 28) :: number) - 1) .. "…"
+	end
+	self.lblNome.Text = nome
 	-- data: 1 minuto de verdade = 1 dia do jogo; o ano acompanha o progresso da era
 	local dia = math.floor(workspace:GetServerTimeNow() / Metas.SEGUNDOS_POR_DIA)
 	self.lblData.Text = `{dia % 30 + 1} de {MESES[(dia // 30) % 12 + 1]} de {Economia.anoAtual(estado, self.dados)}`
