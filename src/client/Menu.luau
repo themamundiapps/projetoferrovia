@@ -781,7 +781,7 @@ function Menu._abaMetas(self: Menu)
 		local cartao, txt = novoCartao(est, r, `Missao_{i}`, 41 + i, pronta and not m.resgatada)
 		local lTitulo = txt("corpo", `{(Emojis :: any)[emoji] or ""} <b>{titulo}</b>`, 1)
 		if m.resgatada then
-			lTitulo.TextColor3 = c.inkMuted
+			lTitulo.TextColor3 = est:paleta(cartao).inkMuted
 			local l = txt("fraco", `{Emojis.confirmar} Resgatada`, 2)
 			l.TextColor3 = c.positive
 		elseif pronta then

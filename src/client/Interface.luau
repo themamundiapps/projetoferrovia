@@ -56,7 +56,8 @@ local function numero(n: number): string
 end
 
 function Interface.new(tela: ScreenGui, era: any, dados: any)
-	local c, f = era.cores, era.fontes
+	-- cores do painel (no kit de painel escuro, texto claro)
+	local c, f = Estilo.new(era).c, era.fontes
 	local self = setmetatable({}, Interface)
 	self.era = era
 	self.dados = dados
@@ -643,7 +644,7 @@ function Interface.fechar(self: Interface)
 end
 
 function Interface._preencher(self: Interface)
-	local estado, dados, c = self.estado, self.dados, self.era.cores
+	local estado, dados, c = self.estado, self.dados, Estilo.new(self.era).c
 	if not estado or not self.trechoAberto then
 		return
 	end

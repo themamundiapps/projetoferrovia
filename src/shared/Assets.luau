@@ -103,7 +103,35 @@ Assets.KitUI = {
 		cartao = { id = "rbxassetid://130952075358434", slice = Rect.new(80, 80, 378, 614), escala = 0.3, borda = 0 },
 		painel = { id = "rbxassetid://116203976251217", slice = Rect.new(160, 155, 568, 204), escala = 0.42, borda = 9 },
 	},
-	moderno = {},
+	moderno = {
+		-- Era Elétrica (arte/ui/moderno/, referencia.png): painéis verde-petróleo com aro de alumínio,
+		-- cartões creme, laranja de sinalização. Painel escuro: o texto fica creme (ver Estilo.new).
+		escuro = {
+			panel = Color3.fromHex("#0F3F44"), bg = Color3.fromHex("#1C5257"),
+			ink = Color3.fromHex("#F3EAD3"), inkMuted = Color3.fromHex("#A8C6C2"), rule = Color3.fromHex("#3F7276"),
+			positive = Color3.fromHex("#5CC584"), negative = Color3.fromHex("#F07A64"),
+			accent = Color3.fromHex("#E8661E"), onAccent = Color3.fromHex("#FFFFFF"),
+		},
+		-- dentro dos cartões creme: texto escuro, laranja de sinalização
+		claro = { accent = Color3.fromHex("#E8661E"), onAccent = Color3.fromHex("#FFFFFF") },
+		-- painel.png (468 x 692): aro de 21 px com parafusos nos cantos
+		painel = { id = "rbxassetid://0", slice = Rect.new(40, 40, 428, 652), escala = 0.7, borda = 6 },
+		-- cartao.png (489 x 687): aro + filete verde, miolo creme
+		cartao = { id = "rbxassetid://0", slice = Rect.new(70, 70, 419, 617), escala = 0.32 },
+		-- cabecalho.png (698 x 149): faixa verde clara com bloco laranja à esquerda
+		cabecalho = { id = "rbxassetid://0", slice = Rect.new(60, 60, 638, 89), escala = 1, borda = 0 },
+		divisor = { id = "rbxassetid://0", largura = 683, altura = 98 },
+		-- botao.png (683 x 210) e botao_discreto.png (693 x 207): pílulas; as pontas ocupam a altura toda
+		botao = { id = "rbxassetid://0", slice = Rect.new(110, 100, 573, 110), escala = 1, borda = 0 },
+		botao_discreto = { id = "rbxassetid://0", slice = Rect.new(110, 100, 583, 107), escala = 1, borda = 0 },
+		-- aba.png (731 x 237, creme) e aba_ativa.png (686 x 188, verde com filete laranja)
+		aba = { id = "rbxassetid://0", slice = Rect.new(50, 110, 681, 127), escala = 1, borda = 0 },
+		aba_ativa = { id = "rbxassetid://0", slice = Rect.new(100, 90, 586, 98), escala = 1, borda = 0 },
+		botao_redondo = { id = "rbxassetid://0", slice = Rect.new(1, 1, 690, 689), escala = 1, borda = 0, redondo = true },
+		-- barra_fundo.png (700 x 136): canal creme entre as pontas laranja
+		barra_fundo = { id = "rbxassetid://0", slice = Rect.new(70, 60, 630, 76), escala = 1, borda = 0, largura = 700,
+			canal = { x = 48 / 700, topo = 24 / 136, base = 112 / 136 } },
+	},
 } :: { [string]: { [string]: any } }
 
 -- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.

@@ -20,10 +20,46 @@ local function novo(classe: string, props: { [string]: any }, pai: Instance?): a
 end
 Estilo.novo = novo
 
-export type Estilo = typeof(setmetatable({} :: { era: any, c: any, f: any }, Estilo))
+export type Estilo = typeof(setmetatable({} :: { era: any, c: any, cClaro: any, f: any }, Estilo))
 
+-- Paletas: `c` vale para o painel; `cClaro` para o que fica sobre fundo claro (cartões creme).
+-- No kit clássico as duas são a da era. Num kit de painel escuro (moderno), `c` troca o texto
+-- para creme e `cClaro` mantém o texto escuro da era.
 function Estilo.new(era: any): Estilo
-	return setmetatable({ era = era, c = era.cores, f = era.fontes }, Estilo)
+	local kit = Assets.KitUI[era.kit or ""]
+	local c, claro = era.cores, era.cores
+	if kit and kit.escuro and kit.painel and kit.painel.id ~= "rbxassetid://0" then
+		c = table.clone(era.cores)
+		for k, v in kit.escuro do
+			c[k] = v
+		end
+		claro = table.clone(era.cores)
+		for k, v in kit.claro or {} do
+			claro[k] = v
+		end
+	end
+	return setmetatable({ era = era, c = c, cClaro = claro, f = era.fontes }, Estilo)
+end
+
+-- Está sobre fundo claro (dentro de um cartão creme)? Os cartões marcam o atributo FundoClaro.
+local function fundoClaro(pai: Instance?): boolean
+	local p = pai
+	while p and not p:IsA("LayerCollector") do
+		if p:GetAttribute("FundoClaro") then
+			return true
+		end
+		p = p.Parent
+	end
+	return false
+end
+Estilo.fundoClaro = fundoClaro
+
+-- Paleta certa para um elemento dentro de `pai`.
+function Estilo.paleta(self: Estilo, pai: Instance?): any
+	if self.cClaro ~= self.c and fundoClaro(pai) then
+		return self.cClaro
+	end
+	return self.c
 end
 
 function Estilo.padding(_self: Estilo, pai: Instance, px: number, py: number?)
@@ -105,6 +141,7 @@ function Estilo.cartao(self: Estilo, props: { [string]: any }, pai: Instance, de
 	if p and p.id ~= "rbxassetid://0" then
 		local img = novo("ImageLabel", props, pai)
 		img.BackgroundTransparency = 1
+		img:SetAttribute("FundoClaro", true) -- a peça do cartão é clara: texto escuro dentro dela
 		img.Image = p.id
 		img.ScaleType = Enum.ScaleType.Slice
 		img.SliceCenter = p.slice
@@ -272,7 +309,7 @@ end
 export type TipoTexto = "titulo" | "subtitulo" | "rotulo" | "corpo" | "numero" | "fraco"
 
 function Estilo.texto(self: Estilo, tipo: TipoTexto, txt: string, pai: Instance, ordem: number?): TextLabel
-	local c, f = self.c, self.f
+	local c, f = self:paleta(pai), self.f
 	local fonte, tam, cor = f.body, 16, c.ink
 	if tipo == "titulo" then
 		fonte, tam = f.display, 24
@@ -308,7 +345,7 @@ export type TipoBotao = "principal" | "secundario" | "discreto"
 -- TextButton: o resto do código segue mudando b.Text, b.TextSize etc., e o rótulo copia.
 local PROPS_TEXTO = { Text = true, RichText = true, FontFace = true, TextSize = true, TextColor3 = true, TextWrapped = true, TextXAlignment = true, TextYAlignment = true, TextScaled = true }
 local trocarPeca = setmetatable({} :: { [TextButton]: (any) -> () }, { __mode = "k" })
-local function vestirBotao(b: TextButton, p: any)
+local function vestirBotao(b: TextButton, p: any, semTinta: boolean?)
 	b.BackgroundTransparency = 1
 	b.AutoButtonColor = false
 	b.TextTransparency = 1
@@ -333,7 +370,8 @@ local function vestirBotao(b: TextButton, p: any)
 	local function tingir()
 		local cor = b.BackgroundColor3
 		local lum = 0.299 * cor.R + 0.587 * cor.G + 0.114 * cor.B
-		base = if lum < 0.35 then cor:Lerp(Color3.new(1, 1, 1), 0.3) else Color3.new(1, 1, 1)
+		-- (no kit de painel escuro as cores da paleta já são escuras: a peça fica com a cor dela)
+		base = if lum < 0.35 and not semTinta then cor:Lerp(Color3.new(1, 1, 1), 0.3) else Color3.new(1, 1, 1)
 		fundo.ImageColor3 = base
 	end
 	local function copiar()
@@ -545,7 +583,7 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 		Text = nome,
 		FontFace = if proprio then f.number else f.label,
 		TextSize = 13,
-		TextColor3 = if proprio then NOME_CLARO else c.ink,
+		TextColor3 = if proprio then NOME_CLARO else self.cClaro.ink,
 		ZIndex = 36,
 	}, pl) :: TextLabel
 	local etiqueta = novo("TextLabel", {
@@ -554,11 +592,11 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 		Position = UDim2.new(0.5, 0, 0, -8),
 		AutomaticSize = Enum.AutomaticSize.X,
 		Size = UDim2.fromOffset(0, 18),
-		BackgroundColor3 = if proprio then c.accent else c.ink,
+		BackgroundColor3 = if proprio then c.accent else self.cClaro.ink,
 		Text = "",
 		FontFace = f.number,
 		TextSize = 12,
-		TextColor3 = c.panel,
+		TextColor3 = self.cClaro.panel,
 		Visible = false,
 		ZIndex = 37,
 	}, b) :: TextLabel
@@ -602,7 +640,7 @@ function Estilo.marcarMedalhao(self: Estilo, m: Medalhao, ativo: boolean)
 	m.placa.SliceScale = 12 / p.slice.Min.Y
 	m.disco.Size = if ativo then UDim2.fromOffset(70, 70) else UDim2.fromOffset(62, 62)
 	m.disco.Position = if ativo then UDim2.new(0.5, 0, 0, 2) else UDim2.new(0.5, 0, 0, 8)
-	m.nome.TextColor3 = if ativo then self.c.accent else self.c.ink
+	m.nome.TextColor3 = if ativo then self.c.accent else self.cClaro.ink
 end
 
 -- Botão redondo (zoom): peça inteira do kit; sem ela, botão discreto.
@@ -629,6 +667,7 @@ function Estilo.aba(self: Estilo, txt: string, pai: Instance, ordem: number?): T
 	local troca = trocarPeca[b]
 	if troca and kit and kit.aba and kit.aba.id ~= "rbxassetid://0" then
 		troca(kit.aba)
+		b.TextColor3 = self.cClaro.ink -- a peça da aba é clara
 	end
 	return b
 end
@@ -640,7 +679,8 @@ function Estilo.marcarAba(self: Estilo, b: TextButton, ativo: boolean)
 	local troca = trocarPeca[b]
 	if troca and kit and kit.aba and kit.aba_ativa and kit.aba.id ~= "rbxassetid://0" and kit.aba_ativa.id ~= "rbxassetid://0" then
 		troca(if ativo then kit.aba_ativa else kit.aba)
-		b.TextColor3 = c.ink
+		-- aba ativa escura (kit moderno) leva texto claro; a aba normal é clara
+		b.TextColor3 = if ativo then c.ink else self.cClaro.ink
 		return
 	end
 	b.BackgroundColor3 = if ativo then c.ink else c.bg
@@ -669,7 +709,7 @@ function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance,
 			b.BackgroundColor3 = c.bg
 			b.TextColor3 = c.ink
 		end
-		vestirBotao(b, peca)
+		vestirBotao(b, peca, self.cClaro ~= self.c)
 		return b
 	end
 	self:cantos(b)
@@ -736,7 +776,7 @@ function Estilo.barraTopo(self: Estilo, pai: Instance): Frame
 	local barra = novo("Frame", {
 		Name = "BarraTopo",
 		Size = UDim2.new(1, 0, 0, h),
-		BackgroundColor3 = self.c.ink,
+		BackgroundColor3 = self.cClaro.ink,
 		BackgroundTransparency = 0,
 		BorderSizePixel = 0,
 		Active = true,
@@ -815,7 +855,7 @@ function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Insta
 		AnchorPoint = Vector2.new(if dir then 1 else 0, 0.5),
 		Position = UDim2.new(if dir then 1 else 0, 0, 0.5, 0),
 		Size = UDim2.fromOffset(w, h),
-		BackgroundColor3 = self.c.ink,
+		BackgroundColor3 = self.cClaro.ink,
 		BackgroundTransparency = 0,
 		BorderSizePixel = 0,
 		AutoButtonColor = false,
