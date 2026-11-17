@@ -198,8 +198,6 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local blocoNome = bloco(esquerda, "Companhia", 1)
 	self.lblNome = textoTopo(blocoNome, 1, f.display, 20, CREME)
 	self.lblNome.Name = "NomeCompanhia"
-	self.lblCargo = textoTopo(blocoNome, 2, f.label, 13, FRACO)
-	self.lblCargo.Name = "Titulo"
 	separador(esquerda, 2)
 	-- caixa e renda
 	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 24, 36)
@@ -229,12 +227,14 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	end
 	separador(direita, 30)
 	-- nível: título fica junto do nome; aqui o número, a barra e o XP
-	local blocoNivel = bloco(direita, "Nivel", 31, 170)
-	self.lblNivel = textoTopo(blocoNivel, 1, f.label, 14, CREME)
-	self.lblNivel.Name = "Nivel"
+	-- título do presidente (Negociante, Barão...) junto do nível e da barra de XP
+	local blocoNivel = bloco(direita, "Nivel", 31, 180)
+	self.lblCargo = textoTopo(blocoNivel, 1, f.display, 16, CREME)
+	self.lblCargo.Name = "Titulo"
 	local trilho = novo("Frame", { Name = "Trilho", LayoutOrder = 2, Size = UDim2.new(1, 0, 0, 18), BackgroundTransparency = 1, ZIndex = 31 }, blocoNivel)
 	self.cheioXp = est:barra(trilho, 1)
-	self.lblXp = textoTopo(blocoNivel, 3, f.label, 11, FRACO)
+	self.lblNivel = textoTopo(blocoNivel, 3, f.label, 11, FRACO)
+	self.lblNivel.Name = "Nivel"
 
 	-- se a tela for estreita, a faixa de recursos perde itens (o menos importante primeiro)
 	local ORDEM_ESCONDER = { "carga", "passageiros", "trens", "satisfacao" }
@@ -488,9 +488,10 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.estado = estado
 	local simbolo = self.dados.simbolo
 	local nivel, xpNoNivel, xpDoNivel = Economia.nivel(estado)
-	self.lblCargo.Text = Economia.tituloNivel(nivel, estado.era, Idioma.atual)
-	self.lblNivel.Text = `{Emojis.nivel} NÍVEL {nivel}`
-	self.lblXp.Text = if xpDoNivel > 0 then `{numero(xpNoNivel)} / {numero(xpDoNivel)} XP` else "nível máximo"
+	self.lblCargo.Text = `{Emojis.nivel} {Economia.tituloNivel(nivel, estado.era, Idioma.atual)}`
+	self.lblNivel.Text = if xpDoNivel > 0
+		then `NÍVEL {nivel} · {numero(xpNoNivel)} / {numero(xpDoNivel)} XP`
+		else `NÍVEL {nivel} · MÁXIMO`
 	self.cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
 	-- nome muito comprido é cortado à mão (o corte automático do Roblox mede antes de a fonte carregar)
 	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
