@@ -44,6 +44,7 @@ local Emojis = {
 	contratos = "📜",
 	jornal = "📰",
 	banco = "🏦",
+	tarifas = "🎫", -- passagens e serviço de bordo
 	alvo = "🎯", -- missões do dia
 	medalha = "🏅",
 	nivel = "⭐",

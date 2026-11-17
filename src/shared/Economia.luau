@@ -2,6 +2,8 @@
 -- Economia: regras puras (sem efeitos colaterais), usadas pelo servidor para decidir
 -- e pelo cliente para mostrar previsões. Valores provisórios, ajustados nos playtests.
 
+local Tarifas = require(script.Parent:WaitForChild("Tarifas"))
+
 local Economia = {}
 
 Economia.DINHEIRO_INICIAL = 2500
@@ -137,6 +139,7 @@ export type EstadoMapa = {
 	emprestimo: { valor: number, total: number, divida: number, classe: string, em: number }?, -- ver Banco.luau
 	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
 	decisoes: EstadoDecisoes, -- eventos com escolha (ver Decisoes.luau)
+	tarifas: Tarifas.EstadoTarifas?, -- preço por classe e serviço de bordo (ver Tarifas.luau)
 }
 
 function Economia.estadoNovo(): EstadoMapa
@@ -158,6 +161,7 @@ function Economia.estadoNovo(): EstadoMapa
 		tutorial = false,
 		jornal = { ativos = {}, edicoes = {}, proximo = 0 },
 		decisoes = { pendente = nil, efeitos = {}, vistas = {}, historico = {} },
+		tarifas = Tarifas.padrao(),
 	}
 end
 
@@ -479,11 +483,14 @@ end
 -- Passageiros por hora que um trecho construído gera (estações e rede aumentam; o traçado pode diminuir).
 function Economia.passageirosTrecho(estado: EstadoMapa, dados: any, t: any, fatorRede: number): number
 	local opcao = Economia.opcaoTrecho(t, estado.trechos[t.id])
+	local era = Economia.indiceEra(estado)
+	local fp = Tarifas.fatores(estado.tarifas, Tarifas.misturaTrecho(dados, t, era), era)
 	return Economia.PASSAGEIROS_POR_PESO
 		* Economia.pesoTrecho(dados, t)
 		* fatorEstacoesTrecho(estado, t)
 		* (opcao.fatorDemanda or 1)
 		* fatorRede
+		* fp
 end
 
 function Economia.passageirosLinha(estado: EstadoMapa, dados: any, linha: any, rede: Rede?): number
@@ -779,6 +786,37 @@ function Economia.movimentoEstacao(estado: EstadoMapa, dados: any, id: string, r
 	return m
 end
 
+-- ---------------------------------------------------------------- passagens
+
+-- Mistura de classes da rede: média das cidades com trilho, pesada pelo porte.
+function Economia.misturaRede(estado: EstadoMapa, dados: any): { number }
+	local era = Economia.indiceEra(estado)
+	local soma, peso = { 0, 0, 0 }, 0
+	local vista: { [string]: boolean } = {}
+	for _, linha in dados.linhas do
+		for _, t in linha.trechos do
+			if estado.trechos[t.id] then
+				for _, id in { t.de, t.para } do
+					if not vista[id] then
+						vista[id] = true
+						local e = dados.estacoes[id]
+						local m = Tarifas.mistura(e, era)
+						local w = Economia.PESO_PORTE[e.porte] or 1
+						for c = 1, 3 do
+							soma[c] += m[c] * w
+						end
+						peso += w
+					end
+				end
+			end
+		end
+	end
+	if peso == 0 then
+		return Tarifas.mistura({ porte = 2 }, era)
+	end
+	return { soma[1] / peso, soma[2] / peso, soma[3] / peso }
+end
+
 -- ---------------------------------------------------------------- satisfação
 
 -- 70% vem do serviço das linhas (trens), 30% do nível médio das estações da rede. Vai de 0 a 1.
@@ -810,7 +848,8 @@ function Economia.satisfacao(estado: EstadoMapa, dados: any, rede: Rede?): numbe
 	end
 	local servico = servicoPeso / peso
 	local nivelMedio = if nEst > 0 then niveis / nEst / #Economia.NIVEIS_ESTACAO else 0
-	return math.clamp(0.7 * servico + 0.3 * nivelMedio, 0, 1)
+	local tarifas = Tarifas.ajusteSatisfacao(estado.tarifas, Economia.misturaRede(estado, dados), Economia.indiceEra(estado))
+	return math.clamp(0.7 * servico + 0.3 * nivelMedio + tarifas, 0, 1)
 end
 
 -- Satisfação mexe na renda de tudo: de -15% (0%) a +15% (100%).
@@ -913,15 +952,21 @@ export type Balanco = {
 -- Receita bruta da linha (antes da satisfação e do nível da companhia): trechos × estações × rede × serviço × cargas × era.
 function Economia.receitaLinha(estado: EstadoMapa, dados: any, linha: any, cargas: { InfoCarga }?, rede: Rede?): number
 	local fatorRede = Economia.bonusRede(estado, dados, linha, rede)
-	local bruta = 0
+	local era = Economia.indiceEra(estado)
+	local tol = Tarifas.tolerancia(estado.tarifas, era)
+	-- a parte dos passageiros segue as tarifas; o bônus de carga é sobre a renda do trecho, sem elas
+	local bruta, brutaPassagens = 0, 0
 	for _, t in linha.trechos do
 		local alt = estado.trechos[t.id]
 		if alt then
-			bruta += Economia.rendaTrecho(dados, t, alt) * fatorEstacoes(estado, t)
+			local r = Economia.rendaTrecho(dados, t, alt) * fatorEstacoes(estado, t)
+			local _, fr = Tarifas.fatores(estado.tarifas, Tarifas.misturaTrecho(dados, t, era), era, tol)
+			bruta += r
+			brutaPassagens += r * fr
 		end
 	end
 	local bonus = if cargas then Economia.bonusCarga(cargas) else 0
-	return bruta * fatorRede * Economia.servico(estado, dados, linha, rede) * (1 + bonus) * Economia.multiplicadorEra(estado)
+	return (brutaPassagens + bruta * bonus) * fatorRede * Economia.servico(estado, dados, linha, rede) * Economia.multiplicadorEra(estado)
 end
 
 function Economia.manutencaoLinha(estado: EstadoMapa, linha: any): number
@@ -932,7 +977,20 @@ function Economia.manutencaoLinha(estado: EstadoMapa, linha: any): number
 			total += Economia.manutencaoTrecho(t, alt)
 		end
 	end
-	return total + (estado.trens[linha.id] or 0) * Economia.manutencaoTrem(estado, linha)
+	local servicos = 1 + Tarifas.custoServicos(estado.tarifas, Economia.indiceEra(estado))
+	return total + (estado.trens[linha.id] or 0) * Economia.manutencaoTrem(estado, linha) * servicos
+end
+
+-- Manutenção só dos trens (sem serviço de bordo), por segundo: base do custo dos serviços.
+function Economia.manutencaoTrens(estado: EstadoMapa, dados: any): number
+	local total = 0
+	for _, linha in dados.linhas do
+		local n = estado.trens[linha.id] or 0
+		if n > 0 then
+			total += n * Economia.manutencaoTrem(estado, linha)
+		end
+	end
+	return total
 end
 
 -- Contas da companhia: receita (com satisfação), manutenção e lucro, no total e por linha.

@@ -13,6 +13,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
+local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
@@ -175,6 +176,7 @@ local function sanear(salvo: any): EstadoMapa
 		end
 	end
 	e.tutorial = salvo.tutorial == true
+	e.tarifas = Tarifas.sanear(salvo.tarifas)
 	if type(salvo.nomeCompanhia) == "string" and #salvo.nomeCompanhia <= 64 then
 		e.nomeCompanhia = salvo.nomeCompanhia
 	end
@@ -284,6 +286,7 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		nomeCompanhia = e.nomeCompanhia,
 		emprestimo = e.emprestimo,
 		decisoes = e.decisoes,
+		tarifas = e.tarifas,
 		jornal = e.jornal,
 		eventos = s.eventos,
 		trechos = e.trechos,
@@ -865,6 +868,45 @@ function Acoes.quitarEmprestimo(s: Sessao, _args: any): (boolean, string?)
 	e.emprestimo = nil
 	Metas.contar(e, "emprestimos", 1)
 	return true, "Empréstimo quitado. O banco agradece!"
+end
+
+-- Tarifas: muda o preço de uma classe (args.classe = 1 a 3, args.preco = 0,5 a 2).
+function Acoes.definirTarifa(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.classe) ~= "number" or type(args.preco) ~= "number" or args.preco ~= args.preco then
+		return false, "Pedido inválido."
+	end
+	local c = math.floor(args.classe)
+	if c < 1 or c > Tarifas.CLASSES then
+		return false, "Pedido inválido."
+	end
+	local e = s.mapas[s.mapaAtual]
+	e.tarifas = e.tarifas or Tarifas.padrao()
+	local t = e.tarifas :: Tarifas.EstadoTarifas
+	t.precos[c] = Tarifas.arredondar(args.preco)
+	return true, nil
+end
+
+-- Tarifas: contrata ou dispensa um serviço de bordo (args.id).
+function Acoes.alternarServico(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or type(args.id) ~= "string" then
+		return false, "Pedido inválido."
+	end
+	local serv = Tarifas.PorId[args.id]
+	if not serv then
+		return false, "Pedido inválido."
+	end
+	local e = s.mapas[s.mapaAtual]
+	if serv.era > Economia.indiceEra(e) then
+		return false, "Esse serviço ainda não existe nesta era."
+	end
+	e.tarifas = e.tarifas or Tarifas.padrao()
+	local t = e.tarifas :: Tarifas.EstadoTarifas
+	if t.servicos[serv.id] then
+		t.servicos[serv.id] = nil
+		return true, `{serv.nome.pt}: serviço dispensado.`
+	end
+	t.servicos[serv.id] = true
+	return true, `{serv.nome.pt}: serviço contratado.`
 end
 
 -- Nome da companhia: passa pelo filtro de texto do Roblox antes de ser guardado (obrigatório para texto

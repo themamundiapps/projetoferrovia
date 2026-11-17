@@ -5,7 +5,8 @@ set -e
 LUAU=${1:-luau}
 RAIZ=$(cd "$(dirname "$0")/../.." && pwd)
 TMP=$(mktemp -d)
-cp "$RAIZ/src/shared/Economia.luau" "$TMP/Economia.luau"
+sed 's|require(script.Parent:WaitForChild("Tarifas"))|require("./Tarifas")|' "$RAIZ/src/shared/Economia.luau" > "$TMP/Economia.luau"
+cp "$RAIZ/src/shared/Tarifas.luau" "$TMP/Tarifas.luau"
 sed 's/Vector2\.new(\([^,]*\), \([^)]*\))/{ X = \1, Y = \2 }/g' "$RAIZ/src/shared/Dados/Brasil.luau" > "$TMP/Brasil.luau"
 cp "$RAIZ/tools/balanco/simular.luau" "$TMP/sim.luau"
 cd "$TMP" && "$LUAU" sim.luau

@@ -12,6 +12,7 @@ local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
+local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
@@ -28,6 +29,7 @@ local ABAS = {
 	{ id = "metas", nome = "Contratos", emoji = "contratos" },
 	{ id = "jornal", nome = "Jornal", emoji = "jornal" },
 	{ id = "banco", nome = "Banco", emoji = "banco" },
+	{ id = "tarifas", nome = "Tarifas", emoji = "tarifas" },
 	{ id = "companhia", nome = "Companhia", emoji = "companhia" },
 	{ id = "ajustes", nome = "Ajustes", emoji = "configuracoes" },
 }
@@ -223,6 +225,12 @@ function Menu._assinatura(self: Menu, estado: any): string
 	-- banco: redesenha quando pega/quita empréstimo ou quando muda a classe de crédito
 	table.insert(metas, if estado.emprestimo then estado.emprestimo.em else 0)
 	table.insert(metas, Banco.classe(Banco.nota(estado, Economia.satisfacao(estado, self.dados))).id)
+	-- tarifas: redesenha quando muda um preço ou um serviço
+	local tf = estado.tarifas or Tarifas.padrao()
+	table.insert(metas, table.concat(tf.precos, ","))
+	for _, sv in Tarifas.SERVICOS do
+		table.insert(metas, if tf.servicos[sv.id] then sv.id else "")
+	end
 	local ok, txt = pcall(function()
 		return HttpService:JSONEncode({ estado.trechos, estado.trens, estado.estacoes or {}, estado.era, situacoes, metas })
 	end)
@@ -378,6 +386,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaJornal()
 	elseif self.aba == "banco" then
 		self:_abaBanco()
+	elseif self.aba == "tarifas" then
+		self:_abaTarifas()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	else
@@ -970,6 +980,136 @@ function Menu._abaBanco(self: Menu)
 	end
 	atualizarOfertas()
 	table.insert(self.vivos, atualizarOfertas)
+end
+
+-- ---------------------------------------------------------------- aba Tarifas
+
+local function pct(x: number): string
+	return `{math.round(x * 100)}%`
+end
+
+local function sinal(x: number): string
+	local n = math.round(x)
+	return if n > 0 then `+{n}` elseif n < 0 then `−{-n}` else "0"
+end
+
+function Menu._abaTarifas(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	est:titulo(`{Emojis.tarifas} Tarifas`, r, 1)
+	est:texto("fraco", "O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", r, 2)
+	if not estado then
+		return
+	end
+	local simbolo = dados.simbolo
+	local era = Economia.indiceEra(estado)
+	local tf = estado.tarifas or Tarifas.padrao()
+	local mistura = Economia.misturaRede(estado, dados)
+	local tol = Tarifas.tolerancia(tf, era)
+
+	-- resumo
+	local resumo, txtR = novoCartao(est, r, "ResumoTarifas", 3, true)
+	local _ = resumo
+	local fp, fr = Tarifas.fatores(tf, mistura, era, tol)
+	local ajuste = Tarifas.ajusteSatisfacao(tf, mistura, era) * 100
+	txtR("subtitulo", `Receita das passagens: {pct(fr)} do normal`, 1)
+	txtR("corpo", `Passageiros: {pct(fp)} · satisfação {sinal(ajuste)} pontos`, 2)
+	local lCusto = txtR("fraco", "", 3)
+	local function atualizarCusto()
+		local custo = Tarifas.custoServicos(self.estado.tarifas, era) * Economia.manutencaoTrens(self.estado, dados)
+		lCusto.Text = if custo > 0
+			then `Serviço de bordo custa {Economia.formatar(custo, simbolo)} por segundo.`
+			else "Nenhum serviço de bordo contratado."
+	end
+	atualizarCusto()
+	table.insert(self.vivos, atualizarCusto)
+
+	-- preço por classe
+	est:texto("subtitulo", "Preço das passagens", r, 10)
+	for c = 1, Tarifas.CLASSES do
+		local p = tf.precos[c] or 1
+		local cartao, txt = novoCartao(est, r, `Classe_{c}`, 10 + c)
+		txt("subtitulo", `{Tarifas.nomeClasse(c, era, Idioma.atual)} · {pct(mistura[c])} dos passageiros`, 1)
+		local fileira = novo("Frame", {
+			Name = "Preco",
+			LayoutOrder = 2,
+			Size = UDim2.new(1, 0, 0, 38),
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, cartao)
+		local menos = est:botao("secundario", "−", fileira, 1)
+		menos.Name = "Menos"
+		menos.Size = UDim2.fromOffset(46, 38)
+		menos.ZIndex = 34
+		local mais = est:botao("secundario", "+", fileira, 3)
+		mais.Name = "Mais"
+		mais.AnchorPoint = Vector2.new(1, 0)
+		mais.Position = UDim2.fromScale(1, 0)
+		mais.Size = UDim2.fromOffset(46, 38)
+		mais.ZIndex = 34
+		local valor = est:texto("numero", pct(p), fileira, 2)
+		valor.Size = UDim2.new(1, -104, 1, 0)
+		valor.Position = UDim2.fromOffset(52, 0)
+		valor.AutomaticSize = Enum.AutomaticSize.None
+		valor.TextXAlignment = Enum.TextXAlignment.Center
+		valor.TextYAlignment = Enum.TextYAlignment.Center
+		valor.TextSize = 22
+		valor.ZIndex = 34
+		est:habilitar(menos, p > Tarifas.MIN + 1e-6)
+		est:habilitar(mais, p < Tarifas.MAX - 1e-6)
+		menos.Activated:Connect(function()
+			self.aoAgir:Fire("definirTarifa", { classe = c, preco = p - Tarifas.PASSO })
+		end)
+		mais.Activated:Connect(function()
+			self.aoAgir:Fire("definirTarifa", { classe = c, preco = p + Tarifas.PASSO })
+		end)
+		local d = Tarifas.demanda(c, p, tol[c])
+		local otimo = Tarifas.precoOtimo(c, tol[c])
+		txt("fraco", `Procura {pct(d)} · cada assento rende {pct(p * d)} · o melhor fica perto de {pct(otimo)}`, 3)
+		local justo = Tarifas.JUSTO[c] + 0.8 * tol[c]
+		if p > justo + 1e-6 then
+			local aviso = txt("fraco", `{Emojis.alerta} Acima de {pct(justo)} os passageiros reclamam: a satisfação cai.`, 4)
+			aviso.TextColor3 = est.c.negative
+		elseif p < 1 - 1e-6 then
+			txt("fraco", `{Emojis.satisfacao} Passagem popular: rende menos, mas a satisfação sobe.`, 4)
+		end
+	end
+
+	-- serviço de bordo
+	est:divisor(r, 20)
+	est:texto("subtitulo", "Serviço de bordo", r, 21)
+	local manutTrens = Economia.manutencaoTrens(estado, dados)
+	local futuros: { string } = {}
+	local ordem = 22
+	for _, sv in Tarifas.SERVICOS do
+		if sv.era > era then
+			table.insert(futuros, Idioma.t(sv.nome))
+			continue
+		end
+		local ativo = tf.servicos[sv.id] == true
+		local cartao, txt = novoCartao(est, r, `Servico_{sv.id}`, ordem, ativo)
+		ordem += 1
+		txt("subtitulo", `{(Emojis :: any)[sv.emoji] or ""} {Idioma.t(sv.nome)}`, 1)
+		txt("fraco", Idioma.t(sv.desc), 2)
+		local efeitos: { string } = {}
+		for c = 1, Tarifas.CLASSES do
+			if sv.tol[c] > 0 then
+				table.insert(efeitos, `{Tarifas.nomeClasse(c, era, Idioma.atual)} aceita +{pct(sv.tol[c])}`)
+			end
+		end
+		table.insert(efeitos, `satisfação +{math.round(sv.sat * 100)}`)
+		txt("corpo", table.concat(efeitos, " · "), 3)
+		txt("fraco", `Custo: {Economia.formatar(sv.custo * manutTrens, simbolo)}/s ({pct(sv.custo)} da manutenção dos trens)`, 4)
+		local b = est:botao(if ativo then "secundario" else "principal", if ativo then "Dispensar" else "Contratar", cartao, 5)
+		b.Name = "BtnServico"
+		b.Size = UDim2.new(1, 0, 0, 36)
+		b.ZIndex = 33
+		b.Activated:Connect(function()
+			self.aoAgir:Fire("alternarServico", { id = sv.id })
+		end)
+	end
+	if #futuros > 0 then
+		est:texto("fraco", `Nas próximas eras: {table.concat(futuros, ", ")}.`, r, ordem)
+	end
 end
 
 -- ---------------------------------------------------------------- aba Companhia
