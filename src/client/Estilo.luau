@@ -509,7 +509,7 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 			Name = "Icone",
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.58, 0.58),
+			Size = UDim2.fromScale(0.64, 0.64),
 			BackgroundTransparency = 1,
 			Image = icone,
 			ScaleType = Enum.ScaleType.Fit,
