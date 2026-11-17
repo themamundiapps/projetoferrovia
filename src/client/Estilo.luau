@@ -463,6 +463,30 @@ local MED_LARG, MED_ALT, MED_DISCO, MED_GAP = 86, 96, 66, 2
 local BASE_ALT, BASE_PAD = 62, 46
 local NOME_CLARO, NOME_ATIVO = Color3.fromRGB(236, 222, 190), Color3.fromRGB(255, 206, 96)
 
+-- Cores do nome nos medalhões e do símbolo do zoom (o kit pode trocar: plaquinha clara pede texto escuro).
+local function coresMedalhao(kit: any): (Color3, Color3, Color3)
+	local cm = kit and kit.coresMedalhao
+	if cm then
+		return cm.nome, cm.ativo, cm.simbolo
+	end
+	return NOME_CLARO, NOME_ATIVO, NOME_ATIVO
+end
+Estilo.coresMedalhao = coresMedalhao
+
+-- Cores do texto da barra de cima (madeira escura no clássico, alumínio claro no moderno).
+function Estilo.coresTopo(self: Estilo): { forte: Color3, fraco: Color3, verde: Color3, vermelho: Color3, separador: Color3 }
+	local kit = Assets.KitUI[self.era.kit or ""]
+	local ct = kit and kit.coresTopo
+	local p = kit and kit.barra_topo
+	if ct and p and p.meio ~= "rbxassetid://0" then
+		return ct
+	end
+	return {
+		forte = Estilo.CREME, fraco = Estilo.CREME_FRACO, verde = Estilo.VERDE_CLARO,
+		vermelho = Color3.fromRGB(240, 130, 110), separador = Color3.fromRGB(196, 156, 84),
+	}
+end
+
 -- Barra de medalhões: base de mogno esticada (9-slice) e a fileira por cima.
 -- Devolve (barra, fileira); sem as peças do kit devolve nil.
 function Estilo.barraMedalhoes(self: Estilo, props: { [string]: any }, pai: Instance, n: number): (Frame?, Frame?)
@@ -583,7 +607,7 @@ function Estilo.medalhao(self: Estilo, emoji: string, nome: string, pai: Instanc
 		Text = nome,
 		FontFace = if proprio then f.number else f.label,
 		TextSize = 13,
-		TextColor3 = if proprio then NOME_CLARO else self.cClaro.ink,
+		TextColor3 = if proprio then (coresMedalhao(kit)) else self.cClaro.ink,
 		ZIndex = 36,
 	}, pl) :: TextLabel
 	local etiqueta = novo("TextLabel", {
@@ -630,7 +654,8 @@ function Estilo.marcarMedalhao(self: Estilo, m: Medalhao, ativo: boolean)
 		local t = if ativo then MED_DISCO + 10 else MED_DISCO
 		m.disco.Size = UDim2.fromOffset(t, t)
 		m.disco.Position = UDim2.new(0.5, 0, 0, if ativo then -8 else 0)
-		m.nome.TextColor3 = if ativo then NOME_ATIVO else NOME_CLARO
+		local nome, corAtivo = coresMedalhao(kit)
+		m.nome.TextColor3 = if ativo then corAtivo else nome
 		m.placa.ImageColor3 = if ativo then Color3.fromRGB(255, 236, 200) else Color3.new(1, 1, 1)
 		return
 	end
@@ -652,7 +677,8 @@ function Estilo.botaoRedondo(self: Estilo, txt: string, pai: Instance, ordem: nu
 	if troca and med then
 		-- mesmo medalhão da barra de baixo: aro de latão, miolo esmaltado e símbolo dourado
 		troca({ id = med.id, slice = Rect.new(1, 1, 683, 683), redondo = true })
-		b.TextColor3 = NOME_ATIVO
+		local _, _, simbolo = coresMedalhao(kit)
+		b.TextColor3 = simbolo
 		b.FontFace = Font.new(self.era.fontes.display.Family, Enum.FontWeight.Bold)
 	elseif troca and kit and kit.botao_redondo and kit.botao_redondo.id ~= "rbxassetid://0" then
 		troca(kit.botao_redondo)

@@ -131,6 +131,28 @@ Assets.KitUI = {
 		-- barra_fundo.png (700 x 136): canal creme entre as pontas laranja
 		barra_fundo = { id = "rbxassetid://0", slice = Rect.new(70, 60, 630, 76), escala = 1, borda = 0, largura = 700,
 			canal = { x = 48 / 700, topo = 24 / 136, base = 112 / 136 } },
+		-- barra_cheia.png (620 x 22): cápsula clara, tingida no jogo
+		barra_cheia = { id = "rbxassetid://0", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
+		-- barra de medalhões: medalhão laranja (662 x 662), base verde (701 x 107), plaquinha creme (688 x 125)
+		medalhao = { id = "rbxassetid://0" },
+		base_medalhoes = { id = "rbxassetid://0", slice = Rect.new(30, 25, 671, 85), altura = 107 },
+		placa_nome = { id = "rbxassetid://0", slice = Rect.new(70, 40, 618, 85), altura = 125 },
+		icones = {
+			linhas = "rbxassetid://0", projetos = "rbxassetid://0", metas = "rbxassetid://0", jornal = "rbxassetid://0",
+			banco = "rbxassetid://0", companhia = "rbxassetid://0", ajustes = "rbxassetid://0", tarifas = "rbxassetid://0",
+			trens = "rbxassetid://0", passageiros = "rbxassetid://0", satisfacao = "rbxassetid://0", carga = "rbxassetid://0",
+			decisao = "rbxassetid://0", dinheiro = "rbxassetid://0",
+		},
+		-- barra de cima de alumínio escovado: pontas (60 x 122) e miolo que se repete (320 x 122)
+		barra_topo = { esq = "rbxassetid://0", meio = "rbxassetid://0", dir = "rbxassetid://0", altura = 122, ponta = 60, largMeio = 320 },
+		aba_lateral = { id = "rbxassetid://0", slice = Rect.new(40, 110, 200, 555), largura = 258 },
+		-- placa de estação (686 x 208): o bloco verde da esquerda ocupa 130 px
+		placa_cidade = { id = "rbxassetid://0", slice = Rect.new(130, 50, 640, 158), altura = 208, margem = 130 },
+		vinheta = { id = "rbxassetid://0" },
+		-- textos sobre as peças claras: barra de cima (alumínio) e plaquinhas/medalhões
+		coresTopo = { forte = Color3.fromHex("#1F2B2E"), fraco = Color3.fromHex("#4E6A6E"), verde = Color3.fromHex("#1E7D4F"),
+			vermelho = Color3.fromHex("#C0392B"), separador = Color3.fromHex("#2F6E73") },
+		coresMedalhao = { nome = Color3.fromHex("#1F2B2E"), ativo = Color3.fromHex("#E8661E"), simbolo = Color3.fromHex("#1F2B2E") },
 	},
 } :: { [string]: { [string]: any } }
 

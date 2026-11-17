@@ -44,7 +44,8 @@ type Estacao = {
 	nivel: number,
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
-	placa: ImageLabel?, -- cartucho atrás do nome (capitais e metrópoles, com o kit clássico)
+	placa: ImageLabel?, -- cartucho atrás do nome (capitais e metrópoles, com o kit da era)
+	folgaPlaca: number, -- distância do começo da placa até o nome
 	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
 	terminal: boolean, -- ponta de alguma linha: aparece mesmo no zoom mais longe
 }
@@ -446,6 +447,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 
 		-- capitais e metrópoles: o nome vai numa placa de pergaminho (só com a peça do kit)
 		local placa: ImageLabel? = nil
+		local folgaPlaca = PLACA_FOLGA
 		local kit = (Assets.KitUI :: any)[self.era.kit or ""]
 		local pc = kit and kit.placa_cidade
 		if e.porte >= 4 and pc and pc.id ~= "rbxassetid://0" then
@@ -462,6 +464,8 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			}, self.conteudo) :: ImageLabel
 			rotulo.ZIndex = Z.rotulo + 1
 			contorno.Enabled = false
+			-- placa com faixa decorada à esquerda (a de estação da Era Elétrica): o nome começa depois dela
+			folgaPlaca = math.max(PLACA_FOLGA, math.ceil((pc.margem or 0) * PLACA_ALTURA / pc.altura) + 6)
 		end
 
 		local selo: TextLabel? = nil
@@ -492,6 +496,7 @@ function MapaView._criarEstacoes(self: MapaView, dados: any)
 			rotulo = rotulo,
 			selo = selo,
 			placa = placa,
+			folgaPlaca = folgaPlaca,
 			apagada = false,
 			terminal = terminais[id] == true,
 		})
@@ -948,8 +953,8 @@ function MapaView._layout(self: MapaView)
 			-- a placa começa logo depois da bolinha e o nome vai por dentro dela
 			placa.Visible = e.rotulo.Visible
 			placa.Position = UDim2.fromOffset(p.X + tam / 2 + 3, p.Y)
-			placa.Size = UDim2.fromOffset(e.rotulo.TextBounds.X + 2 * PLACA_FOLGA, PLACA_ALTURA)
-			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 3 + PLACA_FOLGA, p.Y)
+			placa.Size = UDim2.fromOffset(e.rotulo.TextBounds.X + e.folgaPlaca + PLACA_FOLGA, PLACA_ALTURA)
+			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 3 + e.folgaPlaca, p.Y)
 		else
 			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
 		end

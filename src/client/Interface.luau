@@ -88,7 +88,9 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	-- esquerda: companhia, caixa e data; direita: recursos e nível. Embaixo dela, o botão da era.
 	local est = Estilo.new(era)
 	local ALT = Estilo.ALTURA_TOPO
-	local CREME, FRACO = Estilo.CREME, Estilo.CREME_FRACO
+	local coresTopo = est:coresTopo() -- claro na madeira (clássico), escuro no alumínio (moderno)
+	self.coresTopo = coresTopo
+	local CREME, FRACO = coresTopo.forte, coresTopo.fraco
 	local hud = novo("Frame", {
 		Name = "Topo",
 		Size = UDim2.new(1, 0, 0, 0),
@@ -166,7 +168,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 			Name = "Separador",
 			LayoutOrder = ordem,
 			Size = UDim2.fromOffset(2, 34),
-			BackgroundColor3 = Color3.fromRGB(196, 156, 84),
+			BackgroundColor3 = coresTopo.separador,
 			BackgroundTransparency = 0.35,
 			BorderSizePixel = 0,
 			ZIndex = 31,
@@ -507,11 +509,11 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	if estado.renda >= 0 then
 		self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
-		self.lblRenda.TextColor3 = Estilo.VERDE_CLARO
+		self.lblRenda.TextColor3 = self.coresTopo.verde
 	else
 		-- manutenção maior que a receita
 		self.lblRenda.Text = `− {Economia.formatar(-estado.renda, simbolo, true)} por segundo`
-		self.lblRenda.TextColor3 = Color3.fromRGB(240, 130, 110)
+		self.lblRenda.TextColor3 = self.coresTopo.vermelho
 	end
 	-- faixa de recursos
 	local b = Economia.balanco(estado, self.dados)
