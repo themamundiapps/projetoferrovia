@@ -110,6 +110,23 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 		self.minimizado = false
 		self:_mostrar()
 	end)
+	-- fica logo acima dos botões de zoom quando eles aparecem (tela de toque); eles mudam de lugar
+	-- em tela estreita
+	local achado = tela:FindFirstChild("Zoom") :: GuiObject?
+	if achado then
+		local zoom: GuiObject = achado
+		local function acimaDoZoom()
+			if zoom.Visible then
+				local base = tela.AbsolutePosition.Y + tela.AbsoluteSize.Y - zoom.AbsolutePosition.Y + 6
+				self.btnPendente.Position = UDim2.new(1, -14, 1, -math.max(132, base))
+			else
+				self.btnPendente.Position = UDim2.new(1, -14, 1, -132)
+			end
+		end
+		zoom:GetPropertyChangedSignal("AbsolutePosition"):Connect(acimaDoZoom)
+		zoom:GetPropertyChangedSignal("Visible"):Connect(acimaDoZoom)
+		acimaDoZoom()
+	end
 
 	local function ajustarLargura()
 		caixa.Size = UDim2.fromOffset(math.clamp(tela.AbsoluteSize.X - 40, 280, 520), 0)

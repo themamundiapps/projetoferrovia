@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
@@ -125,6 +126,17 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 			self.aoZoom:Fire(fatores[i])
 		end)
 	end
+	-- No computador o zoom é a roda do mouse: os botões só aparecem em tela de toque. Se não couberem
+	-- ao lado da barra de baixo (tela estreita), sobem para cima dela, no canto direito.
+	zoom.Visible = UserInputService.TouchEnabled
+	local function posicionarZoom()
+		local livre = (tela.AbsoluteSize.X - (barra :: Frame).AbsoluteSize.X) / 2
+		local cabe = livre >= zoom.AbsoluteSize.X + 16 + 8
+		zoom.Position = UDim2.new(1, -16, 1, if cabe then -16 else -((barra :: Frame).AbsoluteSize.Y + 6 + 10))
+	end
+	self._vigiaZoom = tela:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
+	zoom:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
+	posicionarZoom()
 
 	-- ---------------------------------------------------- gavetas (puxadores nas bordas da tela)
 	-- esquerda: a companhia (ou a última aba aberta); direita: as linhas, com o painel do lado direito
@@ -198,6 +210,9 @@ function Menu.destruir(self: Menu)
 	self.aoAgir:Destroy()
 	if self._vigiaTela then
 		self._vigiaTela:Disconnect()
+	end
+	if self._vigiaZoom then
+		self._vigiaZoom:Disconnect()
 	end
 	self.aoFocarLinha:Destroy()
 	self.aoAjuste:Destroy()
