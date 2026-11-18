@@ -202,7 +202,7 @@ Assets.KitUI = {
 		aba_lateral = { id = "rbxassetid://123503997998608", slice = Rect.new(40, 100, 118, 586), largura = 168 },
 		-- placa de cidade (694 x 212): o friso ciano da esquerda ocupa 60 px
 		placa_cidade = { id = "rbxassetid://95426146631147", slice = Rect.new(60, 60, 649, 152), altura = 212, margem = 60 },
-		vinheta = { id = "rbxassetid://0" },
+		vinheta = { id = "rbxassetid://92534481569643" },
 		-- textos sobre a barra de cima e as plaquinhas (escuras): gelo, com o ciano de destaque
 		coresTopo = { forte = Color3.fromHex("#E8EEF8"), fraco = Color3.fromHex("#8A9BB8"), verde = Color3.fromHex("#3DDC97"),
 			vermelho = Color3.fromHex("#FF5C7A"), separador = Color3.fromHex("#3A4F75") },
