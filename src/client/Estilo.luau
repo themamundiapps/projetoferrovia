@@ -734,6 +734,9 @@ function Estilo.botao(self: Estilo, tipo: TipoBotao, txt: string, pai: Instance,
 			-- o secundário (escuro) usa a peça clara: texto escuro
 			b.BackgroundColor3 = c.bg
 			b.TextColor3 = c.ink
+		elseif tipo == "principal" and kit.textoPrincipal then
+			-- peça do principal escura (Alta Velocidade): o texto não usa o onAccent
+			b.TextColor3 = kit.textoPrincipal
 		end
 		vestirBotao(b, peca, self.cClaro ~= self.c)
 		return b

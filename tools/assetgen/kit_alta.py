@@ -150,3 +150,9 @@ for folha, nomes in ICONES.items():
         q[y0:y0 + im.height, x0:x0 + im.width, 3] = np.array(im, np.float32)
         Image.fromarray(q.astype(np.uint8)).save(f"{sai}/icones/{nome}.png")
     print(folha, "-> 8 ícones")
+
+# vinheta do mapa: mesma queda da Elétrica, um pouco mais forte e em azul-noite
+v = np.array(Image.open(f"{sai}/../moderno/vinheta.png").convert("RGBA"), np.float32)
+v[..., :3] = [5, 8, 15]
+v[..., 3] = np.clip(v[..., 3] * 1.2, 0, 255)
+salvar(v, "vinheta")

@@ -154,6 +154,60 @@ Assets.KitUI = {
 			vermelho = Color3.fromHex("#C0392B"), separador = Color3.fromHex("#2F6E73") },
 		coresMedalhao = { nome = Color3.fromHex("#1F2B2E"), ativo = Color3.fromHex("#E8661E"), simbolo = Color3.fromHex("#1F2B2E"), fonte = "label" },
 	},
+	alta = {
+		-- Era da Alta Velocidade (arte/ui/alta/, referencia.png): vidro azul-marinho, aro grafite com cantos
+		-- chanfrados e frisos de neon ciano. Peças preparadas por tools/assetgen/kit_alta.py.
+		-- Tudo é escuro, até os cartões: o texto fica claro em todo lugar (escuro e claro com o gelo da era).
+		escuro = {
+			panel = Color3.fromHex("#121A29"), bg = Color3.fromHex("#0C111C"),
+			ink = Color3.fromHex("#E8EEF8"), inkMuted = Color3.fromHex("#8A9BB8"), rule = Color3.fromHex("#2C3D5C"),
+			positive = Color3.fromHex("#3DDC97"), negative = Color3.fromHex("#FF5C7A"),
+			accent = Color3.fromHex("#7CF7FF"), onAccent = Color3.fromHex("#0C111C"),
+		},
+		claro = { ink = Color3.fromHex("#E8EEF8"), inkMuted = Color3.fromHex("#A9B7CE"), accent = Color3.fromHex("#7CF7FF") },
+		-- o botão principal é vidro escuro com contorno ciano: texto claro (não o onAccent)
+		textoPrincipal = Color3.fromHex("#E8EEF8"),
+		-- painel.png (372 x 700): aro grafite chanfrado com filete ciano por dentro
+		painel = { id = "rbxassetid://72284683473934", slice = Rect.new(40, 40, 332, 660), escala = 0.7, borda = 6 },
+		-- cartao.png (362 x 694): vidro um tom acima do painel
+		cartao = { id = "rbxassetid://108152316396044", slice = Rect.new(50, 50, 312, 644), escala = 0.2 },
+		-- cabecalho.png (716 x 130): faixa chanfrada com o filete ciano à esquerda
+		cabecalho = { id = "rbxassetid://93808167629835", slice = Rect.new(130, 60, 656, 70), escala = 1, borda = 0 },
+		divisor = { id = "rbxassetid://88475529921027", largura = 768, altura = 21 },
+		-- botao.png (699 x 287, com o brilho em volta) e botao_discreto.png (694 x 219, pílula de aro grafite)
+		botao = { id = "rbxassetid://120400951359545", slice = Rect.new(120, 140, 579, 147), escala = 1, borda = 0 },
+		botao_discreto = { id = "rbxassetid://116485315073509", slice = Rect.new(115, 100, 579, 119), escala = 1, borda = 0 },
+		-- aba.png (694 x 219, aro grafite) e aba_ativa.png (690 x 174, aro ciano)
+		aba = { id = "rbxassetid://137056185562505", slice = Rect.new(50, 100, 644, 119), escala = 1, borda = 0 },
+		aba_ativa = { id = "rbxassetid://92455075034293", slice = Rect.new(50, 80, 640, 94), escala = 1, borda = 0 },
+		botao_redondo = { id = "rbxassetid://79957157289699", slice = Rect.new(1, 1, 684, 684), escala = 1, borda = 0, redondo = true },
+		-- barra_fundo.png (693 x 137): canal de vidro entre os aros
+		barra_fundo = { id = "rbxassetid://133198570605129", slice = Rect.new(75, 62, 618, 75), escala = 1, borda = 0, largura = 693,
+			canal = { x = 40 / 693, topo = 16 / 137, base = 121 / 137 } },
+		-- barra_cheia.png (620 x 22): cápsula clara gerada, tingida no jogo
+		barra_cheia = { id = "rbxassetid://104094739145441", slice = Rect.new(11, 10, 609, 12), escala = 1, borda = 0 },
+		-- barra de medalhões: medalhão de aro ciano (686 x 686), base chanfrada (721 x 106), plaquinha (698 x 200)
+		medalhao = { id = "rbxassetid://115395087493828" },
+		base_medalhoes = { id = "rbxassetid://94685708515932", slice = Rect.new(85, 30, 636, 76), altura = 106 },
+		placa_nome = { id = "rbxassetid://138416525934399", slice = Rect.new(45, 60, 653, 140), altura = 200 },
+		-- ícones em traço claro (arte/ui/alta/icones/, 256 x 256)
+		icones = {
+			linhas = "rbxassetid://101087471621557", projetos = "rbxassetid://75869290254947", metas = "rbxassetid://91814380112470", jornal = "rbxassetid://91573003851306",
+			banco = "rbxassetid://113317883188764", companhia = "rbxassetid://75018367266315", ajustes = "rbxassetid://124375020468860", tarifas = "rbxassetid://122981018243405",
+			trens = "rbxassetid://75920150833923", passageiros = "rbxassetid://95006154184330", satisfacao = "rbxassetid://120825840140428", carga = "rbxassetid://98847533496613",
+			decisao = "rbxassetid://135175366130531", dinheiro = "rbxassetid://126937211757792",
+		},
+		-- barra de cima de vidro com friso ciano: pontas chanfradas (60 x 98) e miolo que se repete (320 x 98)
+		barra_topo = { esq = "rbxassetid://121541487540547", meio = "rbxassetid://125122002476431", dir = "rbxassetid://105582098588796", altura = 98, ponta = 60, largMeio = 320 },
+		aba_lateral = { id = "rbxassetid://123503997998608", slice = Rect.new(40, 100, 118, 586), largura = 168 },
+		-- placa de cidade (694 x 212): o friso ciano da esquerda ocupa 60 px
+		placa_cidade = { id = "rbxassetid://95426146631147", slice = Rect.new(60, 60, 649, 152), altura = 212, margem = 60 },
+		vinheta = { id = "rbxassetid://0" },
+		-- textos sobre a barra de cima e as plaquinhas (escuras): gelo, com o ciano de destaque
+		coresTopo = { forte = Color3.fromHex("#E8EEF8"), fraco = Color3.fromHex("#8A9BB8"), verde = Color3.fromHex("#3DDC97"),
+			vermelho = Color3.fromHex("#FF5C7A"), separador = Color3.fromHex("#3A4F75") },
+		coresMedalhao = { nome = Color3.fromHex("#C9D3E3"), ativo = Color3.fromHex("#7CF7FF"), simbolo = Color3.fromHex("#7CF7FF"), fonte = "label" },
+	},
 } :: { [string]: { [string]: any } }
 
 -- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.

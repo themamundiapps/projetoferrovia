@@ -99,7 +99,7 @@ Theme.Eras = {
 		graoPapel = false,
 	},
 	{
-		id = "alta", kit = "moderno", nome = "Era da Alta Velocidade", anos = "2000–",
+		id = "alta", kit = "alta", nome = "Era da Alta Velocidade", anos = "2000–",
 		cores = {
 			bg = Color3.fromHex("#0C111C"),
 			panel = Color3.fromHex("#141D2E"),
