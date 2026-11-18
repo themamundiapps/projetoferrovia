@@ -598,9 +598,9 @@ end
 -- para as cidades não se amontoarem com o país inteiro na tela.
 function MapaView._tamanhoEstacao(self: MapaView, e: Estacao): number
 	local escala = math.clamp(0.35 + 0.45 * self.zoom, 0.45, 1)
-	local tam = (e.tamanho + e.nivel * 2) * escala
+	local tam = (e.tamanho + e.nivel * 1.2) * escala
 	e.ponto.Size = UDim2.fromOffset(tam, tam)
-	e.traco.Thickness = math.max(1.2, (3 + e.nivel * 0.7) * escala)
+	e.traco.Thickness = math.max(1.2, (2.5 + e.nivel * 0.4) * escala)
 	e.traco.Color = if e.nivel >= 5 then self.era.cores.accent else self.era.cores.ink
 	return tam
 end
