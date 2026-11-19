@@ -16,3 +16,6 @@ Thumbs.db
 
 # Dados brutos do Natural Earth (baixados pelo script, ver tools/assetgen/feicoes.mjs)
 tools/assetgen/naturalearth/
+
+# fotos do Wikimedia Commons (baixadas por tools/assetgen/baixar_commons.py)
+arte/cidades_jogo/*_19[0-9][0-9].*

@@ -59,17 +59,20 @@ Assets.Cidades = {
 	-- faltam: curitiba, campo_grande
 } :: { [string]: string } -- id da cidade -> imagem
 
--- A mesma cidade em outras épocas (arte/cidades/<id>_<ano>.jpg): a ficha e o jornal mostram a da era
+-- A mesma cidade em outras épocas (fotos do Wikimedia Commons, baixadas por tools/assetgen/baixar_commons.py
+-- para arte/cidades_jogo/<id>_<ano>.jpg): a ficha e o jornal mostram a da era
 -- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
 -- Créditos e licenças em arte/cidades/CREDITOS.md.
 Assets.CidadesPorEra = {
-	diesel = { -- anos 1960
+	diesel = { -- anos 1950 e 60
 		rio = "rbxassetid://0",
 		sao_paulo = "rbxassetid://0",
+		bh = "rbxassetid://0",
 	},
-	eletrico = { -- anos 1980 (a Alta usa estas até ter as dela)
+	eletrico = { -- anos 1970 e 80 (a Alta usa estas até ter as dela)
 		rio = "rbxassetid://0",
 		sao_paulo = "rbxassetid://0",
+		bh = "rbxassetid://0",
 	},
 	alta = {},
 } :: { [string]: { [string]: string } }
