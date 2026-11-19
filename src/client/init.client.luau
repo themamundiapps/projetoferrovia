@@ -154,6 +154,10 @@ local function trensDoMapa(estado: any): { any }
 					table.insert(pontos, DadosBrasil.estacoes[t.de].pos)
 					table.insert(ids, t.de)
 				end
+				for _, v in t.via or {} do -- desvios do traçado (ver MapaView._criarLinhas): não são estações
+					table.insert(pontos, v)
+					table.insert(ids, "")
+				end
 				table.insert(pontos, DadosBrasil.estacoes[t.para].pos)
 				table.insert(ids, t.para)
 			end

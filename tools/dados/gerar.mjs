@@ -57,7 +57,13 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     if (!e.historia?.pt || !e.historia?.en) throw new Error(`Estação ${e.id} sem "historia" (pt e en)`);
   }
 
-  const km = (a, b) => Math.round(d3.geoDistance([est[a].lon, est[a].lat], [est[b].lon, est[b].lat]) * 6371 * SINUOSIDADE);
+  // km pelo traçado: de -> pontos de "via" (desvios para o trilho não cortar o mar) -> para
+  const km = (a, b, via = []) => {
+    const pts = [[est[a].lon, est[a].lat], ...via, [est[b].lon, est[b].lat]];
+    let rad = 0;
+    for (let i = 1; i < pts.length; i++) rad += d3.geoDistance(pts[i - 1], pts[i]);
+    return Math.round(rad * 6371 * SINUOSIDADE);
+  };
   // Linhas históricas em ordem de ano; depois, as do Gabinete de Projetos na ordem da lista de projetos.
   const ordemProjeto = Object.fromEntries((dados.projetos ?? []).map((p, i) => [p.id, i]));
   for (const l of dados.linhas) if (l.projeto && ordemProjeto[l.projeto] === undefined) throw new Error(`Projeto desconhecido "${l.projeto}" na linha ${l.id}`);
@@ -102,9 +108,13 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)}, nota = ${lua(l.nota)},`);
     L.push("\t\t\ttrechos = {");
     l.trechos.forEach((t, i) => {
-      const k = km(t.de, t.para);
+      const k = km(t.de, t.para, t.via);
       const custo = Math.round(k * fator * dados.terrenos[t.terreno].custo);
       let s = `\t\t\t\t{ id = ${lua(`${l.id}_${i + 1}`)}, de = ${lua(t.de)}, para = ${lua(t.para)}, ano = ${lua(t.ano)}, km = ${k}, terreno = ${lua(t.terreno)}, custo = ${custo}, degrau = ${degrau}`;
+      if (t.via) {
+        const vs = t.via.map((p) => { const [x, y] = proj(p); return `Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)})`; });
+        s += `, via = { ${vs.join(", ")} }`;
+      }
       if (t.alternativas) {
         const alts = t.alternativas.map((a) => {
           const ka = Math.round(k * a.fatorKm);

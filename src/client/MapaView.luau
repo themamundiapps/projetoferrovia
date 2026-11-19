@@ -32,6 +32,7 @@ type Segmento = {
 	de: string,
 	para: string,
 	tracos: { Frame }, -- tracejado das linhas que ainda são só projeto (vazio nas outras)
+	emenda: boolean, -- pedaço de um trecho com desvio (via): estica um pouco para não abrir fresta na curva
 }
 
 type Estacao = {
@@ -357,49 +358,60 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 	for _, linha in dados.linhas do
 		local cor: Color3 = self.era.linhas[linha.cor] or cores.ink
 		for _, trecho in linha.trechos do
-			local a: Vector2 = dados.estacoes[trecho.de].pos
-			local b: Vector2 = dados.estacoes[trecho.para].pos
-			local casing = novo("Frame", {
-				Name = trecho.id .. "_contorno",
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = cores.ink,
-				BorderSizePixel = 0,
-				ZIndex = Z.contorno,
-			}, self.conteudo) :: Frame
-			local frame = novo("Frame", {
-				Name = trecho.id,
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = cor,
-				BorderSizePixel = 0,
-				ZIndex = Z.linha,
-			}, self.conteudo) :: Frame
-			-- linhas do Gabinete de Projetos ganham um tracejado, mostrado enquanto forem só projeto
-			local tracos: { Frame } = {}
-			if linha.projeto then
-				local n = math.clamp(math.round((b - a).Magnitude / 9), 3, 40)
-				for k = 1, n do
-					tracos[k] = novo("Frame", {
-						Name = `{trecho.id}_traco{k}`,
-						AnchorPoint = Vector2.new(0.5, 0.5),
-						BackgroundColor3 = cor,
-						BorderSizePixel = 0,
-						Visible = false,
-						ZIndex = Z.linha,
-					}, self.conteudo) :: Frame
-				end
+			-- o trecho vai de estação a estação passando pelos pontos de "via" (desvios para não cortar o
+			-- mar); cada pedaço é um segmento com o mesmo id
+			local pontos: { Vector2 } = { dados.estacoes[trecho.de].pos }
+			for _, v in trecho.via or {} do
+				table.insert(pontos, v)
 			end
-			table.insert(self.segmentos, {
-				id = trecho.id,
-				cor = cor,
-				a = a,
-				b = b,
-				casing = casing,
-				linha = frame,
-				estado = "construido",
-				de = trecho.de,
-				para = trecho.para,
-				tracos = tracos,
-			})
+			table.insert(pontos, dados.estacoes[trecho.para].pos)
+			local emenda = #pontos > 2
+			for p = 1, #pontos - 1 do
+				local a: Vector2 = pontos[p]
+				local b: Vector2 = pontos[p + 1]
+				local casing = novo("Frame", {
+					Name = trecho.id .. "_contorno",
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = cores.ink,
+					BorderSizePixel = 0,
+					ZIndex = Z.contorno,
+				}, self.conteudo) :: Frame
+				local frame = novo("Frame", {
+					Name = trecho.id,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = cor,
+					BorderSizePixel = 0,
+					ZIndex = Z.linha,
+				}, self.conteudo) :: Frame
+				-- linhas do Gabinete de Projetos ganham um tracejado, mostrado enquanto forem só projeto
+				local tracos: { Frame } = {}
+				if linha.projeto then
+					local n = math.clamp(math.round((b - a).Magnitude / 9), 3, 40)
+					for k = 1, n do
+						tracos[k] = novo("Frame", {
+							Name = `{trecho.id}_traco{k}`,
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundColor3 = cor,
+							BorderSizePixel = 0,
+							Visible = false,
+							ZIndex = Z.linha,
+						}, self.conteudo) :: Frame
+					end
+				end
+				table.insert(self.segmentos, {
+					id = trecho.id,
+					cor = cor,
+					a = a,
+					b = b,
+					casing = casing,
+					linha = frame,
+					estado = "construido",
+					de = trecho.de,
+					para = trecho.para,
+					tracos = tracos,
+					emenda = emenda,
+				})
+			end
 		end
 	end
 end
@@ -656,12 +668,22 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 		for i = 2, #l.pontos do
 			acumulado[i] = acumulado[i - 1] + (l.pontos[i] - l.pontos[i - 1]).Magnitude
 		end
+		-- a duração conta só as estações (os pontos de desvio do traçado têm id vazio)
+		local paradas = 0
+		for _, id in l.ids or {} do
+			if id ~= "" then
+				paradas += 1
+			end
+		end
+		if not l.ids then
+			paradas = #l.pontos
+		end
 		local trilha: Trilha = {
 			pontos = l.pontos,
 			ids = l.ids or {},
 			acumulado = acumulado,
 			total = acumulado[#acumulado],
-			duracao = math.clamp(5 * (#l.pontos - 1), 7, 30), -- segundos de uma ponta à outra
+			duracao = math.clamp(5 * (paradas - 1), 7, 30), -- segundos de uma ponta à outra
 		}
 		local visiveis = math.min(l.n, MAX_TRENS_VISIVEIS)
 		for k = 1, visiveis do
@@ -913,6 +935,9 @@ function MapaView._layout(self: MapaView)
 		local meio = (a + b) / 2
 		local angulo = math.deg(math.atan2(d.Y, d.X))
 		local comprimento = d.Magnitude
+		if s.emenda then
+			comprimento += espessura -- cobre a dobra entre os pedaços
+		end
 		s.linha.Position = UDim2.fromOffset(meio.X, meio.Y)
 		s.linha.Size = UDim2.fromOffset(comprimento, espessura)
 		s.linha.Rotation = angulo

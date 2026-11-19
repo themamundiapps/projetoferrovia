@@ -227,9 +227,9 @@ return {
 			id = "ef118", nome = "EF-118 Vitória–Rio", ano = 2026, cor = 7, ordem = 14, degrau = 5, projeto = "ef118", nota = nil,
 			trechos = {
 				{ id = "ef118_1", de = "vitoria", para = "anchieta", ano = 2026, km = 78, terreno = "baixada", custo = 40992, degrau = 5 },
-				{ id = "ef118_2", de = "anchieta", para = "porto_acu", ano = 2026, km = 128, terreno = "baixada", custo = 67268, degrau = 5 },
+				{ id = "ef118_2", de = "anchieta", para = "porto_acu", ano = 2026, km = 149, terreno = "baixada", custo = 78304, degrau = 5, via = { Vector2.new(1659.1, 1311.0), Vector2.new(1649.7, 1323.6), Vector2.new(1642.7, 1336.1) } },
 				{ id = "ef118_3", de = "porto_acu", para = "macae", ano = 2026, km = 139, terreno = "baixada", custo = 73049, degrau = 5 },
-				{ id = "ef118_4", de = "macae", para = "rio", ano = 2026, km = 194, terreno = "serra_leve", custo = 148296, degrau = 5 },
+				{ id = "ef118_4", de = "macae", para = "rio", ano = 2026, km = 234, terreno = "serra_leve", custo = 178872, degrau = 5, via = { Vector2.new(1586.5, 1394.3), Vector2.new(1564.9, 1401.4), Vector2.new(1556.5, 1396.8), Vector2.new(1543.8, 1403.9) } },
 			},
 		},
 		{
@@ -276,9 +276,9 @@ return {
 		{
 			id = "litoranea_sul", nome = "Litorânea do Sul", ano = 1950, cor = 8, ordem = 20, degrau = 5, projeto = "litoranea_sul", nota = nil,
 			trechos = {
-				{ id = "litoranea_sul_1", de = "santos", para = "paranagua", ano = 1950, km = 350, terreno = "baixada", custo = 183937, degrau = 5 },
+				{ id = "litoranea_sul_1", de = "santos", para = "paranagua", ano = 1950, km = 424, terreno = "baixada", custo = 222826, degrau = 5, via = { Vector2.new(1380.3, 1473.4), Vector2.new(1331.6, 1490.9), Vector2.new(1324.1, 1501.7), Vector2.new(1296.0, 1527.5), Vector2.new(1286.6, 1540.5) } },
 				{ id = "litoranea_sul_2", de = "paranagua", para = "joinville", ano = 1950, km = 116, terreno = "serra_leve", custo = 88672, degrau = 5 },
-				{ id = "litoranea_sul_3", de = "joinville", para = "florianopolis", ano = 1950, km = 184, terreno = "baixada", custo = 96698, degrau = 5 },
+				{ id = "litoranea_sul_3", de = "joinville", para = "florianopolis", ano = 1950, km = 191, terreno = "baixada", custo = 100377, degrau = 5, via = { Vector2.new(1286.6, 1616.2), Vector2.new(1288.9, 1642.5) } },
 			},
 		},
 		{
@@ -292,17 +292,17 @@ return {
 		{
 			id = "litoranea_ne", nome = "Litorânea do Nordeste", ano = 1985, cor = 3, ordem = 22, degrau = 6, projeto = "litoranea_ne", nota = nil,
 			trechos = {
-				{ id = "litoranea_ne_1", de = "salvador", para = "aracaju", ano = 1985, km = 346, terreno = "baixada", custo = 436403, degrau = 6 },
+				{ id = "litoranea_ne_1", de = "salvador", para = "aracaju", ano = 1985, km = 356, terreno = "baixada", custo = 449016, degrau = 6, via = { Vector2.new(1776.3, 887.5) } },
 				{ id = "litoranea_ne_2", de = "aracaju", para = "maceio", ano = 1985, km = 252, terreno = "baixada", custo = 317842, degrau = 6 },
 				{ id = "litoranea_ne_3", de = "maceio", para = "recife", ano = 1985, km = 252, terreno = "baixada", custo = 317842, degrau = 6 },
 				{ id = "litoranea_ne_4", de = "recife", para = "natal", ano = 1985, km = 319, terreno = "baixada", custo = 402348, degrau = 6 },
-				{ id = "litoranea_ne_5", de = "natal", para = "fortaleza", ano = 1985, km = 544, terreno = "baixada", custo = 686136, degrau = 6 },
+				{ id = "litoranea_ne_5", de = "natal", para = "fortaleza", ano = 1985, km = 575, terreno = "baixada", custo = 725236, degrau = 6, via = { Vector2.new(1823.6, 550.2), Vector2.new(1803.4, 520.6), Vector2.new(1780.9, 506.0) } },
 			},
 		},
 		{
 			id = "amazonia", nome = "Ferrovia da Amazônia", ano = 1990, cor = 5, ordem = 23, degrau = 6, projeto = "amazonia", nota = nil,
 			trechos = {
-				{ id = "amazonia_1", de = "belem", para = "altamira", ano = 1990, km = 569, terreno = "floresta", custo = 1174366, degrau = 6 },
+				{ id = "amazonia_1", de = "belem", para = "altamira", ano = 1990, km = 673, terreno = "floresta", custo = 1389013, degrau = 6, via = { Vector2.new(1291.3, 428.6), Vector2.new(1230.4, 461.4) } },
 				{ id = "amazonia_2", de = "altamira", para = "santarem", ano = 1990, km = 363, terreno = "floresta", custo = 749200, degrau = 6 },
 				{ id = "amazonia_3", de = "santarem", para = "manaus", ano = 1990, km = 743, terreno = "floresta", custo = 1533487, degrau = 6 },
 			},
@@ -311,7 +311,7 @@ return {
 			id = "tav_sul", nome = "Trem-bala do Sul", ano = 2025, cor = 6, ordem = 24, degrau = 8, projeto = "tav_sul", nota = nil,
 			trechos = {
 				{ id = "tav_sul_1", de = "sao_paulo", para = "curitiba", ano = 2025, km = 425, terreno = "serra", custo = 6736609, degrau = 8 },
-				{ id = "tav_sul_2", de = "curitiba", para = "florianopolis", ano = 2025, km = 315, terreno = "serra_leve", custo = 3328678, degrau = 8 },
+				{ id = "tav_sul_2", de = "curitiba", para = "florianopolis", ano = 2025, km = 319, terreno = "serra_leve", custo = 3370946, degrau = 8, via = { Vector2.new(1279.6, 1616.2), Vector2.new(1288.9, 1642.5) } },
 				{ id = "tav_sul_3", de = "florianopolis", para = "porto_alegre", ano = 2025, km = 470, terreno = "baixada", custo = 3414536, degrau = 8 },
 			},
 		},
