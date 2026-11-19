@@ -8,8 +8,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
 
-local VOLUME_MUSICA = 0.1
-local VOLUME_EFEITOS = 0.25
+local VOLUME_MUSICA = 0.15
+local VOLUME_EFEITOS = 0.35
 local FADE = 1.5
 
 local Som = {}
@@ -32,12 +32,19 @@ local tocando: Sound? = nil
 local conexaoFim: RBXScriptConnection? = nil
 local geracao = 0 -- muda a cada troca de era: faixas antigas não puxam a próxima
 
+-- volume próprio de cada efeito (1 = o do grupo): as vinhetas da APM são gravadas bem mais altas
+local VOLUME_EFEITO: { [string]: number } = {
+	era = 0.2,
+	conquista = 0.35,
+}
+
 -- efeitos ficam pré-carregados (um Sound por nome, reaproveitado)
 local efeitos: { [string]: Sound } = {}
 for nome, id in Assets.Sons do
 	local s = Instance.new("Sound")
 	s.Name = nome
 	s.SoundId = id
+	s.Volume = VOLUME_EFEITO[nome] or 1
 	s.SoundGroup = grupoEfeitos
 	s.Parent = grupoEfeitos
 	efeitos[nome] = s
