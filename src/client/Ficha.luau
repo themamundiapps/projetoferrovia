@@ -246,7 +246,7 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 	}, r)
 	novo("UIStroke", { Color = c.ink, Thickness = 1.5 }, moldura)
 	est:cantos(moldura)
-	local imagem = (Assets.Cidades :: any)[id] or (Assets.Paisagens :: any)[e.paisagem or ""]
+	local imagem = Assets.imagemCidade(id, est.era.id) or (Assets.Paisagens :: any)[e.paisagem or ""]
 	if imagem then
 		local img = novo("ImageLabel", {
 			Size = UDim2.fromScale(1, 1),

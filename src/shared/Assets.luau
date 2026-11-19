@@ -58,6 +58,33 @@ Assets.Cidades = {
 	vitoria = "rbxassetid://101719837411189",
 	-- faltam: curitiba, campo_grande
 } :: { [string]: string } -- id da cidade -> imagem
+
+-- A mesma cidade em outras épocas (arte/cidades/<id>_<ano>.jpg): a ficha e o jornal mostram a da era
+-- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
+-- Créditos e licenças em arte/cidades/CREDITOS.md.
+Assets.CidadesPorEra = {
+	diesel = { -- anos 1960
+		rio = "rbxassetid://0",
+		sao_paulo = "rbxassetid://0",
+	},
+	eletrico = { -- anos 1980 (a Alta usa estas até ter as dela)
+		rio = "rbxassetid://0",
+		sao_paulo = "rbxassetid://0",
+	},
+	alta = {},
+} :: { [string]: { [string]: string } }
+
+local ORDEM_ERAS = { "vapor", "diesel", "eletrico", "alta" }
+function Assets.imagemCidade(id: string, eraId: string?): string?
+	local ate = table.find(ORDEM_ERAS, eraId or "vapor") or 1
+	for i = ate, 2, -1 do
+		local img = Assets.CidadesPorEra[ORDEM_ERAS[i]][id]
+		if img and img ~= "rbxassetid://0" then
+			return img
+		end
+	end
+	return Assets.Cidades[id]
+end
 -- Kit de UI (imagens fatiadas em 9, arte/ui/<kit>/). slice = SliceCenter na imagem de 512 px;
 -- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).
 Assets.KitUI = {

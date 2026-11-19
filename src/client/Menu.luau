@@ -880,7 +880,7 @@ end
 local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	local function imagem(id: string): string?
 		local e = dados.estacoes[id]
-		return (Assets.Cidades :: any)[id] or (e and (Assets.Paisagens :: any)[e.paisagem or ""])
+		return Assets.imagemCidade(id, estado.era) or (e and (Assets.Paisagens :: any)[e.paisagem or ""])
 	end
 	local candidatas: { string } = {}
 	if ev.tipo == "cidade" and ev.alvo and dados.estacoes[ev.alvo] then
@@ -918,7 +918,7 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 			return img, dados.estacoes[id].nome
 		end
 	end
-	return (Assets.Cidades :: any).rio, dados.estacoes.rio and dados.estacoes.rio.nome
+	return Assets.imagemCidade("rio", estado.era), dados.estacoes.rio and dados.estacoes.rio.nome
 end
 
 local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = "grátis" }
