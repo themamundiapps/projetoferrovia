@@ -36,6 +36,10 @@ local geracao = 0 -- muda a cada troca de era: faixas antigas não puxam a próx
 local VOLUME_EFEITO: { [string]: number } = {
 	conquista = 0.35,
 }
+-- efeitos que cortam (com fade) depois de alguns segundos: quem deixa o jogo de fundo não leva susto
+local DURACAO_MAX: { [string]: number } = {
+	conquista = 2.5,
+}
 
 -- efeitos ficam pré-carregados (um Sound por nome, reaproveitado)
 local efeitos: { [string]: Sound } = {}
@@ -142,6 +146,18 @@ function Som.efeito(nome: string)
 		c.Ended:Once(function()
 			c:Destroy()
 		end)
+		local max = DURACAO_MAX[nome]
+		if max then
+			task.delay(max, function()
+				if c.Parent and c.IsPlaying then
+					local tw = TweenService:Create(c, TweenInfo.new(0.8), { Volume = 0 })
+					tw.Completed:Once(function()
+						c:Destroy()
+					end)
+					tw:Play()
+				end
+			end)
+		end
 	end
 end
 
