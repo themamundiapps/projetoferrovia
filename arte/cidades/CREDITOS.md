@@ -1,19 +1,56 @@
 # Créditos e licenças das imagens das cidades
 
-As imagens geradas por IA pelo estúdio (todas as `<cidade>.png/jpg` sem ano no nome) não precisam de crédito.
-As fotos de época vêm do Wikimedia Commons, com licença livre para uso comercial (domínio público, CC0,
-CC BY ou CC BY-SA; nada de NC nem ND). Elas não ficam no repositório: `python tools/assetgen/baixar_commons.py`
-baixa as miniaturas (960 px) para `arte/cidades_jogo/`. As CC BY e CC BY-SA pedem crédito: autor, licença e
-link entram na tela de créditos do jogo. As CC BY-SA pedem ainda que a versão recortada fique na mesma licença.
+As ilustrações da Era do Vapor (`arte/cidades/<cidade>.png/jpg`) foram geradas por IA pelo estúdio e não precisam de crédito.
+As fotos das outras eras vêm do Wikimedia Commons, com licença livre para uso comercial (domínio público, CC0, CC BY,
+CC BY-SA ou "atribuição"; nada de NC nem ND). Elas não ficam no repositório: `python tools/assetgen/baixar_commons.py`
+baixa as miniaturas (960 px) para `arte/cidades_jogo/` a partir de `tools/assetgen/fotos_commons.json`.
 
-| Arquivo | Era no jogo | Foto | Autor / origem | Licença |
-|---|---|---|---|---|
-| `rio_1960.jpg` | Diesel | [Avenida Atlântica (Copacabana), 1965](https://commons.wikimedia.org/wiki/File:Az_Avenida_Atl%C3%A2ntica_(Copacabana)_a_Rua_Sousa_Lima_torkolat%C3%A1n%C3%A1l._Fortepan_74395.jpg) | Fortepan / Romák Éva (doadora) | CC BY-SA 3.0 |
-| `rio_1980.jpg` | Elétrica / Alta | [Rio de Janeiro, 1975](https://commons.wikimedia.org/wiki/File:Rio_de_Janeiro,_Brazil_(28252969945).jpg) | Urbain J. Kinet | sem restrições conhecidas (Flickr Commons) |
-| `sao_paulo_1960.jpg` | Diesel | [Praça Ramos de Azevedo, 1968](https://commons.wikimedia.org/wiki/File:Praca_Ramos_de_Azevedo_a_Rua_Bar%C3%A3o_de_Itapetininga_fel%C3%A9_n%C3%A9zve._Fortepan_73751.jpg) | Fortepan / Romák Éva (doadora) | CC BY-SA 3.0 |
-| `sao_paulo_1980.jpg` | Elétrica / Alta | [São Paulo, vista aérea, 1974](https://commons.wikimedia.org/wiki/File:S%C3%A3o_Paulo_-_Air_View_-_2356164247.jpg) | roger4336 (Flickr) | CC BY-SA 2.0 |
-| `bh_1960.jpg` | Diesel | [Trólebus em Belo Horizonte, 1953](https://commons.wikimedia.org/wiki/File:Tr%C3%B3lebus_Belo_Horizonte_(1953).png) | Prefeitura de Belo Horizonte | domínio público |
-| `bh_1980.jpg` | Elétrica / Alta | [Belo Horizonte, 1972](https://commons.wikimedia.org/wiki/File:Belo_Horizonte,_Fundo_Correio_da_Manh%C3%A3_-_2.tif) | Correio da Manhã / Arquivo Nacional | domínio público |
+**Antes de publicar:** as licenças CC BY, CC BY-SA e "atribuição" pedem crédito (autor, licença e link), que vai numa
+tela de créditos do jogo. As CC BY-SA pedem ainda que a versão recortada fique na mesma licença.
 
-Pela Lei 9.610/98 (art. 44), fotos ficam protegidas por 70 anos contados de 1º de janeiro do ano seguinte
-ao da divulgação: foto antiga não é livre só por ser antiga; vale a licença da página no Commons.
+| Cidade | Era | Foto (página no Commons) | Data | Autor | Licença |
+|---|---|---|---|---|---|
+| Rio de Janeiro | Diesel | [Az_Avenida_Atlântica_(Copacabana)_a_Rua_Sousa_Lima_torkolatánál._Fortepan_74395.jpg](https://commons.wikimedia.org/wiki/File:Az_Avenida_Atl%C3%A2ntica_%28Copacabana%29_a_Rua_Sousa_Lima_torkolat%C3%A1n%C3%A1l._Fortepan_74395.jpg) | 1965 | Fortepan / Romák Éva | CC BY-SA 3.0 |
+| Rio de Janeiro | Elétrica | [Rio_de_Janeiro,_Brazil_(27637372153).jpg](https://commons.wikimedia.org/wiki/File:Rio_de_Janeiro%2C_Brazil_%2827637372153%29.jpg) | 1975 | Urbain J. Kinet | sem restrições conhecidas |
+| Rio de Janeiro | Alta Velocidade | [1_leblon_aerial_2014.jpg](https://commons.wikimedia.org/wiki/File:1_leblon_aerial_2014.jpg) | 2014 | Chensiyuan | CC BY-SA 4.0 |
+| São Paulo | Diesel | [Postal_Palacetes_Prates.jpg](https://commons.wikimedia.org/wiki/File:Postal_Palacetes_Prates.jpg) | anos 1950 | autor não identificado (cartão-postal) | domínio público |
+| São Paulo | Elétrica | [Downtown_São_Paulo.jpg](https://commons.wikimedia.org/wiki/File:Downtown_S%C3%A3o_Paulo.jpg) | 1971 | Roger Wollstadt | CC BY-SA 2.0 |
+| São Paulo | Alta Velocidade | [São_Paulo_vista_do_MAC-USP.jpg](https://commons.wikimedia.org/wiki/File:S%C3%A3o_Paulo_vista_do_MAC-USP.jpg) | 2025 | Boaventuravinicius | CC BY 4.0 |
+| Belo Horizonte | Diesel | [Antiga_praça_da_Savassi.jpeg](https://commons.wikimedia.org/wiki/File:Antiga_pra%C3%A7a_da_Savassi.jpeg) | 1946 | Prefeitura de Belo Horizonte | domínio público |
+| Belo Horizonte | Elétrica | [Belo_Horizonte,_Fundo_Correio_da_Manhã_-_2.tif](https://commons.wikimedia.org/wiki/File:Belo_Horizonte%2C_Fundo_Correio_da_Manh%C3%A3_-_2.tif) | 1972 | Correio da Manhã / Arquivo Nacional | domínio público |
+| Belo Horizonte | Alta Velocidade | [منظر_عام_لمدينة_بيلوهوريزونتي_البرازيلية.jpg](https://commons.wikimedia.org/wiki/File:%D9%85%D9%86%D8%B8%D8%B1_%D8%B9%D8%A7%D9%85_%D9%84%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%A8%D9%8A%D9%84%D9%88%D9%87%D9%88%D8%B1%D9%8A%D8%B2%D9%88%D9%86%D8%AA%D9%8A_%D8%A7%D9%84%D8%A8%D8%B1%D8%A7%D8%B2%D9%8A%D9%84%D9%8A%D8%A9.jpg) | 2017 | Sambasoccer27 | CC BY-SA 4.0 |
+| Recife | Diesel | [Recife,_Fundo_Correio_da_Manhã.tif](https://commons.wikimedia.org/wiki/File:Recife%2C_Fundo_Correio_da_Manh%C3%A3.tif) | 1969 | Correio da Manhã / Arquivo Nacional | domínio público |
+| Recife | Elétrica | [Recife,_Fundo_Correio_da_Manhã_-_3.tif](https://commons.wikimedia.org/wiki/File:Recife%2C_Fundo_Correio_da_Manh%C3%A3_-_3.tif) | 1972 | Correio da Manhã / Arquivo Nacional | domínio público |
+| Recife | Alta Velocidade | [Galpões_abandonados_-_Recife,_Pernambuco,_Brasil.jpg](https://commons.wikimedia.org/wiki/File:Galp%C3%B5es_abandonados_-_Recife%2C_Pernambuco%2C_Brasil.jpg) | 2012 | Direitos Urbanos | CC BY 2.0 |
+| Salvador | Diesel | [Hidroporto_de_Salvador_em_1949.jpg](https://commons.wikimedia.org/wiki/File:Hidroporto_de_Salvador_em_1949.jpg) | 1949 | autor não identificado | domínio público |
+| Salvador | Elétrica | [Salvador_decada_70_porto_da_barra.jpg](https://commons.wikimedia.org/wiki/File:Salvador_decada_70_porto_da_barra.jpg) | c. 1975 | André Koehne | CC BY-SA 4.0 |
+| Salvador | Alta Velocidade | [Webysther_20150907165153_-_Mercado_modelo_e_baia_de_todos_os_santos.jpg](https://commons.wikimedia.org/wiki/File:Webysther_20150907165153_-_Mercado_modelo_e_baia_de_todos_os_santos.jpg) | 2015 | Webysther | CC BY-SA 4.0 |
+| Curitiba | Diesel | [Praca_rui_barbosa_curitiba_anos_1960.jpg](https://commons.wikimedia.org/wiki/File:Praca_rui_barbosa_curitiba_anos_1960.jpg) | 1960 | autor não identificado | domínio público |
+| Curitiba | Alta Velocidade | [Vista_da_Torre_das_Mercês_em_Curitiba_-_Brasil._(10160328624).jpg](https://commons.wikimedia.org/wiki/File:Vista_da_Torre_das_Merc%C3%AAs_em_Curitiba_-_Brasil._%2810160328624%29.jpg) | 2013 | Marinelson Almeida | CC BY 2.0 |
+| Porto Alegre | Diesel | [Porto_Alegre_Av_Borges_de_Medeiros_Estação_Férrea_Mercado_Livre_déc1950.jpg](https://commons.wikimedia.org/wiki/File:Porto_Alegre_Av_Borges_de_Medeiros_Esta%C3%A7%C3%A3o_F%C3%A9rrea_Mercado_Livre_d%C3%A9c1950.jpg) | anos 1950 | autor não identificado | domínio público |
+| Porto Alegre | Alta Velocidade | [FSA1310_Vista_do_Shopping_Pontal.jpg](https://commons.wikimedia.org/wiki/File:FSA1310_Vista_do_Shopping_Pontal.jpg) | 2026 | Fernando Antunes / CMPA | Atribuição |
+| Belém | Alta Velocidade | [A_panoramic_view_of_the_historic_center_of_Belém_do_Pará.jpg](https://commons.wikimedia.org/wiki/File:A_panoramic_view_of_the_historic_center_of_Bel%C3%A9m_do_Par%C3%A1.jpg) | 2023 | Rafaelbyphoto | CC BY 4.0 |
+| Manaus | Elétrica | [Manaus_década_de_80_-_panoramio.jpg](https://commons.wikimedia.org/wiki/File:Manaus_d%C3%A9cada_de_80_-_panoramio.jpg) | anos 1980 | RicardoSAPO | domínio público (conferir: autor marcou ©) |
+| Manaus | Alta Velocidade | [Teatro_Amazonas_-_Vista_Aérea.jpg](https://commons.wikimedia.org/wiki/File:Teatro_Amazonas_-_Vista_A%C3%A9rea.jpg) | 2013 | José Zamith | CC BY 3.0 BR |
+| Brasília | Diesel | [Vista_do_aeroporto_de_Brasília_-_BR_RJANRIO_PH_0_FOT_05962_0001,_Acervo_do_Arquivo_Nacional.jpg](https://commons.wikimedia.org/wiki/File:Vista_do_aeroporto_de_Bras%C3%ADlia_-_BR_RJANRIO_PH_0_FOT_05962_0001%2C_Acervo_do_Arquivo_Nacional.jpg) | anos 1960 | Arquivo Nacional | domínio público |
+| Brasília | Elétrica | [Brasilia,_Brazil_(28252970275).jpg](https://commons.wikimedia.org/wiki/File:Brasilia%2C_Brazil_%2828252970275%29.jpg) | 1975 | Urbain J. Kinet | sem restrições conhecidas |
+| Brasília | Alta Velocidade | [O_Senado_e_o_Céu_de_Brasília.jpg](https://commons.wikimedia.org/wiki/File:O_Senado_e_o_C%C3%A9u_de_Bras%C3%ADlia.jpg) | 2020 | Bruno Tamm Rabello | CC BY-SA 4.0 |
+| Fortaleza | Elétrica | [Avenida_Beira_Mar_-_Fortaleza-_1980.jpg](https://commons.wikimedia.org/wiki/File:Avenida_Beira_Mar_-_Fortaleza-_1980.jpg) | 1980 | Francisco Marinho de Andrade | CC BY 3.0 |
+| Fortaleza | Alta Velocidade | [Skyline_de_Fortaleza.jpg](https://commons.wikimedia.org/wiki/File:Skyline_de_Fortaleza.jpg) | 2008 | Ricardo | CC BY 2.0 |
+| Juiz de Fora | Alta Velocidade | [Vista_do_centro_de_Juiz_de_Fora-MG.JPG](https://commons.wikimedia.org/wiki/File:Vista_do_centro_de_Juiz_de_Fora-MG.JPG) | 2009 | Rcandre | CC BY-SA 4.0 |
+| Santos | Alta Velocidade | [Santos_-_55372881413.jpg](https://commons.wikimedia.org/wiki/File:Santos_-_55372881413.jpg) | 2025 | xiquinhosilva | CC BY 4.0 |
+| Campinas | Diesel | [Vista_aérea_de_Campinas.jpg](https://commons.wikimedia.org/wiki/File:Vista_a%C3%A9rea_de_Campinas.jpg) | 1963 | autor não identificado | CC BY-SA 4.0 |
+| Campinas | Alta Velocidade | [Campinas_-_SP_-_Jardim_Proença_visto_da_Rua_Proença.JPG](https://commons.wikimedia.org/wiki/File:Campinas_-_SP_-_Jardim_Proen%C3%A7a_visto_da_Rua_Proen%C3%A7a.JPG) | 2007 | Fasouzafreitas | CC BY-SA 3.0 |
+| Vitória | Alta Velocidade | [2018-12-04_-_Vitória_-_043.jpg](https://commons.wikimedia.org/wiki/File:2018-12-04_-_Vit%C3%B3ria_-_043.jpg) | 2018 | Oleg Yunakov | CC BY-SA 4.0 |
+| São José dos Campos | Alta Velocidade | [View_of_São_Jose_dos_Campos_2017_01.jpg](https://commons.wikimedia.org/wiki/File:View_of_S%C3%A3o_Jose_dos_Campos_2017_01.jpg) | 2017 | Mike Peel (www.mikepeel.net) | CC BY-SA 4.0 |
+| Sorocaba | Alta Velocidade | [Vila_Carvalho_-_Sorocaba.jpg](https://commons.wikimedia.org/wiki/File:Vila_Carvalho_-_Sorocaba.jpg) | 2008 | Frederico Cintra | CC BY 2.0 |
+| Ponta Grossa | Alta Velocidade | [Ponta_Grossa-Paraná-Brasil.jpg](https://commons.wikimedia.org/wiki/File:Ponta_Grossa-Paran%C3%A1-Brasil.jpg) | 2017 | Gabriel N.12345678 | CC BY-SA 4.0 |
+| Santa Maria | Alta Velocidade | [Basílica_de_Nossa_Senhora_Medianeira.jpg](https://commons.wikimedia.org/wiki/File:Bas%C3%ADlica_de_Nossa_Senhora_Medianeira.jpg) | 2012 | Imagens SM | CC BY-SA 3.0 |
+| Campo Grande | Alta Velocidade | [VA_Pq_das_Nações_Indígenas.jpg](https://commons.wikimedia.org/wiki/File:VA_Pq_das_Na%C3%A7%C3%B5es_Ind%C3%ADgenas.jpg) | 2018 | Flavio Andre / MTur Destinos | Atribuição |
+| Florianópolis | Alta Velocidade | [Um_panorama_de_história_-_Ponte_Hercílio_Luz_2.jpg](https://commons.wikimedia.org/wiki/File:Um_panorama_de_hist%C3%B3ria_-_Ponte_Herc%C3%ADlio_Luz_2.jpg) | 2015 | Alfabilesantana | CC BY-SA 4.0 |
+| Maceió | Alta Velocidade | [Praia_Pajuçara_Maceió_04_2015_3254.JPG](https://commons.wikimedia.org/wiki/File:Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3254.JPG) | 2015 | Mariordo (Mario Roberto Durán Ortiz) | CC BY-SA 4.0 |
+| Natal | Alta Velocidade | [Natal,_capital_do_Rio_Grande_do_Norte,_Brasil.jpg](https://commons.wikimedia.org/wiki/File:Natal%2C_capital_do_Rio_Grande_do_Norte%2C_Brasil.jpg) | 2018 | Ney Douglas / MTur Destinos | Atribuição |
+
+Cidades e eras sem foto livre encontrada usam a imagem da era anterior mais próxima (no fim, a ilustração do Vapor).
+Pela Lei 9.610/98 (art. 44), fotos ficam protegidas por 70 anos contados de 1º de janeiro do ano seguinte ao da
+divulgação: foto antiga não é livre só por ser antiga; vale a licença da página no Commons.

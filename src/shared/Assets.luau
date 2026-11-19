@@ -60,21 +60,56 @@ Assets.Cidades = {
 } :: { [string]: string } -- id da cidade -> imagem
 
 -- A mesma cidade em outras épocas (fotos do Wikimedia Commons, baixadas por tools/assetgen/baixar_commons.py
--- para arte/cidades_jogo/<id>_<ano>.jpg): a ficha e o jornal mostram a da era
+-- para arte/cidades_jogo/<id>_<era>.jpg): a ficha e o jornal mostram a da era
 -- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
 -- Créditos e licenças em arte/cidades/CREDITOS.md.
 Assets.CidadesPorEra = {
-	diesel = { -- anos 1950 e 60
+	diesel = { -- anos 1940 a 60
 		rio = "rbxassetid://0",
 		sao_paulo = "rbxassetid://0",
 		bh = "rbxassetid://0",
+		recife = "rbxassetid://0",
+		salvador = "rbxassetid://0",
+		curitiba = "rbxassetid://0",
+		porto_alegre = "rbxassetid://0",
+		brasilia = "rbxassetid://0",
+		campinas = "rbxassetid://0",
 	},
-	eletrico = { -- anos 1970 e 80 (a Alta usa estas até ter as dela)
+	eletrico = { -- anos 1970 a 90
 		rio = "rbxassetid://0",
 		sao_paulo = "rbxassetid://0",
 		bh = "rbxassetid://0",
+		recife = "rbxassetid://0",
+		salvador = "rbxassetid://0",
+		manaus = "rbxassetid://0",
+		brasilia = "rbxassetid://0",
+		fortaleza = "rbxassetid://0",
 	},
-	alta = {},
+	alta = { -- de 2000 em diante
+		rio = "rbxassetid://0",
+		sao_paulo = "rbxassetid://0",
+		bh = "rbxassetid://0",
+		recife = "rbxassetid://0",
+		salvador = "rbxassetid://0",
+		curitiba = "rbxassetid://0",
+		porto_alegre = "rbxassetid://0",
+		belem = "rbxassetid://0",
+		manaus = "rbxassetid://0",
+		brasilia = "rbxassetid://0",
+		fortaleza = "rbxassetid://0",
+		juiz_de_fora = "rbxassetid://0",
+		santos = "rbxassetid://0",
+		campinas = "rbxassetid://0",
+		vitoria = "rbxassetid://0",
+		sao_jose_campos = "rbxassetid://0",
+		sorocaba = "rbxassetid://0",
+		ponta_grossa = "rbxassetid://0",
+		santa_maria = "rbxassetid://0",
+		campo_grande = "rbxassetid://0",
+		florianopolis = "rbxassetid://0",
+		maceio = "rbxassetid://0",
+		natal = "rbxassetid://0",
+	},
 } :: { [string]: { [string]: string } }
 
 local ORDEM_ERAS = { "vapor", "diesel", "eletrico", "alta" }

@@ -18,4 +18,6 @@ Thumbs.db
 tools/assetgen/naturalearth/
 
 # fotos do Wikimedia Commons (baixadas por tools/assetgen/baixar_commons.py)
-arte/cidades_jogo/*_19[0-9][0-9].*
+arte/cidades_jogo/*_diesel.*
+arte/cidades_jogo/*_eletrico.*
+arte/cidades_jogo/*_alta.*

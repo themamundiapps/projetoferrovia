@@ -1,0 +1,322 @@
+[
+ {
+  "cidade": "rio",
+  "era": "diesel",
+  "caminho": "a/ab/Az_Avenida_Atl%C3%A2ntica_%28Copacabana%29_a_Rua_Sousa_Lima_torkolat%C3%A1n%C3%A1l._Fortepan_74395.jpg",
+  "licenca": "CC BY-SA 3.0",
+  "autor": "Fortepan / Romák Éva",
+  "data": "1965"
+ },
+ {
+  "cidade": "rio",
+  "era": "eletrico",
+  "caminho": "e/e0/Rio_de_Janeiro%2C_Brazil_%2827637372153%29.jpg",
+  "licenca": "sem restrições conhecidas",
+  "autor": "Urbain J. Kinet",
+  "data": "1975"
+ },
+ {
+  "cidade": "rio",
+  "era": "alta",
+  "caminho": "1/14/1_leblon_aerial_2014.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Chensiyuan",
+  "data": "2014"
+ },
+ {
+  "cidade": "sao_paulo",
+  "era": "diesel",
+  "caminho": "d/db/Postal_Palacetes_Prates.jpg",
+  "licenca": "domínio público",
+  "autor": "autor não identificado (cartão-postal)",
+  "data": "anos 1950"
+ },
+ {
+  "cidade": "sao_paulo",
+  "era": "eletrico",
+  "caminho": "f/fd/Downtown_S%C3%A3o_Paulo.jpg",
+  "licenca": "CC BY-SA 2.0",
+  "autor": "Roger Wollstadt",
+  "data": "1971"
+ },
+ {
+  "cidade": "sao_paulo",
+  "era": "alta",
+  "caminho": "0/04/S%C3%A3o_Paulo_vista_do_MAC-USP.jpg",
+  "licenca": "CC BY 4.0",
+  "autor": "Boaventuravinicius",
+  "data": "2025"
+ },
+ {
+  "cidade": "bh",
+  "era": "diesel",
+  "caminho": "6/61/Antiga_pra%C3%A7a_da_Savassi.jpeg",
+  "licenca": "domínio público",
+  "autor": "Prefeitura de Belo Horizonte",
+  "data": "1946"
+ },
+ {
+  "cidade": "bh",
+  "era": "eletrico",
+  "caminho": "1/13/Belo_Horizonte%2C_Fundo_Correio_da_Manh%C3%A3_-_2.tif",
+  "licenca": "domínio público",
+  "autor": "Correio da Manhã / Arquivo Nacional",
+  "data": "1972"
+ },
+ {
+  "cidade": "bh",
+  "era": "alta",
+  "caminho": "5/5f/%D9%85%D9%86%D8%B8%D8%B1_%D8%B9%D8%A7%D9%85_%D9%84%D9%85%D8%AF%D9%8A%D9%86%D8%A9_%D8%A8%D9%8A%D9%84%D9%88%D9%87%D9%88%D8%B1%D9%8A%D8%B2%D9%88%D9%86%D8%AA%D9%8A_%D8%A7%D9%84%D8%A8%D8%B1%D8%A7%D8%B2%D9%8A%D9%84%D9%8A%D8%A9.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Sambasoccer27",
+  "data": "2017"
+ },
+ {
+  "cidade": "recife",
+  "era": "diesel",
+  "caminho": "8/8a/Recife%2C_Fundo_Correio_da_Manh%C3%A3.tif",
+  "licenca": "domínio público",
+  "autor": "Correio da Manhã / Arquivo Nacional",
+  "data": "1969"
+ },
+ {
+  "cidade": "recife",
+  "era": "eletrico",
+  "caminho": "b/bc/Recife%2C_Fundo_Correio_da_Manh%C3%A3_-_3.tif",
+  "licenca": "domínio público",
+  "autor": "Correio da Manhã / Arquivo Nacional",
+  "data": "1972"
+ },
+ {
+  "cidade": "recife",
+  "era": "alta",
+  "caminho": "9/9c/Galp%C3%B5es_abandonados_-_Recife%2C_Pernambuco%2C_Brasil.jpg",
+  "licenca": "CC BY 2.0",
+  "autor": "Direitos Urbanos",
+  "data": "2012"
+ },
+ {
+  "cidade": "salvador",
+  "era": "diesel",
+  "caminho": "2/28/Hidroporto_de_Salvador_em_1949.jpg",
+  "licenca": "domínio público",
+  "autor": "autor não identificado",
+  "data": "1949"
+ },
+ {
+  "cidade": "salvador",
+  "era": "eletrico",
+  "caminho": "1/11/Salvador_decada_70_porto_da_barra.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "André Koehne",
+  "data": "c. 1975"
+ },
+ {
+  "cidade": "salvador",
+  "era": "alta",
+  "caminho": "8/88/Webysther_20150907165153_-_Mercado_modelo_e_baia_de_todos_os_santos.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Webysther",
+  "data": "2015"
+ },
+ {
+  "cidade": "curitiba",
+  "era": "diesel",
+  "caminho": "3/3f/Praca_rui_barbosa_curitiba_anos_1960.jpg",
+  "licenca": "domínio público",
+  "autor": "autor não identificado",
+  "data": "1960"
+ },
+ {
+  "cidade": "curitiba",
+  "era": "alta",
+  "caminho": "a/a7/Vista_da_Torre_das_Merc%C3%AAs_em_Curitiba_-_Brasil._%2810160328624%29.jpg",
+  "licenca": "CC BY 2.0",
+  "autor": "Marinelson Almeida",
+  "data": "2013"
+ },
+ {
+  "cidade": "porto_alegre",
+  "era": "diesel",
+  "caminho": "8/82/Porto_Alegre_Av_Borges_de_Medeiros_Esta%C3%A7%C3%A3o_F%C3%A9rrea_Mercado_Livre_d%C3%A9c1950.jpg",
+  "licenca": "domínio público",
+  "autor": "autor não identificado",
+  "data": "anos 1950"
+ },
+ {
+  "cidade": "porto_alegre",
+  "era": "alta",
+  "caminho": "2/2a/FSA1310_Vista_do_Shopping_Pontal.jpg",
+  "licenca": "Atribuição",
+  "autor": "Fernando Antunes / CMPA",
+  "data": "2026"
+ },
+ {
+  "cidade": "belem",
+  "era": "alta",
+  "caminho": "8/86/A_panoramic_view_of_the_historic_center_of_Bel%C3%A9m_do_Par%C3%A1.jpg",
+  "licenca": "CC BY 4.0",
+  "autor": "Rafaelbyphoto",
+  "data": "2023"
+ },
+ {
+  "cidade": "manaus",
+  "era": "eletrico",
+  "caminho": "8/81/Manaus_d%C3%A9cada_de_80_-_panoramio.jpg",
+  "licenca": "domínio público (conferir: autor marcou ©)",
+  "autor": "RicardoSAPO",
+  "data": "anos 1980"
+ },
+ {
+  "cidade": "manaus",
+  "era": "alta",
+  "caminho": "3/33/Teatro_Amazonas_-_Vista_A%C3%A9rea.jpg",
+  "licenca": "CC BY 3.0 BR",
+  "autor": "José Zamith",
+  "data": "2013"
+ },
+ {
+  "cidade": "brasilia",
+  "era": "diesel",
+  "caminho": "d/d9/Vista_do_aeroporto_de_Bras%C3%ADlia_-_BR_RJANRIO_PH_0_FOT_05962_0001%2C_Acervo_do_Arquivo_Nacional.jpg",
+  "licenca": "domínio público",
+  "autor": "Arquivo Nacional",
+  "data": "anos 1960"
+ },
+ {
+  "cidade": "brasilia",
+  "era": "eletrico",
+  "caminho": "8/80/Brasilia%2C_Brazil_%2828252970275%29.jpg",
+  "licenca": "sem restrições conhecidas",
+  "autor": "Urbain J. Kinet",
+  "data": "1975"
+ },
+ {
+  "cidade": "brasilia",
+  "era": "alta",
+  "caminho": "4/4d/O_Senado_e_o_C%C3%A9u_de_Bras%C3%ADlia.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Bruno Tamm Rabello",
+  "data": "2020"
+ },
+ {
+  "cidade": "fortaleza",
+  "era": "eletrico",
+  "caminho": "c/ca/Avenida_Beira_Mar_-_Fortaleza-_1980.jpg",
+  "licenca": "CC BY 3.0",
+  "autor": "Francisco Marinho de Andrade",
+  "data": "1980"
+ },
+ {
+  "cidade": "fortaleza",
+  "era": "alta",
+  "caminho": "e/e7/Skyline_de_Fortaleza.jpg",
+  "licenca": "CC BY 2.0",
+  "autor": "Ricardo",
+  "data": "2008"
+ },
+ {
+  "cidade": "juiz_de_fora",
+  "era": "alta",
+  "caminho": "3/33/Vista_do_centro_de_Juiz_de_Fora-MG.JPG",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Rcandre",
+  "data": "2009"
+ },
+ {
+  "cidade": "santos",
+  "era": "alta",
+  "caminho": "e/e7/Santos_-_55372881413.jpg",
+  "licenca": "CC BY 4.0",
+  "autor": "xiquinhosilva",
+  "data": "2025"
+ },
+ {
+  "cidade": "campinas",
+  "era": "diesel",
+  "caminho": "9/91/Vista_a%C3%A9rea_de_Campinas.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "autor não identificado",
+  "data": "1963"
+ },
+ {
+  "cidade": "campinas",
+  "era": "alta",
+  "caminho": "5/56/Campinas_-_SP_-_Jardim_Proen%C3%A7a_visto_da_Rua_Proen%C3%A7a.JPG",
+  "licenca": "CC BY-SA 3.0",
+  "autor": "Fasouzafreitas",
+  "data": "2007"
+ },
+ {
+  "cidade": "vitoria",
+  "era": "alta",
+  "caminho": "b/be/2018-12-04_-_Vit%C3%B3ria_-_043.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Oleg Yunakov",
+  "data": "2018"
+ },
+ {
+  "cidade": "sao_jose_campos",
+  "era": "alta",
+  "caminho": "f/f7/View_of_S%C3%A3o_Jose_dos_Campos_2017_01.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Mike Peel (www.mikepeel.net)",
+  "data": "2017"
+ },
+ {
+  "cidade": "sorocaba",
+  "era": "alta",
+  "caminho": "1/18/Vila_Carvalho_-_Sorocaba.jpg",
+  "licenca": "CC BY 2.0",
+  "autor": "Frederico Cintra",
+  "data": "2008"
+ },
+ {
+  "cidade": "ponta_grossa",
+  "era": "alta",
+  "caminho": "e/e4/Ponta_Grossa-Paran%C3%A1-Brasil.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Gabriel N.12345678",
+  "data": "2017"
+ },
+ {
+  "cidade": "santa_maria",
+  "era": "alta",
+  "caminho": "f/f8/Bas%C3%ADlica_de_Nossa_Senhora_Medianeira.jpg",
+  "licenca": "CC BY-SA 3.0",
+  "autor": "Imagens SM",
+  "data": "2012"
+ },
+ {
+  "cidade": "campo_grande",
+  "era": "alta",
+  "caminho": "3/3f/VA_Pq_das_Na%C3%A7%C3%B5es_Ind%C3%ADgenas.jpg",
+  "licenca": "Atribuição",
+  "autor": "Flavio Andre / MTur Destinos",
+  "data": "2018"
+ },
+ {
+  "cidade": "florianopolis",
+  "era": "alta",
+  "caminho": "7/7f/Um_panorama_de_hist%C3%B3ria_-_Ponte_Herc%C3%ADlio_Luz_2.jpg",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Alfabilesantana",
+  "data": "2015"
+ },
+ {
+  "cidade": "maceio",
+  "era": "alta",
+  "caminho": "2/20/Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3254.JPG",
+  "licenca": "CC BY-SA 4.0",
+  "autor": "Mariordo (Mario Roberto Durán Ortiz)",
+  "data": "2015"
+ },
+ {
+  "cidade": "natal",
+  "era": "alta",
+  "caminho": "b/b1/Natal%2C_capital_do_Rio_Grande_do_Norte%2C_Brasil.jpg",
+  "licenca": "Atribuição",
+  "autor": "Ney Douglas / MTur Destinos",
+  "data": "2018"
+ }
+]
