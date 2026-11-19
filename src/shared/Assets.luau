@@ -345,7 +345,7 @@ Assets.Sons = {
 	sinal = "rbxasset://sounds/electronicpingshort.wav", -- embutido: trem novo nas eras Elétrica e Alta
 	premio = "rbxassetid://9125509503", -- moeda caindo (Pro Sound Effects)
 	conquista = "rbxassetid://1836860398", -- Winning Spirit (APM, 6 s): nível, linha completa
-	era = "rbxassetid://94590027038118", -- Victorious Journey Sting (APM, 7 s): era nova
+	era = "rbxassetid://9119628070", -- apito a vapor (o mesmo da compra de trem): era nova; o Leonardo preferiu à vinheta
 	jornal = "rbxassetid://9118835414", -- páginas virando (Pro Sound Effects)
 	erro = "rbxasset://sounds/switch.wav", -- embutido
 } :: { [string]: string }

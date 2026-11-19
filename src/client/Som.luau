@@ -34,7 +34,6 @@ local geracao = 0 -- muda a cada troca de era: faixas antigas não puxam a próx
 
 -- volume próprio de cada efeito (1 = o do grupo): as vinhetas da APM são gravadas bem mais altas
 local VOLUME_EFEITO: { [string]: number } = {
-	era = 0.2,
 	conquista = 0.35,
 }
 
