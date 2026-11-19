@@ -863,6 +863,9 @@ function MapaView.definirCamera(self: MapaView, zoom: number, pan: Vector2)
 	self.conteudo.Position = UDim2.fromOffset(math.round(self.pan.X), math.round(self.pan.Y))
 	if mudouZoom then
 		self:_layout()
+		-- os trens se reposicionam junto com as linhas; esperar o próximo quadro deixava os trens
+		-- um quadro na escala antiga, fora dos trilhos, a cada passo de zoom
+		self:_moverTrens()
 	end
 	self:_recortar()
 	self.aoMudarCamera:Fire(self.zoom)
