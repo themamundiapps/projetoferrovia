@@ -276,7 +276,7 @@ return {
 		{
 			id = "litoranea_sul", nome = "Litorânea do Sul", ano = 1950, cor = 8, ordem = 20, degrau = 5, projeto = "litoranea_sul", nota = nil,
 			trechos = {
-				{ id = "litoranea_sul_1", de = "santos", para = "paranagua", ano = 1950, km = 424, terreno = "baixada", custo = 222826, degrau = 5, via = { Vector2.new(1380.3, 1473.4), Vector2.new(1331.6, 1490.9), Vector2.new(1324.1, 1501.7), Vector2.new(1296.0, 1527.5), Vector2.new(1286.6, 1540.5) } },
+				{ id = "litoranea_sul_1", de = "santos", para = "paranagua", ano = 1950, km = 387, terreno = "baixada", custo = 203381, degrau = 5, via = { Vector2.new(1380.3, 1473.4), Vector2.new(1331.6, 1490.9), Vector2.new(1314.7, 1512.0), Vector2.new(1295.0, 1536.9) } },
 				{ id = "litoranea_sul_2", de = "paranagua", para = "joinville", ano = 1950, km = 116, terreno = "serra_leve", custo = 88672, degrau = 5 },
 				{ id = "litoranea_sul_3", de = "joinville", para = "florianopolis", ano = 1950, km = 191, terreno = "baixada", custo = 100377, degrau = 5, via = { Vector2.new(1286.6, 1616.2), Vector2.new(1288.9, 1642.5) } },
 			},
