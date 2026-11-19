@@ -106,7 +106,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	local zoom = novo("Frame", {
 		Name = "Zoom",
 		AnchorPoint = Vector2.new(1, 1),
-		Position = UDim2.new(1, -16, 1, -16),
+		Position = UDim2.new(1, -16 - Estilo.INSET_DIR, 1, -16),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
 		BackgroundTransparency = 1,
@@ -131,8 +131,8 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	zoom.Visible = UserInputService.TouchEnabled
 	local function posicionarZoom()
 		local livre = (tela.AbsoluteSize.X - (barra :: Frame).AbsoluteSize.X) / 2
-		local cabe = livre >= zoom.AbsoluteSize.X + 16 + 8
-		zoom.Position = UDim2.new(1, -16, 1, if cabe then -16 else -(Estilo.px((barra :: Frame).AbsoluteSize.Y) + 6 + 10))
+		local cabe = livre >= zoom.AbsoluteSize.X + (16 + 8 + Estilo.INSET_DIR) * Estilo.escala
+		zoom.Position = UDim2.new(1, -16 - Estilo.INSET_DIR, 1, if cabe then -16 else -(Estilo.px((barra :: Frame).AbsoluteSize.Y) + 6 + 10))
 	end
 	self._vigiaZoom = tela:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
 	zoom:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)

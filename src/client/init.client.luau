@@ -79,8 +79,8 @@ tela.Parent = playerGui
 local telaUI = Instance.new("ScreenGui")
 telaUI.Name = "FerroviaUI"
 -- a barra de cima vai até o topo da tela; ela mesma desvia dos botões do Roblox (GuiService.TopbarInset).
--- No celular, a interface fica dentro da área segura (fora do recorte da câmera e da barra de gestos).
-telaUI.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+-- Ela vai até a borda física da tela; o recorte da câmera do celular é medido pela "AreaSegura" abaixo.
+telaUI.ScreenInsets = Enum.ScreenInsets.None
 telaUI.DisplayOrder = 1
 telaUI.ResetOnSpawn = false
 telaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -92,16 +92,27 @@ telaUI.Parent = playerGui
 local escalaUI = Instance.new("UIScale")
 escalaUI.Name = "EscalaUI"
 escalaUI.Parent = telaUI
+-- tela vazia só para medir a área segura (fora do recorte da câmera e dos cantos arredondados)
+local areaSegura = Instance.new("ScreenGui")
+areaSegura.Name = "AreaSegura"
+areaSegura.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+areaSegura.ResetOnSpawn = false
+areaSegura.Enabled = true
+areaSegura.Parent = playerGui
 local function atualizarEscala()
-	local t = telaUI.AbsoluteSize
-	if t.X <= 0 or t.Y <= 0 then
+	local t, a = telaUI.AbsoluteSize, areaSegura.AbsoluteSize
+	if t.X <= 0 or t.Y <= 0 or a.X <= 0 or a.Y <= 0 then
 		return
 	end
-	local s = math.clamp(math.min(t.X / 1000, t.Y / 560), 0.6, 1)
-	Estilo.definirEscala(s) -- antes do UIScale: quem recalcula ao mudar o tamanho já lê a escala nova
+	-- a escala sai da área segura (o que dá para usar de fato)
+	local s = math.clamp(math.min(a.X / 1000, a.Y / 560), 0.6, 1)
+	local esq = math.max(0, areaSegura.AbsolutePosition.X - telaUI.AbsolutePosition.X) / s
+	local dir = math.max(0, (telaUI.AbsolutePosition.X + t.X) - (areaSegura.AbsolutePosition.X + a.X)) / s
+	Estilo.definirEscala(s, esq, dir) -- antes do UIScale: quem recalcula ao mudar o tamanho já lê a escala nova
 	escalaUI.Scale = s
 end
 telaUI:GetPropertyChangedSignal("AbsoluteSize"):Connect(atualizarEscala)
+areaSegura:GetPropertyChangedSignal("AbsoluteSize"):Connect(atualizarEscala)
 atualizarEscala()
 
 -- Onde a câmera começa (e volta, em "Reenquadrar"): a região das primeiras linhas, definida nos dados.

@@ -49,12 +49,17 @@ function Estilo.compensar(obj: GuiObject, minimo: number, aoMudar: ((number) -> 
 end
 
 local MINIMO_TOPO, MINIMO_GAVETA = 0.82, 0.95
-function Estilo.definirEscala(s: number)
+-- Recorte da câmera / cantos do celular (área segura), em pontos da tela virtual, de cada lado.
+-- A interface vai até a borda física da tela; só o que é clicável ou texto desvia disso.
+Estilo.INSET_ESQ, Estilo.INSET_DIR = 0, 0
+function Estilo.definirEscala(s: number, insetEsq: number?, insetDir: number?)
 	Estilo.escala = s
+	Estilo.INSET_ESQ, Estilo.INSET_DIR = insetEsq or 0, insetDir or 0
 	-- a barra de cima e as gavetas ficam maiores (em pontos da tela virtual) quando compensadas:
 	-- quem se posiciona abaixo da barra ou ao lado das gavetas lê estes dois valores
 	Estilo.TOPO_TELA = Estilo.ALTURA_TOPO * math.max(1, MINIMO_TOPO / s)
 	Estilo.MARGEM_LATERAL = Estilo.LARGURA_ABA_LATERAL * math.max(1, MINIMO_GAVETA / s) + 10
+		+ math.max(Estilo.INSET_ESQ, Estilo.INSET_DIR)
 	for u, aplicar in compensados do
 		if u.Parent then
 			aplicar()
@@ -939,11 +944,15 @@ function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Insta
 	-- em tela baixa (celular) o puxador é mais curto e encolhe menos que o resto (Estilo.compensar)
 	local w, h = Estilo.LARGURA_ABA_LATERAL, if Estilo.escala < 0.9 then 170 else 230
 	local dir = lado == "dir"
+	-- no celular com recorte, o puxador continua colado na borda física e cresce por baixo do
+	-- recorte; o rótulo fica na parte visível (medidas dentro da gaveta, que tem a compensação k)
+	local k = math.max(1, MINIMO_GAVETA / Estilo.escala)
+	local extra = (if dir then Estilo.INSET_DIR else Estilo.INSET_ESQ) / k
 	local b = novo("TextButton", {
 		Name = if dir then "GavetaDir" else "GavetaEsq",
 		AnchorPoint = Vector2.new(if dir then 1 else 0, 0.5),
 		Position = UDim2.new(if dir then 1 else 0, 0, 0.5, 0),
-		Size = UDim2.fromOffset(w, h),
+		Size = UDim2.fromOffset(w + extra, h),
 		BackgroundColor3 = self.cClaro.ink,
 		BackgroundTransparency = 0,
 		BorderSizePixel = 0,
@@ -974,7 +983,7 @@ function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Insta
 	novo("TextLabel", {
 		Name = "Rotulo",
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
+		Position = UDim2.new(0, if dir then w / 2 else extra + w / 2, 0.5, 0),
 		Size = UDim2.fromOffset(h - 40, w - 8),
 		Rotation = if dir then 90 else -90,
 		BackgroundTransparency = 1,
