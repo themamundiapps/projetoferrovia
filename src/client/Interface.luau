@@ -113,7 +113,8 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	-- os botões do Roblox (menu, chat) ficam por cima da ponta esquerda: o conteúdo começa depois deles
 	local GuiService = game:GetService("GuiService")
 	local function desviar()
-		local esq = math.max(ponta, GuiService.TopbarInset.Min.X + 12)
+		-- (TopbarInset vem em pixels da tela; a barra fica dentro da área segura e da escala da interface)
+		local esq = math.max(ponta, Estilo.px(GuiService.TopbarInset.Min.X - tela.AbsolutePosition.X) + 12)
 		conteudo.Position = UDim2.fromOffset(esq, 6)
 		conteudo.Size = UDim2.new(1, -(esq + ponta), 0, ALT - 18)
 	end

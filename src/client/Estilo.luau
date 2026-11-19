@@ -8,6 +8,14 @@ local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("As
 local Estilo = {}
 Estilo.__index = Estilo
 
+-- Escala da interface (UIScale da FerroviaUI): 1 no computador, menor em tela baixa (celular).
+-- Medidas lidas em AbsoluteSize/AbsolutePosition são pixels reais; para virar Offset (que o UIScale
+-- multiplica de novo) passam por Estilo.px. Quem define é o init.client, antes de mudar o UIScale.
+Estilo.escala = 1
+function Estilo.px(v: number): number
+	return v / Estilo.escala
+end
+
 local function novo(classe: string, props: { [string]: any }, pai: Instance?): any
 	local inst = Instance.new(classe)
 	for k, v in props do
@@ -109,8 +117,9 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 	}, pai) :: ImageLabel
 	local function acompanhar()
 		local origem = (pai :: GuiBase2d).AbsolutePosition
-		img.Position = UDim2.fromOffset(fr.AbsolutePosition.X - origem.X - b, fr.AbsolutePosition.Y - origem.Y - b)
-		local w, h = fr.AbsoluteSize.X + 2 * b, fr.AbsoluteSize.Y + 2 * b
+		local px = Estilo.px
+		img.Position = UDim2.fromOffset(px(fr.AbsolutePosition.X - origem.X) - b, px(fr.AbsolutePosition.Y - origem.Y) - b)
+		local w, h = px(fr.AbsoluteSize.X) + 2 * b, px(fr.AbsoluteSize.Y) + 2 * b
 		img.Size = UDim2.fromOffset(w, h)
 		-- caixa pequena (caixa da companhia, barra do menu): os cantos encolhem para não cobrir o texto;
 		-- nenhum canto passa de 1/4 do lado menor da caixa
@@ -146,7 +155,7 @@ function Estilo.cartao(self: Estilo, props: { [string]: any }, pai: Instance, de
 		img.ScaleType = Enum.ScaleType.Slice
 		img.SliceCenter = p.slice
 		local function ajustar()
-			local lado = math.min(img.AbsoluteSize.X, img.AbsoluteSize.Y) * 0.25
+			local lado = Estilo.px(math.min(img.AbsoluteSize.X, img.AbsoluteSize.Y)) * 0.25
 			img.SliceScale = math.max(0.05, math.min(p.escala, lado / p.slice.Min.X, lado / p.slice.Min.Y))
 		end
 		img:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
@@ -214,7 +223,7 @@ function Estilo.barra(self: Estilo, pai: Instance, ordem: number?): Frame
 				ZIndex = 35,
 			}, canal) :: ImageLabel
 			local function ajustar()
-				local h = cheio.AbsoluteSize.Y
+				local h = Estilo.px(cheio.AbsoluteSize.Y)
 				cheio.SliceScale = math.max(0.05, h / (2 * q.slice.Min.Y))
 				cheio.Visible = cheio.AbsoluteSize.X >= 2
 			end
@@ -394,7 +403,7 @@ local function vestirBotao(b: TextButton, p: any, semTinta: boolean?)
 		end
 		fundo.Position = UDim2.fromOffset(-l, -t)
 		fundo.Size = UDim2.new(1, l + r, 1, t + d)
-		local w, h = b.AbsoluteSize.X, b.AbsoluteSize.Y
+		local w, h = Estilo.px(b.AbsoluteSize.X), Estilo.px(b.AbsoluteSize.Y)
 		local cx, cy = p.slice.Min.X, p.slice.Min.Y
 		-- as pontas ocupam a altura toda do botão
 		local escala = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))

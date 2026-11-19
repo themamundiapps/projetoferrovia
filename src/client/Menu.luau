@@ -132,7 +132,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	local function posicionarZoom()
 		local livre = (tela.AbsoluteSize.X - (barra :: Frame).AbsoluteSize.X) / 2
 		local cabe = livre >= zoom.AbsoluteSize.X + 16 + 8
-		zoom.Position = UDim2.new(1, -16, 1, if cabe then -16 else -((barra :: Frame).AbsoluteSize.Y + 6 + 10))
+		zoom.Position = UDim2.new(1, -16, 1, if cabe then -16 else -(Estilo.px((barra :: Frame).AbsoluteSize.Y) + 6 + 10))
 	end
 	self._vigiaZoom = tela:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
 	zoom:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
@@ -232,7 +232,7 @@ function Menu.posicionarAbaixoDe(self: Menu, y: number)
 	self.painel.Position = UDim2.new(if dir then 1 else 0, if dir then -margem else margem, 0, y + 10 + 2 * b)
 	-- embaixo, para acima da barra do menu (que cresce com os medalhões)
 	local barra = self.barra
-	local alturaBarra = if barra then barra.AbsoluteSize.Y else 60
+	local alturaBarra = if barra then Estilo.px(barra.AbsoluteSize.Y) else 60
 	-- o Jornal abre como uma página larga; as outras abas, na largura normal
 	local largura = if self.aba == "jornal" then 560 else 330
 	self.painel.Size = UDim2.new(0, largura, 1, -(y + 10 + 2 * b) - (alturaBarra + 14 + 3 * b) - 10)

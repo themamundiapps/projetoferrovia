@@ -117,7 +117,7 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 		local zoom: GuiObject = achado
 		local function acimaDoZoom()
 			if zoom.Visible then
-				local base = tela.AbsolutePosition.Y + tela.AbsoluteSize.Y - zoom.AbsolutePosition.Y + 6
+				local base = Estilo.px(tela.AbsolutePosition.Y + tela.AbsoluteSize.Y - zoom.AbsolutePosition.Y) + 6
 				self.btnPendente.Position = UDim2.new(1, -14, 1, -math.max(132, base))
 			else
 				self.btnPendente.Position = UDim2.new(1, -14, 1, -132)
@@ -129,7 +129,7 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	end
 
 	local function ajustarLargura()
-		caixa.Size = UDim2.fromOffset(math.clamp(tela.AbsoluteSize.X - 40, 280, 520), 0)
+		caixa.Size = UDim2.fromOffset(math.clamp(Estilo.px(tela.AbsoluteSize.X) - 40, 280, 520), 0)
 	end
 	self.conexao = tela:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustarLargura)
 	ajustarLargura()

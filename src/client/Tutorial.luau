@@ -80,7 +80,7 @@ function Tutorial.new(tela: ScreenGui, era: any, dados: any): Tutorial
 
 	-- em telas estreitas a caixa encolhe para não cobrir os painéis dos lados
 	local function ajustarLargura()
-		caixa.Size = UDim2.fromOffset(math.clamp(tela.AbsoluteSize.X - 2 * MARGEM_LATERAL, 260, 440), 0)
+		caixa.Size = UDim2.fromOffset(math.clamp(Estilo.px(tela.AbsoluteSize.X) - 2 * MARGEM_LATERAL, 260, 440), 0)
 	end
 	self.conexao = tela:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustarLargura)
 	ajustarLargura()

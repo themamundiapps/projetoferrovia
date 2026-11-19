@@ -20,6 +20,7 @@ local Interface = require(script:WaitForChild("Interface"))
 local Menu = require(script:WaitForChild("Menu"))
 local Tutorial = require(script:WaitForChild("Tutorial"))
 local Decisao = require(script:WaitForChild("Decisao"))
+local Estilo = require(script:WaitForChild("Estilo"))
 local Ficha = require(script:WaitForChild("Ficha"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -77,12 +78,31 @@ tela.Parent = playerGui
 -- o mapa ocupa a tela inteira, mas nada clicável fica embaixo dos botões do Roblox.
 local telaUI = Instance.new("ScreenGui")
 telaUI.Name = "FerroviaUI"
--- a barra de cima vai até o topo da tela; ela mesma desvia dos botões do Roblox (GuiService.TopbarInset)
-telaUI.ScreenInsets = Enum.ScreenInsets.None
+-- a barra de cima vai até o topo da tela; ela mesma desvia dos botões do Roblox (GuiService.TopbarInset).
+-- No celular, a interface fica dentro da área segura (fora do recorte da câmera e da barra de gestos).
+telaUI.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 telaUI.DisplayOrder = 1
 telaUI.ResetOnSpawn = false
 telaUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 telaUI.Parent = playerGui
+
+-- Escala da interface: a tela "virtual" tem pelo menos 1000 x 560 pontos. No computador a escala é 1;
+-- num celular deitado (uns 750 x 380), fica perto de 0,68 e tudo cabe: barras, gavetas e painéis.
+-- O mapa (tela "Ferrovia") não entra na escala.
+local escalaUI = Instance.new("UIScale")
+escalaUI.Name = "EscalaUI"
+escalaUI.Parent = telaUI
+local function atualizarEscala()
+	local t = telaUI.AbsoluteSize
+	if t.X <= 0 or t.Y <= 0 then
+		return
+	end
+	local s = math.clamp(math.min(t.X / 1000, t.Y / 560), 0.6, 1)
+	Estilo.escala = s -- antes do UIScale: quem recalcula ao mudar o tamanho já lê a escala nova
+	escalaUI.Scale = s
+end
+telaUI:GetPropertyChangedSignal("AbsoluteSize"):Connect(atualizarEscala)
+atualizarEscala()
 
 -- Onde a câmera começa (e volta, em "Reenquadrar"): a região das primeiras linhas, definida nos dados.
 local minimo: Vector2 = DadosBrasil.foco.min
@@ -288,7 +308,7 @@ local function montar(eraId: string)
 	local function reposicionar()
 		-- posição relativa à tela do jogo (as posições absolutas vêm deslocadas pela barra do Roblox)
 		local origem = (ui.hud.Parent :: any).AbsolutePosition.Y
-		menu:posicionarAbaixoDe(ui.hud.AbsolutePosition.Y - origem + ui.hud.AbsoluteSize.Y)
+		menu:posicionarAbaixoDe(Estilo.px(ui.hud.AbsolutePosition.Y - origem + ui.hud.AbsoluteSize.Y))
 	end
 	table.insert(conexoesTela, ui.hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(reposicionar))
 	task.defer(reposicionar)
