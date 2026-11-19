@@ -45,7 +45,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.estado = nil :: any
 	self.aba = nil :: string?
 	self.verCreditos = false -- dentro de Ajustes: lista de créditos no lugar das opções
-	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true }
+	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFocarLinha = Instance.new("BindableEvent") -- (linhaId)
 	self.aoAjuste = Instance.new("BindableEvent") -- (chave, valor)
@@ -1556,6 +1556,8 @@ function Menu._abaAjustes(self: Menu)
 		{ chave = "nomesEstacoes", nome = "Nomes das cidades" },
 		{ chave = "nomesMapa", nome = "Nomes de estados, rios e regiões" },
 		{ chave = "trens", nome = "Trens andando no mapa" },
+		{ chave = "musica", nome = "Música" },
+		{ chave = "efeitos", nome = "Efeitos sonoros" },
 	}
 	for i, op in opcoes do
 		local ligado = self.ajustes[op.chave]

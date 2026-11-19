@@ -22,6 +22,7 @@ local Tutorial = require(script:WaitForChild("Tutorial"))
 local Decisao = require(script:WaitForChild("Decisao"))
 local Estilo = require(script:WaitForChild("Estilo"))
 local Ficha = require(script:WaitForChild("Ficha"))
+local Som = require(script:WaitForChild("Som"))
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -125,7 +126,7 @@ local menu: any = nil
 local tutorial: any = nil
 local decisao: any = nil
 local ficha: any = nil
-local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true }
+local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 local eraAtual: string? = nil
 local ultimoEstado: any = nil
 local conexoesTela: { RBXScriptConnection } = {}
@@ -193,21 +194,27 @@ local function avisarEventos(estado: any)
 	local simbolo = DadosBrasil.simbolo
 	for _, ev in estado.eventos or {} do
 		if ev.tipo == "contrato" and ev.cumprido then
+			Som.efeito("premio")
 			ui:enfileirar(`{Emojis.contratos} Contrato cumprido! Prêmio: {Economia.formatar(ev.premio, simbolo)}`, 5)
 		elseif ev.tipo == "contrato" then
 			ui:enfileirar(`{Emojis.relogio} O prazo do contrato acabou. Há ofertas novas na aba Contratos.`, 5)
 		elseif ev.tipo == "medalha" then
 			local m = Metas.acharMedalha(ev.id)
 			if m then
+				Som.efeito("premio")
 				ui:enfileirar(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, 4)
 			end
 		elseif ev.tipo == "nivel" then
+			Som.efeito("conquista")
 			ui:enfileirar(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, 5)
 		elseif ev.tipo == "linha" then
+			Som.efeito("conquista")
 			ui:enfileirar(`{Emojis.confirmar} Linha completa: {ev.nome}!`, 4)
 		elseif ev.tipo == "banco" then
+			Som.efeito("premio")
 			ui:enfileirar(`{Emojis.banco} Empréstimo quitado!`, 4)
 		elseif ev.tipo == "jornal" then
+			Som.efeito("jornal")
 			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, DadosBrasil, Idioma.atual)
 			ui:enfileirar(`{Emojis.jornal} EXTRA! {manchete}`, 6)
 			menu:marcarJornal()
@@ -218,8 +225,17 @@ end
 local function agir(tipo: string, args: any)
 	local resposta = remoteAcao:InvokeServer(tipo, args)
 	if resposta and not resposta.ok then
+		Som.efeito("erro")
 		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
 	elseif resposta and resposta.ok then
+		if tipo == "trem" then
+			-- apito a vapor até o Diesel; nas eras Elétrica e Alta, um sinal eletrônico
+			Som.efeito(if eraAtual == "vapor" or eraAtual == "diesel" then "apito" else "sinal")
+		elseif tipo == "construir" or tipo == "melhorarEstacao" or tipo == "completarFrotas" or tipo == "construirTudo" or tipo == "modernizar" then
+			Som.efeito("compra")
+		elseif tipo == "resgatarMissao" or tipo == "tomarEmprestimo" then
+			Som.efeito("premio")
+		end
 		if resposta.mensagem then
 			ui:avisar(`{Emojis.confirmar} {resposta.mensagem}`, 3)
 		elseif tipo == "acelerar" then
@@ -331,6 +347,9 @@ local function montar(eraId: string)
 	table.insert(conexoesTela, menu.aoAjuste.Event:Connect(function(chave: string, valor: boolean)
 		if chave == "reenquadrar" then
 			mapa:focar(minimo, maximo, 80)
+		elseif chave == "musica" or chave == "efeitos" then
+			ajustesSalvos[chave] = valor
+			Som.definir(chave, valor)
 		else
 			ajustesSalvos[chave] = valor
 			mapa:definirAjuste(chave, valor)
@@ -440,11 +459,16 @@ local function aplicarEstado(estado: any)
 	if not estado then
 		return
 	end
+	local primeiro = ultimoEstado == nil
 	ultimoEstado = estado
+	Som.musica(estado.era) -- a música só começa com a era do save (não toca o Vapor antes)
 	if estado.era ~= eraAtual then
 		local trocou = eraAtual ~= nil
 		montar(estado.era)
 		if trocou then
+			if not primeiro then
+				Som.efeito("era") -- só numa troca de verdade, não ao entrar num save que já está noutra era
+			end
 			local era = Theme.PorId[estado.era]
 			local emoji = (Emojis :: any)["era_" .. estado.era] or Emojis.era_diesel
 			ui:enfileirar(`{emoji} Bem-vindo à {era and era.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
@@ -457,6 +481,7 @@ local function aplicarEstado(estado: any)
 end
 
 montar("vapor")
+Som.observarCliques(telaUI)
 remoteEstado.OnClientEvent:Connect(aplicarEstado)
 task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())

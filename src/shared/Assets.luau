@@ -304,4 +304,50 @@ Assets.Tile = {
 	papel_grao = UDim2.fromOffset(512, 512),
 }
 
+-- Som (Som.luau). REGRA: só áudios licenciados pelo próprio Roblox (APM Music e Pro Sound Effects,
+-- da Creator Store) ou os sons embutidos do Roblox (rbxasset://sounds/...). Nada enviado por
+-- usuários: pode ser privado (não toca em outro jogo) ou ter direito autoral de terceiros.
+Assets.Musicas = {
+	vapor = { -- ragtime e piano dos anos 1910-20 (APM, álbum "Ragtime Piano / Cinema Organ")
+		"rbxassetid://1842259245", -- Klassicle Rag
+		"rbxassetid://1842259180", -- Straw Hat And Cane
+		"rbxassetid://1842259219", -- Itchy Feet
+		"rbxassetid://1842259058", -- Striding Stomp
+		"rbxassetid://1842259252", -- Mississippi Paddle Wheel
+	},
+	diesel = { -- swing, big band e música ligeira dos anos 1940-60 (APM)
+		"rbxassetid://9047001422", -- Swing Shift (d)
+		"rbxassetid://1838894724", -- Scat Express
+		"rbxassetid://1845448260", -- Doing The Town
+		"rbxassetid://1845439658", -- City Gent
+		"rbxassetid://1839284362", -- Americano
+	},
+	eletrico = { -- bossa nova (APM; "A Dream Of Bossa Nova" é gravação de 1970)
+		"rbxassetid://9043921564", -- A Dream Of Bossa Nova
+		"rbxassetid://1837070127", -- Prima Bossa Nova
+		"rbxassetid://1846207861", -- A Touch Of Bossa Nova
+		"rbxassetid://1843640051", -- Nova Bossa Nova
+		"rbxassetid://1839331078", -- Bossa Nova
+	},
+	alta = { -- lo-fi e chill hop atuais (APM)
+		"rbxassetid://9047105533", -- No Smoking
+		"rbxassetid://9046863253", -- Poolside
+		"rbxassetid://9044565681", -- Low Rider (c)
+		"rbxassetid://9048511378", -- Just Chilling
+		"rbxassetid://1837796200", -- Beach Vibes (b)
+	},
+} :: { [string]: { string } }
+
+Assets.Sons = {
+	clique = "rbxasset://sounds/clickfast.wav", -- embutido no Roblox
+	compra = "rbxassetid://9113728042", -- Cash Register 1 (Pro Sound Effects)
+	apito = "rbxassetid://9119628070", -- Steam Train Whistle Single Blows Airy 2 (Pro Sound Effects)
+	sinal = "rbxasset://sounds/electronicpingshort.wav", -- embutido: trem novo nas eras Elétrica e Alta
+	premio = "rbxassetid://9125509503", -- moeda caindo (Pro Sound Effects)
+	conquista = "rbxassetid://1836860398", -- Winning Spirit (APM, 6 s): nível, linha completa
+	era = "rbxassetid://94590027038118", -- Victorious Journey Sting (APM, 7 s): era nova
+	jornal = "rbxassetid://9118835414", -- páginas virando (Pro Sound Effects)
+	erro = "rbxasset://sounds/switch.wav", -- embutido
+} :: { [string]: string }
+
 return Assets
