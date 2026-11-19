@@ -38,7 +38,11 @@ type Segmento = {
 	-- Corredor compartilhado: linhas que passam pelo mesmo caminho são desenhadas lado a lado.
 	-- faixa = deslocamento em "larguras de linha" (0 = no centro); normal = direção do deslocamento.
 	faixa: number,
-	normal: Vector2,
+	normal: Vector2, -- sempre à esquerda do sentido de..para (igual em todos os pedaços do trecho)
+	-- direção do deslocamento em cada ponta: na emenda entre dois pedaços é a "mitra" (média das
+	-- normais), para os pedaços deslocados continuarem se encontrando na curva
+	mA: Vector2,
+	mB: Vector2,
 }
 
 type Estacao = {
@@ -96,6 +100,7 @@ export type MapaView = typeof(setmetatable(
 		tiles: { Tile },
 		segmentos: { Segmento },
 		segPorPontos: { [string]: Segmento },
+		segsDoTrecho: { [string]: { Segmento } },
 		estacoes: { Estacao },
 		rotulosMapa: { RotuloMapa },
 		mostrarNomes: boolean,
@@ -211,6 +216,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		tiles = {},
 		segmentos = {},
 		segPorPontos = {},
+		segsDoTrecho = {},
 		estacoes = {},
 		rotulosMapa = {},
 		mostrarNomes = true,
@@ -423,7 +429,11 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 					ordem = linha.ordem or 0,
 					faixa = 0,
 					normal = if (b - a).Magnitude > 1e-3 then Vector2.new(-(b - a).Unit.Y, (b - a).Unit.X) else Vector2.zero,
+					mA = Vector2.zero,
+					mB = Vector2.zero,
 				})
+				self.segsDoTrecho[trecho.id] = self.segsDoTrecho[trecho.id] or {}
+				table.insert(self.segsDoTrecho[trecho.id], self.segmentos[#self.segmentos])
 			end
 		end
 	end
@@ -453,6 +463,15 @@ end
 
 local function chaveSegmento(linhaId: string, a: Vector2, b: Vector2): string
 	return `{linhaId}|{math.round(a.X * 10)},{math.round(a.Y * 10)}|{math.round(b.X * 10)},{math.round(b.Y * 10)}`
+end
+
+-- Vetor da emenda entre dois pedaços deslocados: projeção 1 nas duas normais (as bordas se encontram).
+local function mitra(n1: Vector2, n2: Vector2): Vector2
+	local d = 1 + n1:Dot(n2)
+	if d < 0.3 then -- curva muito fechada: a mitra iria longe demais
+		return n2
+	end
+	return (n1 + n2) / d
 end
 
 function MapaView._calcularCorredores(self: MapaView)
@@ -505,12 +524,28 @@ function MapaView._calcularCorredores(self: MapaView)
 		for k, id in linhas do
 			faixaDe[id] = k - (#linhas + 1) / 2
 		end
+		-- a faixa é medida numa direção comum do grupo; cada segmento a converte para a sua normal
+		-- (linhas em sentidos opostos têm a "esquerda" trocada)
 		local referencia = grupo[1].normal
 		for _, s in grupo do
-			if s.normal:Dot(referencia) < 0 then
-				s.normal = -s.normal
+			s.faixa = faixaDe[s.linhaId] * (if s.normal:Dot(referencia) < 0 then -1 else 1)
+		end
+	end
+	-- um trecho com desvio fica inteiro na mesma faixa (senão dá degrau nas curvas), e as emendas
+	-- entre os pedaços usam a mitra das duas normais
+	for _, pedacos in self.segsDoTrecho do
+		local f = 0
+		for _, s in pedacos do
+			if s.faixa ~= 0 then
+				f = s.faixa
+				break
 			end
-			s.faixa = faixaDe[s.linhaId]
+		end
+		for k, s in pedacos do
+			s.faixa = f
+			local antes, depois = pedacos[k - 1], pedacos[k + 1]
+			s.mA = if antes then mitra(antes.normal, s.normal) else s.normal
+			s.mB = if depois then mitra(s.normal, depois.normal) else s.normal
 		end
 	end
 	-- para os trens acharem o segmento (e a faixa) de cada pedaço da trilha
@@ -858,7 +893,11 @@ function MapaView._moverTrens(self: MapaView)
 		local p = a:Lerp(b, if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0) * z
 		local seg = tr.segs[i]
 		if seg and seg.faixa ~= 0 then
-			p += seg.normal * (seg.faixa * larguraFaixa(z))
+			local u = if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0
+			if (seg.a - a).Magnitude > 0.01 then
+				u = 1 - u -- pedaço desenhado no sentido contrário ao da trilha
+			end
+			p += seg.mA:Lerp(seg.mB, u) * (seg.faixa * larguraFaixa(z))
 		end
 		t.frame.Position = UDim2.fromOffset(p.X, p.Y)
 		t.frame.Rotation = math.deg(math.atan2(b.Y - a.Y, b.X - a.X))
@@ -1054,8 +1093,8 @@ function MapaView._layout(self: MapaView)
 	self:_tamanhoTrens()
 	local faixa = larguraFaixa(z)
 	for _, s in self.segmentos do
-		local desvio = s.normal * (s.faixa * faixa)
-		local a, b = s.a * z + desvio, s.b * z + desvio
+		local a = s.a * z + s.mA * (s.faixa * faixa)
+		local b = s.b * z + s.mB * (s.faixa * faixa)
 		local d = b - a
 		local meio = (a + b) / 2
 		local angulo = math.deg(math.atan2(d.Y, d.X))
