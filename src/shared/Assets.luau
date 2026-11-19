@@ -64,24 +64,21 @@ Assets.Cidades = {
 -- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
 -- Créditos e licenças em arte/cidades/CREDITOS.md.
 Assets.CidadesPorEra = {
+	-- REGRA: nada de foto com texto, legenda, marca-d'água, site ou marca comercial legível (a moderação
+	-- do Roblox pune; em 18/11 uma foto com "www.prati.com.br" gerou advertência na conta). Conferir antes de subir.
 	diesel = { -- anos 1940 a 60
 		rio = "rbxassetid://0",
-		sao_paulo = "rbxassetid://81335939464282",
 		bh = "rbxassetid://0",
 		recife = "rbxassetid://0",
-		salvador = "rbxassetid://113237792696023",
 		curitiba = "rbxassetid://0",
-		porto_alegre = "rbxassetid://0",
 		brasilia = "rbxassetid://0",
 		campinas = "rbxassetid://0",
 	},
 	eletrico = { -- anos 1970 a 90
-		rio = "rbxassetid://0",
 		sao_paulo = "rbxassetid://106681665662907",
 		bh = "rbxassetid://0",
 		recife = "rbxassetid://0",
 		salvador = "rbxassetid://0",
-		manaus = "rbxassetid://0",
 		brasilia = "rbxassetid://0",
 		fortaleza = "rbxassetid://0",
 	},

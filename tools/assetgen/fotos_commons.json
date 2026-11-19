@@ -9,27 +9,11 @@
  },
  {
   "cidade": "rio",
-  "era": "eletrico",
-  "caminho": "e/e0/Rio_de_Janeiro%2C_Brazil_%2827637372153%29.jpg",
-  "licenca": "sem restrições conhecidas",
-  "autor": "Urbain J. Kinet",
-  "data": "1975"
- },
- {
-  "cidade": "rio",
   "era": "alta",
   "caminho": "1/14/1_leblon_aerial_2014.jpg",
   "licenca": "CC BY-SA 4.0",
   "autor": "Chensiyuan",
   "data": "2014"
- },
- {
-  "cidade": "sao_paulo",
-  "era": "diesel",
-  "caminho": "d/db/Postal_Palacetes_Prates.jpg",
-  "licenca": "domínio público",
-  "autor": "autor não identificado (cartão-postal)",
-  "data": "anos 1950"
  },
  {
   "cidade": "sao_paulo",
@@ -97,14 +81,6 @@
  },
  {
   "cidade": "salvador",
-  "era": "diesel",
-  "caminho": "2/28/Hidroporto_de_Salvador_em_1949.jpg",
-  "licenca": "domínio público",
-  "autor": "autor não identificado",
-  "data": "1949"
- },
- {
-  "cidade": "salvador",
   "era": "eletrico",
   "caminho": "1/11/Salvador_decada_70_porto_da_barra.jpg",
   "licenca": "CC BY-SA 4.0",
@@ -137,14 +113,6 @@
  },
  {
   "cidade": "porto_alegre",
-  "era": "diesel",
-  "caminho": "8/82/Porto_Alegre_Av_Borges_de_Medeiros_Esta%C3%A7%C3%A3o_F%C3%A9rrea_Mercado_Livre_d%C3%A9c1950.jpg",
-  "licenca": "domínio público",
-  "autor": "autor não identificado",
-  "data": "anos 1950"
- },
- {
-  "cidade": "porto_alegre",
   "era": "alta",
   "caminho": "2/2a/FSA1310_Vista_do_Shopping_Pontal.jpg",
   "licenca": "Atribuição",
@@ -158,14 +126,6 @@
   "licenca": "CC BY 4.0",
   "autor": "Rafaelbyphoto",
   "data": "2023"
- },
- {
-  "cidade": "manaus",
-  "era": "eletrico",
-  "caminho": "8/81/Manaus_d%C3%A9cada_de_80_-_panoramio.jpg",
-  "licenca": "domínio público (conferir: autor marcou ©)",
-  "autor": "RicardoSAPO",
-  "data": "anos 1980"
  },
  {
   "cidade": "manaus",
