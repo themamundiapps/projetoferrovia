@@ -98,6 +98,10 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		BackgroundTransparency = 1,
 		ZIndex = 28,
 	}, tela)
+	-- no celular a barra encolhe menos que o resto; continua de ponta a ponta (largura dividida pela compensação)
+	Estilo.compensar(hud, 0.82, function(k: number)
+		hud.Size = UDim2.new(1 / k, 0, 0, 0)
+	end)
 	novo("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8) }, hud)
 	self.hud = hud
 	local barra = est:barraTopo(hud)
@@ -114,7 +118,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local GuiService = game:GetService("GuiService")
 	local function desviar()
 		-- (TopbarInset vem em pixels da tela; a barra fica dentro da área segura e da escala da interface)
-		local esq = math.max(ponta, Estilo.px(GuiService.TopbarInset.Min.X - tela.AbsolutePosition.X) + 12)
+		local esq = math.max(ponta, Estilo.px(GuiService.TopbarInset.Min.X - tela.AbsolutePosition.X, barra) + 12)
 		conteudo.Position = UDim2.fromOffset(esq, 6)
 		conteudo.Size = UDim2.new(1, -(esq + ponta), 0, ALT - 18)
 	end
@@ -313,7 +317,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.aviso = caixa({
 		Name = "Aviso",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, Estilo.ALTURA_TOPO + 12),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 12),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
 		Visible = false,
@@ -333,7 +337,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	local painel = caixa({
 		Name = "Concessao",
 		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -Estilo.MARGEM_LATERAL, 0, Estilo.ALTURA_TOPO + 12),
+		Position = UDim2.new(1, -Estilo.MARGEM_LATERAL, 0, Estilo.TOPO_TELA + 12),
 		Size = UDim2.fromOffset(300, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Visible = false,

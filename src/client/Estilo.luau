@@ -9,11 +9,59 @@ local Estilo = {}
 Estilo.__index = Estilo
 
 -- Escala da interface (UIScale da FerroviaUI): 1 no computador, menor em tela baixa (celular).
--- Medidas lidas em AbsoluteSize/AbsolutePosition são pixels reais; para virar Offset (que o UIScale
--- multiplica de novo) passam por Estilo.px. Quem define é o init.client, antes de mudar o UIScale.
+-- Medidas lidas em AbsoluteSize/AbsolutePosition são pixels reais; para virar Offset (ou SliceScale),
+-- que os UIScale multiplicam de novo, passam por Estilo.px. Sem `inst`, vale a escala geral (coisas
+-- soltas na FerroviaUI); com `inst`, a escala que chega até ele (a barra de cima e as gavetas
+-- encolhem menos que o resto: ver Estilo.compensar). Quem define a escala é o init.client.
 Estilo.escala = 1
-function Estilo.px(v: number): number
-	return v / Estilo.escala
+function Estilo.escalaDe(inst: Instance): number
+	local s = 1
+	local o: Instance? = inst
+	while o do
+		local u = o:FindFirstChildOfClass("UIScale")
+		if u then
+			s *= u.Scale
+		end
+		o = o.Parent
+	end
+	return s
+end
+function Estilo.px(v: number, inst: Instance?): number
+	return v / (if inst then Estilo.escalaDe(inst) else Estilo.escala)
+end
+
+-- Peças que não podem encolher tanto quanto o resto (texto pequeno demais): um UIScale dentro
+-- delas compensa a escala geral até o mínimo pedido. `aoMudar` recebe o fator da compensação.
+local compensados: { [UIScale]: () -> () } = setmetatable({}, { __mode = "k" }) :: any
+function Estilo.compensar(obj: GuiObject, minimo: number, aoMudar: ((number) -> ())?)
+	local u = Instance.new("UIScale")
+	u.Name = "Compensa"
+	u.Parent = obj
+	local function aplicar()
+		local k = math.max(1, minimo / Estilo.escala)
+		u.Scale = k
+		if aoMudar then
+			aoMudar(k)
+		end
+	end
+	compensados[u] = aplicar
+	aplicar()
+end
+
+local MINIMO_TOPO, MINIMO_GAVETA = 0.82, 0.95
+function Estilo.definirEscala(s: number)
+	Estilo.escala = s
+	-- a barra de cima e as gavetas ficam maiores (em pontos da tela virtual) quando compensadas:
+	-- quem se posiciona abaixo da barra ou ao lado das gavetas lê estes dois valores
+	Estilo.TOPO_TELA = Estilo.ALTURA_TOPO * math.max(1, MINIMO_TOPO / s)
+	Estilo.MARGEM_LATERAL = Estilo.LARGURA_ABA_LATERAL * math.max(1, MINIMO_GAVETA / s) + 10
+	for u, aplicar in compensados do
+		if u.Parent then
+			aplicar()
+		else
+			compensados[u] = nil
+		end
+	end
 end
 
 local function novo(classe: string, props: { [string]: any }, pai: Instance?): any
@@ -117,9 +165,9 @@ function Estilo.moldura(self: Estilo, fr: GuiObject): boolean
 	}, pai) :: ImageLabel
 	local function acompanhar()
 		local origem = (pai :: GuiBase2d).AbsolutePosition
-		local px = Estilo.px
-		img.Position = UDim2.fromOffset(px(fr.AbsolutePosition.X - origem.X) - b, px(fr.AbsolutePosition.Y - origem.Y) - b)
-		local w, h = px(fr.AbsoluteSize.X) + 2 * b, px(fr.AbsoluteSize.Y) + 2 * b
+		local s = Estilo.escalaDe(pai)
+		img.Position = UDim2.fromOffset((fr.AbsolutePosition.X - origem.X) / s - b, (fr.AbsolutePosition.Y - origem.Y) / s - b)
+		local w, h = fr.AbsoluteSize.X / s + 2 * b, fr.AbsoluteSize.Y / s + 2 * b
 		img.Size = UDim2.fromOffset(w, h)
 		-- caixa pequena (caixa da companhia, barra do menu): os cantos encolhem para não cobrir o texto;
 		-- nenhum canto passa de 1/4 do lado menor da caixa
@@ -155,7 +203,7 @@ function Estilo.cartao(self: Estilo, props: { [string]: any }, pai: Instance, de
 		img.ScaleType = Enum.ScaleType.Slice
 		img.SliceCenter = p.slice
 		local function ajustar()
-			local lado = Estilo.px(math.min(img.AbsoluteSize.X, img.AbsoluteSize.Y)) * 0.25
+			local lado = Estilo.px(math.min(img.AbsoluteSize.X, img.AbsoluteSize.Y), img) * 0.25
 			img.SliceScale = math.max(0.05, math.min(p.escala, lado / p.slice.Min.X, lado / p.slice.Min.Y))
 		end
 		img:GetPropertyChangedSignal("AbsoluteSize"):Connect(ajustar)
@@ -223,7 +271,7 @@ function Estilo.barra(self: Estilo, pai: Instance, ordem: number?): Frame
 				ZIndex = 35,
 			}, canal) :: ImageLabel
 			local function ajustar()
-				local h = Estilo.px(cheio.AbsoluteSize.Y)
+				local h = Estilo.px(cheio.AbsoluteSize.Y, cheio)
 				cheio.SliceScale = math.max(0.05, h / (2 * q.slice.Min.Y))
 				cheio.Visible = cheio.AbsoluteSize.X >= 2
 			end
@@ -403,7 +451,8 @@ local function vestirBotao(b: TextButton, p: any, semTinta: boolean?)
 		end
 		fundo.Position = UDim2.fromOffset(-l, -t)
 		fundo.Size = UDim2.new(1, l + r, 1, t + d)
-		local w, h = Estilo.px(b.AbsoluteSize.X), Estilo.px(b.AbsoluteSize.Y)
+		local s = Estilo.escalaDe(b)
+		local w, h = b.AbsoluteSize.X / s, b.AbsoluteSize.Y / s
 		local cx, cy = p.slice.Min.X, p.slice.Min.Y
 		-- as pontas ocupam a altura toda do botão
 		local escala = math.max(0.05, math.min((h / 2) / cy, (w / 2) / cx))
@@ -798,9 +847,10 @@ end
 
 -- ---------------------------------------------------------------- moldura da tela (barra de cima, gavetas)
 
-Estilo.ALTURA_TOPO = 70 -- barra de cima
+Estilo.ALTURA_TOPO = 70 -- barra de cima (dentro dela)
+Estilo.TOPO_TELA = 70 -- altura que a barra de cima ocupa na tela (maior quando compensada; definirEscala)
 Estilo.LARGURA_ABA_LATERAL = 34 -- puxador das gavetas, colado nas bordas
-Estilo.MARGEM_LATERAL = 34 + 10 -- onde começam os painéis encostados nas gavetas
+Estilo.MARGEM_LATERAL = 34 + 10 -- onde começam os painéis encostados nas gavetas (definirEscala)
 Estilo.CREME = Color3.fromRGB(240, 226, 196) -- texto sobre a madeira
 Estilo.CREME_FRACO = Color3.fromRGB(205, 184, 150)
 Estilo.VERDE_CLARO = Color3.fromRGB(150, 205, 130)
@@ -886,7 +936,8 @@ end
 function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Instance): TextButton
 	local kit = Assets.KitUI[self.era.kit or ""]
 	local p = kit and kit.aba_lateral
-	local w, h = Estilo.LARGURA_ABA_LATERAL, 230
+	-- em tela baixa (celular) o puxador é mais curto e encolhe menos que o resto (Estilo.compensar)
+	local w, h = Estilo.LARGURA_ABA_LATERAL, if Estilo.escala < 0.9 then 170 else 230
 	local dir = lado == "dir"
 	local b = novo("TextButton", {
 		Name = if dir then "GavetaDir" else "GavetaEsq",
@@ -943,6 +994,7 @@ function Estilo.abaLateral(self: Estilo, texto: string, lado: string, pai: Insta
 			(fundo :: ImageLabel).ImageColor3 = Color3.new(1, 1, 1)
 		end
 	end)
+	Estilo.compensar(b, MINIMO_GAVETA)
 	return b
 end
 

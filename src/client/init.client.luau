@@ -98,7 +98,7 @@ local function atualizarEscala()
 		return
 	end
 	local s = math.clamp(math.min(t.X / 1000, t.Y / 560), 0.6, 1)
-	Estilo.escala = s -- antes do UIScale: quem recalcula ao mudar o tamanho já lê a escala nova
+	Estilo.definirEscala(s) -- antes do UIScale: quem recalcula ao mudar o tamanho já lê a escala nova
 	escalaUI.Scale = s
 end
 telaUI:GetPropertyChangedSignal("AbsoluteSize"):Connect(atualizarEscala)

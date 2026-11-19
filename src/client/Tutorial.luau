@@ -30,7 +30,7 @@ function Tutorial.new(tela: ScreenGui, era: any, dados: any): Tutorial
 	local caixa = est:caixa({
 		Name = "Tutorial",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, Estilo.ALTURA_TOPO + 60),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 60),
 		Size = UDim2.fromOffset(420, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Visible = false,
