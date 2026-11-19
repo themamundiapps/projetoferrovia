@@ -8,8 +8,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
 
-local VOLUME_MUSICA = 0.3
-local VOLUME_EFEITOS = 0.55
+local VOLUME_MUSICA = 0.1
+local VOLUME_EFEITOS = 0.25
 local FADE = 1.5
 
 local Som = {}
