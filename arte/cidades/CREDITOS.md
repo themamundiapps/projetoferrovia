@@ -6,7 +6,10 @@ CC BY-SA ou "atribuição"; nada de NC nem ND). Elas não ficam no repositório:
 baixa as miniaturas (960 px) para `arte/cidades_jogo/` a partir de `tools/assetgen/fotos_commons.json`.
 
 **Antes de publicar:** as licenças CC BY, CC BY-SA e "atribuição" pedem crédito (autor, licença e link), que vai numa
-tela de créditos do jogo. As CC BY-SA pedem ainda que a versão recortada fique na mesma licença.
+tela de créditos do jogo (Ajustes › Créditos). As CC BY-SA pedem ainda que a versão recortada fique na mesma licença.
+A tela lê `src/shared/Creditos.luau`, gerado desta tabela: depois de mudar a tabela, rode
+`python tools/assetgen/gerar_creditos.py`. O jogo não mostra links (regra do Roblox); os links ficam aqui e podem ir na
+descrição do jogo.
 
 | Cidade | Era | Foto (página no Commons) | Data | Autor | Licença |
 |---|---|---|---|---|---|

@@ -13,6 +13,7 @@ local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Assets = require(Shared:WaitForChild("Assets"))
+local Creditos = require(Shared:WaitForChild("Creditos"))
 local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
@@ -43,6 +44,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.dados = dados
 	self.estado = nil :: any
 	self.aba = nil :: string?
+	self.verCreditos = false -- dentro de Ajustes: lista de créditos no lugar das opções
 	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFocarLinha = Instance.new("BindableEvent") -- (linhaId)
@@ -242,6 +244,7 @@ function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 	if aba ~= self.aba then
 		-- aba nova começa do topo (o redesenho guarda a rolagem só dentro da mesma aba)
 		self.rolagem.CanvasPosition = Vector2.zero
+		self.verCreditos = false
 	end
 	self.aba = aba
 	if aba then
@@ -1544,6 +1547,10 @@ end
 
 function Menu._abaAjustes(self: Menu)
 	local est, r = self.est, self.rolagem
+	if self.verCreditos then
+		self:_creditos()
+		return
+	end
 	est:titulo(`{Emojis.configuracoes} Ajustes`, r, 1)
 	local opcoes = {
 		{ chave = "nomesEstacoes", nome = "Nomes das cidades" },
@@ -1565,6 +1572,52 @@ function Menu._abaAjustes(self: Menu)
 	bEnq.Activated:Connect(function()
 		self.aoAjuste:Fire("reenquadrar", true)
 	end)
+	local bCred = est:botao("discreto", `{Emojis.jornal} Créditos`, r, 11)
+	bCred.Activated:Connect(function()
+		self.verCreditos = true
+		self.rolagem.CanvasPosition = Vector2.zero
+		self:_redesenhar()
+	end)
+end
+
+-- Texto vindo de fora (nomes de autores e arquivos) dentro de um rótulo RichText.
+local function escapar(s: string): string
+	return (s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"))
+end
+
+-- Créditos das fotos das cidades: as licenças CC BY e CC BY-SA pedem autor, título e licença.
+-- Sem links: o jogo não pode mostrar endereços de fora do Roblox (os links ficam em CREDITOS.md
+-- e na descrição do jogo).
+function Menu._creditos(self: Menu)
+	local est, r = self.est, self.rolagem
+	est:titulo(`{Emojis.jornal} Créditos`, r, 1)
+	local bVolta = est:botao("secundario", "Voltar aos ajustes", r, 2)
+	bVolta.Activated:Connect(function()
+		self.verCreditos = false
+		self.rolagem.CanvasPosition = Vector2.zero
+		self:_redesenhar()
+	end)
+	est:texto(
+		"corpo",
+		"As fotos das cidades nas eras Diesel, Elétrica e Alta Velocidade vêm do Wikimedia Commons e são usadas sob as licenças indicadas abaixo. Elas foram recortadas e reduzidas para o jogo; as fotos em CC BY-SA continuam sob a mesma licença. As ilustrações da Era do Vapor são do estúdio.",
+		r,
+		3
+	)
+	local ordem, cidadeAtual = 10, ""
+	for _, c in Creditos do
+		if c.cidade ~= cidadeAtual then
+			cidadeAtual = c.cidade
+			ordem += 1
+			est:texto("subtitulo", escapar(c.cidade), r, ordem)
+		end
+		ordem += 1
+		est:texto(
+			"fraco",
+			`<b>{escapar(c.era)}</b> · foto de {escapar(c.ano)}\n{escapar(c.autor)} · {escapar(c.licenca)}\n<i>{escapar(c.arquivo)}</i>`,
+			r,
+			ordem
+		)
+	end
 end
 
 return Menu
