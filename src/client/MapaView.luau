@@ -33,6 +33,12 @@ type Segmento = {
 	para: string,
 	tracos: { Frame }, -- tracejado das linhas que ainda são só projeto (vazio nas outras)
 	emenda: boolean, -- pedaço de um trecho com desvio (via): estica um pouco para não abrir fresta na curva
+	linhaId: string,
+	ordem: number, -- ordem da linha nos dados (define qual faixa cada linha ocupa num corredor)
+	-- Corredor compartilhado: linhas que passam pelo mesmo caminho são desenhadas lado a lado.
+	-- faixa = deslocamento em "larguras de linha" (0 = no centro); normal = direção do deslocamento.
+	faixa: number,
+	normal: Vector2,
 }
 
 type Estacao = {
@@ -54,7 +60,7 @@ type Estacao = {
 -- Trens animados: cada linha tem uma trilha (os pontos dos trechos construídos) e alguns trens indo e voltando.
 -- ids: estação de cada ponto (para saber por onde o trem passou)
 export type LinhaTrens = { id: string, pontos: { Vector2 }, ids: { string }?, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
-type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number }
+type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number, segs: { [number]: any } }
 -- Aviso que sobe e some quando um trem passa por uma cidade produtora ligada a um porto.
 export type AvisoProdutora = { texto: string }
 type Trem = { frame: Frame, trilha: Trilha, fase: number, segmento: number?, voltando: boolean? }
@@ -89,6 +95,7 @@ export type MapaView = typeof(setmetatable(
 		era: any,
 		tiles: { Tile },
 		segmentos: { Segmento },
+		segPorPontos: { [string]: Segmento },
 		estacoes: { Estacao },
 		rotulosMapa: { RotuloMapa },
 		mostrarNomes: boolean,
@@ -203,6 +210,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		era = era,
 		tiles = {},
 		segmentos = {},
+		segPorPontos = {},
 		estacoes = {},
 		rotulosMapa = {},
 		mostrarNomes = true,
@@ -223,6 +231,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 	self:_criarTiles(mapa)
 	self:_criarRotulosMapa(dados)
 	self:_criarLinhas(dados)
+	self:_calcularCorredores()
 	self:_criarEstacoes(dados)
 	self:_conectarEntrada()
 	table.insert(
@@ -410,10 +419,111 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 					para = trecho.para,
 					tracos = tracos,
 					emenda = emenda,
+					linhaId = linha.id,
+					ordem = linha.ordem or 0,
+					faixa = 0,
+					normal = if (b - a).Magnitude > 1e-3 then Vector2.new(-(b - a).Unit.Y, (b - a).Unit.X) else Vector2.zero,
 				})
 			end
 		end
 	end
+end
+
+-- Corredores: segmentos de linhas diferentes quase paralelos e colados (um passando por cima do
+-- outro) formam um grupo; cada linha do grupo ganha uma faixa, e o _layout as desenha lado a lado,
+-- como num mapa de metrô. Os trens andam na faixa da sua linha.
+local TOLERANCIA_CORREDOR = 2.5 -- px do mapa
+local COS_CORREDOR = math.cos(math.rad(15))
+
+local function distanciaAoSegmento(p: Vector2, a: Vector2, b: Vector2): number
+	local ab = b - a
+	local t = math.clamp((p - a):Dot(ab) / math.max(ab:Dot(ab), 1e-6), 0, 1)
+	return (a + ab * t - p).Magnitude
+end
+
+local function fracaoColada(x: Segmento, y: Segmento): number
+	local perto = 0
+	for k = 0, 10 do
+		if distanciaAoSegmento(x.a:Lerp(x.b, k / 10), y.a, y.b) < TOLERANCIA_CORREDOR then
+			perto += 1
+		end
+	end
+	return perto / 11
+end
+
+local function chaveSegmento(linhaId: string, a: Vector2, b: Vector2): string
+	return `{linhaId}|{math.round(a.X * 10)},{math.round(a.Y * 10)}|{math.round(b.X * 10)},{math.round(b.Y * 10)}`
+end
+
+function MapaView._calcularCorredores(self: MapaView)
+	local segs = self.segmentos
+	local pai: { number } = {}
+	for i = 1, #segs do
+		pai[i] = i
+	end
+	local function raiz(i: number): number
+		while pai[i] ~= i do
+			pai[i] = pai[pai[i]]
+			i = pai[i]
+		end
+		return i
+	end
+	for i = 1, #segs do
+		local s1 = segs[i]
+		for j = i + 1, #segs do
+			local s2 = segs[j]
+			if s1.linhaId ~= s2.linhaId and s1.normal ~= Vector2.zero and s2.normal ~= Vector2.zero
+				and math.abs(s1.normal:Dot(s2.normal)) >= COS_CORREDOR
+				and math.max(fracaoColada(s1, s2), fracaoColada(s2, s1)) >= 0.3
+			then
+				pai[raiz(i)] = raiz(j)
+			end
+		end
+	end
+	local grupos: { [number]: { Segmento } } = {}
+	for i, s in segs do
+		local r = raiz(i)
+		grupos[r] = grupos[r] or {}
+		table.insert(grupos[r], s)
+	end
+	for _, grupo in grupos do
+		local ordemDe: { [string]: number } = {}
+		local linhas: { string } = {}
+		for _, s in grupo do
+			if not ordemDe[s.linhaId] then
+				ordemDe[s.linhaId] = s.ordem
+				table.insert(linhas, s.linhaId)
+			end
+		end
+		if #linhas < 2 then
+			continue
+		end
+		table.sort(linhas, function(x, y)
+			return ordemDe[x] < ordemDe[y]
+		end)
+		local faixaDe: { [string]: number } = {}
+		for k, id in linhas do
+			faixaDe[id] = k - (#linhas + 1) / 2
+		end
+		local referencia = grupo[1].normal
+		for _, s in grupo do
+			if s.normal:Dot(referencia) < 0 then
+				s.normal = -s.normal
+			end
+			s.faixa = faixaDe[s.linhaId]
+		end
+	end
+	-- para os trens acharem o segmento (e a faixa) de cada pedaço da trilha
+	self.segPorPontos = {}
+	for _, s in segs do
+		self.segPorPontos[chaveSegmento(s.linhaId, s.a, s.b)] = s
+		self.segPorPontos[chaveSegmento(s.linhaId, s.b, s.a)] = s
+	end
+end
+
+-- Distância entre as faixas de um corredor, em pixels de tela.
+local function larguraFaixa(zoom: number): number
+	return math.clamp(2 + zoom * 0.9, 3, 10) + 1
 end
 
 function MapaView._criarEstacoes(self: MapaView, dados: any)
@@ -668,6 +778,11 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 		for i = 2, #l.pontos do
 			acumulado[i] = acumulado[i - 1] + (l.pontos[i] - l.pontos[i - 1]).Magnitude
 		end
+		-- segmento desenhado de cada pedaço da trilha (para o trem andar na faixa da linha)
+		local segsTrilha: { [number]: any } = {}
+		for i = 1, #l.pontos - 1 do
+			segsTrilha[i] = self.segPorPontos[chaveSegmento(l.id, l.pontos[i], l.pontos[i + 1])]
+		end
 		-- a duração conta só as estações (os pontos de desvio do traçado têm id vazio)
 		local paradas = 0
 		for _, id in l.ids or {} do
@@ -683,6 +798,7 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 			ids = l.ids or {},
 			acumulado = acumulado,
 			total = acumulado[#acumulado],
+			segs = segsTrilha,
 			duracao = math.clamp(5 * (paradas - 1), 7, 30), -- segundos de uma ponta à outra
 		}
 		local visiveis = math.min(l.n, MAX_TRENS_VISIVEIS)
@@ -740,6 +856,10 @@ function MapaView._moverTrens(self: MapaView)
 		local a, b = tr.pontos[i], tr.pontos[i + 1]
 		local comprimento = tr.acumulado[i + 1] - tr.acumulado[i]
 		local p = a:Lerp(b, if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0) * z
+		local seg = tr.segs[i]
+		if seg and seg.faixa ~= 0 then
+			p += seg.normal * (seg.faixa * larguraFaixa(z))
+		end
 		t.frame.Position = UDim2.fromOffset(p.X, p.Y)
 		t.frame.Rotation = math.deg(math.atan2(b.Y - a.Y, b.X - a.X))
 	end
@@ -932,8 +1052,10 @@ function MapaView._layout(self: MapaView)
 
 	local espessura = espessuraLinha(z)
 	self:_tamanhoTrens()
+	local faixa = larguraFaixa(z)
 	for _, s in self.segmentos do
-		local a, b = s.a * z, s.b * z
+		local desvio = s.normal * (s.faixa * faixa)
+		local a, b = s.a * z + desvio, s.b * z + desvio
 		local d = b - a
 		local meio = (a + b) / 2
 		local angulo = math.deg(math.atan2(d.Y, d.X))
