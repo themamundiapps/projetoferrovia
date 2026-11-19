@@ -244,7 +244,7 @@ return {
 			id = "ramal_suape", nome = "Ramal Salgueiro–Suape", ano = 2006, cor = 6, ordem = 16, degrau = 6, projeto = "ramal_suape", nota = nil,
 			trechos = {
 				{ id = "ramal_suape_1", de = "salgueiro", para = "arcoverde", ano = 2006, km = 289, terreno = "planalto", custo = 331373, degrau = 6 },
-				{ id = "ramal_suape_2", de = "arcoverde", para = "suape", ano = 2006, km = 289, terreno = "serra_leve", custo = 530196, degrau = 6 },
+				{ id = "ramal_suape_2", de = "arcoverde", para = "suape", ano = 2006, km = 292, terreno = "serra_leve", custo = 535700, degrau = 6, via = { Vector2.new(1905.1, 707.4), Vector2.new(1926.2, 705.0) } },
 			},
 		},
 		{
@@ -294,7 +294,7 @@ return {
 			trechos = {
 				{ id = "litoranea_ne_1", de = "salvador", para = "aracaju", ano = 1985, km = 356, terreno = "baixada", custo = 449016, degrau = 6, via = { Vector2.new(1776.3, 887.5) } },
 				{ id = "litoranea_ne_2", de = "aracaju", para = "maceio", ano = 1985, km = 252, terreno = "baixada", custo = 317842, degrau = 6 },
-				{ id = "litoranea_ne_3", de = "maceio", para = "recife", ano = 1985, km = 252, terreno = "baixada", custo = 317842, degrau = 6 },
+				{ id = "litoranea_ne_3", de = "maceio", para = "recife", ano = 1985, km = 255, terreno = "baixada", custo = 321626, degrau = 6, via = { Vector2.new(1919.2, 732.5), Vector2.new(1925.3, 708.8), Vector2.new(1929.9, 698.4) } },
 				{ id = "litoranea_ne_4", de = "recife", para = "natal", ano = 1985, km = 319, terreno = "baixada", custo = 402348, degrau = 6 },
 				{ id = "litoranea_ne_5", de = "natal", para = "fortaleza", ano = 1985, km = 575, terreno = "baixada", custo = 725236, degrau = 6, via = { Vector2.new(1823.6, 550.2), Vector2.new(1803.4, 520.6), Vector2.new(1780.9, 506.0) } },
 			},

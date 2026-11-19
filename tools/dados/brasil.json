@@ -1423,7 +1423,17 @@
           "de": "arcoverde",
           "para": "suape",
           "ano": 2006,
-          "terreno": "serra_leve"
+          "terreno": "serra_leve",
+          "via": [
+            [
+              -35.6,
+              -8.52
+            ],
+            [
+              -35.15,
+              -8.47
+            ]
+          ]
         }
       ],
       "degrau": 6
@@ -1910,7 +1920,21 @@
           "de": "maceio",
           "para": "recife",
           "ano": 1985,
-          "terreno": "baixada"
+          "terreno": "baixada",
+          "via": [
+            [
+              -35.3,
+              -9.05
+            ],
+            [
+              -35.17,
+              -8.55
+            ],
+            [
+              -35.07,
+              -8.33
+            ]
+          ]
         },
         {
           "de": "recife",
