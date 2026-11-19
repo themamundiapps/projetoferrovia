@@ -9,6 +9,24 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Assets = require(Shared:WaitForChild("Assets"))
+local HistoriasEra = require(Shared:WaitForChild("Dados"):WaitForChild("HistoriasEra"))
+
+local ORDEM_ERAS = { "vapor", "diesel", "eletrico", "alta" }
+
+-- História da cidade na era atual; sem texto da era, volta para a anterior e, no fim, para a do Vapor.
+local function historiaNaEra(id: string, e: any, eraId: string): any
+	local porEra = (HistoriasEra :: any)[id]
+	if porEra then
+		local ate = table.find(ORDEM_ERAS, eraId) or 1
+		for i = ate, 2, -1 do
+			local t = porEra[ORDEM_ERAS[i]]
+			if t then
+				return t
+			end
+		end
+	end
+	return e.historia
+end
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -430,7 +448,7 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 	end
 
 	-- história
-	local lHistoria = est:texto("corpo", Idioma.t(e.historia), secao(T("ficha_historia"), 8), 3)
+	local lHistoria = est:texto("corpo", Idioma.t(historiaNaEra(id, e, est.era.id)), secao(T("ficha_historia"), 8), 3)
 	lHistoria.FontFace = Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic)
 	lHistoria.LineHeight = 1.15
 
