@@ -34,18 +34,18 @@ tela de créditos do jogo. As CC BY-SA pedem ainda que a versão recortada fique
 | Manaus | Alta Velocidade | [Teatro_Amazonas_-_Vista_Aérea.jpg](https://commons.wikimedia.org/wiki/File:Teatro_Amazonas_-_Vista_A%C3%A9rea.jpg) | 2013 | José Zamith | CC BY 3.0 BR |
 | Brasília | Diesel | [Vista_do_aeroporto_de_Brasília_-_BR_RJANRIO_PH_0_FOT_05962_0001,_Acervo_do_Arquivo_Nacional.jpg](https://commons.wikimedia.org/wiki/File:Vista_do_aeroporto_de_Bras%C3%ADlia_-_BR_RJANRIO_PH_0_FOT_05962_0001%2C_Acervo_do_Arquivo_Nacional.jpg) | anos 1960 | Arquivo Nacional | domínio público |
 | Brasília | Elétrica | [Brasilia,_Brazil_(28252970275).jpg](https://commons.wikimedia.org/wiki/File:Brasilia%2C_Brazil_%2828252970275%29.jpg) | 1975 | Urbain J. Kinet | sem restrições conhecidas |
-| Brasília | Alta Velocidade | [O_Senado_e_o_Céu_de_Brasília.jpg](https://commons.wikimedia.org/wiki/File:O_Senado_e_o_C%C3%A9u_de_Bras%C3%ADlia.jpg) | 2020 | Bruno Tamm Rabello | CC BY-SA 4.0 |
+| Brasília | Alta Velocidade | [RobertoCastro_Vista_Aérea_Brasilia_DF_(39098940290).jpg](https://commons.wikimedia.org/wiki/File:RobertoCastro_Vista_A%C3%A9rea_Brasilia_DF_%2839098940290%29.jpg) | 2018 | Roberto Castro / MTur Destinos | domínio público |
 | Fortaleza | Elétrica | [Avenida_Beira_Mar_-_Fortaleza-_1980.jpg](https://commons.wikimedia.org/wiki/File:Avenida_Beira_Mar_-_Fortaleza-_1980.jpg) | 1980 | Francisco Marinho de Andrade | CC BY 3.0 |
 | Fortaleza | Alta Velocidade | [Skyline_de_Fortaleza.jpg](https://commons.wikimedia.org/wiki/File:Skyline_de_Fortaleza.jpg) | 2008 | Ricardo | CC BY 2.0 |
 | Juiz de Fora | Alta Velocidade | [Vista_do_centro_de_Juiz_de_Fora-MG.JPG](https://commons.wikimedia.org/wiki/File:Vista_do_centro_de_Juiz_de_Fora-MG.JPG) | 2009 | Rcandre | CC BY-SA 4.0 |
-| Santos | Alta Velocidade | [Santos_-_55372881413.jpg](https://commons.wikimedia.org/wiki/File:Santos_-_55372881413.jpg) | 2025 | xiquinhosilva | CC BY 4.0 |
+| Santos | Alta Velocidade | [Santos_skyline.jpg](https://commons.wikimedia.org/wiki/File:Santos_skyline.jpg) | 2013 | Leguth Edson | CC BY-SA 3.0 |
 | Campinas | Diesel | [Vista_aérea_de_Campinas.jpg](https://commons.wikimedia.org/wiki/File:Vista_a%C3%A9rea_de_Campinas.jpg) | 1963 | autor não identificado | CC BY-SA 4.0 |
 | Campinas | Alta Velocidade | [Campinas_-_SP_-_Jardim_Proença_visto_da_Rua_Proença.JPG](https://commons.wikimedia.org/wiki/File:Campinas_-_SP_-_Jardim_Proen%C3%A7a_visto_da_Rua_Proen%C3%A7a.JPG) | 2007 | Fasouzafreitas | CC BY-SA 3.0 |
 | Vitória | Alta Velocidade | [2018-12-04_-_Vitória_-_043.jpg](https://commons.wikimedia.org/wiki/File:2018-12-04_-_Vit%C3%B3ria_-_043.jpg) | 2018 | Oleg Yunakov | CC BY-SA 4.0 |
 | São José dos Campos | Alta Velocidade | [View_of_São_Jose_dos_Campos_2017_01.jpg](https://commons.wikimedia.org/wiki/File:View_of_S%C3%A3o_Jose_dos_Campos_2017_01.jpg) | 2017 | Mike Peel (www.mikepeel.net) | CC BY-SA 4.0 |
 | Sorocaba | Alta Velocidade | [Vila_Carvalho_-_Sorocaba.jpg](https://commons.wikimedia.org/wiki/File:Vila_Carvalho_-_Sorocaba.jpg) | 2008 | Frederico Cintra | CC BY 2.0 |
 | Ponta Grossa | Alta Velocidade | [Ponta_Grossa-Paraná-Brasil.jpg](https://commons.wikimedia.org/wiki/File:Ponta_Grossa-Paran%C3%A1-Brasil.jpg) | 2017 | Gabriel N.12345678 | CC BY-SA 4.0 |
-| Santa Maria | Alta Velocidade | [Basílica_de_Nossa_Senhora_Medianeira.jpg](https://commons.wikimedia.org/wiki/File:Bas%C3%ADlica_de_Nossa_Senhora_Medianeira.jpg) | 2012 | Imagens SM | CC BY-SA 3.0 |
+| Santa Maria | Alta Velocidade | [Vista_de_Santa_Maria_(RS).jpg](https://commons.wikimedia.org/wiki/File:Vista_de_Santa_Maria_%28RS%29.jpg) | 2008 | Clube Trekking Santa Maria | CC BY 2.0 |
 | Campo Grande | Alta Velocidade | [VA_Pq_das_Nações_Indígenas.jpg](https://commons.wikimedia.org/wiki/File:VA_Pq_das_Na%C3%A7%C3%B5es_Ind%C3%ADgenas.jpg) | 2018 | Flavio Andre / MTur Destinos | Atribuição |
 | Florianópolis | Alta Velocidade | [Um_panorama_de_história_-_Ponte_Hercílio_Luz_2.jpg](https://commons.wikimedia.org/wiki/File:Um_panorama_de_hist%C3%B3ria_-_Ponte_Herc%C3%ADlio_Luz_2.jpg) | 2015 | Alfabilesantana | CC BY-SA 4.0 |
 | Maceió | Alta Velocidade | [Praia_Pajuçara_Maceió_04_2015_3254.JPG](https://commons.wikimedia.org/wiki/File:Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3254.JPG) | 2015 | Mariordo (Mario Roberto Durán Ortiz) | CC BY-SA 4.0 |
