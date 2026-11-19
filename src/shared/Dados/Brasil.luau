@@ -229,7 +229,7 @@ return {
 				{ id = "ef118_1", de = "vitoria", para = "anchieta", ano = 2026, km = 78, terreno = "baixada", custo = 40992, degrau = 5 },
 				{ id = "ef118_2", de = "anchieta", para = "porto_acu", ano = 2026, km = 149, terreno = "baixada", custo = 78304, degrau = 5, via = { Vector2.new(1659.1, 1311.0), Vector2.new(1649.7, 1323.6), Vector2.new(1642.7, 1336.1) } },
 				{ id = "ef118_3", de = "porto_acu", para = "macae", ano = 2026, km = 139, terreno = "baixada", custo = 73049, degrau = 5 },
-				{ id = "ef118_4", de = "macae", para = "rio", ano = 2026, km = 234, terreno = "serra_leve", custo = 178872, degrau = 5, via = { Vector2.new(1586.5, 1394.3), Vector2.new(1564.9, 1401.4), Vector2.new(1556.5, 1396.8), Vector2.new(1543.8, 1403.9) } },
+				{ id = "ef118_4", de = "macae", para = "rio", ano = 2026, km = 231, terreno = "serra_leve", custo = 176579, degrau = 5, via = { Vector2.new(1581.8, 1394.3), Vector2.new(1558.4, 1394.3), Vector2.new(1544.3, 1400.4) } },
 			},
 		},
 		{
