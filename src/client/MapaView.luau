@@ -43,6 +43,7 @@ type Segmento = {
 	-- normais), para os pedaços deslocados continuarem se encontrando na curva
 	mA: Vector2,
 	mB: Vector2,
+	junta: { linha: Frame, casing: Frame }?, -- bolinha na dobra para o próximo pedaço (curva redonda)
 }
 
 type Estacao = {
@@ -413,7 +414,30 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 						}, self.conteudo) :: Frame
 					end
 				end
+				-- dobra para o próximo pedaço do mesmo trecho: uma bolinha da cor da linha (e do contorno)
+				-- arredonda a curva, sem o "dente" que dois retângulos em ângulo deixam
+				local junta: { linha: Frame, casing: Frame }? = nil
+				if p < #pontos - 1 then
+					local jc = novo("Frame", {
+						Name = trecho.id .. "_junta_contorno",
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundColor3 = cores.ink,
+						BorderSizePixel = 0,
+						ZIndex = Z.contorno,
+					}, self.conteudo) :: Frame
+					novo("UICorner", { CornerRadius = UDim.new(1, 0) }, jc)
+					local jl = novo("Frame", {
+						Name = trecho.id .. "_junta",
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundColor3 = cor,
+						BorderSizePixel = 0,
+						ZIndex = Z.linha,
+					}, self.conteudo) :: Frame
+					novo("UICorner", { CornerRadius = UDim.new(1, 0) }, jl)
+					junta = { linha = jl, casing = jc }
+				end
 				table.insert(self.segmentos, {
+					junta = junta,
 					id = trecho.id,
 					cor = cor,
 					a = a,
@@ -558,7 +582,8 @@ end
 
 -- Distância entre as faixas de um corredor, em pixels de tela.
 local function larguraFaixa(zoom: number): number
-	return math.clamp(2 + zoom * 0.9, 3, 10) + 1
+	-- menos que a largura da linha: as cores ficam coladas, uma levemente por cima da outra
+	return math.clamp(2 + zoom * 0.9, 3, 10) * 0.6
 end
 
 function MapaView._criarEstacoes(self: MapaView, dados: any)
@@ -691,6 +716,13 @@ function MapaView._estilizar(self: MapaView, s: Segmento)
 	s.casing.BackgroundColor3 = if sel then cores.accent else cores.ink
 	if sel then
 		s.casing.BackgroundTransparency = 0
+	end
+	local j = s.junta
+	if j then
+		j.linha.BackgroundColor3 = s.linha.BackgroundColor3
+		j.linha.BackgroundTransparency = s.linha.BackgroundTransparency
+		j.casing.BackgroundColor3 = s.casing.BackgroundColor3
+		j.casing.BackgroundTransparency = s.casing.BackgroundTransparency
 	end
 end
 
@@ -1099,9 +1131,6 @@ function MapaView._layout(self: MapaView)
 		local meio = (a + b) / 2
 		local angulo = math.deg(math.atan2(d.Y, d.X))
 		local comprimento = d.Magnitude
-		if s.emenda then
-			comprimento += espessura -- cobre a dobra entre os pedaços
-		end
 		s.linha.Position = UDim2.fromOffset(meio.X, meio.Y)
 		s.linha.Size = UDim2.fromOffset(comprimento, espessura)
 		s.linha.Rotation = angulo
@@ -1109,6 +1138,13 @@ function MapaView._layout(self: MapaView)
 		s.casing.Position = s.linha.Position
 		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + extra)
 		s.casing.Rotation = angulo
+		local j = s.junta
+		if j then
+			j.linha.Position = UDim2.fromOffset(b.X, b.Y)
+			j.linha.Size = UDim2.fromOffset(espessura, espessura)
+			j.casing.Position = j.linha.Position
+			j.casing.Size = UDim2.fromOffset(espessura + extra, espessura + extra)
+		end
 		local n = #s.tracos
 		if n > 0 and s.estado == "projeto" then
 			local tam = comprimento / n
