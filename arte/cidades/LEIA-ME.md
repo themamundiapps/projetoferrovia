@@ -7,21 +7,30 @@ as outras usam uma das 8 paisagens genéricas. Esta lista sai de `tools/dados/br
 
 - Pasta: `arte/cidades/` (esta).
 - Formato: PNG ou JPG, **1024 × 576 px** (paisagem, 16:9). O Roblox não aceita imagem maior que 1024 px.
-- Sem texto, moldura ou marca-d'água: o nome da cidade é escrito pelo jogo.
+- Sem texto, moldura, assinatura de pintor ou marca-d'água: o nome da cidade é escrito pelo jogo, e texto na imagem arrisca a moderação do Roblox.
+- Prompts para gerar as que faltam: documento "Ferrovia Tycoon · Ilustrações das cidades (prompts)".
 - O nome do arquivo é o da lista, em minúsculas e sem acento.
 - Qualquer outra cidade pode ganhar imagem própria: salve `<id da cidade>.png` aqui (os ids estão no `brasil.json`) e avise, para a imagem ser enviada ao Roblox.
 
-## Cidades grandes (16 imagens)
+## Cidades grandes (25 imagens; as 9 marcadas com * ainda faltam)
 
 | Arquivo | Cidade | Porte |
 |---|---|---|
 | `rio.png` | Rio de Janeiro (RJ) | 5 |
 | `sao_paulo.png` | São Paulo (SP) | 5 |
 | `bh.png` | Belo Horizonte (MG) | 4 |
-| `curitiba.png` | Curitiba (PR) | 4 |
+| `curitiba.png` * | Curitiba (PR) | 4 |
 | `porto_alegre.png` | Porto Alegre (RS) | 4 |
 | `recife.png` | Recife (PE) | 4 |
 | `salvador.png` | Salvador (BA) | 4 |
+| `belem.png` * | Belém (PA) | 4 |
+| `brasilia.png` * | Brasília (DF): na Era do Vapor, a Missão Cruls (1892) | 4 |
+| `fortaleza.png` * | Fortaleza (CE) | 4 |
+| `manaus.png` * | Manaus (AM) | 4 |
+| `campo_grande.png` * | Campo Grande (MS) | 3 |
+| `florianopolis.png` * | Florianópolis (SC) | 3 |
+| `maceio.png` * | Maceió (AL) | 3 |
+| `natal.png` * | Natal (RN) | 3 |
 | `campinas.png` | Campinas (SP) | 3 |
 | `campo_grande.png` | Campo Grande (MS) | 3 |
 | `juiz_de_fora.png` | Juiz de Fora (MG) | 3 |
