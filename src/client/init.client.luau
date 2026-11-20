@@ -464,8 +464,6 @@ local function montar(eraId: string)
 	end
 end
 
--- ---------------------------------------------------------------- estado vindo do servidor
-
 -- ---------------------------------------------------------------- menu inicial
 
 -- Enquanto o menu está aberto, a interface some e o mapa da companhia passeia devagar pelo país,
