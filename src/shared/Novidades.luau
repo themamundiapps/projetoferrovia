@@ -8,6 +8,14 @@ export type Novidade = { data: string, titulo: Texto, texto: Texto }
 local Novidades: { Novidade } = {
 	{
 		data = "2026-11-20",
+		titulo = { pt = "Trilha de bossa nova", en = "Bossa nova soundtrack" },
+		texto = {
+			pt = "O mapa do Brasil agora toca bossa nova em todas as eras: 15 faixas.",
+			en = "The Brazil map now plays bossa nova in every era: 15 tracks.",
+		},
+	},
+	{
+		data = "2026-11-20",
 		titulo = { pt = "Ranking do servidor", en = "Server leaderboard" },
 		texto = {
 			pt = "No canto da tela, quem está no servidor com você: foto, companhia e quanto dinheiro cada um tem.",

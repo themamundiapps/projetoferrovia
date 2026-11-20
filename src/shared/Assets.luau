@@ -343,6 +343,29 @@ Assets.Musicas = {
 	},
 } :: { [string]: { string } }
 
+-- Trilha própria de um mapa, a mesma em todas as eras (no lugar de Assets.Musicas). O Brasil é todo em
+-- bossa nova (pedido do Leonardo em 20/11). APM e DistroKid: as duas fontes que o Roblox libera para
+-- todos os criadores usarem de graça.
+Assets.MusicasMapa = {
+	brasil = {
+		"rbxassetid://9043921564", -- A Dream Of Bossa Nova (APM)
+		"rbxassetid://1837070127", -- Prima Bossa Nova (APM)
+		"rbxassetid://1846207861", -- A Touch Of Bossa Nova (APM)
+		"rbxassetid://1843640051", -- Nova Bossa Nova (APM)
+		"rbxassetid://1839331078", -- Bossa Nova (APM)
+		"rbxassetid://1845764031", -- Bossa Nova Party (APM)
+		"rbxassetid://127251981695845", -- Chill Bossa Nova Lounge Music (DistroKid)
+		"rbxassetid://138487938962973", -- Sunday in Brazil (DistroKid)
+		"rbxassetid://135535869409208", -- Lazy Sunday Bossa Cafe (DistroKid)
+		"rbxassetid://138093550740219", -- Relaxing Jazz Bossa Evening (DistroKid)
+		"rbxassetid://126206022862185", -- Bossa Nova Brasileira Nº 11 (DistroKid)
+		"rbxassetid://139336439200914", -- Bossinha Jazzy (DistroKid)
+		"rbxassetid://88397474917981", -- Soft Bossa Horizon (DistroKid)
+		"rbxassetid://132521872324308", -- Beach Tropical Coffee Bossa Nova (DistroKid)
+		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
+	},
+} :: { [string]: { string } }
+
 Assets.Sons = {
 	clique = "rbxasset://sounds/clickfast.wav", -- embutido no Roblox
 	compra = "rbxassetid://9113728042", -- Cash Register 1 (Pro Sound Effects)

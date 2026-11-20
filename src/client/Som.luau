@@ -70,12 +70,18 @@ local function sumir(s: Sound)
 	tw:Play()
 end
 
+-- Playlist que toca agora: a do mapa (a mesma em todas as eras) ou, sem ela, a da era.
+local mapaAtual = "brasil"
+local function listaAtual(): { string }?
+	return (Assets :: any).MusicasMapa[mapaAtual] or (eraAtual and Assets.Musicas[eraAtual])
+end
+
 local function proxima()
 	if conexaoFim then
 		conexaoFim:Disconnect()
 		conexaoFim = nil
 	end
-	local lista = eraAtual and Assets.Musicas[eraAtual]
+	local lista = listaAtual()
 	if not musicaLigada or not lista or #lista == 0 then
 		return
 	end
@@ -93,6 +99,13 @@ local function proxima()
 	TweenService:Create(s, TweenInfo.new(FADE), { Volume = 1 }):Play()
 	tocando = s
 	local minha = geracao
+	-- faixa que não carrega (tirada do ar, sem permissão) não pode travar a playlist: pula
+	task.delay(12, function()
+		if minha == geracao and tocando == s and not s.IsLoaded then
+			s:Destroy()
+			proxima()
+		end
+	end)
 	conexaoFim = s.Ended:Connect(function()
 		s:Destroy()
 		if minha == geracao then
@@ -121,7 +134,12 @@ function Som.musica(eraId: string)
 	if eraId == eraAtual and tocando then
 		return
 	end
+	-- com trilha do mapa, trocar de era não reinicia a música
+	local antes = listaAtual()
 	eraAtual = eraId
+	if tocando and antes and antes == listaAtual() then
+		return
+	end
 	fila = {}
 	pararMusica()
 	proxima()
