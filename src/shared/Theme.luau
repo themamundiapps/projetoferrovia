@@ -144,8 +144,9 @@ end
 Theme.ContornoLinha = 2
 
 for _, era in Theme.Eras or {} do
-	(era :: any).nomes = { pt = era.nome, en = NOMES_EN[era.id] or era.nome }
-	(era :: any).anosPorIdioma = { pt = if era.id == "alta" then "2000 – hoje" else era.anos, en = ANOS_EN[era.id] or era.anos }
+	local e = era :: any
+	e.nomes = { pt = e.nome, en = NOMES_EN[e.id] or e.nome }
+	e.anosPorIdioma = { pt = if e.id == "alta" then "2000 – hoje" else e.anos, en = ANOS_EN[e.id] or e.anos }
 end
 
 function Theme.traduzir(idioma: string)
