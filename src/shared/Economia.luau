@@ -1181,23 +1181,27 @@ function Economia.moedaDe(dados: any, _estado: EstadoMapa): string
 end
 
 function Economia.formatar(valor: number, simbolo: string?, decimais: boolean?): string
+	-- português: 1.234 e 2,5 mi · inglês: 1,234 e 2.5 M (o símbolo da moeda fica o do mapa)
+	local en = Idioma.atual == "en"
+	local virgula = if en then "." else ","
+	local milhar = if en then "," else "."
 	local s = simbolo or "R$"
 	local abs = math.abs(valor)
 	local sinal = if valor < 0 then "-" else ""
 	local limites = { 1e12, 1e9, 1e6 }
-	local nomes = { "tri", "bi", "mi" }
+	local nomes = if en then { "T", "B", "M" } else { "tri", "bi", "mi" }
 	for i, limite in limites do
 		if abs >= limite then
-			local txt = string.format("%.1f", abs / limite):gsub("%.", ",")
+			local txt = string.format("%.1f", abs / limite):gsub("%.", virgula)
 			return `{sinal}{s} {txt} {nomes[i]}`
 		end
 	end
 	if decimais and abs < 1000 then
-		local txt = string.format("%.2f", abs):gsub("%.", ",")
+		local txt = string.format("%.2f", abs):gsub("%.", virgula)
 		return `{sinal}{s} {txt}`
 	end
 	local inteiro = tostring(math.floor(abs + 0.5))
-	local comPontos = inteiro:reverse():gsub("(%d%d%d)", "%1."):reverse():gsub("^%.", "")
+	local comPontos = inteiro:reverse():gsub("(%d%d%d)", "%1" .. milhar):reverse():gsub("^%" .. milhar, "")
 	return `{sinal}{s} {comPontos}`
 end
 
