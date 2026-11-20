@@ -10,6 +10,8 @@ local TextService = game:GetService("TextService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
+local Idioma = require(Shared:WaitForChild("Idioma"))
+local L = Idioma.L
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
@@ -38,6 +40,7 @@ type Sessao = {
 	ganhoOffline: number,
 	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
 	rng: Random,
+	idioma: string, -- "pt" ou "en": as mensagens para este jogador saem neste idioma
 }
 
 local sessoes: { [Player]: Sessao } = {}
@@ -346,7 +349,7 @@ local function ganharXp(s: Sessao, e: EstadoMapa, xp: number)
 	e.xp += xp
 	local depois = Economia.nivel(e)
 	if depois > antes then
-		table.insert(s.eventos, { tipo = "nivel", nivel = depois, titulo = Economia.tituloNivel(depois, e.era) })
+		table.insert(s.eventos, { tipo = "nivel", nivel = depois, titulo = Economia.tituloNivel(depois, e.era, s.idioma) })
 	end
 end
 
@@ -455,21 +458,21 @@ local Acoes: { [string]: (Sessao, any) -> (boolean, string?) } = {}
 
 function Acoes.construir(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.trecho) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	local linha, iLinha, trecho, iTrecho = Economia.acharTrecho(dados, args.trecho)
 	if not trecho then
-		return false, "Trecho desconhecido."
+		return false, L("Trecho desconhecido.", "Unknown section.")
 	end
 	local situacao = Economia.situacaoTrecho(e, dados, iLinha, iTrecho)
 	if situacao == "construido" then
-		return false, "Esse trecho já foi construído."
+		return false, L("Esse trecho já foi construído.", "That section is already built.")
 	elseif situacao == "projeto" then
-		return false, "Essa ferrovia ainda é só um projeto: pesquise no Gabinete de Projetos."
+		return false, L("Essa ferrovia ainda é só um projeto: pesquise no Gabinete de Projetos.", "That railway is still just a project: study it in the Projects Cabinet.")
 	elseif situacao == "bloqueado" then
-		return false, "Esse trecho ainda não está liberado."
+		return false, L("Esse trecho ainda não está liberado.", "That section is not unlocked yet.")
 	end
 	local alternativa = "padrao"
 	if trecho.alternativas then
@@ -477,7 +480,7 @@ function Acoes.construir(s: Sessao, args: any): (boolean, string?)
 	end
 	local custo = Economia.opcaoTrecho(trecho, alternativa).custo
 	if e.dinheiro < custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= custo
 	e.trechos[trecho.id] = alternativa
@@ -495,7 +498,7 @@ end
 
 function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.linha) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -506,17 +509,17 @@ function Acoes.trem(s: Sessao, args: any): (boolean, string?)
 		end
 	end
 	if not linha then
-		return false, "Linha desconhecida."
+		return false, L("Linha desconhecida.", "Unknown line.")
 	end
 	if Economia.trechosConstruidos(e, linha) == 0 then
-		return false, "Construa um trecho dessa linha primeiro."
+		return false, L("Construa um trecho dessa linha primeiro.", "Build a section of that line first.")
 	end
 	if not Economia.podeComprarTrem(e, dados, linha) then
-		return false, "Frota completa: os trens já levam todos os passageiros desta linha."
+		return false, L("Frota completa: os trens já levam todos os passageiros desta linha.", "Fleet full: the trains already carry every passenger on this line.")
 	end
 	local custo = Economia.custoTrem(e, linha)
 	if e.dinheiro < custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= custo
 	e.trens[linha.id] = (e.trens[linha.id] or 0) + 1
@@ -528,7 +531,7 @@ end
 -- Vende um trem (devolve metade do preço). A linha fica sempre com ao menos 1.
 function Acoes.venderTrem(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.linha) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -539,10 +542,10 @@ function Acoes.venderTrem(s: Sessao, args: any): (boolean, string?)
 		end
 	end
 	if not linha then
-		return false, "Linha desconhecida."
+		return false, L("Linha desconhecida.", "Unknown line.")
 	end
 	if not Economia.podeVenderTrem(e, linha) then
-		return false, "Toda linha precisa de pelo menos 1 trem."
+		return false, L("Toda linha precisa de pelo menos 1 trem.", "Every line needs at least 1 train.")
 	end
 	e.trens[linha.id] -= 1
 	e.dinheiro += Economia.valorVendaTrem(e, linha)
@@ -551,22 +554,22 @@ end
 
 function Acoes.melhorarEstacao(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.estacao) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	if not dados.estacoes[args.estacao] then
-		return false, "Estação desconhecida."
+		return false, L("Estação desconhecida.", "Unknown station.")
 	end
 	if not Economia.estacaoNaRede(e, dados, args.estacao) then
-		return false, "Construa um trecho até esta estação primeiro."
+		return false, L("Construa um trecho até esta estação primeiro.", "Build a section to this station first.")
 	end
 	local custo = Economia.custoMelhoria(e, dados, args.estacao)
 	if not custo then
-		return false, "Esta estação já está no nível máximo."
+		return false, L("Esta estação já está no nível máximo.", "This station is already at the top level.")
 	end
 	if e.dinheiro < custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= custo
 	e.estacoes[args.estacao] = Economia.nivelEstacao(e, args.estacao) + 1
@@ -602,9 +605,9 @@ function Acoes.construirTudo(s: Sessao, _args: any): (boolean, string?)
 		construidos += 1
 	end
 	if construidos == 0 then
-		return false, "Nenhum trecho disponível cabe no seu caixa agora."
+		return false, L("Nenhum trecho disponível cabe no seu caixa agora.", "No available section fits your budget right now.")
 	end
-	return true, `{construidos} trecho(s) construído(s).`
+	return true, L(`{construidos} trecho(s) construído(s).`, `{construidos} section(s) built.`)
 end
 
 -- Compra os trens que faltam em todas as linhas, enquanto houver dinheiro.
@@ -622,61 +625,61 @@ function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 		end
 	end
 	if comprados == 0 then
-		return false, "Nenhuma linha precisa de trem, ou falta dinheiro."
+		return false, L("Nenhuma linha precisa de trem, ou falta dinheiro.", "No line needs a train, or there is not enough money.")
 	end
-	return true, `{comprados} trem(ns) comprado(s).`
+	return true, L(`{comprados} trem(ns) comprado(s).`, `{comprados} train(s) bought.`)
 end
 
 -- Gabinete de Projetos: começa a pesquisa (paga na hora, termina com o tempo, mesmo offline).
 function Acoes.pesquisar(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.projeto) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	local p = Economia.acharProjeto(dados, args.projeto)
 	if not p then
-		return false, "Projeto desconhecido."
+		return false, L("Projeto desconhecido.", "Unknown project.")
 	end
 	local situacao = Economia.situacaoProjeto(e, dados, p)
 	if situacao == "concluido" then
-		return false, "Esse projeto já foi concluído."
+		return false, L("Esse projeto já foi concluído.", "That project is already finished.")
 	elseif situacao == "pesquisando" then
-		return false, "Esse projeto já está em estudo."
+		return false, L("Esse projeto já está em estudo.", "That project is already being studied.")
 	elseif situacao == "ocupado" then
-		return false, "O Gabinete já está estudando outro projeto. Espere terminar ou acelere."
+		return false, L("O Gabinete já está estudando outro projeto. Espere terminar ou acelere.", "The Cabinet is already studying another project. Wait for it to finish or speed it up.")
 	elseif situacao == "bloqueado" then
 		local _, motivo = Economia.requisitosProjeto(e, dados, p)
-		return false, motivo or "Projeto ainda fechado."
+		return false, motivo or L("Projeto ainda fechado.", "Project still locked.")
 	end
 	if e.dinheiro < p.custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= p.custo
 	e.projetos[p.id] = os.time() + p.segundos
 	Metas.contar(e, "estudo", 1)
 	ganharXp(s, e, Metas.XP.projeto)
-	return true, `Estudo iniciado: {p.nome}.`
+	return true, L(`Estudo iniciado: {p.nome}.`, `Study started: {p.nome}.`)
 end
 
 -- Paga para terminar agora a pesquisa em andamento.
 function Acoes.acelerar(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.projeto) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	local p = Economia.acharProjeto(dados, args.projeto)
 	if not p then
-		return false, "Projeto desconhecido."
+		return false, L("Projeto desconhecido.", "Unknown project.")
 	end
 	local atual, restante = Economia.pesquisaAtual(e)
 	if atual ~= p.id then
-		return false, "Esse projeto não está em estudo."
+		return false, L("Esse projeto não está em estudo.", "That project is not being studied.")
 	end
 	local custo = Economia.custoAcelerar(p, restante)
 	if e.dinheiro < custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= custo
 	e.projetos[p.id] = os.time()
@@ -688,13 +691,13 @@ function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 	local e = s.mapas[s.mapaAtual]
 	local proxima, liberada = Economia.proximaEra(e, dados)
 	if not proxima then
-		return false, "Você já está na era mais moderna."
+		return false, L("Você já está na era mais moderna.", "You are already in the most modern era.")
 	end
 	if not liberada then
-		return false, `Complete {proxima.linhasCompletas} linhas para liberar a próxima era.`
+		return false, L(`Complete {proxima.linhasCompletas} linhas para liberar a próxima era.`, `Complete {proxima.linhasCompletas} lines to unlock the next era.`)
 	end
 	if e.dinheiro < proxima.custo then
-		return false, "Dinheiro insuficiente."
+		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= proxima.custo
 	e.era = proxima.id
@@ -705,46 +708,46 @@ end
 -- Contratos: aceitar uma das ofertas (uma por vez).
 function Acoes.aceitarContrato(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.id) ~= "number" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local e = s.mapas[s.mapaAtual]
 	if e.contrato then
-		return false, "Você já tem um contrato em andamento."
+		return false, L("Você já tem um contrato em andamento.", "You already have a contract in progress.")
 	end
 	for i, oferta in e.ofertas do
 		if oferta.id == args.id then
 			table.remove(e.ofertas, i)
 			oferta.progresso, oferta.decorrido = 0, 0
 			e.contrato = oferta
-			return true, "Contrato assinado. O prazo já está correndo!"
+			return true, L("Contrato assinado. O prazo já está correndo!", "Contract signed. The clock is running!")
 		end
 	end
-	return false, "Essa oferta não está mais disponível."
+	return false, L("Essa oferta não está mais disponível.", "That offer is no longer available.")
 end
 
 -- Desistir não tem multa, mas a oferta se perde.
 function Acoes.desistirContrato(s: Sessao, _args: any): (boolean, string?)
 	local e = s.mapas[s.mapaAtual]
 	if not e.contrato then
-		return false, "Não há contrato em andamento."
+		return false, L("Não há contrato em andamento.", "There is no contract in progress.")
 	end
 	e.contrato = nil
-	return true, "Contrato cancelado."
+	return true, L("Contrato cancelado.", "Contract cancelled.")
 end
 
 function Acoes.trocarOfertas(s: Sessao, _args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	if e.contrato then
-		return false, "Termine o contrato em andamento primeiro."
+		return false, L("Termine o contrato em andamento primeiro.", "Finish the current contract first.")
 	end
 	local espera = Metas.TROCA_OFERTAS_SEGUNDOS - (os.time() - e.ofertasEm)
 	if #e.ofertas > 0 and espera > 0 then
-		return false, `Ofertas novas em {Metas.relogio(espera)}.`
+		return false, L(`Ofertas novas em {Metas.relogio(espera)}.`, `New offers in {Metas.relogio(espera)}.`)
 	end
 	local novas = Metas.gerarOfertas(e, dados, Metas.contexto(e, dados), s.rng)
 	if #novas == 0 then
-		return false, "Construa mais trechos para receber contratos."
+		return false, L("Construa mais trechos para receber contratos.", "Build more sections to get contracts.")
 	end
 	e.ofertas = novas
 	e.ofertasEm = os.time()
@@ -754,32 +757,32 @@ end
 -- Missão do dia: quando completa, o jogador resgata o prêmio.
 function Acoes.resgatarMissao(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.indice) ~= "number" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	local m = e.missoes.lista[args.indice]
 	if not m then
-		return false, "Missão desconhecida."
+		return false, L("Missão desconhecida.", "Unknown mission.")
 	end
 	if m.resgatada then
-		return false, "Essa missão já foi resgatada."
+		return false, L("Essa missão já foi resgatada.", "That mission was already claimed.")
 	end
 	if m.progresso < m.meta then
-		return false, "Essa missão ainda não foi cumprida."
+		return false, L("Essa missão ainda não foi cumprida.", "That mission is not complete yet.")
 	end
 	m.resgatada = true
 	e.dinheiro += m.premio
 	Metas.contar(e, "missoes", 1)
 	ganharXp(s, e, m.xp)
-	return true, `Missão cumprida: + {Economia.formatar(m.premio, Economia.moedaDe(dados, e))}`
+	return true, L(`Missão cumprida: + {Economia.formatar(m.premio, Economia.moedaDe(dados, e))}`, `Mission complete: + {Economia.formatar(m.premio, Economia.moedaDe(dados, e))}`)
 end
 
 -- Tutorial: concluir (com prêmio, no último passo) ou pular.
 -- Jornal: pagar para encerrar um evento ruim (enchente, greve, apagão).
 function Acoes.resolverEvento(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.id) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -787,41 +790,41 @@ function Acoes.resolverEvento(s: Sessao, args: any): (boolean, string?)
 		if ev.id == args.id and ev.fim > os.time() then
 			local def = Jornal.acharEvento(ev.id)
 			if not def or not def.resolvivel then
-				return false, "Esse acontecimento não tem como ser resolvido."
+				return false, L("Esse acontecimento não tem como ser resolvido.", "That event cannot be resolved.")
 			end
 			local custo = Jornal.custoResolver(Economia.rendaTotal(e, dados))
 			if e.dinheiro < custo then
-				return false, "Dinheiro insuficiente."
+				return false, L("Dinheiro insuficiente.", "Not enough money.")
 			end
 			e.dinheiro -= custo
 			table.remove(e.jornal.ativos, i)
-			return true, "Problema resolvido."
+			return true, L("Problema resolvido.", "Problem solved.")
 		end
 	end
-	return false, "Esse acontecimento já passou."
+	return false, L("Esse acontecimento já passou.", "That event is already over.")
 end
 
 -- Decisões: escolhe uma das opções da decisão pendente (args.opcao = índice).
 local TIPOS_COM_ALVO = { linha = true, cidade = true, regiao = true, carga = true }
 function Acoes.escolherDecisao(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.opcao) ~= "number" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	local pend = e.decisoes.pendente
 	local def = pend and Decisoes.acharDecisao(pend.id)
 	if not pend or not def then
-		return false, "Não há decisão esperando."
+		return false, L("Não há decisão esperando.", "There is no decision waiting.")
 	end
 	local op = def.opcoes[math.floor(args.opcao)]
 	if not op then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local lucro = Economia.rendaTotal(e, dados)
 	local custo = Decisoes.custo(e, lucro, op)
 	if e.dinheiro < custo then
-		return false, "Dinheiro insuficiente para essa escolha."
+		return false, L("Dinheiro insuficiente para essa escolha.", "Not enough money for that choice.")
 	end
 	local r = Decisoes.resolver(op, e, lucro, s.rng)
 	e.dinheiro = math.max(0, e.dinheiro + r.dinheiro)
@@ -856,17 +859,17 @@ function Acoes.escolherDecisao(s: Sessao, args: any): (boolean, string?)
 	e.decisoes.pendente = nil
 	s.proximaDecisao = agora + s.rng:NextInteger(Decisoes.INTERVALO_MIN, Decisoes.INTERVALO_MAX)
 	if r.sorteOk == true then
-		return true, "Deu certo!"
+		return true, L("Deu certo!", "It worked!")
 	elseif r.sorteOk == false then
-		return true, "Não deu certo desta vez."
+		return true, L("Não deu certo desta vez.", "It didn't work this time.")
 	end
-	return true, "Decisão tomada."
+	return true, L("Decisão tomada.", "Decision made.")
 end
 
 -- Banco: pega um dos empréstimos oferecidos (args.opcao = 1, 2 ou 3).
 function Acoes.tomarEmprestimo(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.opcao) ~= "number" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -878,11 +881,11 @@ function Acoes.tomarEmprestimo(s: Sessao, args: any): (boolean, string?)
 	local ofertas, classe = Banco.ofertas(e, b.lucro, b.satisfacao)
 	local o = ofertas[math.floor(args.opcao)]
 	if not o then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	e.emprestimo = { valor = o.valor, total = o.total, divida = o.total, classe = classe.id, em = os.time() }
 	e.dinheiro += o.valor
-	return true, `Empréstimo de {Economia.formatar(o.valor, dados.simbolo)} liberado.`
+	return true, L(`Empréstimo de {Economia.formatar(o.valor, dados.simbolo)} liberado.`, `Loan of {Economia.formatar(o.valor, dados.simbolo)} granted.`)
 end
 
 -- Banco: paga de uma vez o que falta da dívida.
@@ -890,25 +893,25 @@ function Acoes.quitarEmprestimo(s: Sessao, _args: any): (boolean, string?)
 	local e = s.mapas[s.mapaAtual]
 	local emp = e.emprestimo
 	if not emp then
-		return false, "Você não deve nada ao banco."
+		return false, L("Você não deve nada ao banco.", "You owe the bank nothing.")
 	end
 	if e.dinheiro < emp.divida then
-		return false, "Dinheiro insuficiente para quitar."
+		return false, L("Dinheiro insuficiente para quitar.", "Not enough money to pay it off.")
 	end
 	e.dinheiro -= emp.divida
 	e.emprestimo = nil
 	Metas.contar(e, "emprestimos", 1)
-	return true, "Empréstimo quitado. O banco agradece!"
+	return true, L("Empréstimo quitado. O banco agradece!", "Loan paid off. The bank thanks you!")
 end
 
 -- Tarifas: muda o preço de uma classe (args.classe = 1 a 3, args.preco = 0,5 a 2).
 function Acoes.definirTarifa(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.classe) ~= "number" or type(args.preco) ~= "number" or args.preco ~= args.preco then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local c = math.floor(args.classe)
 	if c < 1 or c > Tarifas.CLASSES then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local e = s.mapas[s.mapaAtual]
 	e.tarifas = e.tarifas or Tarifas.padrao()
@@ -920,24 +923,24 @@ end
 -- Tarifas: contrata ou dispensa um serviço de bordo (args.id).
 function Acoes.alternarServico(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.id) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local serv = Tarifas.PorId[args.id]
 	if not serv then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local e = s.mapas[s.mapaAtual]
 	if serv.era > Economia.indiceEra(e) then
-		return false, "Esse serviço ainda não existe nesta era."
+		return false, L("Esse serviço ainda não existe nesta era.", "That service does not exist yet in this era.")
 	end
 	e.tarifas = e.tarifas or Tarifas.padrao()
 	local t = e.tarifas :: Tarifas.EstadoTarifas
 	if t.servicos[serv.id] then
 		t.servicos[serv.id] = nil
-		return true, `{serv.nome.pt}: serviço dispensado.`
+		return true, L(`{serv.nome.pt}: serviço dispensado.`, `{serv.nome.en}: service dismissed.`)
 	end
 	t.servicos[serv.id] = true
-	return true, `{serv.nome.pt}: serviço contratado.`
+	return true, L(`{serv.nome.pt}: serviço contratado.`, `{serv.nome.en}: service hired.`)
 end
 
 -- Nome da companhia: passa pelo filtro de texto do Roblox antes de ser guardado (obrigatório para texto
@@ -945,14 +948,14 @@ end
 local NOME_MIN, NOME_MAX = 3, 32
 function Acoes.renomear(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.nome) ~= "string" then
-		return false, "Pedido inválido."
+		return false, L("Pedido inválido.", "Invalid request.")
 	end
 	local nome = args.nome:gsub("%s+", " "):gsub("^ ", ""):gsub(" $", "")
 	if utf8.len(nome) == nil or utf8.len(nome) < NOME_MIN or utf8.len(nome) > NOME_MAX then
-		return false, `O nome precisa ter de {NOME_MIN} a {NOME_MAX} letras.`
+		return false, L(`O nome precisa ter de {NOME_MIN} a {NOME_MAX} letras.`, `The name must have {NOME_MIN} to {NOME_MAX} letters.`)
 	end
 	if os.clock() - s.ultimoNome < 10 then
-		return false, "Espere alguns segundos para trocar o nome de novo."
+		return false, L("Espere alguns segundos para trocar o nome de novo.", "Wait a few seconds before changing the name again.")
 	end
 	s.ultimoNome = os.clock()
 	local ok, filtrado = pcall(function()
@@ -960,20 +963,29 @@ function Acoes.renomear(s: Sessao, args: any): (boolean, string?)
 		return resultado:GetNonChatStringForBroadcastAsync()
 	end)
 	if not ok then
-		return false, "Não deu para conferir o nome agora. Tente de novo daqui a pouco."
+		return false, L("Não deu para conferir o nome agora. Tente de novo daqui a pouco.", "Could not check the name right now. Try again in a moment.")
 	end
 	s.mapas[s.mapaAtual].nomeCompanhia = filtrado
 	if filtrado ~= nome then
-		return true, "Parte do nome foi bloqueada pelo filtro do Roblox."
+		return true, L("Parte do nome foi bloqueada pelo filtro do Roblox.", "Part of the name was blocked by the Roblox filter.")
 	end
-	return true, "Nome da companhia registrado."
+	return true, L("Nome da companhia registrado.", "Company name registered.")
+end
+
+-- O jogador trocou o idioma em Ajustes: as próximas mensagens saem no idioma novo.
+function Acoes.idioma(s: Sessao, args: any): (boolean, string?)
+	if type(args) ~= "table" or (args.idioma ~= "pt" and args.idioma ~= "en") then
+		return false, L("Pedido inválido.", "Invalid request.")
+	end
+	s.idioma = args.idioma
+	return true, nil
 end
 
 function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
 	if e.tutorial then
-		return false, "O tutorial já acabou."
+		return false, L("O tutorial já acabou.", "The tutorial is already over.")
 	end
 	if type(args) == "table" and args.pular == true then
 		e.tutorial = true
@@ -981,29 +993,33 @@ function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
 	end
 	local passo = Metas.passoTutorial(e, dados)
 	if not passo or passo.id ~= "fim" then
-		return false, "Ainda falta um passo do tutorial."
+		return false, L("Ainda falta um passo do tutorial.", "There is still a tutorial step left.")
 	end
 	e.tutorial = true
 	e.dinheiro += Metas.PREMIO_TUTORIAL
 	ganharXp(s, e, Metas.XP.tutorial)
-	return true, `Tutorial concluído: + {Economia.formatar(Metas.PREMIO_TUTORIAL, Economia.moedaDe(dados, e))}`
+	return true, L(`Tutorial concluído: + {Economia.formatar(Metas.PREMIO_TUTORIAL, Economia.moedaDe(dados, e))}`, `Tutorial complete: + {Economia.formatar(Metas.PREMIO_TUTORIAL, Economia.moedaDe(dados, e))}`)
 end
 
 remoteAcao.OnServerInvoke = function(jogador: Player, tipo: any, args: any)
 	local s = sessoes[jogador]
 	if not s or not s.carregado then
-		return { ok = false, erro = "Carregando seus dados…" }
+		return { ok = false, erro = L("Carregando seus dados…", "Loading your data…") }
 	end
 	local agora = os.clock()
 	if agora - s.ultimaAcao < 0.1 then
-		return { ok = false, erro = "Devagar!" }
+		return { ok = false, erro = L("Devagar!", "Slow down!") }
 	end
 	s.ultimaAcao = agora
 	local acao = if type(tipo) == "string" then Acoes[tipo] else nil
 	if not acao then
-		return { ok = false, erro = "Ação desconhecida." }
+		return { ok = false, erro = L("Ação desconhecida.", "Unknown action.") }
 	end
+	-- as mensagens da ação saem no idioma do jogador (Idioma.L lê Idioma.atual)
+	local antes = Idioma.atual
+	Idioma.atual = s.idioma
 	local ok, texto = acao(s, args)
+	Idioma.atual = antes
 	if ok then
 		enviarEstado(s)
 	end
@@ -1041,6 +1057,7 @@ local function aoEntrar(jogador: Player)
 		ganhoOffline = 0,
 		eventos = {},
 		rng = Random.new(),
+		idioma = if string.sub(string.lower(jogador.LocaleId or ""), 1, 2) == "pt" or (jogador.LocaleId or "") == "" then "pt" else "en",
 	}
 	sessoes[jogador] = s
 

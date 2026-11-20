@@ -1,6 +1,6 @@
 --!strict
 -- Janela de decisão (estilo Victoria): aparece no meio da tela quando chega uma decisão, com o texto e as
--- opções; cada botão mostra o que a escolha faz. "Decidir depois" esconde a janela e deixa um botão
+-- opções; cada botão mostra o que a escolha faz. L("Decidir depois", "Decide later") esconde a janela e deixa um botão
 -- no canto para voltar a ela. O jogo continua rodando atrás.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -10,6 +10,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
+local L = Idioma.L
 local Assets = require(Shared:WaitForChild("Assets"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
@@ -99,7 +100,7 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	end)
 
 	-- botão para voltar à decisão (canto direito, acima do zoom)
-	self.btnPendente = est:botao("principal", `{Emojis.contratos} Decisão pendente`, tela)
+	self.btnPendente = est:botao("principal", L(`{Emojis.contratos} Decisão pendente`, `{Emojis.contratos} Pending decision`), tela)
 	self.btnPendente.Name = "DecisaoPendente"
 	self.btnPendente.AnchorPoint = Vector2.new(1, 1)
 	self.btnPendente.Position = UDim2.new(1, -14, 1, -132)
@@ -169,7 +170,7 @@ function Decisao._desenhar(self: Decisao, estado: any, def: Decisoes.Definicao)
 	self.lblTitulo.Size = if img then UDim2.new(1, 0, 0, 0) else UDim2.new(1, -60, 0, 0)
 	self.lblEmoji.Text = (Emojis :: any)[def.emoji] or Emojis.contratos
 	self.lblTitulo.Text = titulo
-	self.lblRotulo.Text = `{Emojis.contratos} DECISÃO DA COMPANHIA`
+	self.lblRotulo.Text = L(`{Emojis.contratos} DECISÃO DA COMPANHIA`, `{Emojis.contratos} COMPANY DECISION`)
 	self.lblTexto.Text = texto
 	for _, b in self.botoes do
 		b:Destroy()
@@ -206,7 +207,7 @@ function Decisao._atualizarOpcoes(self: Decisao, estado: any, def: Decisoes.Defi
 			local custo = Decisoes.custo(estado, ctx.lucro, op)
 			local pode = estado.dinheiro >= custo
 			local efeitos = Decisoes.descrever(op, ctx)
-			local falta = if pode then "" else `  ({Emojis.alerta} faltam {Economia.formatar(custo - estado.dinheiro, simbolo)})`
+			local falta = if pode then "" else L(`  ({Emojis.alerta} faltam {Economia.formatar(custo - estado.dinheiro, simbolo)})`, `  ({Emojis.alerta} {Economia.formatar(custo - estado.dinheiro, simbolo)} short)`)
 			b.Text = `<b>{nome}</b>\n<font size="13">{efeitos}{falta}</font>`
 			self.liberado[i] = pode
 			self.est:habilitar(b, pode)

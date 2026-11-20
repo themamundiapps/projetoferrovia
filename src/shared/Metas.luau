@@ -4,6 +4,8 @@
 -- No jogo, 1 minuto de verdade = 1 dia da ferrovia (os números "por dia" são por minuto jogado).
 
 local Economia = require(script.Parent:WaitForChild("Economia"))
+local Idioma = require(script.Parent:WaitForChild("Idioma"))
+local L = Idioma.L
 
 type EstadoMapa = Economia.EstadoMapa
 
@@ -238,32 +240,32 @@ end
 function Metas.descreverContrato(c: any, dados: any): (string, string, string)
 	local n = Economia.numero
 	if c.tipo == "passageiros" then
-		return "passageiros", `Transporte {n(c.meta)} passageiros`, "Mais trens nas linhas lotadas, estações melhores e trechos novos aumentam os passageiros."
+		return "passageiros", L(`Transporte {n(c.meta)} passageiros`, `Carry {n(c.meta)} passengers`), L("Mais trens nas linhas lotadas, estações melhores e trechos novos aumentam os passageiros.", "More trains on crowded lines, better stations and new sections increase passengers.")
 	elseif c.tipo == "carga" then
 		local carga = (Economia.CARGAS :: any)[c.alvo]
-		return carga.emoji, `Entregue {n(c.meta)} {carga.unidade} de {string.lower(carga.nome)} no porto`, "Melhore as estações produtoras e não deixe faltar trem nas linhas delas."
+		return carga.emoji, L(`Entregue {n(c.meta)} {carga.unidade} de {string.lower(carga.nome)} no porto`, `Deliver {n(c.meta)} {carga.unidade} of {string.lower(carga.nome)} to port`), L("Melhore as estações produtoras e não deixe faltar trem nas linhas delas.", "Upgrade the producing stations and keep enough trains on their lines.")
 	elseif c.tipo == "lotacao" then
-		return "trens", `Ninguém na plataforma por {Metas.relogio(c.meta)}`, "O relógio só anda enquanto todas as linhas levam 100% dos passageiros."
+		return "trens", L(`Ninguém na plataforma por {Metas.relogio(c.meta)}`, `Nobody left on the platform for {Metas.relogio(c.meta)}`), L("O relógio só anda enquanto todas as linhas levam 100% dos passageiros.", "The clock only runs while every line carries 100% of its passengers.")
 	elseif c.tipo == "linha" then
 		local linha = acharLinha(dados, c.alvo)
-		return "construir", `Complete a linha {if linha then linha.nome else "?"}`, "Junte dinheiro e construa todos os trechos dela antes do prazo."
+		return "construir", L(`Complete a linha {if linha then linha.nome else "?"}`, `Complete the {if linha then linha.nome else "?"} line`), L("Junte dinheiro e construa todos os trechos dela antes do prazo.", "Save up and build all of its sections before the deadline.")
 	elseif c.tipo == "satisfacao" then
-		return "satisfacao", `Chegue a {c.meta}% de satisfação`, "Sobe com trens suficientes em todas as linhas e com estações melhores."
+		return "satisfacao", L(`Chegue a {c.meta}% de satisfação`, `Reach {c.meta}% satisfaction`), L("Sobe com trens suficientes em todas as linhas e com estações melhores.", "It rises with enough trains on every line and better stations.")
 	end
-	return "menu", "Contrato", ""
+	return "menu", L("Contrato", "Contract"), ""
 end
 
 -- Progresso em texto ("3.200 de 5.000").
 function Metas.progressoContrato(c: any): string
 	local n = Economia.numero
 	if c.tipo == "lotacao" then
-		return `{Metas.relogio(c.progresso)} de {Metas.relogio(c.meta)}`
+		return L(`{Metas.relogio(c.progresso)} de {Metas.relogio(c.meta)}`, `{Metas.relogio(c.progresso)} of {Metas.relogio(c.meta)}`)
 	elseif c.tipo == "satisfacao" then
-		return `{math.floor(c.progresso)}% de {c.meta}%`
+		return L(`{math.floor(c.progresso)}% de {c.meta}%`, `{math.floor(c.progresso)}% of {c.meta}%`)
 	elseif c.tipo == "linha" then
-		return `{math.floor(c.progresso)} de {c.meta} trechos`
+		return L(`{math.floor(c.progresso)} de {c.meta} trechos`, `{math.floor(c.progresso)} of {c.meta} sections`)
 	end
-	return `{n(math.floor(c.progresso))} de {n(c.meta)}`
+	return L(`{n(math.floor(c.progresso))} de {n(c.meta)}`, `{n(math.floor(c.progresso))} of {n(c.meta)}`)
 end
 
 -- ---------------------------------------------------------------- missões do dia
@@ -375,21 +377,21 @@ end
 function Metas.descreverMissao(m: any, simbolo: string?): (string, string)
 	local n = Economia.numero
 	if m.tipo == "trechos" then
-		return "construir", `Construa {m.meta} {if m.meta == 1 then "trecho" else "trechos"}`
+		return "construir", L(`Construa {m.meta} {if m.meta == 1 then "trecho" else "trechos"}`, `Build {m.meta} {if m.meta == 1 then "section" else "sections"}`)
 	elseif m.tipo == "estacoes" then
-		return "estacoes", `Melhore estações {m.meta} {if m.meta == 1 then "vez" else "vezes"}`
+		return "estacoes", L(`Melhore estações {m.meta} {if m.meta == 1 then "vez" else "vezes"}`, `Upgrade stations {m.meta} {if m.meta == 1 then "time" else "times"}`)
 	elseif m.tipo == "contratos" then
-		return "menu", `Cumpra {m.meta} {if m.meta == 1 then "contrato" else "contratos"}`
+		return "menu", L(`Cumpra {m.meta} {if m.meta == 1 then "contrato" else "contratos"}`, `Complete {m.meta} {if m.meta == 1 then "contract" else "contracts"}`)
 	elseif m.tipo == "lucro" then
-		return "dinheiro", `Lucre {Economia.formatar(m.meta, simbolo)}`
+		return "dinheiro", L(`Lucre {Economia.formatar(m.meta, simbolo)}`, `Earn {Economia.formatar(m.meta, simbolo)} profit`)
 	elseif m.tipo == "passageiros" then
-		return "passageiros", `Transporte {n(m.meta)} passageiros`
+		return "passageiros", L(`Transporte {n(m.meta)} passageiros`, `Carry {n(m.meta)} passengers`)
 	elseif m.tipo == "trens" then
-		return "trens", `Compre {m.meta} {if m.meta == 1 then "trem" else "trens"}`
+		return "trens", L(`Compre {m.meta} {if m.meta == 1 then "trem" else "trens"}`, `Buy {m.meta} {if m.meta == 1 then "train" else "trains"}`)
 	elseif m.tipo == "estudo" then
-		return "gabinete", "Comece um estudo no Gabinete"
+		return "gabinete", L("Comece um estudo no Gabinete", "Start a study in the Cabinet")
 	end
-	return "missoes", "Missão"
+	return "missoes", L("Missão", "Mission")
 end
 
 -- Alguma missão pronta esperando o jogador resgatar?
@@ -590,6 +592,51 @@ Metas.MEDALHAS = {
 	},
 }
 
+-- Nomes em inglês das dificuldades e medalhas; Metas.traduzir troca (o cliente chama ao entrar e ao
+-- mudar o idioma em Ajustes). O português original fica guardado em `pt`.
+local EN_DIFICULDADES = { facil = { "Easy", "EASY" }, medio = { "Medium", "MEDIUM" }, dificil = { "Hard", "HARD" } }
+local EN_MEDALHAS = {
+	primeiro_apito = { "First whistle", "Build your first section." },
+	linha_inaugurada = { "Line opened", "Complete a line with more than one section." },
+	cafe_no_porto = { "Coffee at the port", "Link a coffee city to a port." },
+	minerio_no_porto = { "Iron for the world", "Link a mine to a port." },
+	graos_no_porto = { "The nation's granary", "Link a grain region to a port." },
+	frota_10 = { "Ten locomotives", "Have 10 trains running." },
+	grande_estacao = { "Grand station", "Take a station to the top level." },
+	ninguem_na_plataforma = { "Nobody on the platform", "Have 4 lines running, all carrying 100% of their passengers." },
+	passageiros_felizes = { "Happy passengers", "Reach 90% satisfaction." },
+	adeus_vapor = { "Farewell, steam", "Modernize the company to the next era." },
+	fio_no_trilho = { "Wired rails", "Reach the Electric Era." },
+	bala_de_prata = { "Silver bullet", "Reach the High Speed Era." },
+	bom_pagador = { "Good payer", "Pay off a bank loan." },
+	sonhador = { "Dreamer", "Complete a \"What if?\" line from the Cabinet." },
+	do_papel_ao_trilho = { "From paper to rail", "Finish a study in the Projects Cabinet." },
+	obra_entregue = { "Work delivered", "Complete a railway that only existed on paper." },
+	malha_integrada = { "Integrated network", "Have a line linked to 5 big cities of other lines." },
+	palavra_cumprida = { "A promise kept", "Complete 10 contracts." },
+	primeiro_milhao = { "First million", "Have 1 million in cash." },
+	pais_nos_trilhos = { "A nation on rails", "Complete every line on the map." },
+}
+
+function Metas.traduzir(idioma: string)
+	for _, d in Metas.DIFICULDADES do
+		local x = d :: any
+		x.pt = x.pt or { x.nome, x.caixaAlta }
+		local t = if idioma == "en" then EN_DIFICULDADES[x.id] else x.pt
+		if t then
+			x.nome, x.caixaAlta = t[1], t[2]
+		end
+	end
+	for _, m in Metas.MEDALHAS do
+		local x = m :: any
+		x.pt = x.pt or { x.nome, x.descricao }
+		local t = if idioma == "en" then EN_MEDALHAS[x.id] else x.pt
+		if t then
+			x.nome, x.descricao = t[1], t[2]
+		end
+	end
+end
+
 -- Medalhas que a companhia acabou de merecer (ainda não registradas no estado).
 function Metas.novasMedalhas(estado: EstadoMapa, dados: any, ctx: Contexto): { any }
 	local novas = {}
@@ -631,22 +678,22 @@ function Metas.passoTutorial(estado: any, dados: any): PassoTutorial?
 	local primeira, segunda = dados.linhas[1], dados.linhas[2]
 	if Economia.trechosConstruidos(estado, primeira) == 0 then
 		return {
-			id = "primeiro", indice = 1, total = total, acao = "linha", alvo = primeira.id, botao = "Mostrar no mapa",
-			texto = `Bem-vindo à sua companhia! Toque no trilho da {primeira.nome} e assine a concessão: é o seu primeiro trecho.`,
+			id = "primeiro", indice = 1, total = total, acao = "linha", alvo = primeira.id, botao = L("Mostrar no mapa", "Show on map"),
+			texto = L(`Bem-vindo à sua companhia! Toque no trilho da {primeira.nome} e assine a concessão: é o seu primeiro trecho.`, `Welcome to your company! Tap the {primeira.nome} track and sign the concession: it is your first section.`),
 		}
 	end
 	if segunda and Economia.trechosConstruidos(estado, segunda) == 0 then
 		return {
-			id = "segunda", indice = 2, total = total, acao = "linha", alvo = segunda.id, botao = "Mostrar no mapa",
-			texto = `A primeira linha já rende. Agora comece a {segunda.nome}: cidades grandes dão muito mais passageiros.`,
+			id = "segunda", indice = 2, total = total, acao = "linha", alvo = segunda.id, botao = L("Mostrar no mapa", "Show on map"),
+			texto = L(`A primeira linha já rende. Agora comece a {segunda.nome}: cidades grandes dão muito mais passageiros.`, `Your first line is already earning. Now start the {segunda.nome}: big cities bring many more passengers.`),
 		}
 	end
 	if (estado.contadores or {}).trens == nil then
 		for _, linha in dados.linhas do
 			if Economia.trensFaltando(estado, dados, linha) > 0 then
 				return {
-					id = "trem", indice = 3, total = total, acao = "linha", alvo = linha.id, botao = "Mostrar no mapa",
-					texto = `A {linha.nome} está lotada: tem passageiro ficando na plataforma. Toque num trecho dela e compre um trem.`,
+					id = "trem", indice = 3, total = total, acao = "linha", alvo = linha.id, botao = L("Mostrar no mapa", "Show on map"),
+					texto = L(`A {linha.nome} está lotada: tem passageiro ficando na plataforma. Toque num trecho dela e compre um trem.`, `The {linha.nome} is crowded: passengers are being left on the platform. Tap one of its sections and buy a train.`),
 				}
 			end
 		end
@@ -670,19 +717,19 @@ function Metas.passoTutorial(estado: any, dados: any): PassoTutorial?
 			end
 		end
 		return {
-			id = "estacao", indice = 4, total = total, acao = "estacao", alvo = maior, botao = "Mostrar no mapa",
-			texto = "Toque numa cidade (a bolinha no mapa) para abrir a ficha dela e melhore a estação: mais passageiros e mais renda.",
+			id = "estacao", indice = 4, total = total, acao = "estacao", alvo = maior, botao = L("Mostrar no mapa", "Show on map"),
+			texto = L("Toque numa cidade (a bolinha no mapa) para abrir a ficha dela e melhore a estação: mais passageiros e mais renda.", "Tap a city (the dot on the map) to open its card and upgrade the station: more passengers and more income."),
 		}
 	end
 	if not estado.contrato and ((estado.contadores or {}).contratos or 0) == 0 then
 		return {
-			id = "contrato", indice = 5, total = total, acao = "aba", alvo = "metas", botao = "Abrir Contratos",
-			texto = "Agora aceite um contrato: cumprir contratos e missões dá prêmios e faz a companhia subir de nível.",
+			id = "contrato", indice = 5, total = total, acao = "aba", alvo = "metas", botao = L("Abrir Contratos", "Open Contracts"),
+			texto = L("Agora aceite um contrato: cumprir contratos e missões dá prêmios e faz a companhia subir de nível.", "Now accept a contract: completing contracts and missions gives rewards and levels up your company."),
 		}
 	end
 	return {
-		id = "fim", indice = total, total = total, acao = "concluir", botao = `Concluir · + {Economia.formatar(Metas.PREMIO_TUTORIAL, dados.simbolo)}`,
-		texto = "Pronto! Complete linhas para liberar as próximas, estude projetos no Gabinete e fique de olho no lucro de cada linha. Boa viagem!",
+		id = "fim", indice = total, total = total, acao = "concluir", botao = L(`Concluir · + {Economia.formatar(Metas.PREMIO_TUTORIAL, dados.simbolo)}`, `Finish · + {Economia.formatar(Metas.PREMIO_TUTORIAL, dados.simbolo)}`),
+		texto = L("Pronto! Complete linhas para liberar as próximas, estude projetos no Gabinete e fique de olho no lucro de cada linha. Boa viagem!", "Done! Complete lines to unlock the next ones, study projects in the Cabinet and keep an eye on each line's profit. Have a good trip!"),
 	}
 end
 

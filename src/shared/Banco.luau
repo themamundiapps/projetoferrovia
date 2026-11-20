@@ -4,6 +4,7 @@
 -- dá para quitar de uma vez a qualquer momento. Um empréstimo por vez.
 
 local Economia = require(script.Parent:WaitForChild("Economia"))
+local Idioma = require(script.Parent:WaitForChild("Idioma"))
 
 type EstadoMapa = Economia.EstadoMapa
 
@@ -78,10 +79,10 @@ end
 -- Por que não dá para pegar um empréstimo agora (nil = pode).
 function Banco.impedimento(estado: EstadoMapa): string?
 	if estado.emprestimo then
-		return "Quite o empréstimo atual antes de pedir outro."
+		return Idioma.L("Quite o empréstimo atual antes de pedir outro.", "Pay off your current loan before taking another.")
 	end
 	if next(estado.trechos) == nil then
-		return "O banco só empresta para quem já tem trilho: construa o primeiro trecho."
+		return Idioma.L("O banco só empresta para quem já tem trilho: construa o primeiro trecho.", "The bank only lends to companies with track: build your first section.")
 	end
 	return nil
 end

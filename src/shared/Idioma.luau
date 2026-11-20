@@ -1,11 +1,40 @@
 --!strict
 -- Idioma: textos em português e inglês.
--- Por enquanto o jogo roda só em português (Idioma.atual = "pt"): as fichas das cidades já passam por aqui,
--- e o resto da interface vem para esta tabela antes do lançamento em inglês.
+-- No cliente o idioma sai do aparelho do jogador (LocaleId): português para "pt-*", inglês para o resto.
+-- O jogador troca em Ajustes (Idioma.definir). No servidor fica "pt"; as mensagens que o servidor manda
+-- para um jogador usam o idioma da sessão dele (Jogo.luau).
+-- Três jeitos de traduzir:
+--   Idioma.L("texto", "text")    -- par no próprio lugar (o jeito mais usado na interface)
+--   Idioma.t({ pt = …, en = … })  -- par que vem dos dados
+--   Idioma.T("chave", …)          -- textos fixos da tabela TEXTOS abaixo, com %s/%d
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 local Idioma = {}
 
-Idioma.atual = "pt" -- "pt" ou "en"
+-- "pt" ou "en"
+local function detectar(): string
+	if RunService:IsClient() then
+		local jogador = Players.LocalPlayer
+		local local_ = if jogador then string.lower(jogador.LocaleId or "") else ""
+		if local_ ~= "" and string.sub(local_, 1, 2) ~= "pt" then
+			return "en"
+		end
+	end
+	return "pt"
+end
+Idioma.atual = detectar()
+
+-- Muda o idioma (botão em Ajustes); quem desenha a interface remonta depois.
+function Idioma.definir(idioma: string)
+	Idioma.atual = if idioma == "en" then "en" else "pt"
+end
+
+-- Par de textos no próprio lugar: Idioma.L("Fechar", "Close").
+function Idioma.L(pt: string, en: string): string
+	return if Idioma.atual == "en" then en else pt
+end
 
 -- Texto que vem dos dados nos dois idiomas: { pt = "...", en = "..." }.
 function Idioma.t(texto: any): string

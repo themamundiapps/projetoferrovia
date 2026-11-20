@@ -131,6 +131,10 @@ Theme.Eras = {
 }
 
 Theme.PorId = {}
+
+-- Nome das eras nos dois idiomas; Theme.traduzir troca o `nome` (o cliente chama ao entrar e ao mudar o idioma).
+local NOMES_EN = { vapor = "Steam Era", diesel = "Diesel Era", eletrico = "Electric Era", alta = "High Speed Era" }
+local ANOS_EN = { alta = "2000 – today" }
 for i, era in ipairs(Theme.Eras) do
 	era.indice = i
 	Theme.PorId[era.id] = era
@@ -138,5 +142,18 @@ end
 
 -- Linhas com cor clara precisam de contorno escuro (UIStroke 2 px na cor ink) para contraste sobre a terra.
 Theme.ContornoLinha = 2
+
+for _, era in Theme.Eras or {} do
+	(era :: any).nomes = { pt = era.nome, en = NOMES_EN[era.id] or era.nome }
+	(era :: any).anosPorIdioma = { pt = if era.id == "alta" then "2000 – hoje" else era.anos, en = ANOS_EN[era.id] or era.anos }
+end
+
+function Theme.traduzir(idioma: string)
+	for _, era in Theme.Eras or {} do
+		local e = era :: any
+		e.nome = e.nomes[idioma] or e.nomes.pt
+		e.anos = e.anosPorIdioma[idioma] or e.anosPorIdioma.pt
+	end
+end
 
 return Theme

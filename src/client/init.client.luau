@@ -13,6 +13,7 @@ local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
+local L = Idioma.L
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local MapaView = require(script:WaitForChild("MapaView"))
@@ -26,6 +27,11 @@ local Som = require(script:WaitForChild("Som"))
 local Inicio = require(script:WaitForChild("Inicio"))
 local Vinheta = require(script:WaitForChild("Vinheta"))
 local RunService = game:GetService("RunService")
+
+-- nomes das eras, das cargas e dos níveis de estação no idioma do jogador
+Economia.traduzir(Idioma.atual)
+Theme.traduzir(Idioma.atual)
+Metas.traduzir(Idioma.atual)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -205,28 +211,28 @@ local function avisarEventos(estado: any)
 	for _, ev in estado.eventos or {} do
 		if ev.tipo == "contrato" and ev.cumprido then
 			Som.efeito("premio")
-			ui:enfileirar(`{Emojis.contratos} Contrato cumprido! Prêmio: {Economia.formatar(ev.premio, simbolo)}`, 5)
+			ui:enfileirar(L(`{Emojis.contratos} Contrato cumprido! Prêmio: {Economia.formatar(ev.premio, simbolo)}`, `{Emojis.contratos} Contract completed! Reward: {Economia.formatar(ev.premio, simbolo)}`), 5)
 		elseif ev.tipo == "contrato" then
-			ui:enfileirar(`{Emojis.relogio} O prazo do contrato acabou. Há ofertas novas na aba Contratos.`, 5)
+			ui:enfileirar(L(`{Emojis.relogio} O prazo do contrato acabou. Há ofertas novas na aba Contratos.`, `{Emojis.relogio} The contract deadline ran out. There are new offers in the Contracts tab.`), 5)
 		elseif ev.tipo == "medalha" then
 			local m = Metas.acharMedalha(ev.id)
 			if m then
 				Som.efeito("premio")
-				ui:enfileirar(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, 4)
+				ui:enfileirar(L(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, `{Emojis.medalha} Medal: {m.nome}! +{m.xp} XP`), 4)
 			end
 		elseif ev.tipo == "nivel" then
 			Som.efeito("conquista")
-			ui:enfileirar(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, 5)
+			ui:enfileirar(L(`{Emojis.nivel} Nível {ev.nivel}: {ev.titulo}! Bônus de receita: +{ev.nivel - 1}%`, `{Emojis.nivel} Level {ev.nivel}: {ev.titulo}! Income bonus: +{ev.nivel - 1}%`), 5)
 		elseif ev.tipo == "linha" then
 			Som.efeito("conquista")
-			ui:enfileirar(`{Emojis.confirmar} Linha completa: {ev.nome}!`, 4)
+			ui:enfileirar(L(`{Emojis.confirmar} Linha completa: {ev.nome}!`, `{Emojis.confirmar} Line complete: {ev.nome}!`), 4)
 		elseif ev.tipo == "banco" then
 			Som.efeito("premio")
-			ui:enfileirar(`{Emojis.banco} Empréstimo quitado!`, 4)
+			ui:enfileirar(L(`{Emojis.banco} Empréstimo quitado!`, `{Emojis.banco} Loan paid off!`), 4)
 		elseif ev.tipo == "jornal" then
 			Som.efeito("jornal")
 			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, DadosBrasil, Idioma.atual)
-			ui:enfileirar(`{Emojis.jornal} EXTRA! {manchete}`, 6)
+			ui:enfileirar(L(`{Emojis.jornal} EXTRA! {manchete}`, `{Emojis.jornal} EXTRA! {manchete}`), 6)
 			menu:marcarJornal()
 		end
 	end
@@ -236,7 +242,7 @@ local function agir(tipo: string, args: any)
 	local resposta = remoteAcao:InvokeServer(tipo, args)
 	if resposta and not resposta.ok then
 		Som.efeito("erro")
-		ui:avisar(`{Emojis.alerta} {resposta.erro or "Não deu certo."}`)
+		ui:avisar(`{Emojis.alerta} {resposta.erro or L("Não deu certo.", "That didn't work.")}`)
 	elseif resposta and resposta.ok then
 		if tipo == "trem" then
 			-- apito a vapor até o Diesel; nas eras Elétrica e Alta, um sinal eletrônico
@@ -249,24 +255,24 @@ local function agir(tipo: string, args: any)
 		if resposta.mensagem then
 			ui:avisar(`{Emojis.confirmar} {resposta.mensagem}`, 3)
 		elseif tipo == "acelerar" then
-			ui:avisar(`{Emojis.velocidade} Estudo concluído na hora!`, 2)
+			ui:avisar(L(`{Emojis.velocidade} Estudo concluído na hora!`, `{Emojis.velocidade} Study finished instantly!`), 2)
 		elseif tipo == "melhorarEstacao" then
-			ui:avisar(`{Emojis.melhorar} Estação melhorada!`, 2)
+			ui:avisar(L(`{Emojis.melhorar} Estação melhorada!`, `{Emojis.melhorar} Station upgraded!`), 2)
 		elseif tipo == "trem" then
-			ui:avisar(`{Emojis.trens} Trem comprado!`, 2)
+			ui:avisar(L(`{Emojis.trens} Trem comprado!`, `{Emojis.trens} Train bought!`), 2)
 		elseif tipo == "aceitarContrato" or tipo == "trocarOfertas" or tipo == "tutorial" or tipo == "resolverEvento" then
 			-- sem aviso próprio: a tela já mostra o que mudou
 		elseif tipo == "venderTrem" then
-			ui:avisar(`{Emojis.dinheiro} Trem vendido.`, 2)
+			ui:avisar(L(`{Emojis.dinheiro} Trem vendido.`, `{Emojis.dinheiro} Train sold.`), 2)
 		elseif tipo == "construir" then
-			ui:avisar(`{Emojis.construir} Trecho construído!`, 2)
+			ui:avisar(L(`{Emojis.construir} Trecho construído!`, `{Emojis.construir} Section built!`), 2)
 			-- se o trecho novo fez a linha precisar de mais trens, avisa
 			task.delay(0.4, function()
 				local linha = Economia.acharTrecho(DadosBrasil, args.trecho)
 				local estado = ui.estado
 				local faltando = if linha and estado then Economia.trensFaltando(estado, DadosBrasil, linha) else 0
 				if linha and faltando > 0 then
-					ui:avisar(`{Emojis.trens} A linha {linha.nome} cresceu: faltam {faltando} trem(ns) para levar todos os passageiros.`, 5)
+					ui:avisar(L(`{Emojis.trens} A linha {linha.nome} cresceu: faltam {faltando} trem(ns) para levar todos os passageiros.`, `{Emojis.trens} The {linha.nome} line grew: {faltando} more train(s) needed to carry every passenger.`), 5)
 				end
 			end)
 		end
@@ -341,7 +347,7 @@ local function montar(eraId: string)
 
 	table.insert(conexoesTela, menu.aoAgir.Event:Connect(agir))
 	table.insert(conexoesTela, menu.aoConcluirProjeto.Event:Connect(function(p: any)
-		ui:avisar(`{Emojis.gabinete} Projeto aprovado: {p.nome}! A linha já pode ser construída.`, 6)
+		ui:avisar(L(`{Emojis.gabinete} Projeto aprovado: {p.nome}! A linha já pode ser construída.`, `{Emojis.gabinete} Project approved: {p.nome}! The line can now be built.`), 6)
 	end))
 	-- o painel do menu acompanha a altura do caixa (que cresce quando aparece o botão da era)
 	local function reposicionar()
@@ -361,6 +367,19 @@ local function montar(eraId: string)
 			mapa:focar(minimo, maximo, 80)
 		elseif chave == "menuInicial" then
 			abrirMenuInicial()
+		elseif chave == "idioma" then
+			-- troca o idioma e remonta a interface inteira; o servidor passa a responder no idioma novo
+			Idioma.definir(if Idioma.atual == "pt" then "en" else "pt")
+			Economia.traduzir(Idioma.atual)
+			Theme.traduzir(Idioma.atual)
+			Metas.traduzir(Idioma.atual)
+			task.spawn(function()
+				remoteAcao:InvokeServer("idioma", { idioma = Idioma.atual })
+			end)
+			task.defer(function()
+				montar(eraAtual or "vapor")
+				menu:abrirAba("ajustes")
+			end)
 		elseif chave == "musica" or chave == "efeitos" then
 			ajustesSalvos[chave] = valor
 			Som.definir(chave, valor)
@@ -573,7 +592,7 @@ local function aplicarEstado(estado: any)
 				montar(atual.era)
 				avisarEventos(atual)
 				local emoji = (Emojis :: any)["era_" .. atual.era] or Emojis.era_diesel
-				ui:enfileirar(`{emoji} Bem-vindo à {eraPara and eraPara.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
+				ui:enfileirar(L(`{emoji} Bem-vindo à {eraPara and eraPara.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, `{emoji} Welcome to the {eraPara and eraPara.nome or "new era"}! Income doubled and each train carries twice the passengers.`), 6)
 			end)
 		end
 	else

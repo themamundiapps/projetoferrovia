@@ -3,6 +3,8 @@
 -- e pelo cliente para mostrar previsões. Valores provisórios, ajustados nos playtests.
 
 local Tarifas = require(script.Parent:WaitForChild("Tarifas"))
+local Idioma = require(script.Parent:WaitForChild("Idioma"))
+local L = Idioma.L
 
 local Economia = {}
 
@@ -77,13 +79,14 @@ Economia.HORAS_DE_OPERACAO = 18 -- os trens rodam 18 h por dia
 
 -- Cargas: cada cidade produtora ligada por trilho até um porto dá um bônus na renda da linha dela.
 Economia.CARGAS = {
-	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25, unidade = "sacas" },
-	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6, unidade = "t" },
-	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4, unidade = "t" },
-	acucar = { nome = "Açúcar", emoji = "carga_acucar", bonus = 0.3, unidade = "sacas" },
-	madeira = { nome = "Madeira", emoji = "carga_madeira", bonus = 0.3, unidade = "t" },
-	gado = { nome = "Gado", emoji = "carga_gado", bonus = 0.3, unidade = "cabeças" },
-	borracha = { nome = "Borracha", emoji = "carga_borracha", bonus = 0.6, unidade = "t" },
+	-- nome/unidade são os do idioma atual (Economia.traduzir troca); nomes/unidades guardam os dois
+	cafe = { nome = "Café", emoji = "carga_cafe", bonus = 0.25, unidade = "sacas", nomes = { pt = "Café", en = "Coffee" }, unidades = { pt = "sacas", en = "bags" } },
+	minerio = { nome = "Minério", emoji = "carga_minerio", bonus = 0.6, unidade = "t", nomes = { pt = "Minério", en = "Ore" }, unidades = { pt = "t", en = "t" } },
+	graos = { nome = "Grãos", emoji = "carga_graos", bonus = 0.4, unidade = "t", nomes = { pt = "Grãos", en = "Grain" }, unidades = { pt = "t", en = "t" } },
+	acucar = { nome = "Açúcar", emoji = "carga_acucar", bonus = 0.3, unidade = "sacas", nomes = { pt = "Açúcar", en = "Sugar" }, unidades = { pt = "sacas", en = "bags" } },
+	madeira = { nome = "Madeira", emoji = "carga_madeira", bonus = 0.3, unidade = "t", nomes = { pt = "Madeira", en = "Timber" }, unidades = { pt = "t", en = "t" } },
+	gado = { nome = "Gado", emoji = "carga_gado", bonus = 0.3, unidade = "cabeças", nomes = { pt = "Gado", en = "Cattle" }, unidades = { pt = "cabeças", en = "head" } },
+	borracha = { nome = "Borracha", emoji = "carga_borracha", bonus = 0.6, unidade = "t", nomes = { pt = "Borracha", en = "Rubber" }, unidades = { pt = "t", en = "t" } },
 }
 -- Ordem em que as cargas aparecem nas listas.
 Economia.ORDEM_CARGAS = { "cafe", "acucar", "minerio", "madeira", "gado", "borracha", "graos" }
@@ -99,12 +102,24 @@ end
 
 -- Estações: cada nível aumenta a renda dos trechos que chegam nela.
 Economia.NIVEIS_ESTACAO = {
-	{ nome = "Plataforma coberta", emoji = "estacoes" },
-	{ nome = "Armazém", emoji = "cargas" },
-	{ nome = "Restaurante", emoji = "satisfacao" },
-	{ nome = "Hotel", emoji = "companhia" },
-	{ nome = "Grande estação", emoji = "prestigio" },
+	{ nome = "Plataforma coberta", emoji = "estacoes", nomes = { pt = "Plataforma coberta", en = "Covered platform" } },
+	{ nome = "Armazém", emoji = "cargas", nomes = { pt = "Armazém", en = "Warehouse" } },
+	{ nome = "Restaurante", emoji = "satisfacao", nomes = { pt = "Restaurante", en = "Restaurant" } },
+	{ nome = "Hotel", emoji = "companhia", nomes = { pt = "Hotel", en = "Hotel" } },
+	{ nome = "Grande estação", emoji = "prestigio", nomes = { pt = "Grande estação", en = "Grand station" } },
 }
+
+-- Troca os nomes das cargas e dos níveis de estação para o idioma (o cliente chama ao entrar e ao
+-- mudar o idioma em Ajustes).
+function Economia.traduzir(idioma: string)
+	for _, c in Economia.CARGAS do
+		c.nome = (c.nomes :: any)[idioma] or c.nomes.pt
+		c.unidade = (c.unidades :: any)[idioma] or c.unidades.pt
+	end
+	for _, n in Economia.NIVEIS_ESTACAO do
+		n.nome = (n.nomes :: any)[idioma] or n.nomes.pt
+	end
+end
 Economia.BONUS_POR_NIVEL = 0.08
 Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira linha
 
@@ -313,7 +328,7 @@ function Economia.requisitosProjeto(estado: EstadoMapa, dados: any, p: any): (bo
 	local r = p.requer or {}
 	if r.projeto and not Economia.projetoConcluido(estado, r.projeto) then
 		local outro = Economia.acharProjeto(dados, r.projeto)
-		return false, `Conclua antes o projeto {if outro then outro.nome else r.projeto}.`
+		return false, L(`Conclua antes o projeto {if outro then outro.nome else r.projeto}.`, `Finish the {if outro then outro.nome else r.projeto} project first.`)
 	end
 	if r.era then
 		local precisa, atual = 0, Economia.indiceEra(estado)
@@ -324,11 +339,11 @@ function Economia.requisitosProjeto(estado: EstadoMapa, dados: any, p: any): (bo
 		end
 		if atual < precisa then
 			local alvo = Economia.ERAS[precisa]
-			return false, `Chegue à {if alvo then alvo.nome.pt else r.era}.`
+			return false, L(`Chegue à {if alvo then alvo.nome.pt else r.era}.`, `Reach the {if alvo then alvo.nome.en else r.era}.`)
 		end
 	end
 	if r.linhasCompletas and Economia.linhasCompletas(estado, dados) < r.linhasCompletas then
-		return false, `Complete {r.linhasCompletas} linhas (hoje: {Economia.linhasCompletas(estado, dados)}).`
+		return false, L(`Complete {r.linhasCompletas} linhas (hoje: {Economia.linhasCompletas(estado, dados)}).`, `Complete {r.linhasCompletas} lines (now: {Economia.linhasCompletas(estado, dados)}).`)
 	end
 	return true, nil
 end

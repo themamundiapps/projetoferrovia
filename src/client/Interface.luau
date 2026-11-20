@@ -8,6 +8,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
+local L = Idioma.L
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
@@ -49,6 +50,7 @@ end
 
 export type Interface = typeof(setmetatable({} :: any, Interface))
 
+local MESES_EN = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }
 local MESES = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
 
 local function numero(n: number): string
@@ -223,11 +225,11 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	-- recursos
 	self.recursos = {} :: { [string]: { quadro: Frame, valor: TextLabel, legenda: TextLabel } }
 	local listaRecursos = {
-		{ "trens", "trens", Emojis.trens, "trens" },
-		{ "passageiros", "passageiros", Emojis.passageiros or "🧳", "passageiros/dia" },
-		{ "satisfacao", "satisfacao", Emojis.satisfacao, "satisfação" },
-		{ "carga", "carga", Emojis.cargas or "📦", "carga/dia" },
-		{ "contrato", "decisao", Emojis.contratos, "contrato" },
+		{ "trens", "trens", Emojis.trens, L("trens", "trains") },
+		{ "passageiros", "passageiros", Emojis.passageiros or "🧳", L("passageiros/dia", "passengers/day") },
+		{ "satisfacao", "satisfacao", Emojis.satisfacao, L("satisfação", "satisfaction") },
+		{ "carga", "carga", Emojis.cargas or "📦", L("carga/dia", "cargo/day") },
+		{ "contrato", "decisao", Emojis.contratos, L("contrato", "contract") },
 	}
 	local sepRecursos = separador(direita, 10)
 	for i, r in listaRecursos do
@@ -512,8 +514,8 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	local nivel, xpNoNivel, xpDoNivel = Economia.nivel(estado)
 	self.lblCargo.Text = `{Emojis.nivel} {Economia.tituloNivel(nivel, estado.era, Idioma.atual)}`
 	self.lblNivel.Text = if xpDoNivel > 0
-		then `NÍVEL {nivel} · {numero(xpNoNivel)} / {numero(xpDoNivel)} XP`
-		else `NÍVEL {nivel} · MÁXIMO`
+		then L(`NÍVEL {nivel} · {numero(xpNoNivel)} / {numero(xpDoNivel)} XP`, `LEVEL {nivel} · {numero(xpNoNivel)} / {numero(xpDoNivel)} XP`)
+		else L(`NÍVEL {nivel} · MÁXIMO`, `LEVEL {nivel} · MAX`)
 	self.cheioXp.Size = UDim2.fromScale(if xpDoNivel > 0 then math.clamp(xpNoNivel / xpDoNivel, 0, 1) else 1, 1)
 	-- nome muito comprido é cortado à mão (o corte automático do Roblox mede antes de a fonte carregar)
 	local nome = estado.nomeCompanhia or Idioma.T("companhia_padrao")
@@ -523,15 +525,15 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.lblNome.Text = nome
 	-- data: 1 minuto de verdade = 1 dia do jogo; o ano acompanha o progresso da era
 	local dia = math.floor(workspace:GetServerTimeNow() / Metas.SEGUNDOS_POR_DIA)
-	self.lblData.Text = `{dia % 30 + 1} de {MESES[(dia // 30) % 12 + 1]} de {Economia.anoAtual(estado, self.dados)}`
+	self.lblData.Text = L(`{dia % 30 + 1} de {MESES[(dia // 30) % 12 + 1]} de {Economia.anoAtual(estado, self.dados)}`, `{MESES_EN[(dia // 30) % 12 + 1]} {dia % 30 + 1}, {Economia.anoAtual(estado, self.dados)}`)
 	self.lblEra.Text = self.era.nome
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	if estado.renda >= 0 then
-		self.lblRenda.Text = `+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`
+		self.lblRenda.Text = L(`+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`, `+ {Economia.formatar(estado.renda, simbolo, true)} per second`)
 		self.lblRenda.TextColor3 = self.coresTopo.verde
 	else
 		-- manutenção maior que a receita
-		self.lblRenda.Text = `− {Economia.formatar(-estado.renda, simbolo, true)} por segundo`
+		self.lblRenda.Text = L(`− {Economia.formatar(-estado.renda, simbolo, true)} por segundo`, `− {Economia.formatar(-estado.renda, simbolo, true)} per second`)
 		self.lblRenda.TextColor3 = self.coresTopo.vermelho
 	end
 	-- faixa de recursos
@@ -561,13 +563,13 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 		self.linhaEra.Visible = true
 		local fator = math.round(proxima.multiplicador / Economia.multiplicadorEra(estado))
 		local emoji = (Emojis :: any)["era_" .. proxima.id] or Emojis.era_diesel
-		self.btnEra.Text = `{emoji} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{fator} nas linhas · {Economia.formatar(proxima.custo, simbolo)}`
+		self.btnEra.Text = L(`{emoji} <b>Modernizar: {eraProx.nome}</b>\nRenda ×{fator} nas linhas · {Economia.formatar(proxima.custo, simbolo)}`, `{emoji} <b>Modernize: {eraProx.nome}</b>\nIncome ×{fator} on lines · {Economia.formatar(proxima.custo, simbolo)}`)
 		Estilo.new(self.era):habilitar(self.btnEra, podePagar)
 	else
 		self.linhaEra.Visible = false
 	end
 	if estado.ganhoOffline and estado.ganhoOffline > 0.5 then
-		self:avisar(`{Emojis.relogio} Enquanto você esteve fora, seus trens renderam {Economia.formatar(estado.ganhoOffline, simbolo)}`, 6)
+		self:avisar(L(`{Emojis.relogio} Enquanto você esteve fora, seus trens renderam {Economia.formatar(estado.ganhoOffline, simbolo)}`, `{Emojis.relogio} While you were away, your trains earned {Economia.formatar(estado.ganhoOffline, simbolo)}`), 6)
 	end
 	if self.trechoAberto then
 		self:_preencher()
@@ -590,6 +592,7 @@ function Interface._modoTrecho(self: Interface, sim: boolean)
 end
 
 local PORTES = { "Vila", "Cidade", "Cidade grande", "Capital regional", "Metrópole" }
+local PORTES_EN = { "Village", "Town", "City", "Regional capital", "Metropolis" }
 
 function Interface.abrirEstacao(self: Interface, estacaoId: string)
 	self.trechoAberto = nil
@@ -610,7 +613,7 @@ function Interface._preencherEstacao(self: Interface)
 	local nivel = Economia.nivelEstacao(estado, id)
 	local naRede = Economia.estacaoNaRede(estado, dados, id)
 
-	self.lblCabecalho.Text = `ESTAÇÃO · {maiusculas(PORTES[e.porte] or "")}{if e.porto then " · PORTO" else ""}`
+	self.lblCabecalho.Text = L(`ESTAÇÃO · {maiusculas(PORTES[e.porte] or "")}{if e.porto then " · PORTO" else ""}`, `STATION · {string.upper(PORTES_EN[e.porte] or "")}{if e.porto then " · PORT" else ""}`)
 	self.lblTitulo.Text = e.nome
 	local linhas = {}
 	for i, def in Economia.NIVEIS_ESTACAO do
@@ -618,28 +621,28 @@ function Interface._preencherEstacao(self: Interface)
 		table.insert(linhas, `{marca} {def.nome}`)
 	end
 	table.insert(linhas, "")
-	table.insert(linhas, `{Emojis.renda} Bônus atual: +{math.round(nivel * Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos que chegam aqui`)
+	table.insert(linhas, L(`{Emojis.renda} Bônus atual: +{math.round(nivel * Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos que chegam aqui`, `{Emojis.renda} Current bonus: +{math.round(nivel * Economia.BONUS_POR_NIVEL * 100)}% income on the sections arriving here`))
 	if e.produz and Economia.CARGAS[e.produz] then
 		local def = Economia.CARGAS[e.produz]
 		local conectada = Economia.conectadasAoPorto(estado, dados)[id]
-		table.insert(linhas, `{(Emojis :: any)[def.emoji]} Produz {string.lower(def.nome)}{if conectada then " (chegando a um porto)" else " (sem trilho até um porto)"}`)
+		table.insert(linhas, L(`{(Emojis :: any)[def.emoji]} Produz {string.lower(def.nome)}{if conectada then " (chegando a um porto)" else " (sem trilho até um porto)"}`, `{(Emojis :: any)[def.emoji]} Produces {string.lower(def.nome)}{if conectada then " (reaching a port)" else " (no rail to a port)"}`))
 	end
 	self.lblDetalhes.Text = table.concat(linhas, "\n")
 
 	local custo = Economia.custoMelhoria(estado, dados, id)
 	if not naRede then
-		self.btnConstruir.Text = `{Emojis.cadeado} Fora da rede`
-		self.lblMotivo.Text = "Construa um trecho até esta estação para poder melhorá-la."
+		self.btnConstruir.Text = L(`{Emojis.cadeado} Fora da rede`, `{Emojis.cadeado} Off the network`)
+		self.lblMotivo.Text = L("Construa um trecho até esta estação para poder melhorá-la.", "Build a section to this station to upgrade it.")
 		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor, self.btnConstruir.BackgroundTransparency = false, false, 0.6
 	elseif not custo then
-		self.btnConstruir.Text = `{Emojis.prestigio} Nível máximo`
+		self.btnConstruir.Text = L(`{Emojis.prestigio} Nível máximo`, `{Emojis.prestigio} Top level`)
 		self.lblMotivo.Text = ""
 		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor, self.btnConstruir.BackgroundTransparency = false, false, 0.6
 	else
 		local proximo = Economia.NIVEIS_ESTACAO[nivel + 1].nome
 		local podePagar = estado.dinheiro >= custo
 		self.btnConstruir.Text = `{Emojis.melhorar} {proximo} · {Economia.formatar(custo, simbolo)}`
-		self.lblMotivo.Text = if podePagar then `+{math.round(Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos desta estação.` else `Faltam {Economia.formatar(custo - estado.dinheiro, simbolo)}.`
+		self.lblMotivo.Text = if podePagar then L(`+{math.round(Economia.BONUS_POR_NIVEL * 100)}% na renda dos trechos desta estação.`, `+{math.round(Economia.BONUS_POR_NIVEL * 100)}% income on this station's sections.`) else L(`Faltam {Economia.formatar(custo - estado.dinheiro, simbolo)}.`, `{Economia.formatar(custo - estado.dinheiro, simbolo)} short.`)
 		self.btnConstruir.Active, self.btnConstruir.AutoButtonColor = podePagar, podePagar
 		self.btnConstruir.BackgroundTransparency = if podePagar then 0 else 0.6
 	end
@@ -695,11 +698,11 @@ function Interface._preencher(self: Interface)
 	local era = Economia.multiplicadorEra(estado)
 	local estA, estB = dados.estacoes[trecho.de], dados.estacoes[trecho.para]
 	self.lblDetalhes.Text = table.concat({
-		`{Emojis.distancia} Extensão: {opcao.km} km`,
-		`{Emojis.terreno_montanha} Terreno: {terreno.nome} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`,
-		`{Emojis.passageiros} Demanda: {Economia.numero(passageiros)} passageiros/h (cidades de porte {estA.porte} e {estB.porte})`,
-		`{Emojis.renda} Receita: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} da era)` else ""}`,
-		`{Emojis.manutencao} Manutenção: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`,
+		L(`{Emojis.distancia} Extensão: {opcao.km} km`, `{Emojis.distancia} Length: {opcao.km} km`),
+		L(`{Emojis.terreno_montanha} Terreno: {terreno.nome} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`, `{Emojis.terreno_montanha} Terrain: {terreno.nome} (cost ×{string.format("%.1f", terreno.custo)})`),
+		L(`{Emojis.passageiros} Demanda: {Economia.numero(passageiros)} passageiros/h (cidades de porte {estA.porte} e {estB.porte})`, `{Emojis.passageiros} Demand: {Economia.numero(passageiros)} passengers/h (cities of size {estA.porte} and {estB.porte})`),
+		L(`{Emojis.renda} Receita: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} da era)` else ""}`, `{Emojis.renda} Income: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} from the era)` else ""}`),
+		L(`{Emojis.manutencao} Manutenção: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`, `{Emojis.manutencao} Upkeep: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`),
 	}, "\n")
 
 	-- opções de traçado (só antes de construir). Só recria os botões quando algo muda,
@@ -755,34 +758,34 @@ function Interface._preencher(self: Interface)
 	-- botão principal
 	local custo = opcao.custo
 	if situacao == "construido" then
-		self.btnConstruir.Text = `{Emojis.confirmar} Trecho construído`
+		self.btnConstruir.Text = L(`{Emojis.confirmar} Trecho construído`, `{Emojis.confirmar} Section built`)
 		self.btnConstruir.Active = false
 		self.btnConstruir.AutoButtonColor = false
 		self.btnConstruir.BackgroundTransparency = 0.6
 		self.lblMotivo.Text = ""
 	elseif situacao == "projeto" then
-		self.btnConstruir.Text = `{Emojis.gabinete} Ainda é só um projeto`
+		self.btnConstruir.Text = L(`{Emojis.gabinete} Ainda é só um projeto`, `{Emojis.gabinete} Still just a project`)
 		self.btnConstruir.Active = false
 		self.btnConstruir.AutoButtonColor = false
 		self.btnConstruir.BackgroundTransparency = 0.6
-		self.lblMotivo.Text = "Estude este projeto no Gabinete (menu de baixo) para liberar a construção."
+		self.lblMotivo.Text = L("Estude este projeto no Gabinete (menu de baixo) para liberar a construção.", "Study this project in the Cabinet (bottom menu) to unlock construction.")
 	elseif situacao == "bloqueado" then
-		self.btnConstruir.Text = `{Emojis.cadeado} Ainda fechado`
+		self.btnConstruir.Text = L(`{Emojis.cadeado} Ainda fechado`, `{Emojis.cadeado} Still locked`)
 		self.btnConstruir.Active = false
 		self.btnConstruir.AutoButtonColor = false
 		self.btnConstruir.BackgroundTransparency = 0.6
 		if not Economia.linhaLiberada(estado, dados, iLinha) then
-			self.lblMotivo.Text = `Para liberar, complete antes: {table.concat(Economia.faltaParaLiberar(estado, dados, iLinha), ", ")}.`
+			self.lblMotivo.Text = L(`Para liberar, complete antes: {table.concat(Economia.faltaParaLiberar(estado, dados, iLinha), ", ")}.`, `To unlock, first finish: {table.concat(Economia.faltaParaLiberar(estado, dados, iLinha), ", ")}.`)
 		else
-			self.lblMotivo.Text = "Construa antes o trecho anterior desta linha."
+			self.lblMotivo.Text = L("Construa antes o trecho anterior desta linha.", "Build the previous section of this line first.")
 		end
 	else
 		local podePagar = estado.dinheiro >= custo
-		self.btnConstruir.Text = `{Emojis.assinar} Assinar concessão · {Economia.formatar(custo, simbolo)}`
+		self.btnConstruir.Text = L(`{Emojis.assinar} Assinar concessão · {Economia.formatar(custo, simbolo)}`, `{Emojis.assinar} Sign concession · {Economia.formatar(custo, simbolo)}`)
 		self.btnConstruir.Active = podePagar
 		self.btnConstruir.AutoButtonColor = podePagar
 		self.btnConstruir.BackgroundTransparency = if podePagar then 0 else 0.6
-		self.lblMotivo.Text = if podePagar then "" else `Faltam {Economia.formatar(custo - estado.dinheiro, simbolo)}.`
+		self.lblMotivo.Text = if podePagar then "" else L(`Faltam {Economia.formatar(custo - estado.dinheiro, simbolo)}.`, `{Economia.formatar(custo - estado.dinheiro, simbolo)} short.`)
 	end
 	self.lblMotivo.Visible = self.lblMotivo.Text ~= ""
 
@@ -799,32 +802,32 @@ function Interface._preencher(self: Interface)
 	local fmt = Economia.numero
 	self.btnVender.Visible = false
 	if construidos == 0 then
-		self.lblTrens.Text = `{Emojis.trens} O primeiro trem vem junto com o primeiro trecho. Cada trem leva {fmt(Economia.capacidadeTrem(estado))} passageiros/h.`
+		self.lblTrens.Text = L(`{Emojis.trens} O primeiro trem vem junto com o primeiro trecho. Cada trem leva {fmt(Economia.capacidadeTrem(estado))} passageiros/h.`, `{Emojis.trens} The first train comes with the first section. Each train carries {fmt(Economia.capacidadeTrem(estado))} passengers/h.`)
 		self.lblTrens.TextColor3 = c.inkMuted
 		self.btnTrem.Visible = false
 	else
-		local linhaFrota = `{Emojis.trens} Frota: {trens} {if trens == 1 then "trem" else "trens"} · leva {fmt(capacidade)} de {fmt(demanda)} passageiros/h`
+		local linhaFrota = L(`{Emojis.trens} Frota: {trens} {if trens == 1 then "trem" else "trens"} · leva {fmt(capacidade)} de {fmt(demanda)} passageiros/h`, `{Emojis.trens} Fleet: {trens} {if trens == 1 then "train" else "trains"} · carries {fmt(capacidade)} of {fmt(demanda)} passengers/h`)
 		if faltando > 0 then
-			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"} (cada um custa {manutTrem}/s de manutenção).`
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"} (cada um custa {manutTrem}/s de manutenção).`, `{linhaFrota}\n{Emojis.alerta} Crowded: only {servico}% of passengers board. {faltando} more {if faltando == 1 then "train" else "trains"} needed (each costs {manutTrem}/s upkeep).`)
 			self.lblTrens.TextColor3 = c.negative
 		elseif sobrando > 0 then
-			self.lblTrens.Text = `{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "trem rodando vazio" else "trens rodando vazios"}: cada um custa {manutTrem}/s de manutenção.`
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "trem rodando vazio" else "trens rodando vazios"}: cada um custa {manutTrem}/s de manutenção.`, `{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "train running empty" else "trains running empty"}: each costs {manutTrem}/s upkeep.`)
 			self.lblTrens.TextColor3 = c.negative
 		else
-			self.lblTrens.Text = `{linhaFrota}\n{Emojis.confirmar} Todos os passageiros embarcam.`
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.confirmar} Todos os passageiros embarcam.`, `{linhaFrota}\n{Emojis.confirmar} All passengers board.`)
 			self.lblTrens.TextColor3 = c.positive
 		end
 		self.btnTrem.Visible = faltando > 0
 		if faltando > 0 then
 			local podePagar = estado.dinheiro >= custoTrem
-			self.btnTrem.Text = `{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`
+			self.btnTrem.Text = L(`{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`, `{Emojis.trens} Buy train · {Economia.formatar(custoTrem, simbolo)}`)
 			self.btnTrem.Active = podePagar
 			self.btnTrem.AutoButtonColor = podePagar
 			self.btnTrem.BackgroundTransparency = if podePagar then 0 else 0.6
 		end
 		if Economia.podeVenderTrem(estado, linha) then
 			self.btnVender.Visible = true
-			self.btnVender.Text = `Vender 1 trem · + {Economia.formatar(Economia.valorVendaTrem(estado, linha), simbolo)}`
+			self.btnVender.Text = L(`Vender 1 trem · + {Economia.formatar(Economia.valorVendaTrem(estado, linha), simbolo)}`, `Sell 1 train · + {Economia.formatar(Economia.valorVendaTrem(estado, linha), simbolo)}`)
 		end
 	end
 
@@ -840,12 +843,12 @@ function Interface._preencher(self: Interface)
 		local unidade = def.unidade:gsub("s$", "")
 		if info.conectada then
 			local frete = if v and v.unidadesDia > 0
-				then ` · {Economia.formatar(v.preco, simbolo, true)} por {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/dia`
+				then L(` · {Economia.formatar(v.preco, simbolo, true)} por {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/dia`, ` · {Economia.formatar(v.preco, simbolo, true)} per {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/day`)
 				else ""
-			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda{frete}`)
+			table.insert(linhasTexto, L(`{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda{frete}`, `{emoji} {def.nome} from {nome} reaches a port: +{math.round(def.bonus * 100)}% income{frete}`))
 		else
-			local renderia = if v and v.reaisDia > 0 then ` (renderia {Economia.formatar(v.reaisDia, simbolo)}/dia)` else ""
-			table.insert(linhasTexto, `{emoji} {def.nome} de {nome} ainda sem trilho até um porto{renderia}`)
+			local renderia = if v and v.reaisDia > 0 then L(` (renderia {Economia.formatar(v.reaisDia, simbolo)}/dia)`, ` (would earn {Economia.formatar(v.reaisDia, simbolo)}/day)`) else ""
+			table.insert(linhasTexto, L(`{emoji} {def.nome} de {nome} ainda sem trilho até um porto{renderia}`, `{emoji} {def.nome} from {nome} has no rail to a port yet{renderia}`))
 		end
 	end
 	local temCarga = #linhasTexto > 0

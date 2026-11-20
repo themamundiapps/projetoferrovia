@@ -5,6 +5,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
+local Idioma = require(Shared:WaitForChild("Idioma"))
+local L = Idioma.L
 local Metas = require(Shared:WaitForChild("Metas"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
@@ -56,7 +58,7 @@ function Tutorial.new(tela: ScreenGui, era: any, dados: any): Tutorial
 	self.btnAcao = est:botao("principal", "", botoes)
 	self.btnAcao.Name = "BtnAcao"
 	self.btnAcao.Size = UDim2.new(0.62, -4, 1, 0)
-	self.btnPular = est:botao("discreto", "Pular tutorial", botoes)
+	self.btnPular = est:botao("discreto", L("Pular tutorial", "Skip tutorial"), botoes)
 	self.btnPular.Name = "BtnPular"
 	self.btnPular.AnchorPoint = Vector2.new(1, 0)
 	self.btnPular.Position = UDim2.fromScale(1, 0)
@@ -96,9 +98,9 @@ function Tutorial.atualizarEstado(self: Tutorial, estado: any)
 	if not passo or (anterior and anterior.id == passo.id and anterior.alvo == passo.alvo) then
 		return
 	end
-	self.lblPasso.Text = `{Emojis.dica} PRIMEIROS PASSOS · {passo.indice} DE {passo.total}`
+	self.lblPasso.Text = L(`{Emojis.dica} PRIMEIROS PASSOS · {passo.indice} DE {passo.total}`, `{Emojis.dica} FIRST STEPS · {passo.indice} OF {passo.total}`)
 	self.lblTexto.Text = passo.texto
-	self.btnAcao.Text = passo.botao or "Mostrar no mapa"
+	self.btnAcao.Text = passo.botao or L("Mostrar no mapa", "Show on map")
 	self.btnPular.Visible = passo.acao ~= "concluir"
 	self.btnAcao.Size = if passo.acao == "concluir" then UDim2.fromScale(1, 1) else UDim2.new(0.62, -4, 1, 0)
 end
