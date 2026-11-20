@@ -44,19 +44,24 @@ Assets.Ids = {
 Assets.Cidades = {
 	bh = "rbxassetid://123305865514688",
 	campinas = "rbxassetid://134173839324956",
-	juiz_de_fora = "rbxassetid://114880616786848",
+	juiz_de_fora = "rbxassetid://103491706018429",
 	ponta_grossa = "rbxassetid://79031387184703",
 	porto_alegre = "rbxassetid://95754414027158",
 	recife = "rbxassetid://75128127492856",
 	rio = "rbxassetid://76051103728708",
 	salvador = "rbxassetid://83326118671292",
 	santa_maria = "rbxassetid://137804371375076",
-	santos = "rbxassetid://120632001864198",
+	santos = "rbxassetid://79639713529193",
 	sao_jose_campos = "rbxassetid://98597069519831",
 	sao_paulo = "rbxassetid://132099806211623",
 	sorocaba = "rbxassetid://124503637752148",
 	vitoria = "rbxassetid://101719837411189",
-	-- faltam: curitiba, campo_grande
+	belem = "rbxassetid://134356227697843",
+	manaus = "rbxassetid://95614450848492",
+	fortaleza = "rbxassetid://89186145862491",
+	maceio = "rbxassetid://103935824842638",
+	brasilia = "rbxassetid://79565466653076", -- Missão Cruls (1892): a cidade ainda não existia
+	-- faltam: curitiba, campo_grande, florianopolis, natal
 } :: { [string]: string } -- id da cidade -> imagem
 
 -- A mesma cidade em outras épocas (fotos do Wikimedia Commons, baixadas por tools/assetgen/baixar_commons.py
@@ -275,14 +280,14 @@ Assets.KitUI = {
 -- Ilustrações das decisões (arte/decisoes/<id>.jpg, 16:9). Decisão sem imagem mostra só o emoji.
 Assets.Decisoes = {} :: { [string]: string } -- id da decisão -> imagem
 Assets.Paisagens = {
-	cafe = "rbxassetid://89059490606207",
+	cafe = "rbxassetid://99633245591988",
 	canavial = "rbxassetid://103359671020446",
 	cerrado = "rbxassetid://70621750823885",
-	litoral = "rbxassetid://102904556810309",
+	litoral = "rbxassetid://73614860693104",
 	serra = "rbxassetid://115932616309235",
-	sertao = "rbxassetid://90123016159292",
+	sertao = "rbxassetid://86422171112588", -- cafe, litoral, sertao: versões sem a assinatura do rodapé
 	sul = "rbxassetid://85172850577106",
-	-- falta: amazonia
+	amazonia = "rbxassetid://84630693769642",
 } :: { [string]: string } -- paisagem genérica (campo "paisagem" das cidades) -> imagem
 
 -- Configuração de 9-slice e tiles.
