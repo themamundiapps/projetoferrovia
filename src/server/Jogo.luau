@@ -7,6 +7,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local TextService = game:GetService("TextService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local DataStoreService = game:GetService("DataStoreService")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
@@ -17,6 +19,7 @@ local Jornal = require(Shared:WaitForChild("Jornal"))
 local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
+local Loja = require(Shared:WaitForChild("Loja"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
@@ -41,6 +44,19 @@ type Sessao = {
 	eventos: { any }, -- novidades para o cliente avisar (contrato cumprido, medalha, nível...), enviadas uma vez
 	rng: Random,
 	idioma: string, -- "pt" ou "en": as mensagens para este jogador saem neste idioma
+	loja: SaveLoja, -- compras (vale para todos os mapas)
+	proximoGerente: number, -- os.clock() da próxima rodada do Gerente Automático
+	pontosRanking: number, -- última pontuação enviada ao ranking global
+}
+
+-- Parte do save com as compras. Os passes ficam guardados só como reserva (se a consulta ao Roblox
+-- falhar ao entrar); quem manda é UserOwnsGamePassAsync.
+type SaveLoja = {
+	passes: { [string]: boolean },
+	impulsoAte: number,
+	estudosGuardados: number,
+	gerenteLigado: boolean,
+	recibos: { [string]: number }, -- PurchaseId -> os.time(): compras já entregues (nunca entregar duas vezes)
 }
 
 local sessoes: { [Player]: Sessao } = {}
@@ -285,6 +301,7 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		ofertas = e.ofertas,
 		ofertasEm = e.ofertasEm,
 		missoes = e.missoes,
+		loja = e.loja,
 		tutorial = e.tutorial,
 		nomeCompanhia = e.nomeCompanhia,
 		emprestimo = e.emprestimo,
@@ -327,9 +344,10 @@ local function atualizarPlacar(s: Sessao, renda: number?)
 	if nivel then
 		nivel.Value = (Economia.nivel(e))
 	end
-	-- para o ranking visual do cliente (Placar): números crus em atributos do jogador
-	jogador:SetAttribute("Dinheiro", math.floor(e.dinheiro))
+	-- para o ranking visual do cliente (Placar). Ranking justo: nível e linhas completas, que vêm de
+	-- jogar; dinheiro não entra (dá para comprar na loja).
 	jogador:SetAttribute("Nivel", (Economia.nivel(e)))
+	jogador:SetAttribute("Linhas", Economia.linhasCompletas(e, MAPAS[s.mapaAtual]))
 	jogador:SetAttribute("Companhia", e.nomeCompanhia or "")
 	local rendaTxt = pasta:FindFirstChild("Renda/s") :: StringValue?
 	if rendaTxt and renda then
@@ -446,14 +464,171 @@ local function atualizarMetas(s: Sessao, e: EstadoMapa, dados: any, ctx: Metas.C
 	end
 end
 
-local function salvar(s: Sessao)
-	if not s.carregado or not s.podeSalvar then
+local function salvar(s: Sessao): boolean
+	-- no Studio sem acesso às APIs não há DataStore: as compras de teste valem só na sessão
+	local soMemoria = RunService:IsStudio() and not Persistencia.disponivel()
+	if not s.carregado then
+		return false
+	elseif not s.podeSalvar then
+		return soMemoria
+	end
+	-- o estado da loja dentro de cada mapa é só cópia (Economia.EstadoLoja): sai do save do mapa
+	local mapas = {}
+	for id, e in s.mapas do
+		e.ultimoTick = os.time()
+		local copia = table.clone(e) :: any
+		copia.loja = nil
+		mapas[id] = copia
+	end
+	-- recibos antigos saem (o Roblox não repete uma compra entregue há mais de alguns dias)
+	local limite = os.time() - 30 * 24 * 3600
+	for id, quando in s.loja.recibos do
+		if quando < limite then
+			s.loja.recibos[id] = nil
+		end
+	end
+	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja })
+end
+
+-- ---------------------------------------------------------------- loja (ver Loja.luau)
+
+local function sanearLoja(salvo: any): SaveLoja
+	local loja: SaveLoja = { passes = {}, impulsoAte = 0, estudosGuardados = 0, gerenteLigado = true, recibos = {} }
+	if type(salvo) ~= "table" then
+		return loja
+	end
+	if type(salvo.passes) == "table" then
+		for _, p in Loja.PASSES do
+			loja.passes[p.id] = salvo.passes[p.id] == true
+		end
+	end
+	if numero(salvo.impulsoAte) then
+		loja.impulsoAte = salvo.impulsoAte
+	end
+	if numero(salvo.estudosGuardados) then
+		loja.estudosGuardados = math.clamp(math.floor(salvo.estudosGuardados), 0, 100)
+	end
+	loja.gerenteLigado = salvo.gerenteLigado ~= false
+	if type(salvo.recibos) == "table" then
+		for id, quando in salvo.recibos do
+			if type(id) == "string" and numero(quando) then
+				loja.recibos[id] = quando
+			end
+		end
+	end
+	return loja
+end
+
+-- Copia o que importa para a renda e para a interface para dentro do estado de cada mapa.
+local function aplicarLoja(s: Sessao)
+	local l = s.loja
+	for _, e in s.mapas do
+		e.loja = {
+			dobro = l.passes.dobro == true,
+			impulsoAte = l.impulsoAte,
+			estudos = l.passes.estudos == true,
+			offline = l.passes.offline == true,
+			gerente = l.passes.gerente == true,
+			gerenteLigado = l.gerenteLigado,
+			pinturas = l.passes.pinturas == true,
+			estudosGuardados = l.estudosGuardados,
+		}
+	end
+	s.jogador:SetAttribute("Pinturas", l.passes.pinturas == true)
+end
+
+-- Ao entrar: quais passes o jogador tem (se a consulta falhar, fica o que estava no save).
+local function consultarPasses(s: Sessao)
+	for _, p in Loja.PASSES do
+		if p.passId ~= 0 then
+			local ok, tem = pcall(function()
+				return MarketplaceService:UserOwnsGamePassAsync(s.jogador.UserId, p.passId)
+			end)
+			if ok then
+				s.loja.passes[p.id] = tem == true
+			end
+		end
+	end
+end
+
+-- Entrega um produto. Devolve a mensagem para o jogador.
+local function entregarProduto(s: Sessao, prod: Loja.Produto): string
+	local dados = MAPAS[s.mapaAtual]
+	local e = s.mapas[s.mapaAtual]
+	if prod.tipo == "dinheiro" then
+		local base = Economia.balanco(e, dados, true).lucro
+		local valor = Loja.valorPacote(prod, base)
+		e.dinheiro += valor
+		return L(`{Idioma.t(prod.nome)}: + {Economia.formatar(valor, dados.simbolo)}`, `{Idioma.t(prod.nome)}: + {Economia.formatar(valor, dados.simbolo)}`)
+	elseif prod.tipo == "impulso" then
+		s.loja.impulsoAte = math.max(s.loja.impulsoAte, os.time()) + Loja.IMPULSO_SEGUNDOS
+		local minutos = math.ceil((s.loja.impulsoAte - os.time()) / 60)
+		return L(`Impulso 2x ativo por {minutos} min.`, `2x Boost active for {minutos} min.`)
+	elseif prod.tipo == "estudo" then
+		local atual = Economia.pesquisaAtual(e)
+		if atual then
+			e.projetos[atual] = os.time()
+			return L("Estudo concluído!", "Study finished!")
+		end
+		-- comprou sem estudo em andamento (terminou no meio da compra): vale no próximo
+		s.loja.estudosGuardados += 1
+		return L("O estudo já tinha terminado: o próximo estudo que você começar termina na hora.", "The study had already finished: the next study you start will finish right away.")
+	end
+	return ""
+end
+
+-- Compras de produtos. Regra do Roblox: só responder "concedido" depois de entregar e salvar, e nunca
+-- entregar duas vezes a mesma compra (o recibo fica no save).
+MarketplaceService.ProcessReceipt = function(info: any): Enum.ProductPurchaseDecision
+	local jogador = Players:GetPlayerByUserId(info.PlayerId)
+	local s = jogador and sessoes[jogador]
+	if not s or not s.carregado then
+		return Enum.ProductPurchaseDecision.NotProcessedYet
+	end
+	local idCompra = tostring(info.PurchaseId)
+	if not s.loja.recibos[idCompra] then
+		local prod = Loja.produtoPorId(info.ProductId)
+		if not prod then
+			warn(`[Ferrovia] Produto desconhecido: {info.ProductId}`)
+			return Enum.ProductPurchaseDecision.NotProcessedYet
+		end
+		local antes = Idioma.atual
+		Idioma.atual = s.idioma
+		local msg = entregarProduto(s, prod)
+		Idioma.atual = antes
+		s.loja.recibos[idCompra] = os.time()
+		aplicarLoja(s)
+		table.insert(s.eventos, { tipo = "compra", texto = msg })
+		enviarEstado(s)
+	end
+	if salvar(s) then
+		return Enum.ProductPurchaseDecision.PurchaseGranted
+	end
+	-- não deu para salvar: o Roblox tenta de novo depois; o recibo em memória evita entregar duas vezes
+	return Enum.ProductPurchaseDecision.NotProcessedYet
+end
+
+-- Passe comprado durante o jogo.
+MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(jogador: Player, passId: number, comprou: boolean)
+	local s = sessoes[jogador]
+	local p = Loja.passePorId(passId)
+	if not comprou or not s or not p then
 		return
 	end
-	for _, e in s.mapas do
-		e.ultimoTick = os.time()
-	end
-	Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = s.mapas })
+	s.loja.passes[p.id] = true
+	aplicarLoja(s)
+	table.insert(s.eventos, { tipo = "compra", texto = Idioma.t(p.nome) })
+	enviarEstado(s)
+	task.spawn(salvar, s)
+end)
+
+-- Gerente Automático: completa as frotas e constrói o que o caixa pagar.
+local function rodarGerente(s: Sessao, acoes: any)
+	local antes = Idioma.atual
+	Idioma.atual = s.idioma
+	pcall(acoes.completarFrotas, s, nil)
+	pcall(acoes.construirTudo, s, nil)
+	Idioma.atual = antes
 end
 
 -- ---------------------------------------------------------------- ações
@@ -660,9 +835,17 @@ function Acoes.pesquisar(s: Sessao, args: any): (boolean, string?)
 		return false, L("Dinheiro insuficiente.", "Not enough money.")
 	end
 	e.dinheiro -= p.custo
-	e.projetos[p.id] = os.time() + p.segundos
+	e.projetos[p.id] = os.time() + Economia.duracaoProjeto(e, p)
 	Metas.contar(e, "estudo", 1)
 	ganharXp(s, e, Metas.XP.projeto)
+	-- "Concluir estudo" comprado antes (sem estudo em andamento): usa agora
+	if s.loja.estudosGuardados > 0 then
+		s.loja.estudosGuardados -= 1
+		e.projetos[p.id] = os.time()
+		aplicarLoja(s)
+		task.spawn(salvar, s)
+		return true, L(`Estudo concluído: {p.nome}.`, `Study finished: {p.nome}.`)
+	end
 	return true, L(`Estudo iniciado: {p.nome}.`, `Study started: {p.nome}.`)
 end
 
@@ -977,6 +1160,16 @@ function Acoes.renomear(s: Sessao, args: any): (boolean, string?)
 end
 
 -- O jogador trocou o idioma em Ajustes: as próximas mensagens saem no idioma novo.
+-- Liga ou desliga o Gerente Automático (só para quem tem o passe).
+function Acoes.gerente(s: Sessao, args: any): (boolean, string?)
+	if not s.loja.passes.gerente then
+		return false, L("Você ainda não tem o Gerente Automático.", "You don't have the Auto Manager yet.")
+	end
+	s.loja.gerenteLigado = type(args) == "table" and args.ligado == true
+	aplicarLoja(s)
+	return true, if s.loja.gerenteLigado then L("Gerente Automático ligado.", "Auto Manager on.") else L("Gerente Automático desligado.", "Auto Manager off.")
+end
+
 function Acoes.idioma(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or (args.idioma ~= "pt" and args.idioma ~= "en") then
 		return false, L("Pedido inválido.", "Invalid request.")
@@ -1062,6 +1255,9 @@ local function aoEntrar(jogador: Player)
 		eventos = {},
 		rng = Random.new(),
 		idioma = if string.sub(string.lower(jogador.LocaleId or ""), 1, 2) == "pt" or (jogador.LocaleId or "") == "" then "pt" else "en",
+		loja = sanearLoja(nil),
+		proximoGerente = 0,
+		pontosRanking = -1,
 	}
 	sessoes[jogador] = s
 
@@ -1071,14 +1267,23 @@ local function aoEntrar(jogador: Player)
 		warn(`[Ferrovia] Não consegui carregar {jogador.Name}; esta sessão não vai salvar.`)
 	end
 	s.podeSalvar = ok and Persistencia.disponivel()
+	s.loja = sanearLoja(if type(salvo) == "table" then salvo.loja else nil)
+	consultarPasses(s)
 
 	for id, dados in MAPAS do
 		local estadoSalvo = if type(salvo) == "table" and type(salvo.mapas) == "table" then salvo.mapas[id] else nil
 		local e = sanear(estadoSalvo)
+		s.mapas[id] = e
+		aplicarLoja(s) -- antes da renda offline: Lucro em Dobro e Renda Offline Longa contam
 		Economia.ajustarFrota(e, dados)
 		if estadoSalvo then
-			local decorrido = math.clamp(os.time() - e.ultimoTick, 0, Economia.OFFLINE_MAX_SEGUNDOS)
+			local decorrido = math.clamp(os.time() - e.ultimoTick, 0, Economia.offlineMaximo(e))
+			-- o Impulso 2x não conta no tempo fora (pode ter acabado no meio); o Lucro em Dobro conta
+			local loja = e.loja :: any
+			local impulso = loja.impulsoAte
+			loja.impulsoAte = 0
 			local ganho = math.max(-e.dinheiro, Economia.rendaTotal(e, dados) * decorrido)
+			loja.impulsoAte = impulso
 			-- o banco também recebe enquanto o jogador está fora
 			if e.emprestimo and ganho > 0 then
 				local pago = math.min(e.emprestimo.divida, ganho * Banco.PARCELA)
@@ -1263,6 +1468,103 @@ if RunService:IsStudio() then
 	remoteDebug.Parent = pastaRemotes
 end
 
+-- ---------------------------------------------------------------- ranking global
+
+-- Pontuação: nível × 1000 + linhas completas (o nível manda; as linhas desempatam). Nada de dinheiro.
+-- Cada servidor manda a pontuação dos seus jogadores a cada poucos minutos e guarda o top 10, que o
+-- menu inicial pede pelo RemoteFunction Remotes.Ranking.
+local INTERVALO_RANKING = 120
+local TOP_RANKING = 10
+local rankingStore: OrderedDataStore? = nil
+do
+	local ok, store = pcall(function()
+		return DataStoreService:GetOrderedDataStore("RankingGlobal_v1")
+	end)
+	if ok then
+		rankingStore = store
+	end
+end
+local topRanking: { any } = {}
+local rankingEm = 0
+
+local function pontosRanking(s: Sessao): number
+	local e = s.mapas[MAPA_PADRAO]
+	if not e then
+		return 0
+	end
+	return (Economia.nivel(e)) * 1000 + Economia.linhasCompletas(e, MAPAS[MAPA_PADRAO])
+end
+
+local function atualizarRanking()
+	local store = rankingStore
+	if not store or not Persistencia.disponivel() then
+		return
+	end
+	for _, s in sessoes do
+		local pts = pontosRanking(s)
+		if s.carregado and s.podeSalvar and pts ~= s.pontosRanking then
+			local ok = pcall(function()
+				store:SetAsync(tostring(s.jogador.UserId), pts)
+			end)
+			if ok then
+				s.pontosRanking = pts
+			end
+		end
+	end
+	local ok, pagina = pcall(function()
+		return store:GetSortedAsync(false, TOP_RANKING):GetCurrentPage()
+	end)
+	if not ok or type(pagina) ~= "table" then
+		return
+	end
+	local ids = {}
+	for _, item in pagina do
+		local id = tonumber(item.key)
+		if id then
+			table.insert(ids, id)
+		end
+	end
+	-- nomes de exibição (a maioria não está neste servidor)
+	local nomes: { [number]: string } = {}
+	local okNomes, infos = pcall(function()
+		return game:GetService("UserService"):GetUserInfosByUserIdsAsync(ids)
+	end)
+	if okNomes and type(infos) == "table" then
+		for _, info in infos do
+			nomes[info.Id] = info.DisplayName
+		end
+	end
+	local lista = {}
+	for _, item in pagina do
+		local id = tonumber(item.key)
+		if id and type(item.value) == "number" then
+			table.insert(lista, {
+				userId = id,
+				nome = nomes[id] or "?",
+				nivel = item.value // 1000,
+				linhas = item.value % 1000,
+			})
+		end
+	end
+	topRanking = lista
+	rankingEm = os.time()
+end
+
+local remoteRanking = Instance.new("RemoteFunction")
+remoteRanking.Name = "Ranking"
+remoteRanking.OnServerInvoke = function(_jogador: Player)
+	return { lista = topRanking, em = rankingEm, disponivel = rankingStore ~= nil and Persistencia.disponivel() }
+end
+remoteRanking.Parent = pastaRemotes
+
+task.spawn(function()
+	task.wait(10) -- deixa os jogadores carregarem
+	while true do
+		atualizarRanking()
+		task.wait(INTERVALO_RANKING)
+	end
+end)
+
 -- ---------------------------------------------------------------- renda e autosave
 
 task.spawn(function()
@@ -1300,6 +1602,10 @@ task.spawn(function()
 					encerrarContrato(s, e, resultado == "cumprido")
 				end
 				atualizarMetas(s, e, dados, ctx)
+				if s.loja.passes.gerente and s.loja.gerenteLigado and agora >= s.proximoGerente then
+					s.proximoGerente = agora + Loja.GERENTE_INTERVALO
+					rodarGerente(s, Acoes)
+				end
 				atualizarPlacar(s, lucro)
 				enviarEstado(s, lucro)
 			end

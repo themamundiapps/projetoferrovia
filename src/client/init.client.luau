@@ -212,6 +212,7 @@ local function aplicarNaTela(estado: any)
 	mapa:definirSituacao(situacoes(estado))
 	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
 	mapa:definirNiveis(estado.estacoes or {})
+	mapa.pinturas = (estado.loja or {}).pinturas == true -- passe Pinturas Especiais: locomotivas douradas
 	mapa:definirTrens(trensDoMapa(estado))
 	mapa:definirFrete(freteDoMapa(estado))
 	ui:atualizarEstado(estado)
@@ -242,6 +243,9 @@ local function avisarEventos(estado: any)
 		elseif ev.tipo == "linha" then
 			Som.efeito("conquista")
 			ui:enfileirar(L(`{Emojis.confirmar} Linha completa: {ev.nome}!`, `{Emojis.confirmar} Line complete: {ev.nome}!`), 4)
+		elseif ev.tipo == "compra" then
+			Som.efeito("premio")
+			ui:enfileirar(`{Emojis.loja} {L("Obrigado pela compra!", "Thanks for your purchase!")} {ev.texto or ""}`, 5)
 		elseif ev.tipo == "banco" then
 			Som.efeito("premio")
 			ui:enfileirar(L(`{Emojis.banco} Empréstimo quitado!`, `{Emojis.banco} Loan paid off!`), 4)

@@ -3,6 +3,7 @@
 -- e pelo cliente para mostrar previsões. Valores provisórios, ajustados nos playtests.
 
 local Tarifas = require(script.Parent:WaitForChild("Tarifas"))
+local Loja = require(script.Parent:WaitForChild("Loja"))
 local Idioma = require(script.Parent:WaitForChild("Idioma"))
 local L = Idioma.L
 
@@ -155,6 +156,20 @@ export type EstadoMapa = {
 	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
 	decisoes: EstadoDecisoes, -- eventos com escolha (ver Decisoes.luau)
 	tarifas: Tarifas.EstadoTarifas?, -- preço por classe e serviço de bordo (ver Tarifas.luau)
+	-- compras na loja (não vai no save do mapa: o servidor monta a partir dos passes do jogador e do
+	-- save da loja, e manda junto com o estado). Ver Loja.luau.
+	loja: EstadoLoja?,
+}
+
+export type EstadoLoja = {
+	dobro: boolean?, -- passe Lucro em Dobro
+	impulsoAte: number?, -- os.time() em que o Impulso 2x acaba
+	estudos: boolean?, -- passe Estudos Rápidos
+	offline: boolean?, -- passe Renda Offline Longa
+	gerente: boolean?, -- passe Gerente Automático
+	gerenteLigado: boolean?, -- o jogador pode desligar o gerente
+	pinturas: boolean?, -- passe Pinturas Especiais
+	estudosGuardados: number?, -- "Concluir estudo" comprado sem estudo em andamento: vale no próximo
 }
 
 function Economia.estadoNovo(): EstadoMapa
@@ -288,6 +303,34 @@ function Economia.anoAtual(estado: EstadoMapa, dados: any): number
 	local progresso = Economia.linhasCompletas(estado, dados) / math.max(1, #dados.linhas)
 	ano = math.max(ano, era.anoInicio + math.floor((era.anoFim - era.anoInicio) * progresso))
 	return math.min(ano, era.anoFim)
+end
+
+-- Multiplicador da renda das linhas vindo da loja: Lucro em Dobro e Impulso 2x (somam: até ×4).
+function Economia.fatorLoja(estado: EstadoMapa): number
+	local loja = estado.loja
+	if not loja then
+		return 1
+	end
+	local f = 1
+	if loja.dobro then
+		f *= 2
+	end
+	if loja.impulsoAte and loja.impulsoAte > Economia.relogio() then
+		f *= 2
+	end
+	return f
+end
+
+-- Duração de um estudo do Gabinete (metade com o passe Estudos Rápidos).
+function Economia.duracaoProjeto(estado: EstadoMapa, p: any): number
+	local loja = estado.loja
+	return if loja and loja.estudos then math.ceil(p.segundos * Loja.FATOR_ESTUDOS) else p.segundos
+end
+
+-- Quanto tempo de renda o jogo acumula com o jogo fechado (24 h com o passe Renda Offline Longa).
+function Economia.offlineMaximo(estado: EstadoMapa): number
+	local loja = estado.loja
+	return if loja and loja.offline then Loja.OFFLINE_LONGO_SEGUNDOS else Economia.OFFLINE_MAX_SEGUNDOS
 end
 
 function Economia.fatorNivel(estado: EstadoMapa): number
@@ -1009,11 +1052,12 @@ function Economia.manutencaoTrens(estado: EstadoMapa, dados: any): number
 end
 
 -- Contas da companhia: receita (com satisfação), manutenção e lucro, no total e por linha.
-function Economia.balanco(estado: EstadoMapa, dados: any): Balanco
+-- semLoja: sem Lucro em Dobro nem impulso (base dos pacotes de dinheiro da loja).
+function Economia.balanco(estado: EstadoMapa, dados: any, semLoja: boolean?): Balanco
 	local rede = Economia.rede(estado, dados)
 	local cargas = Economia.cargasPorLinha(estado, dados)
 	local satisfacao = Economia.satisfacao(estado, dados, rede)
-	local fatorSat = (0.85 + 0.3 * satisfacao) * Economia.fatorNivel(estado)
+	local fatorSat = (0.85 + 0.3 * satisfacao) * Economia.fatorNivel(estado) * (if semLoja then 1 else Economia.fatorLoja(estado))
 	local eventos = Economia.eventosAtivos(estado)
 	for _, ev in Economia.efeitosDecisoes(estado) do
 		table.insert(eventos, ev)
