@@ -234,9 +234,7 @@ local function freteDoMapa(estado: any): any
 		while rumo[atual] do
 			local chave = `{atual}>{rumo[atual]}`
 			arestas[chave] = arestas[chave] or {}
-			if not table.find(arestas[chave], v.carga) then
-				table.insert(arestas[chave], v.carga)
-			end
+			table.insert(arestas[chave], v.carga) -- uma vez por produtora: duas cidades de café = ☕☕
 			atual = rumo[atual]
 		end
 		local e = entregas[atual] or { valor = 0, emojis = {} }

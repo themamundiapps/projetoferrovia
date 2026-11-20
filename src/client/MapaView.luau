@@ -994,7 +994,7 @@ function MapaView._moverTrens(self: MapaView)
 	local faixa = larguraFaixa(z)
 	local altura, loco, vagao, folga = medidasTrem(z)
 	local lado = altura * 0.45
-	local tamanhoEmoji = math.clamp(altura * 2.4, 13, 24)
+	local tamanhoEmoji = math.clamp(altura * 1.7, 10, 17)
 	local agora = os.clock()
 	for _, t in self.trens do
 		local tr = t.trilha
@@ -1045,16 +1045,24 @@ function MapaView._moverTrens(self: MapaView)
 	end
 end
 
--- Mostra a carga do trem como emoji em cima dele (vazio: sem emoji).
+-- Mostra a carga do trem como emoji em cima dele (vazio: sem emoji). Cada produtora que já embarcou
+-- carga soma um emoji: duas cidades de café = ☕☕; de 4 para cima vira ☕×4.
 function MapaView._mostrarCarga(self: MapaView, t: Trem)
-	local partes = {}
+	local ordem: { string } = {}
+	local quantos: { [string]: number } = {}
 	for _, c in t.carga or {} do
-		local info = (self.frete.emojis :: any)[c]
-		if info and #partes < 2 then
-			table.insert(partes, info)
+		if not quantos[c] then
+			table.insert(ordem, c)
 		end
+		quantos[c] = (quantos[c] or 0) + 1
 	end
-	t.emoji.Text = table.concat(partes)
+	local partes = {}
+	for _, c in ordem do
+		local emoji = (self.frete.emojis :: any)[c] or ""
+		local n = quantos[c]
+		table.insert(partes, if n <= 3 then string.rep(emoji, n) else `{emoji}×{n}`)
+	end
+	t.emoji.Text = table.concat(partes, " ")
 end
 
 -- A carga embarcou num trem: o selo da produtora some por uns segundos e volta.
