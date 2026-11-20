@@ -1,6 +1,6 @@
 --!strict
 -- Novidades mostradas no menu inicial (as mais recentes primeiro). A cada atualização publicada,
--- acrescente uma entrada no topo; o menu mostra as 4 primeiras.
+-- acrescente uma entrada no topo; o menu mostra as 3 primeiras.
 
 type Texto = { pt: string, en: string }
 export type Novidade = { data: string, titulo: Texto, texto: Texto }

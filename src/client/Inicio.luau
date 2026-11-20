@@ -30,6 +30,7 @@ export type Inicio = typeof(setmetatable(
 		aoJogar: BindableEvent,
 		aberto: boolean,
 		conexoes: { RBXScriptConnection },
+		_medir: () -> (),
 	},
 	Inicio
 ))
@@ -75,13 +76,18 @@ function Inicio.new(playerGui: Instance): Inicio
 		aoJogar = Instance.new("BindableEvent"),
 		aberto = true,
 		conexoes = {},
+		_medir = function() end,
 	}, Inicio)
 	local function medir()
 		local t = raiz.AbsoluteSize
 		if t.X > 0 and t.Y > 0 then
-			escala.Scale = math.clamp(math.min(t.X / 1000, t.Y / 560), 0.6, 1.25)
+			-- cabe na tela: pela largura e pela altura da coluna (em pontos virtuais)
+			local coluna = self.conteudo and self.conteudo:FindFirstChild("Coluna") :: Frame?
+			local alturaColuna = if coluna then coluna.AbsoluteSize.Y / math.max(escala.Scale, 0.01) else 560
+			escala.Scale = math.clamp(math.min(t.X / 1000, t.Y * 0.92 / math.max(alturaColuna, 400)), 0.55, 1.1)
 		end
 	end
+	self._medir = medir
 	table.insert(self.conexoes, raiz:GetPropertyChangedSignal("AbsoluteSize"):Connect(medir))
 	medir()
 	return self
@@ -140,7 +146,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 
 	-- título
 	local titulo = est:texto("titulo", "Ferrovia Tycoon", coluna, 1)
-	titulo.TextSize = 46
+	titulo.TextSize = 40
 	titulo.TextColor3 = c.ink
 	local sub = est:texto("corpo", L(
 		"Construa as ferrovias de um país inteiro, do trem a vapor ao trem-bala.",
@@ -175,7 +181,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	local fileira = novo("Frame", {
 		Name = "Mapas",
 		LayoutOrder = 6,
-		Size = UDim2.new(1, 0, 0, 168),
+		Size = UDim2.new(1, 0, 0, 128),
 		BackgroundTransparency = 1,
 	}, coluna)
 	est:lista(fileira, 10, true)
@@ -231,13 +237,18 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		AutomaticSize = Enum.AutomaticSize.Y,
 	}, coluna)
 	est:lista(caixa, 8)
-	for i = 1, math.min(4, #Novidades) do
+	for i = 1, math.min(3, #Novidades) do
 		local nov = Novidades[i]
 		local ano, mes, dia = string.match(nov.data, "(%d+)-(%d+)-(%d+)")
 		local data = if ano then `{dia}/{mes}` else nov.data
 		local l = est:texto("corpo", `<b>{data} · {Idioma.t(nov.titulo)}</b>  {Idioma.t(nov.texto)}`, caixa, i)
 		l.TextSize = 14
 	end
+	-- ajusta a escala para a coluna inteira caber na altura da tela
+	task.defer(self._medir)
+	coluna:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		self._medir()
+	end)
 end
 
 -- Some com fade (o mapa continua embaixo) e para de segurar os cliques.
