@@ -681,6 +681,7 @@ function Interface._preencher(self: Interface)
 	local escolhida = estado.trechos[trecho.id] or self.alternativa
 	local opcao = Economia.opcaoTrecho(trecho, escolhida)
 	local terreno = dados.terrenos[opcao.terreno or trecho.terreno]
+	local nomeTerreno = if terreno.nomes then Idioma.t(terreno.nomes) else terreno.nome
 	local de, para = dados.estacoes[trecho.de].nome, dados.estacoes[trecho.para].nome
 
 	self.lblCabecalho.Text = `{maiusculas(linha.nome)} · {trecho.ano}`
@@ -699,7 +700,7 @@ function Interface._preencher(self: Interface)
 	local estA, estB = dados.estacoes[trecho.de], dados.estacoes[trecho.para]
 	self.lblDetalhes.Text = table.concat({
 		L(`{Emojis.distancia} Extensão: {opcao.km} km`, `{Emojis.distancia} Length: {opcao.km} km`),
-		L(`{Emojis.terreno_montanha} Terreno: {terreno.nome} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`, `{Emojis.terreno_montanha} Terrain: {terreno.nome} (cost ×{string.format("%.1f", terreno.custo)})`),
+		L(`{Emojis.terreno_montanha} Terreno: {nomeTerreno} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`, `{Emojis.terreno_montanha} Terrain: {nomeTerreno} (cost ×{string.format("%.1f", terreno.custo)})`),
 		L(`{Emojis.passageiros} Demanda: {Economia.numero(passageiros)} passageiros/h (cidades de porte {estA.porte} e {estB.porte})`, `{Emojis.passageiros} Demand: {Economia.numero(passageiros)} passengers/h (cities of size {estA.porte} and {estB.porte})`),
 		L(`{Emojis.renda} Receita: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} da era)` else ""}`, `{Emojis.renda} Income: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} from the era)` else ""}`),
 		L(`{Emojis.manutencao} Manutenção: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`, `{Emojis.manutencao} Upkeep: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`),

@@ -3,30 +3,37 @@
   "terrenos": {
     "planalto": {
       "nome": "Planalto",
+      "nomeEn": "Plateau",
       "custo": 1.0
     },
     "baixada": {
       "nome": "Baixada litorânea",
+      "nomeEn": "Coastal lowland",
       "custo": 1.1
     },
     "vale": {
       "nome": "Vale",
+      "nomeEn": "Valley",
       "custo": 1.2
     },
     "serra_leve": {
       "nome": "Serra",
+      "nomeEn": "Hills",
       "custo": 1.6
     },
     "serra": {
       "nome": "Serra do Mar",
+      "nomeEn": "Coastal escarpment",
       "custo": 2.4
     },
     "pantanal": {
       "nome": "Pantanal",
+      "nomeEn": "Pantanal wetlands",
       "custo": 1.5
     },
     "floresta": {
       "nome": "Floresta",
+      "nomeEn": "Forest",
       "custo": 1.8
     }
   },
@@ -2338,6 +2345,7 @@
     {
       "tipo": "oceano",
       "texto": "OCEANO ATLÂNTICO",
+      "textoEn": "ATLANTIC OCEAN",
       "lon": -34.5,
       "lat": -16.0,
       "angulo": -75,
@@ -2347,6 +2355,7 @@
     {
       "tipo": "oceano",
       "texto": "OCEANO ATLÂNTICO",
+      "textoEn": "ATLANTIC OCEAN",
       "lon": -43.6,
       "lat": -24.4,
       "zoomMin": 1.2

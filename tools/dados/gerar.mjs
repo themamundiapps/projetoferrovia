@@ -81,7 +81,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push(`\tmoeda = ${lua(cfg.moeda)},`);
   L.push(`\tsimbolo = ${lua(cfg.simbolo)},`);
   L.push("\tterrenos = {");
-  for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, custo = ${lua(t.custo)} },`);
+  for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, nomes = { pt = ${lua(t.nome)}, en = ${lua(t.nomeEn ?? t.nome)} }, custo = ${lua(t.custo)} },`);
   L.push("\t},");
   L.push("\testacoes = {");
   for (const e of dados.estacoes) {
@@ -144,8 +144,10 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push("\trotulos = {");
   for (const r of dados.rotulos ?? []) {
     const [x, y] = proj([r.lon, r.lat]);
-    const texto = r.tipo === "estado" || r.tipo === "oceano" ? espacar(r.texto) : r.texto;
-    L.push(`\t\t{ tipo = ${lua(r.tipo)}, texto = ${lua(texto)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), angulo = ${lua(r.angulo ?? 0)}, zoomMin = ${lua(r.zoomMin ?? 0)}, zoomMax = ${lua(r.zoomMax ?? 99)} },`);
+    const espacado = r.tipo === "estado" || r.tipo === "oceano";
+    const texto = espacado ? espacar(r.texto) : r.texto;
+    const textoEn = r.textoEn ? (espacado ? espacar(r.textoEn) : r.textoEn) : texto;
+    L.push(`\t\t{ tipo = ${lua(r.tipo)}, texto = ${lua(texto)}, textoEn = ${lua(textoEn)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), angulo = ${lua(r.angulo ?? 0)}, zoomMin = ${lua(r.zoomMin ?? 0)}, zoomMax = ${lua(r.zoomMax ?? 99)} },`);
   }
   L.push("\t},");
   L.push("}");

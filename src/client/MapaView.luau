@@ -12,6 +12,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
 local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
+local Idioma = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Idioma"))
 
 -- placa (cartucho) atrás do nome das capitais e metrópoles
 local PLACA_ALTURA, PLACA_FOLGA = 26, 15
@@ -65,10 +66,18 @@ type Estacao = {
 -- Trens animados: cada linha tem uma trilha (os pontos dos trechos construídos) e alguns trens indo e voltando.
 -- ids: estação de cada ponto (para saber por onde o trem passou)
 export type LinhaTrens = { id: string, pontos: { Vector2 }, ids: { string }?, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
-type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number, segs: { [number]: any } }
--- Aviso que sobe e some quando um trem passa por uma cidade produtora ligada a um porto.
-export type AvisoProdutora = { texto: string }
-type Trem = { frame: Frame, trilha: Trilha, fase: number, segmento: number?, voltando: boolean? }
+-- antes/depois: índice da estação mais perto antes/depois de cada ponto (os desvios do traçado não são estações)
+type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number, segs: { [number]: any }, antes: { number }, depois: { number } }
+-- Frete para o mapa animar: a carga que passa em cada trecho (de "A>B", rumo ao porto), o aviso de
+-- dinheiro de cada porto (o frete chega e é pago lá) e o selo da carga de cada produtora.
+export type Frete = {
+	arestas: { [string]: { string } },
+	entregas: { [string]: { texto: string } },
+	coletas: { [string]: { carga: string, texto: string } },
+}
+-- Um trem desenhado: locomotiva + vagões, que seguem a curva da trilha.
+-- aresta: trecho (entre estações) em que a locomotiva está, no sentido em que anda; carga: o que os vagões levam nele.
+type Trem = { carros: { Frame }, trilha: Trilha, fase: number, aresta: string?, carga: { string }? }
 
 type RotuloMapa = {
 	pos: Vector2,
@@ -116,7 +125,7 @@ export type MapaView = typeof(setmetatable(
 		selecionado: string?,
 		foco: { min: Vector2, max: Vector2, margem: number }?,
 		interagiu: boolean,
-		produtoras: { [string]: AvisoProdutora },
+		frete: Frete,
 		ultimoAviso: { [string]: number },
 	},
 	MapaView
@@ -125,7 +134,7 @@ export type MapaView = typeof(setmetatable(
 -- Zoom mínimo para mostrar a bolinha da estação, por porte: no Brasil inteiro só as cidades grandes e as
 -- pontas de linha aparecem (as outras poluíam o mapa). A linha continua inteira.
 local ZOOM_PONTO = { [5] = 0, [4] = 0, [3] = 0.5, [2] = 0.8, [1] = 1.1 }
--- Avisos das produtoras: só com o mapa perto o bastante, e no máximo um a cada tantos segundos por cidade.
+-- Avisos de frete (porto e produtora): só com o mapa perto o bastante, e no máximo um a cada tantos segundos por cidade.
 local ZOOM_AVISO = 0.9
 local INTERVALO_AVISO = 4 -- segundos (o valor do aviso é o frete desse intervalo)
 -- Zoom mínimo para mostrar o nome da estação, por porte (5 = metrópole, 1 = vila).
@@ -152,6 +161,18 @@ local Z = {
 }
 -- No máximo este tanto de trens desenhados por linha (a frota pode ser maior).
 local MAX_TRENS_VISIVEIS = 8
+-- Vagões atrás de cada locomotiva.
+local VAGOES = 2
+-- Cor do vagão carregado, por carga (vagão vazio fica na cor do painel).
+local COR_CARGA: { [string]: Color3 } = {
+	cafe = Color3.fromRGB(120, 72, 40),
+	minerio = Color3.fromRGB(168, 70, 46),
+	graos = Color3.fromRGB(226, 178, 52),
+	acucar = Color3.fromRGB(240, 236, 222),
+	madeira = Color3.fromRGB(92, 120, 54),
+	gado = Color3.fromRGB(196, 140, 90),
+	borracha = Color3.fromRGB(60, 60, 64),
+}
 
 -- Cor e camada de cada tipo de tile.
 local function estiloTile(camada: string, cores: any, detalhe: boolean): (Color3, number)
@@ -233,7 +254,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		selecionado = nil,
 		foco = nil,
 		interagiu = false,
-		produtoras = {},
+		frete = { arestas = {}, entregas = {}, coletas = {} },
 		ultimoAviso = {},
 	}, MapaView)
 
@@ -358,7 +379,7 @@ function MapaView._criarRotulosMapa(self: MapaView, dados: any)
 			AutomaticSize = Enum.AutomaticSize.XY,
 			Size = UDim2.fromOffset(0, 0),
 			BackgroundTransparency = 1,
-			Text = r.texto,
+			Text = Idioma.L(r.texto, r.textoEn or r.texto),
 			FontFace = fonte,
 			TextSize = tamanho,
 			TextColor3 = cor,
@@ -804,7 +825,9 @@ function MapaView.definirAjuste(self: MapaView, chave: string, valor: boolean)
 	elseif chave == "trens" then
 		self.mostrarTrens = valor
 		for _, t in self.trens do
-			t.frame.Visible = valor
+			for _, c in t.carros do
+				c.Visible = valor
+			end
 		end
 	end
 	self:_layout()
@@ -816,10 +839,18 @@ local function espessuraLinha(zoom: number): number
 	return math.clamp(2 + zoom * 0.9, 3, 10)
 end
 
+-- Tamanho do trem em pixels de tela: a altura acompanha a espessura da linha.
+local function medidasTrem(zoom: number): (number, number, number, number)
+	local altura = espessuraLinha(zoom) + (if zoom < 1 then 2 else 3)
+	return altura, altura * 1.9, altura * 1.45, math.max(1.5, altura * 0.3) -- altura, locomotiva, vagão, folga
+end
+
 function MapaView._tamanhoTrens(self: MapaView)
-	local altura = espessuraLinha(self.zoom) + (if self.zoom < 1 then 2 else 3)
+	local altura, loco, vagao = medidasTrem(self.zoom)
 	for _, t in self.trens do
-		t.frame.Size = UDim2.fromOffset(altura * 1.9, altura)
+		for k, c in t.carros do
+			c.Size = UDim2.fromOffset(if k == 1 then loco else vagao, if k == 1 then altura else altura * 0.85)
+		end
 	end
 end
 
@@ -835,7 +866,9 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 	end
 	self.assinaturaTrens = assinatura
 	for _, t in self.trens do
-		t.frame:Destroy()
+		for _, c in t.carros do
+			c:Destroy()
+		end
 	end
 	table.clear(self.trens)
 	local cores = self.era.cores
@@ -852,51 +885,101 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 		for i = 1, #l.pontos - 1 do
 			segsTrilha[i] = self.segPorPontos[chaveSegmento(l.id, l.pontos[i], l.pontos[i + 1])]
 		end
-		-- a duração conta só as estações (os pontos de desvio do traçado têm id vazio)
+		local ids = l.ids or {}
+		local function ehEstacao(i: number): boolean
+			return l.ids == nil or (ids[i] or "") ~= ""
+		end
+		-- estação mais perto antes e depois de cada ponto
+		local antes, depois = {}, {}
+		local ultima = 1
+		for i = 1, #l.pontos do
+			if ehEstacao(i) then
+				ultima = i
+			end
+			antes[i] = ultima
+		end
+		local proxima = #l.pontos
+		for i = #l.pontos, 1, -1 do
+			if ehEstacao(i) then
+				proxima = i
+			end
+			depois[i] = proxima
+		end
+		-- a duração conta só as estações
 		local paradas = 0
-		for _, id in l.ids or {} do
-			if id ~= "" then
+		for i = 1, #l.pontos do
+			if ehEstacao(i) then
 				paradas += 1
 			end
 		end
-		if not l.ids then
-			paradas = #l.pontos
-		end
 		local trilha: Trilha = {
 			pontos = l.pontos,
-			ids = l.ids or {},
+			ids = ids,
 			acumulado = acumulado,
 			total = acumulado[#acumulado],
 			segs = segsTrilha,
+			antes = antes,
+			depois = depois,
 			duracao = math.clamp(5 * (paradas - 1), 7, 30), -- segundos de uma ponta à outra
 		}
+		-- trem lotado: locomotiva vermelha; trem rodando vazio (frota demais): o trem todo apagado
+		local transp = if l.situacao == "vazio" then 0.55 else 0
 		local visiveis = math.min(l.n, MAX_TRENS_VISIVEIS)
 		for k = 1, visiveis do
-			local frame = novo("Frame", {
-				Name = `trem_{l.id}_{k}`,
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				-- trem lotado fica vermelho; trem rodando vazio fica apagado
-				BackgroundColor3 = if l.situacao == "lotado" then cores.negative else cores.panel,
-				BackgroundTransparency = if l.situacao == "vazio" then 0.55 else 0,
-				BorderSizePixel = 0,
-				Visible = self.mostrarTrens,
-				ZIndex = Z.trem,
-			}, self.conteudo) :: Frame
-			novo("UICorner", { CornerRadius = UDim.new(0, 2) }, frame)
-			novo("UIStroke", { Color = cores.ink, Thickness = 1.5 }, frame)
-			table.insert(self.trens, { frame = frame, trilha = trilha, fase = (k - 1) / visiveis * 2 })
+			local carros: { Frame } = {}
+			for c = 1, 1 + VAGOES do
+				local carro = novo("Frame", {
+					Name = `trem_{l.id}_{k}_{c}`,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = if c == 1 then (if l.situacao == "lotado" then cores.negative else cores.ink) else cores.panel,
+					BackgroundTransparency = transp,
+					BorderSizePixel = 0,
+					Visible = self.mostrarTrens,
+					ZIndex = if c == 1 then Z.trem + 1 else Z.trem,
+				}, self.conteudo) :: Frame
+				novo("UICorner", { CornerRadius = UDim.new(0, if c == 1 then 3 else 2) }, carro)
+				novo("UIStroke", { Color = cores.ink, Thickness = if c == 1 then 1.5 else 1.2, Transparency = transp }, carro)
+				table.insert(carros, carro)
+			end
+			table.insert(self.trens, { carros = carros, trilha = trilha, fase = (k - 1) / visiveis * 2 })
 		end
 	end
 	self:_tamanhoTrens()
 	self:_moverTrens()
 end
 
+-- Ponto da trilha a uma distância d do começo, em pixels do conteúdo, já na faixa da linha.
+-- Devolve também o índice do pedaço e a direção dele (do começo para o fim da trilha).
+local function pontoNaTrilha(tr: Trilha, d: number, z: number, faixa: number): (Vector2, number, Vector2)
+	d = math.clamp(d, 0, tr.total)
+	local i = 1
+	while i < #tr.pontos - 1 and tr.acumulado[i + 1] < d do
+		i += 1
+	end
+	local a, b = tr.pontos[i], tr.pontos[i + 1]
+	local comprimento = tr.acumulado[i + 1] - tr.acumulado[i]
+	local u = if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0
+	local p = a:Lerp(b, u) * z
+	local seg = tr.segs[i]
+	if seg and seg.faixa ~= 0 then
+		local us = if (seg.a - a).Magnitude > 0.01 then 1 - u else u -- pedaço desenhado no sentido contrário
+		p += seg.mA:Lerp(seg.mB, us) * (seg.faixa * faixa)
+	end
+	local dir = b - a
+	return p, i, if dir.Magnitude > 0 then dir.Unit else Vector2.new(1, 0)
+end
+
 -- Chamado a cada quadro: cada trem vai e volta pela trilha da linha, mais devagar perto das pontas.
+-- Mão dupla: quem vai anda de um lado da linha e quem volta, do outro, para os trens se cruzarem
+-- sem um sumir embaixo do outro. Os vagões seguem a locomotiva pela curva.
 function MapaView._moverTrens(self: MapaView)
 	if not self.mostrarTrens or #self.trens == 0 then
 		return
 	end
 	local z = self.zoom
+	local faixa = larguraFaixa(z)
+	local altura, loco, vagao, folga = medidasTrem(z)
+	local lado = altura * 0.45
 	local agora = os.clock()
 	for _, t in self.trens do
 		local tr = t.trilha
@@ -906,47 +989,85 @@ function MapaView._moverTrens(self: MapaView)
 			u = 2 - u
 		end
 		u = u * u * (3 - 2 * u)
-		local d = u * tr.total
-		local i = 1
-		while i < #tr.pontos - 1 and tr.acumulado[i + 1] < d do
-			i += 1
-		end
-		-- passou por uma estação? (mudou de trecho, ou deu meia-volta numa ponta)
-		local passou: string? = nil
-		if t.segmento and t.segmento ~= i then
-			passou = if i > t.segmento then tr.ids[i] else tr.ids[t.segmento]
-		elseif t.voltando ~= nil and t.voltando ~= voltando then
-			passou = if voltando then tr.ids[#tr.pontos] else tr.ids[1]
-		end
-		t.segmento, t.voltando = i, voltando
-		if passou then
-			self:_avisoProdutora(passou, agora)
-		end
-		local a, b = tr.pontos[i], tr.pontos[i + 1]
-		local comprimento = tr.acumulado[i + 1] - tr.acumulado[i]
-		local p = a:Lerp(b, if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0) * z
-		local seg = tr.segs[i]
-		if seg and seg.faixa ~= 0 then
-			local u = if comprimento > 0 then (d - tr.acumulado[i]) / comprimento else 0
-			if (seg.a - a).Magnitude > 0.01 then
-				u = 1 - u -- pedaço desenhado no sentido contrário ao da trilha
+		-- o trem ocupa [inicio, inicio + comprimento] da trilha; a locomotiva vai na ponta da frente
+		local comprimento = (loco + VAGOES * (vagao + folga)) / z
+		local escala = if comprimento > tr.total * 0.8 then tr.total * 0.8 / comprimento else 1
+		comprimento *= escala
+		local inicio = u * (tr.total - comprimento)
+		local sentido = if voltando then -1 else 1
+		local frente = if voltando then inicio else inicio + comprimento
+		local d = frente
+		local iFrente = 1
+		for k, carro in t.carros do
+			local tam = (if k == 1 then loco else vagao) / z * escala
+			if k > 1 then
+				d -= sentido * (folga / z * escala)
 			end
-			p += seg.mA:Lerp(seg.mB, u) * (seg.faixa * larguraFaixa(z))
+			local centro = d - sentido * tam / 2
+			local p, i, dir = pontoNaTrilha(tr, centro, z, faixa)
+			if k == 1 then
+				iFrente = i
+			end
+			p += Vector2.new(-dir.Y, dir.X) * (sentido * lado)
+			carro.Position = UDim2.fromOffset(p.X, p.Y)
+			carro.Rotation = math.deg(math.atan2(dir.Y, dir.X))
+			d -= sentido * tam
 		end
-		t.frame.Position = UDim2.fromOffset(p.X, p.Y)
-		t.frame.Rotation = math.deg(math.atan2(b.Y - a.Y, b.X - a.X))
+		-- trecho (entre estações) em que a locomotiva está, no sentido em que anda
+		local de = tr.ids[if voltando then tr.depois[iFrente + 1] else tr.antes[iFrente]] or ""
+		local para = tr.ids[if voltando then tr.antes[iFrente] else tr.depois[iFrente + 1]] or ""
+		local aresta = `{de}>{para}`
+		if aresta ~= t.aresta then
+			self:_trocarAresta(t, aresta, de, agora)
+		end
 	end
 end
 
--- Cidades produtoras que rendem frete agora (id -> texto do aviso, ex.: "☕ +R$ 28").
-function MapaView.definirProdutoras(self: MapaView, produtoras: { [string]: AvisoProdutora })
-	self.produtoras = produtoras
+-- Pinta os vagões com a carga do trecho em que o trem está.
+function MapaView._pintarVagoes(self: MapaView, t: Trem)
+	local cores = self.era.cores
+	local carga = t.carga
+	for k = 2, #t.carros do
+		local c = if carga and #carga > 0 then carga[(k - 2) % #carga + 1] else nil
+		t.carros[k].BackgroundColor3 = if c then COR_CARGA[c] or cores.panel else cores.panel
+	end
 end
 
--- Um trem passou por esta estação: se for produtora ligada a um porto, sobe um aviso que some.
-function MapaView._avisoProdutora(self: MapaView, id: string, agora: number)
-	local info = self.produtoras[id]
-	if not info or not self.mostrarTrens or self.zoom < ZOOM_AVISO then
+-- A locomotiva entrou num trecho novo, saindo da estação "de": descarrega no porto, carrega na produtora
+-- e pinta os vagões com a carga que segue por esse trecho.
+function MapaView._trocarAresta(self: MapaView, t: Trem, aresta: string, de: string, agora: number)
+	local anterior = t.aresta
+	local cargaAntes = t.carga
+	local carga = self.frete.arestas[aresta]
+	t.aresta, t.carga = aresta, carga
+	self:_pintarVagoes(t)
+	if anterior then
+		local entrega = self.frete.entregas[de]
+		if entrega and cargaAntes and #cargaAntes > 0 then
+			self:_avisoMapa(de, entrega.texto, self.era.cores.positive, 19, agora)
+		end
+		local coleta = self.frete.coletas[de]
+		if coleta and carga and table.find(carga, coleta.carga) then
+			self:_avisoMapa(de, coleta.texto, self.era.cores.ink, 16, agora)
+		end
+	end
+end
+
+-- Frete atual (ver o tipo Frete): repinta os vagões de quem já está andando.
+function MapaView.definirFrete(self: MapaView, frete: Frete)
+	self.frete = frete
+	for _, t in self.trens do
+		if t.aresta then
+			t.carga = frete.arestas[t.aresta]
+			self:_pintarVagoes(t)
+		end
+	end
+end
+
+-- Aviso que sobe de uma estação e some (frete pago no porto, carga embarcada na produtora).
+-- Só com o mapa perto o bastante, com a estação na tela, e no máximo um a cada tantos segundos por estação.
+function MapaView._avisoMapa(self: MapaView, id: string, texto: string, cor: Color3, tamanho: number, agora: number)
+	if not self.mostrarTrens or self.zoom < ZOOM_AVISO then
 		return
 	end
 	if agora - (self.ultimoAviso[id] or -math.huge) < INTERVALO_AVISO then
@@ -977,10 +1098,10 @@ function MapaView._avisoProdutora(self: MapaView, id: string, agora: number)
 		Size = UDim2.fromOffset(0, 0),
 		Position = UDim2.fromOffset(p.X, p.Y - 14),
 		BackgroundTransparency = 1,
-		Text = info.texto,
+		Text = texto,
 		FontFace = self.era.fontes.display,
-		TextSize = 19,
-		TextColor3 = cores.positive,
+		TextSize = tamanho,
+		TextColor3 = cor,
 		ZIndex = Z.rotulo + 1,
 	}, self.conteudo) :: TextLabel
 	local contorno = novo("UIStroke", { Color = cores.panel, Thickness = 2.5 }, lbl) :: UIStroke
