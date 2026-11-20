@@ -244,6 +244,60 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		local l = est:texto("corpo", `<b>{data} · {Idioma.t(nov.titulo)}</b>  {Idioma.t(nov.texto)}`, caixa, i)
 		l.TextSize = 14
 	end
+	-- ranking de quem está neste servidor (vem do placar "leaderstats" que o servidor mantém)
+	local ranking = est:cartao({
+		Name = "Ranking",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -24 - Estilo.INSET_DIR, 0, 24),
+		Size = UDim2.fromOffset(250, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+	}, conteudo)
+	est:lista(ranking, 4)
+	local tituloRanking = est:texto("rotulo", Idioma.maiusculas(L("Neste servidor", "On this server")), ranking, 0)
+	tituloRanking.TextSize = 13
+	local linhasRanking: { TextLabel } = {}
+	for i = 1, 5 do
+		local l = est:texto("corpo", "", ranking, i)
+		l.TextSize = 14
+		l.Visible = false
+		linhasRanking[i] = l
+	end
+	local function atualizarRanking()
+		local lista = {}
+		for _, j in Players:GetPlayers() do
+			local pasta = j:FindFirstChild("leaderstats")
+			local nivelJ = pasta and pasta:FindFirstChild("Nível") :: IntValue?
+			local rendaJ = pasta and pasta:FindFirstChild("Renda/s") :: StringValue?
+			table.insert(lista, {
+				nome = j.DisplayName,
+				nivel = if nivelJ then nivelJ.Value else 0,
+				renda = if rendaJ then rendaJ.Value else "",
+				eu = j == Players.LocalPlayer,
+			})
+		end
+		table.sort(lista, function(a, b)
+			return a.nivel > b.nivel
+		end)
+		for i, l in linhasRanking do
+			local item = lista[i]
+			l.Visible = item ~= nil
+			if item then
+				local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
+				local renda = if item.renda ~= "" then `  ·  {item.renda}/s` else ""
+				l.Text = `{i}. {nome}  ·  {L("nível", "level")} {item.nivel}{renda}`
+			end
+		end
+	end
+	atualizarRanking()
+	task.spawn(function()
+		while conteudo.Parent do
+			task.wait(2)
+			if self.aberto and conteudo.Parent then
+				atualizarRanking()
+			end
+		end
+	end)
+
 	-- ajusta a escala para a coluna inteira caber na altura da tela
 	task.defer(self._medir)
 	coluna:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()

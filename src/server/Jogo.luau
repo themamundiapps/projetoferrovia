@@ -300,6 +300,37 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 	}
 end
 
+-- Placar do servidor (lista de jogadores do Roblox, no canto de cima): nível e renda por segundo.
+-- A lista ordena pelo primeiro valor (o nível); a renda vai como texto formatado.
+local function atualizarPlacar(s: Sessao, renda: number?)
+	local jogador = s.jogador
+	local pasta = jogador:FindFirstChild("leaderstats")
+	if not pasta then
+		pasta = Instance.new("Folder")
+		pasta.Name = "leaderstats"
+		local nivel = Instance.new("IntValue")
+		nivel.Name = "Nível"
+		nivel.Parent = pasta
+		local rendaTxt = Instance.new("StringValue")
+		rendaTxt.Name = "Renda/s"
+		rendaTxt.Parent = pasta
+		pasta.Parent = jogador
+	end
+	local e = s.mapas[s.mapaAtual]
+	if not e then
+		return
+	end
+	local nivel = pasta:FindFirstChild("Nível") :: IntValue?
+	if nivel then
+		nivel.Value = (Economia.nivel(e))
+	end
+	local rendaTxt = pasta:FindFirstChild("Renda/s") :: StringValue?
+	if rendaTxt and renda then
+		local dados = MAPAS[s.mapaAtual]
+		rendaTxt.Value = Economia.formatar(math.max(0, renda), dados and dados.simbolo)
+	end
+end
+
 local function enviarEstado(s: Sessao, renda: number?)
 	if s.carregado then
 		remoteEstado:FireClient(s.jogador, pacoteEstado(s, renda))
@@ -1048,6 +1079,7 @@ local function aoEntrar(jogador: Player)
 
 	if sessoes[jogador] == s then
 		s.carregado = true
+		atualizarPlacar(s, nil)
 		enviarEstado(s)
 	end
 end
@@ -1247,6 +1279,7 @@ task.spawn(function()
 					encerrarContrato(s, e, resultado == "cumprido")
 				end
 				atualizarMetas(s, e, dados, ctx)
+				atualizarPlacar(s, lucro)
 				enviarEstado(s, lucro)
 			end
 		end
