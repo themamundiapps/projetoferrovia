@@ -70,18 +70,18 @@ type Estacao = {
 export type LinhaTrens = { id: string, pontos: { Vector2 }, ids: { string }?, n: number, situacao: string } -- "normal" | "lotado" | "vazio"
 -- antes/depois: índice da estação mais perto antes/depois de cada ponto (os desvios do traçado não são estações)
 type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, total: number, duracao: number, segs: { [number]: any }, antes: { number }, depois: { number } }
--- Frete para o mapa animar: a carga que passa em cada trecho (de "A>B", rumo ao porto), o aviso de
--- dinheiro de cada porto (o frete chega e é pago lá) e o selo da carga de cada produtora.
+-- Frete para o mapa animar: cada trem, voltando para a cidade onde a linha começa, pega a carga das
+-- produtoras por onde passa e entrega lá. coletas: carga de cada produtora e quanto rende num aviso;
+-- emojis: emoji de cada carga; formatar: dinheiro no formato do jogo.
 export type Frete = {
-	arestas: { [string]: { string } },
-	emojis: { [string]: string }, -- emoji de cada carga
-	entregas: { [string]: { texto: string } },
-	coletas: { [string]: { carga: string, texto: string } },
+	emojis: { [string]: string },
+	coletas: { [string]: { carga: string, valor: number } },
+	formatar: (number) -> string,
 }
 -- Um trem desenhado (carros: a locomotiva e os vagões, se houver, que seguem a curva da trilha).
 -- aresta: trecho (entre estações) em que a locomotiva está, no sentido em que anda; carga: o que o trem leva nele,
 -- mostrado como emoji em cima do trem.
-type Trem = { carros: { Frame }, emoji: TextLabel, trilha: Trilha, fase: number, aresta: string?, carga: { string }? }
+type Trem = { carros: { Frame }, emoji: TextLabel, trilha: Trilha, fase: number, aresta: string?, carga: { string }?, valor: number? }
 
 type RotuloMapa = {
 	pos: Vector2,
@@ -252,7 +252,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		selecionado = nil,
 		foco = nil,
 		interagiu = false,
-		frete = { arestas = {}, emojis = {}, entregas = {}, coletas = {} },
+		frete = { emojis = {}, coletas = {}, formatar = tostring },
 		ultimoAviso = {},
 	}, MapaView)
 
@@ -390,10 +390,43 @@ function MapaView._criarRotulosMapa(self: MapaView, dados: any)
 	end
 end
 
+-- Textura leve da linha, para diferenciar linhas da mesma cor: a primeira linha de cada cor é lisa, as
+-- seguintes ganham um desenho ao longo dela (o gradiente só escurece, então é tudo em tons mais escuros).
+-- Cada desenho é uma lista de faixas {começo, fim, escurecer} na largura da linha (0 = uma borda, 1 = a outra).
+local TEXTURAS_LINHA: { { { number } } } = {
+	{}, -- lisa
+	{ { 0.38, 0.62, 0.62 } }, -- friso escuro no meio
+	{ { 0.18, 0.33, 0.6 }, { 0.67, 0.82, 0.6 } }, -- dois frisos, como trilhos
+	{ { 0.5, 1, 0.72 } }, -- duas cores: metade de baixo mais escura
+}
+
+local function texturaLinha(frame: GuiObject, padrao: number)
+	local faixas = TEXTURAS_LINHA[(padrao - 1) % #TEXTURAS_LINHA + 1]
+	if #faixas == 0 then
+		return
+	end
+	local pontos = { ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)) }
+	for _, f in faixas do
+		local escuro = Color3.new(f[3], f[3], f[3])
+		table.insert(pontos, ColorSequenceKeypoint.new(math.max(f[1] - 0.001, 0.001), Color3.new(1, 1, 1)))
+		table.insert(pontos, ColorSequenceKeypoint.new(f[1], escuro))
+		if f[2] < 1 then
+			table.insert(pontos, ColorSequenceKeypoint.new(f[2], escuro))
+			table.insert(pontos, ColorSequenceKeypoint.new(f[2] + 0.001, Color3.new(1, 1, 1)))
+		end
+	end
+	local ultima = faixas[#faixas]
+	table.insert(pontos, ColorSequenceKeypoint.new(1, if ultima[2] >= 1 then Color3.new(ultima[3], ultima[3], ultima[3]) else Color3.new(1, 1, 1)))
+	novo("UIGradient", { Color = ColorSequence.new(pontos), Rotation = 90 }, frame)
+end
+
 function MapaView._criarLinhas(self: MapaView, dados: any)
 	local cores = self.era.cores
+	local usosCor: { [any]: number } = {}
 	for _, linha in dados.linhas do
 		local cor: Color3 = self.era.linhas[linha.cor] or cores.ink
+		usosCor[linha.cor] = (usosCor[linha.cor] or 0) + 1
+		local padrao = usosCor[linha.cor]
 		for _, trecho in linha.trechos do
 			-- o trecho vai de estação a estação passando pelos pontos de "via" (desvios para não cortar o
 			-- mar); cada pedaço é um segmento com o mesmo id
@@ -420,6 +453,7 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 					BorderSizePixel = 0,
 					ZIndex = Z.linha,
 				}, self.conteudo) :: Frame
+				texturaLinha(frame, padrao)
 				-- linhas do Gabinete de Projetos ganham um tracejado, mostrado enquanto forem só projeto
 				local tracos: { Frame } = {}
 				if linha.projeto then
@@ -1040,7 +1074,7 @@ function MapaView._moverTrens(self: MapaView)
 		local para = tr.ids[if voltando then tr.antes[iFrente] else tr.depois[iFrente + 1]] or ""
 		local aresta = `{de}>{para}`
 		if aresta ~= t.aresta then
-			self:_trocarAresta(t, aresta, de, agora)
+			self:_trocarAresta(t, aresta, de, voltando, agora)
 		end
 	end
 end
@@ -1083,41 +1117,41 @@ function MapaView._esconderSelo(self: MapaView, id: string, agora: number)
 	end
 end
 
--- A locomotiva entrou num trecho novo, saindo da estação "de". O trem leva a carga que segue por esse trecho
--- rumo ao porto: embarca na produtora (o selo dela some e o emoji aparece em cima do trem), passa de uma linha
--- para outra nos entroncamentos e desembarca no porto, onde sobe o frete pago.
-function MapaView._trocarAresta(self: MapaView, t: Trem, aresta: string, de: string, agora: number)
+-- A locomotiva entrou num trecho novo, saindo da estação "de". Voltando para o começo da linha, o trem
+-- pega a carga de cada produtora por onde passa (o selo dela some e o emoji vai para cima do trem, somando
+-- com o que já leva); ao dar meia-volta na cidade onde a linha começa, entrega tudo e sobe o frete.
+function MapaView._trocarAresta(self: MapaView, t: Trem, aresta: string, de: string, voltando: boolean, agora: number)
 	local anterior = t.aresta
-	local cargaAntes = t.carga
-	local carga = self.frete.arestas[aresta]
-	t.aresta, t.carga = aresta, carga
-	self:_mostrarCarga(t)
-	if anterior then
-		local entrega = self.frete.entregas[de]
-		if entrega and cargaAntes and #cargaAntes > 0 then
-			self:_avisoMapa(de, entrega.texto, self.era.cores.positive, 19, agora)
-		end
+	t.aresta = aresta
+	if not anterior then
+		return -- primeiro quadro do trem: começa vazio
+	end
+	if voltando then
 		local coleta = self.frete.coletas[de]
-		if coleta and carga and table.find(carga, coleta.carga) then
+		if coleta then
+			t.carga = t.carga or {}
+			table.insert(t.carga :: { string }, coleta.carga)
+			t.valor = (t.valor or 0) + coleta.valor
 			self:_esconderSelo(de, agora)
+			self:_mostrarCarga(t)
 			if t.emoji.Visible then
-				-- o emoji "pula" para dentro do trem
+				-- o emoji "pula" para cima do trem
 				t.emoji.TextTransparency = 1
 				TweenService:Create(t.emoji, TweenInfo.new(0.35), { TextTransparency = 0 }):Play()
 			end
 		end
+	elseif t.carga and #t.carga > 0 then
+		if de == t.trilha.ids[1] then
+			self:_avisoMapa(de, `{t.emoji.Text} +{self.frete.formatar(t.valor or 0)}`, self.era.cores.positive, 19, agora)
+		end
+		t.carga, t.valor = nil, nil
+		self:_mostrarCarga(t)
 	end
 end
 
--- Frete atual (ver o tipo Frete): atualiza a carga de quem já está andando.
+-- Frete atual (ver o tipo Frete). A carga que já está nos trens segue até o destino.
 function MapaView.definirFrete(self: MapaView, frete: Frete)
 	self.frete = frete
-	for _, t in self.trens do
-		if t.aresta then
-			t.carga = frete.arestas[t.aresta]
-			self:_mostrarCarga(t)
-		end
-	end
 end
 
 -- Aviso que sobe de uma estação e some (frete pago no porto, carga embarcada na produtora).

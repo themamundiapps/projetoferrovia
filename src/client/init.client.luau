@@ -184,75 +184,26 @@ local function trensDoMapa(estado: any): { any }
 	return lista
 end
 
--- Frete para o mapa: cada produtora ligada a um porto manda a carga pelo caminho mais curto (em trechos)
--- até o porto mais perto. Os trens levam o emoji da carga nos trechos desse caminho (o selo da produtora
--- some quando a carga embarca) e o porto mostra o frete pago (o valor de cada aviso é o que rende em 4 s).
+-- Frete para o mapa: os trens pegam a carga das produtoras ligadas a um porto (as que rendem frete) e levam
+-- até a cidade onde a linha começa. O valor de cada coleta é o que a produtora rende em 4 s.
 local function freteDoMapa(estado: any): any
-	local vizinhos: { [string]: { string } } = {}
-	for _, linha in DadosBrasil.linhas do
-		for _, t in linha.trechos do
-			if estado.trechos[t.id] then
-				vizinhos[t.de] = vizinhos[t.de] or {}
-				vizinhos[t.para] = vizinhos[t.para] or {}
-				table.insert(vizinhos[t.de], t.para)
-				table.insert(vizinhos[t.para], t.de)
-			end
-		end
-	end
-	-- busca em largura a partir dos portos: rumo[id] = próxima estação no caminho até o porto
-	local rumo: { [string]: string } = {}
-	local visto: { [string]: boolean } = {}
-	local fila: { string } = {}
-	for id, e in DadosBrasil.estacoes do
-		if e.porto and vizinhos[id] then
-			visto[id] = true
-			table.insert(fila, id)
-		end
-	end
-	local i = 1
-	while i <= #fila do
-		local u = fila[i]
-		for _, v in vizinhos[u] do
-			if not visto[v] then
-				visto[v] = true
-				rumo[v] = u
-				table.insert(fila, v)
-			end
-		end
-		i += 1
-	end
-	local arestas: { [string]: { string } } = {}
-	local entregas: { [string]: { valor: number, emojis: { string } } } = {}
-	local coletas: { [string]: { carga: string, texto: string } } = {}
+	local coletas: { [string]: { carga: string, valor: number } } = {}
 	for id, v in (Economia.valorCargas(estado, DadosBrasil)) do
-		if not (v.conectada and v.reaisDia > 0 and rumo[id]) then
-			continue
+		if v.conectada and v.reaisDia > 0 then
+			coletas[id] = { carga = v.carga, valor = v.reaisDia * 4 / 60 }
 		end
-		local emoji = (Emojis :: any)[(Economia.CARGAS :: any)[v.carga].emoji] or ""
-		coletas[id] = { carga = v.carga, texto = emoji }
-		local atual = id
-		while rumo[atual] do
-			local chave = `{atual}>{rumo[atual]}`
-			arestas[chave] = arestas[chave] or {}
-			table.insert(arestas[chave], v.carga) -- uma vez por produtora: duas cidades de café = ☕☕
-			atual = rumo[atual]
-		end
-		local e = entregas[atual] or { valor = 0, emojis = {} }
-		entregas[atual] = e
-		e.valor += v.reaisDia * 4 / 60
-		if not table.find(e.emojis, emoji) then
-			table.insert(e.emojis, emoji)
-		end
-	end
-	local textos: { [string]: { texto: string } } = {}
-	for porto, e in entregas do
-		textos[porto] = { texto = `{table.concat(e.emojis)} +{Economia.formatar(e.valor, DadosBrasil.simbolo)}` }
 	end
 	local emojis: { [string]: string } = {}
 	for id, c in Economia.CARGAS :: any do
 		emojis[id] = (Emojis :: any)[c.emoji] or ""
 	end
-	return { arestas = arestas, emojis = emojis, entregas = textos, coletas = coletas }
+	return {
+		emojis = emojis,
+		coletas = coletas,
+		formatar = function(v: number): string
+			return Economia.formatar(v, DadosBrasil.simbolo)
+		end,
+	}
 end
 
 local function aplicarNaTela(estado: any)
