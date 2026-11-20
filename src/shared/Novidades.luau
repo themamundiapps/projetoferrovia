@@ -7,6 +7,22 @@ export type Novidade = { data: string, titulo: Texto, texto: Texto }
 
 local Novidades: { Novidade } = {
 	{
+		data = "2026-11-20",
+		titulo = { pt = "Ranking do servidor", en = "Server leaderboard" },
+		texto = {
+			pt = "No canto da tela, quem está no servidor com você: foto, companhia e quanto dinheiro cada um tem.",
+			en = "In the corner of the screen, everyone on your server: picture, company and how much money each one has.",
+		},
+	},
+	{
+		data = "2026-11-20",
+		titulo = { pt = "Trens levam a carga", en = "Trains carry the cargo" },
+		texto = {
+			pt = "Os trens pegam o café, os grãos e o minério das cidades e levam até o começo da linha. Linhas da mesma cor ganharam textura.",
+			en = "Trains pick up coffee, grain and ore from the cities and carry it to the start of the line. Lines of the same color got a texture.",
+		},
+	},
+	{
 		data = "2026-11-19",
 		titulo = { pt = "Som e trilha sonora", en = "Sound and soundtrack" },
 		texto = {

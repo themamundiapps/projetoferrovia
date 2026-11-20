@@ -26,6 +26,7 @@ local Ficha = require(script:WaitForChild("Ficha"))
 local Som = require(script:WaitForChild("Som"))
 local Inicio = require(script:WaitForChild("Inicio"))
 local Vinheta = require(script:WaitForChild("Vinheta"))
+local Placar = require(script:WaitForChild("Placar"))
 local RunService = game:GetService("RunService")
 
 -- nomes das eras, das cargas e dos níveis de estação no idioma do jogador
@@ -138,6 +139,7 @@ local menu: any = nil
 local tutorial: any = nil
 local decisao: any = nil
 local ficha: any = nil
+local placar: any = nil
 local ajustesSalvos: { [string]: boolean } = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 local eraAtual: string? = nil
 local ultimoEstado: any = nil
@@ -314,6 +316,7 @@ local function montar(eraId: string)
 		end
 		table.clear(conexoesTela)
 		ui:destruir()
+		placar:destruir()
 		menu:destruir()
 		tutorial:destruir()
 		decisao:destruir()
@@ -353,6 +356,11 @@ local function montar(eraId: string)
 	tutorial = Tutorial.new(telaUI, era, DadosBrasil)
 	decisao = Decisao.new(telaUI, era, DadosBrasil)
 	ficha = Ficha.new(telaUI, era, DadosBrasil)
+	-- ranking dos jogadores do servidor (canto de cima à direita); some quando o painel do trecho abre ali
+	placar = Placar.new(telaUI, era, DadosBrasil.simbolo)
+	table.insert(conexoesTela, ui.painel:GetPropertyChangedSignal("Visible"):Connect(function()
+		placar:esconder(ui.painel.Visible)
+	end))
 	menu.ajustes = ajustesSalvos
 	for chave, valor in ajustesSalvos do
 		mapa:definirAjuste(chave, valor)

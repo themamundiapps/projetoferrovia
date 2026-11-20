@@ -327,6 +327,10 @@ local function atualizarPlacar(s: Sessao, renda: number?)
 	if nivel then
 		nivel.Value = (Economia.nivel(e))
 	end
+	-- para o ranking visual do cliente (Placar): números crus em atributos do jogador
+	jogador:SetAttribute("Dinheiro", math.floor(e.dinheiro))
+	jogador:SetAttribute("Nivel", (Economia.nivel(e)))
+	jogador:SetAttribute("Companhia", e.nomeCompanhia or "")
 	local rendaTxt = pasta:FindFirstChild("Renda/s") :: StringValue?
 	if rendaTxt and renda then
 		local dados = MAPAS[s.mapaAtual]
