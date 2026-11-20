@@ -1527,6 +1527,33 @@ function Menu._abaCompanhia(self: Menu)
 	end)
 	est:texto("fraco", Idioma.T("companhia_dica_nome"), r, 34)
 
+	-- ranking de quem está neste servidor (o placar "leaderstats" que o servidor mantém)
+	est:divisor(r, 35)
+	est:texto("subtitulo", `{Emojis.nivel} Ranking do servidor`, r, 36)
+	local lista = {}
+	for _, j in game:GetService("Players"):GetPlayers() do
+		local pasta = j:FindFirstChild("leaderstats")
+		local nivelJ = pasta and pasta:FindFirstChild("Nível") :: IntValue?
+		local rendaJ = pasta and pasta:FindFirstChild("Renda/s") :: StringValue?
+		table.insert(lista, {
+			nome = j.DisplayName,
+			nivel = if nivelJ then nivelJ.Value else 0,
+			renda = if rendaJ then rendaJ.Value else "",
+			eu = j == game:GetService("Players").LocalPlayer,
+		})
+	end
+	table.sort(lista, function(a, b)
+		return a.nivel > b.nivel
+	end)
+	local linhasRanking = {}
+	for i = 1, math.min(10, #lista) do
+		local item = lista[i]
+		local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
+		local renda = if item.renda ~= "" then ` · {item.renda}/s` else ""
+		table.insert(linhasRanking, `{i}. {nome} · nível {item.nivel}{renda}`)
+	end
+	est:texto("corpo", table.concat(linhasRanking, "\n"), r, 37)
+
 	-- medalhas
 	local ganhas = estado.medalhas or {}
 	local nGanhas = 0

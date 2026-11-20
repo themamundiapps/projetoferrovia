@@ -69,6 +69,9 @@ task.spawn(function()
 end)
 pcall(function()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+	-- a lista de jogadores do Roblox cobriria a barra de cima; o ranking do servidor fica no menu
+	-- inicial e na aba Companhia (os dados vêm do mesmo placar "leaderstats")
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
 end)
 
 local tela = Instance.new("ScreenGui")
