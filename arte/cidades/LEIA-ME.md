@@ -12,7 +12,7 @@ as outras usam uma das 8 paisagens genéricas. Esta lista sai de `tools/dados/br
 - O nome do arquivo é o da lista, em minúsculas e sem acento.
 - Qualquer outra cidade pode ganhar imagem própria: salve `<id da cidade>.png` aqui (os ids estão no `brasil.json`) e avise, para a imagem ser enviada ao Roblox.
 
-## Cidades grandes (25 imagens; as 9 marcadas com * ainda faltam)
+## Cidades grandes (25 imagens; as marcadas com * ainda faltam)
 
 | Arquivo | Cidade | Porte |
 |---|---|---|
@@ -23,13 +23,13 @@ as outras usam uma das 8 paisagens genéricas. Esta lista sai de `tools/dados/br
 | `porto_alegre.png` | Porto Alegre (RS) | 4 |
 | `recife.png` | Recife (PE) | 4 |
 | `salvador.png` | Salvador (BA) | 4 |
-| `belem.png` * | Belém (PA) | 4 |
-| `brasilia.png` * | Brasília (DF): na Era do Vapor, a Missão Cruls (1892) | 4 |
-| `fortaleza.png` * | Fortaleza (CE) | 4 |
-| `manaus.png` * | Manaus (AM) | 4 |
+| `belem.png` | Belém (PA) | 4 |
+| `brasilia.png` | Brasília (DF): na Era do Vapor, a Missão Cruls (1892) | 4 |
+| `fortaleza.png` | Fortaleza (CE) | 4 |
+| `manaus.png` | Manaus (AM) | 4 |
 | `campo_grande.png` * | Campo Grande (MS) | 3 |
 | `florianopolis.png` * | Florianópolis (SC) | 3 |
-| `maceio.png` * | Maceió (AL) | 3 |
+| `maceio.png` | Maceió (AL) | 3 |
 | `natal.png` * | Natal (RN) | 3 |
 | `campinas.png` | Campinas (SP) | 3 |
 | `campo_grande.png` | Campo Grande (MS) | 3 |
