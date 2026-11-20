@@ -57,6 +57,8 @@ type Estacao = {
 	nivel: number,
 	rotulo: TextLabel,
 	selo: TextLabel?, -- ☕/⛏️ das cidades produtoras
+	seloConectado: boolean?, -- a produtora tem caminho até um porto (selo forte)
+	seloAte: number?, -- selo escondido até este instante (a carga acabou de embarcar num trem)
 	placa: ImageLabel?, -- cartucho atrás do nome (capitais e metrópoles, com o kit da era)
 	folgaPlaca: number, -- distância do começo da placa até o nome
 	apagada: boolean, -- cidade que só aparece em projetos ainda não estudados
@@ -72,12 +74,14 @@ type Trilha = { pontos: { Vector2 }, ids: { string }, acumulado: { number }, tot
 -- dinheiro de cada porto (o frete chega e é pago lá) e o selo da carga de cada produtora.
 export type Frete = {
 	arestas: { [string]: { string } },
+	emojis: { [string]: string }, -- emoji de cada carga
 	entregas: { [string]: { texto: string } },
 	coletas: { [string]: { carga: string, texto: string } },
 }
--- Um trem desenhado: locomotiva + vagões, que seguem a curva da trilha.
--- aresta: trecho (entre estações) em que a locomotiva está, no sentido em que anda; carga: o que os vagões levam nele.
-type Trem = { carros: { Frame }, trilha: Trilha, fase: number, aresta: string?, carga: { string }? }
+-- Um trem desenhado (carros: a locomotiva e os vagões, se houver, que seguem a curva da trilha).
+-- aresta: trecho (entre estações) em que a locomotiva está, no sentido em que anda; carga: o que o trem leva nele,
+-- mostrado como emoji em cima do trem.
+type Trem = { carros: { Frame }, emoji: TextLabel, trilha: Trilha, fase: number, aresta: string?, carga: { string }? }
 
 type RotuloMapa = {
 	pos: Vector2,
@@ -136,6 +140,8 @@ export type MapaView = typeof(setmetatable(
 local ZOOM_PONTO = { [5] = 0, [4] = 0, [3] = 0.5, [2] = 0.8, [1] = 1.1 }
 -- Avisos de frete (porto e produtora): só com o mapa perto o bastante, e no máximo um a cada tantos segundos por cidade.
 local ZOOM_AVISO = 0.9
+-- Emoji da carga em cima dos trens: só com o mapa perto o bastante (no país inteiro vira poluição).
+local ZOOM_EMOJI = 0.7
 local INTERVALO_AVISO = 4 -- segundos (o valor do aviso é o frete desse intervalo)
 -- Zoom mínimo para mostrar o nome da estação, por porte (5 = metrópole, 1 = vila).
 local ZOOM_ROTULO = { [5] = 0, [4] = 0.8, [3] = 1.6, [2] = 2.6, [1] = 4 }
@@ -161,18 +167,10 @@ local Z = {
 }
 -- No máximo este tanto de trens desenhados por linha (a frota pode ser maior).
 local MAX_TRENS_VISIVEIS = 8
--- Vagões atrás de cada locomotiva.
-local VAGOES = 2
--- Cor do vagão carregado, por carga (vagão vazio fica na cor do painel).
-local COR_CARGA: { [string]: Color3 } = {
-	cafe = Color3.fromRGB(120, 72, 40),
-	minerio = Color3.fromRGB(168, 70, 46),
-	graos = Color3.fromRGB(226, 178, 52),
-	acucar = Color3.fromRGB(240, 236, 222),
-	madeira = Color3.fromRGB(92, 120, 54),
-	gado = Color3.fromRGB(196, 140, 90),
-	borracha = Color3.fromRGB(60, 60, 64),
-}
+-- Vagões atrás de cada locomotiva (0: só a locomotiva; a carga aparece como emoji em cima do trem).
+local VAGOES = 0
+-- Por quanto tempo o selo da produtora some quando a carga embarca num trem.
+local SELO_SUMIDO = 3
 
 -- Cor e camada de cada tipo de tile.
 local function estiloTile(camada: string, cores: any, detalhe: boolean): (Color3, number)
@@ -254,7 +252,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		selecionado = nil,
 		foco = nil,
 		interagiu = false,
-		frete = { arestas = {}, entregas = {}, coletas = {} },
+		frete = { arestas = {}, emojis = {}, entregas = {}, coletas = {} },
 		ultimoAviso = {},
 	}, MapaView)
 
@@ -785,7 +783,10 @@ function MapaView.definirCargas(self: MapaView, conectadas: { [string]: boolean 
 	for _, e in self.estacoes do
 		local selo = e.selo
 		if selo then
-			selo.TextTransparency = if conectadas[e.id] then 0 else 0.65
+			e.seloConectado = conectadas[e.id] == true
+			if not (e.seloAte and os.clock() < e.seloAte) then
+				selo.TextTransparency = if e.seloConectado then 0 else 0.65
+			end
 		end
 	end
 end
@@ -828,6 +829,7 @@ function MapaView.definirAjuste(self: MapaView, chave: string, valor: boolean)
 			for _, c in t.carros do
 				c.Visible = valor
 			end
+			t.emoji.Visible = false -- volta no próximo quadro, se o trem estiver levando carga
 		end
 	end
 	self:_layout()
@@ -869,6 +871,7 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 		for _, c in t.carros do
 			c:Destroy()
 		end
+		t.emoji:Destroy()
 	end
 	table.clear(self.trens)
 	local cores = self.era.cores
@@ -941,7 +944,18 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 				novo("UIStroke", { Color = cores.ink, Thickness = if c == 1 then 1.5 else 1.2, Transparency = transp }, carro)
 				table.insert(carros, carro)
 			end
-			table.insert(self.trens, { carros = carros, trilha = trilha, fase = (k - 1) / visiveis * 2 })
+			local emoji = novo("TextLabel", {
+				Name = `carga_{l.id}_{k}`,
+				AnchorPoint = Vector2.new(0.5, 1),
+				Size = UDim2.fromOffset(0, 0),
+				AutomaticSize = Enum.AutomaticSize.XY,
+				BackgroundTransparency = 1,
+				Text = "",
+				TextSize = 16,
+				Visible = false,
+				ZIndex = Z.rotulo,
+			}, self.conteudo) :: TextLabel
+			table.insert(self.trens, { carros = carros, emoji = emoji, trilha = trilha, fase = (k - 1) / visiveis * 2 })
 		end
 	end
 	self:_tamanhoTrens()
@@ -980,6 +994,7 @@ function MapaView._moverTrens(self: MapaView)
 	local faixa = larguraFaixa(z)
 	local altura, loco, vagao, folga = medidasTrem(z)
 	local lado = altura * 0.45
+	local tamanhoEmoji = math.clamp(altura * 2.4, 13, 24)
 	local agora = os.clock()
 	for _, t in self.trens do
 		local tr = t.trilha
@@ -1005,10 +1020,17 @@ function MapaView._moverTrens(self: MapaView)
 			end
 			local centro = d - sentido * tam / 2
 			local p, i, dir = pontoNaTrilha(tr, centro, z, faixa)
+			p += Vector2.new(-dir.Y, dir.X) * (sentido * lado)
 			if k == 1 then
 				iFrente = i
+				-- a carga vai em cima da locomotiva
+				local mostrar = t.emoji.Text ~= "" and z >= ZOOM_EMOJI
+				t.emoji.Visible = mostrar
+				if mostrar then
+					t.emoji.Position = UDim2.fromOffset(p.X, p.Y - altura * 0.6 - 1)
+					t.emoji.TextSize = tamanhoEmoji
+				end
 			end
-			p += Vector2.new(-dir.Y, dir.X) * (sentido * lado)
 			carro.Position = UDim2.fromOffset(p.X, p.Y)
 			carro.Rotation = math.deg(math.atan2(dir.Y, dir.X))
 			d -= sentido * tam
@@ -1023,24 +1045,45 @@ function MapaView._moverTrens(self: MapaView)
 	end
 end
 
--- Pinta os vagões com a carga do trecho em que o trem está.
-function MapaView._pintarVagoes(self: MapaView, t: Trem)
-	local cores = self.era.cores
-	local carga = t.carga
-	for k = 2, #t.carros do
-		local c = if carga and #carga > 0 then carga[(k - 2) % #carga + 1] else nil
-		t.carros[k].BackgroundColor3 = if c then COR_CARGA[c] or cores.panel else cores.panel
+-- Mostra a carga do trem como emoji em cima dele (vazio: sem emoji).
+function MapaView._mostrarCarga(self: MapaView, t: Trem)
+	local partes = {}
+	for _, c in t.carga or {} do
+		local info = (self.frete.emojis :: any)[c]
+		if info and #partes < 2 then
+			table.insert(partes, info)
+		end
+	end
+	t.emoji.Text = table.concat(partes)
+end
+
+-- A carga embarcou num trem: o selo da produtora some por uns segundos e volta.
+function MapaView._esconderSelo(self: MapaView, id: string, agora: number)
+	for _, e in self.estacoes do
+		if e.id == id and e.selo then
+			e.seloAte = agora + SELO_SUMIDO
+			e.selo.TextTransparency = 1
+			local selo = e.selo
+			task.delay(SELO_SUMIDO, function()
+				if selo.Parent and e.seloAte and os.clock() >= e.seloAte - 0.05 then
+					e.seloAte = nil
+					TweenService:Create(selo, TweenInfo.new(0.4), { TextTransparency = if e.seloConectado then 0 else 0.65 }):Play()
+				end
+			end)
+			return
+		end
 	end
 end
 
--- A locomotiva entrou num trecho novo, saindo da estação "de": descarrega no porto, carrega na produtora
--- e pinta os vagões com a carga que segue por esse trecho.
+-- A locomotiva entrou num trecho novo, saindo da estação "de". O trem leva a carga que segue por esse trecho
+-- rumo ao porto: embarca na produtora (o selo dela some e o emoji aparece em cima do trem), passa de uma linha
+-- para outra nos entroncamentos e desembarca no porto, onde sobe o frete pago.
 function MapaView._trocarAresta(self: MapaView, t: Trem, aresta: string, de: string, agora: number)
 	local anterior = t.aresta
 	local cargaAntes = t.carga
 	local carga = self.frete.arestas[aresta]
 	t.aresta, t.carga = aresta, carga
-	self:_pintarVagoes(t)
+	self:_mostrarCarga(t)
 	if anterior then
 		local entrega = self.frete.entregas[de]
 		if entrega and cargaAntes and #cargaAntes > 0 then
@@ -1048,18 +1091,23 @@ function MapaView._trocarAresta(self: MapaView, t: Trem, aresta: string, de: str
 		end
 		local coleta = self.frete.coletas[de]
 		if coleta and carga and table.find(carga, coleta.carga) then
-			self:_avisoMapa(de, coleta.texto, self.era.cores.ink, 16, agora)
+			self:_esconderSelo(de, agora)
+			if t.emoji.Visible then
+				-- o emoji "pula" para dentro do trem
+				t.emoji.TextTransparency = 1
+				TweenService:Create(t.emoji, TweenInfo.new(0.35), { TextTransparency = 0 }):Play()
+			end
 		end
 	end
 end
 
--- Frete atual (ver o tipo Frete): repinta os vagões de quem já está andando.
+-- Frete atual (ver o tipo Frete): atualiza a carga de quem já está andando.
 function MapaView.definirFrete(self: MapaView, frete: Frete)
 	self.frete = frete
 	for _, t in self.trens do
 		if t.aresta then
 			t.carga = frete.arestas[t.aresta]
-			self:_pintarVagoes(t)
+			self:_mostrarCarga(t)
 		end
 	end
 end

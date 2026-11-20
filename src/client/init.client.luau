@@ -185,8 +185,8 @@ local function trensDoMapa(estado: any): { any }
 end
 
 -- Frete para o mapa: cada produtora ligada a um porto manda a carga pelo caminho mais curto (em trechos)
--- até o porto mais perto. Os vagões ganham a cor da carga nos trechos desse caminho, a produtora mostra a
--- carga embarcando e o porto mostra o frete pago (o valor de cada aviso é o que rende em 4 s).
+-- até o porto mais perto. Os trens levam o emoji da carga nos trechos desse caminho (o selo da produtora
+-- some quando a carga embarca) e o porto mostra o frete pago (o valor de cada aviso é o que rende em 4 s).
 local function freteDoMapa(estado: any): any
 	local vizinhos: { [string]: { string } } = {}
 	for _, linha in DadosBrasil.linhas do
@@ -250,7 +250,11 @@ local function freteDoMapa(estado: any): any
 	for porto, e in entregas do
 		textos[porto] = { texto = `{table.concat(e.emojis)} +{Economia.formatar(e.valor, DadosBrasil.simbolo)}` }
 	end
-	return { arestas = arestas, entregas = textos, coletas = coletas }
+	local emojis: { [string]: string } = {}
+	for id, c in Economia.CARGAS :: any do
+		emojis[id] = (Emojis :: any)[c.emoji] or ""
+	end
+	return { arestas = arestas, emojis = emojis, entregas = textos, coletas = coletas }
 end
 
 local function aplicarNaTela(estado: any)
