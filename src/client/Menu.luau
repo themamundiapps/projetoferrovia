@@ -3,6 +3,8 @@
 -- e os botões de zoom.
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local MarketplaceService = game:GetService("MarketplaceService")
+local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -18,6 +20,7 @@ local Creditos = require(Shared:WaitForChild("Creditos"))
 local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
+local Loja = require(Shared:WaitForChild("Loja"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
 local novo = Estilo.novo
@@ -35,6 +38,7 @@ local ABAS = {
 	{ id = "banco", nome = { pt = "Banco", en = "Bank" }, emoji = "banco" },
 	{ id = "tarifas", nome = { pt = "Tarifas", en = "Fares" }, emoji = "tarifas" },
 	{ id = "companhia", nome = { pt = "Companhia", en = "Company" }, emoji = "companhia" },
+	{ id = "loja", nome = { pt = "Loja", en = "Shop" }, emoji = "loja" },
 	{ id = "ajustes", nome = { pt = "Ajustes", en = "Settings" }, emoji = "configuracoes" },
 }
 
@@ -304,6 +308,9 @@ function Menu._assinatura(self: Menu, estado: any): string
 	-- banco: redesenha quando pega/quita empréstimo ou quando muda a classe de crédito
 	table.insert(metas, if estado.emprestimo then estado.emprestimo.em else 0)
 	table.insert(metas, Banco.classe(Banco.nota(estado, Economia.satisfacao(estado, self.dados))).id)
+	-- loja: redesenha quando compra um passe, liga/desliga o gerente ou guarda um estudo
+	local lj = estado.loja or {}
+	table.insert(metas, `{lj.dobro}{lj.estudos}{lj.offline}{lj.gerente}{lj.gerenteLigado}{lj.pinturas}{lj.estudosGuardados}`)
 	-- tarifas: redesenha quando muda um preço ou um serviço
 	local tf = estado.tarifas or Tarifas.padrao()
 	table.insert(metas, table.concat(tf.precos, ","))
@@ -469,6 +476,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaTarifas()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
+	elseif self.aba == "loja" then
+		self:_abaLoja()
 	else
 		self:_abaAjustes()
 	end
@@ -576,6 +585,31 @@ end
 
 -- ---------------------------------------------------------------- aba Gabinete de Projetos
 
+-- Preço em Robux de cada passe/produto, pedido ao Roblox uma vez por sessão (passe/produto -> preço).
+local precosLoja: { [string]: number } = {}
+local function precoRoblox(chave: string, id: number, tipo: Enum.InfoType, aoChegar: () -> ())
+	if id == 0 or precosLoja[chave] then
+		return
+	end
+	precosLoja[chave] = -1 -- pedindo
+	task.spawn(function()
+		local ok, info = pcall(function()
+			return MarketplaceService:GetProductInfo(id, tipo)
+		end)
+		if ok and info and type(info.PriceInRobux) == "number" then
+			precosLoja[chave] = info.PriceInRobux
+			aoChegar()
+		else
+			precosLoja[chave] = nil
+		end
+	end)
+end
+
+local function textoPreco(chave: string, referencia: number): string
+	local p = precosLoja[chave]
+	return `{if p and p > 0 then p else referencia} Robux`
+end
+
 function Menu._abaProjetos(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	est:titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), r, 1)
@@ -651,23 +685,42 @@ function Menu._abaProjetos(self: Menu)
 			bAcel.Activated:Connect(function()
 				self.aoAgir:Fire("acelerar", { projeto = p.id })
 			end)
+			local bRobux = est:botao("discreto", "", cartao, 7)
+			bRobux.Name = "BtnConcluirRobux"
+			bRobux.ZIndex = 33
+			bRobux.Visible = false
+			bRobux.Activated:Connect(function()
+				local id = bRobux:GetAttribute("Produto")
+				if type(id) == "number" and id ~= 0 then
+					MarketplaceService:PromptProductPurchase(Players.LocalPlayer, id)
+				end
+			end)
 			local function atualizar()
 				local e = self.estado
 				local _, restante = Economia.pesquisaAtual(e)
-				barra.Size = UDim2.fromScale(math.clamp(1 - restante / p.segundos, 0, 1), 1)
+				barra.Size = UDim2.fromScale(math.clamp(1 - restante / Economia.duracaoProjeto(e, p), 0, 1), 1)
 				lTempo.Text = L(`{Emojis.relogio} Em estudo · faltam <b>{relogio(restante)}</b>`, `{Emojis.relogio} Being studied · <b>{relogio(restante)}</b> left`)
 				local custo = Economia.custoAcelerar(p, restante)
 				bAcel.Text = L(`{Emojis.velocidade} Acelerar agora · {Economia.formatar(custo, simbolo)}`, `{Emojis.velocidade} Finish now · {Economia.formatar(custo, simbolo)}`)
 				est:habilitar(bAcel, e.dinheiro >= custo)
+				-- versão em Robux (o preço depende do tempo que falta)
+				local prod = Loja.produtoEstudo(restante)
+				bRobux.Visible = prod ~= nil and prod.produtoId ~= 0
+				if prod and prod.produtoId ~= 0 then
+					precoRoblox("produto_" .. prod.id, prod.produtoId, Enum.InfoType.Product, function() end)
+					local preco = textoPreco("produto_" .. prod.id, prod.preco)
+					bRobux.Text = L(`{Emojis.gabinete} Concluir agora · {preco}`, `{Emojis.gabinete} Finish now · {preco}`)
+					bRobux:SetAttribute("Produto", prod.produtoId)
+				end
 			end
 			atualizar()
 			table.insert(self.vivos, atualizar)
 		elseif situacao == "bloqueado" then
 			local _, motivo = Economia.requisitosProjeto(estado, dados, p)
 			txt("corpo", `{Emojis.cadeado} {motivo or "Ainda fechado."}`, 4)
-			txt("fraco", L(`Estudo: {Economia.formatar(p.custo, simbolo)} · {relogio(p.segundos)}`, `Study: {Economia.formatar(p.custo, simbolo)} · {relogio(p.segundos)}`), 5)
+			txt("fraco", L(`Estudo: {Economia.formatar(p.custo, simbolo)} · {relogio(Economia.duracaoProjeto(estado, p))}`, `Study: {Economia.formatar(p.custo, simbolo)} · {relogio(Economia.duracaoProjeto(estado, p))}`), 5)
 		else
-			local b = est:botao("principal", L(`{Emojis.gabinete} Estudar · {Economia.formatar(p.custo, simbolo)} · {relogio(p.segundos)}`, `{Emojis.gabinete} Study · {Economia.formatar(p.custo, simbolo)} · {relogio(p.segundos)}`), cartao, 4)
+			local b = est:botao("principal", L(`{Emojis.gabinete} Estudar · {Economia.formatar(p.custo, simbolo)} · {relogio(Economia.duracaoProjeto(estado, p))}`, `{Emojis.gabinete} Study · {Economia.formatar(p.custo, simbolo)} · {relogio(Economia.duracaoProjeto(estado, p))}`), cartao, 4)
 			b.Name = "BtnEstudar_" .. p.id
 			b.ZIndex = 33
 			local lMotivo = txt("fraco", "", 5)
@@ -1531,32 +1584,32 @@ function Menu._abaCompanhia(self: Menu)
 	end)
 	est:texto("fraco", Idioma.T("companhia_dica_nome"), r, 34)
 
-	-- ranking de quem está neste servidor (o placar "leaderstats" que o servidor mantém)
+	-- ranking de quem está neste servidor: nível e linhas completas (o mesmo critério do placar do canto)
 	est:divisor(r, 35)
 	est:texto("subtitulo", L(`{Emojis.nivel} Ranking do servidor`, `{Emojis.nivel} Server leaderboard`), r, 36)
 	local lista = {}
-	for _, j in game:GetService("Players"):GetPlayers() do
-		local pasta = j:FindFirstChild("leaderstats")
-		local nivelJ = pasta and pasta:FindFirstChild("Nível") :: IntValue?
-		local rendaJ = pasta and pasta:FindFirstChild("Renda/s") :: StringValue?
+	for _, j in Players:GetPlayers() do
 		table.insert(lista, {
-			nome = j.DisplayName,
-			nivel = if nivelJ then nivelJ.Value else 0,
-			renda = if rendaJ then rendaJ.Value else "",
-			eu = j == game:GetService("Players").LocalPlayer,
+			nome = j.DisplayName .. (if j:GetAttribute("Pinturas") == true then " ✦" else ""),
+			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
+			linhas = tonumber(j:GetAttribute("Linhas")) or 0,
+			eu = j == Players.LocalPlayer,
 		})
 	end
 	table.sort(lista, function(a, b)
-		return a.nivel > b.nivel
+		if a.nivel ~= b.nivel then
+			return a.nivel > b.nivel
+		end
+		return a.linhas > b.linhas
 	end)
 	local linhasRanking = {}
 	for i = 1, math.min(10, #lista) do
 		local item = lista[i]
 		local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
-		local renda = if item.renda ~= "" then ` · {item.renda}/s` else ""
-		table.insert(linhasRanking, L(`{i}. {nome} · nível {item.nivel}{renda}`, `{i}. {nome} · level {item.nivel}{renda}`))
+		table.insert(linhasRanking, L(`{i}. {nome} · nível {item.nivel} · {item.linhas} linhas completas`, `{i}. {nome} · level {item.nivel} · {item.linhas} complete lines`))
 	end
 	est:texto("corpo", table.concat(linhasRanking, "\n"), r, 37)
+	est:texto("fraco", L("O ranking conta o nível e as linhas completas, que vêm de jogar. Dinheiro não entra.", "The leaderboard counts level and complete lines, which come from playing. Money doesn't count."), r, 38)
 
 	-- medalhas
 	local ganhas = estado.medalhas or {}
@@ -1572,6 +1625,107 @@ function Menu._abaCompanhia(self: Menu)
 		local l = est:texto(if tem then "corpo" else "fraco", `{emoji} <b>{m.nome}</b> · {m.descricao}`, r, 41 + i)
 		l.Name = "Medalha_" .. m.id
 	end
+end
+
+-- ---------------------------------------------------------------- aba Loja (Robux; ver Loja.luau)
+
+function Menu._abaLoja(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	est:titulo(L(`{Emojis.loja} Loja`, `{Emojis.loja} Shop`), r, 1)
+	est:texto("fraco", L(
+		"Compras com Robux para acelerar a companhia. Nada aqui muda os rankings: eles contam o nível e as linhas completas, que vêm de jogar.",
+		"Robux purchases to speed up your company. Nothing here changes the leaderboards: they count level and complete lines, which come from playing."
+	), r, 2)
+	if not estado then
+		return
+	end
+	local loja = estado.loja or {}
+	local simbolo = dados.simbolo
+	local jogador = Players.LocalPlayer
+	local function redesenhar()
+		if self.aba == "loja" then
+			self:_redesenhar()
+		end
+	end
+
+	-- passes (compra única)
+	est:texto("subtitulo", L("Passes (compra única)", "Passes (one-time)"), r, 10)
+	for i, p in Loja.PASSES do
+		local cartao, txt = novoCartao(est, r, "Passe_" .. p.id, 10 + i, loja[p.id] == true)
+		txt("subtitulo", `{(Emojis :: any)[p.emoji] or ""} {Idioma.t(p.nome)}`, 1)
+		txt("fraco", Idioma.t(p.descricao), 2)
+		if loja[p.id] then
+			local l = txt("corpo", L(`{Emojis.confirmar} Você já tem este passe.`, `{Emojis.confirmar} You own this pass.`), 3)
+			l.TextColor3 = est.c.positive
+			if p.id == "gerente" then
+				local ligado = loja.gerenteLigado ~= false
+				local b = est:botao("discreto", if ligado then L(`{Emojis.confirmar} Gerente ligado (toque para desligar)`, `{Emojis.confirmar} Manager on (tap to turn off)`)
+					else L(`{Emojis.fechar} Gerente desligado (toque para ligar)`, `{Emojis.fechar} Manager off (tap to turn on)`), cartao, 4)
+				b.ZIndex = 33
+				b.Activated:Connect(function()
+					self.aoAgir:Fire("gerente", { ligado = not ligado })
+				end)
+			end
+		elseif p.passId == 0 then
+			txt("fraco", L(`{Emojis.relogio} Em breve`, `{Emojis.relogio} Coming soon`), 3)
+		else
+			precoRoblox("passe_" .. p.id, p.passId, Enum.InfoType.GamePass, redesenhar)
+			local b = est:botao("principal", textoPreco("passe_" .. p.id, p.preco), cartao, 3)
+			b.Name = "Comprar_" .. p.id
+			b.ZIndex = 33
+			b.Activated:Connect(function()
+				MarketplaceService:PromptGamePassPurchase(jogador, p.passId)
+			end)
+		end
+	end
+
+	-- produtos (compra repetida)
+	est:divisor(r, 30)
+	est:texto("subtitulo", L("Pacotes e impulsos", "Packs and boosts"), r, 31)
+	local ordem = 31
+	for _, p in Loja.PRODUTOS do
+		if p.tipo == "estudo" then
+			continue -- "Concluir estudo" fica no Gabinete, ao lado do estudo em andamento
+		end
+		ordem += 1
+		local cartao, txt = novoCartao(est, r, "Produto_" .. p.id, ordem)
+		txt("subtitulo", `{(Emojis :: any)[p.emoji] or ""} {Idioma.t(p.nome)}`, 1)
+		txt("fraco", Idioma.t(p.descricao), 2)
+		if p.tipo == "dinheiro" then
+			local lValor = txt("corpo", "", 3)
+			local function atualizar()
+				local b2 = Economia.balanco(self.estado, dados, true).lucro
+				lValor.Text = L(`Hoje: <b>+ {Economia.formatar(Loja.valorPacote(p, b2), simbolo)}</b>`, `Right now: <b>+ {Economia.formatar(Loja.valorPacote(p, b2), simbolo)}</b>`)
+			end
+			atualizar()
+			table.insert(self.vivos, atualizar)
+		elseif p.tipo == "impulso" then
+			local lTempo = txt("corpo", "", 3)
+			local function atualizar()
+				local ate = ((self.estado or {}).loja or {}).impulsoAte or 0
+				local resta = ate - Economia.relogio()
+				lTempo.Text = if resta > 0 then L(`{Emojis.velocidade} Ativo: faltam <b>{relogio(resta)}</b>`, `{Emojis.velocidade} Active: <b>{relogio(resta)}</b> left`) else ""
+				lTempo.Visible = resta > 0
+			end
+			atualizar()
+			table.insert(self.vivos, atualizar)
+		end
+		if p.produtoId == 0 then
+			txt("fraco", L(`{Emojis.relogio} Em breve`, `{Emojis.relogio} Coming soon`), 4)
+		else
+			precoRoblox("produto_" .. p.id, p.produtoId, Enum.InfoType.Product, redesenhar)
+			local b = est:botao("principal", textoPreco("produto_" .. p.id, p.preco), cartao, 4)
+			b.Name = "Comprar_" .. p.id
+			b.ZIndex = 33
+			b.Activated:Connect(function()
+				MarketplaceService:PromptProductPurchase(jogador, p.produtoId)
+			end)
+		end
+	end
+	est:texto("fraco", L(
+		"Os pacotes usam a renda das suas linhas sem o Lucro em Dobro e sem impulso, então o valor é sempre o que aparece aqui.",
+		"Packs use your lines' income without Double Profit or boosts, so the amount is always what you see here."
+	), r, 60)
 end
 
 -- ---------------------------------------------------------------- aba Ajustes

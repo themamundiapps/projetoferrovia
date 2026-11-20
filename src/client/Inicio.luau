@@ -244,57 +244,142 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		local l = est:texto("corpo", `<b>{data} · {Idioma.t(nov.titulo)}</b>  {Idioma.t(nov.texto)}`, caixa, i)
 		l.TextSize = 14
 	end
-	-- ranking de quem está neste servidor (vem do placar "leaderstats" que o servidor mantém)
+	-- ranking global (todos os servidores): nível e linhas completas, com a foto de cada jogador.
+	-- O servidor guarda o top 10 num OrderedDataStore e manda pelo Remotes.Ranking.
+	local CORES_PODIO = { Color3.fromRGB(222, 178, 58), Color3.fromRGB(178, 184, 192), Color3.fromRGB(186, 122, 72) }
 	local ranking = est:cartao({
 		Name = "Ranking",
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -24 - Estilo.INSET_DIR, 0, 24),
-		Size = UDim2.fromOffset(250, 0),
+		Size = UDim2.fromOffset(290, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 	}, conteudo)
 	est:lista(ranking, 4)
-	local tituloRanking = est:texto("rotulo", Idioma.maiusculas(L("Neste servidor", "On this server")), ranking, 0)
-	tituloRanking.TextSize = 13
-	local linhasRanking: { TextLabel } = {}
-	for i = 1, 5 do
-		local l = est:texto("corpo", "", ranking, i)
-		l.TextSize = 14
-		l.Visible = false
-		linhasRanking[i] = l
+	local tituloRanking = est:texto("rotulo", `{Emojis.nivel} {Idioma.maiusculas(L("Ranking global", "Global leaderboard"))}`, ranking, 0)
+	tituloRanking.TextSize = 14
+	local avisoRanking = est:texto("fraco", L("Carregando…", "Loading…"), ranking, 1)
+	avisoRanking.TextSize = 13
+	local linhasRanking: { any } = {}
+	local fotos: { [number]: string } = {}
+	for i = 1, 10 do
+		local linha = novo("Frame", {
+			Name = "Linha" .. i,
+			LayoutOrder = 10 + i,
+			Size = UDim2.new(1, 0, 0, 36),
+			BackgroundColor3 = c.accent,
+			BackgroundTransparency = 1,
+			Visible = false,
+		}, ranking)
+		novo("UICorner", { CornerRadius = UDim.new(0, 6) }, linha)
+		local pos = novo("TextLabel", {
+			AnchorPoint = Vector2.new(0, 0.5),
+			Position = UDim2.new(0, 2, 0.5, 0),
+			Size = UDim2.fromOffset(20, 20),
+			BackgroundColor3 = CORES_PODIO[i] or c.panel,
+			BackgroundTransparency = if CORES_PODIO[i] then 0 else 1,
+			Text = tostring(i),
+			FontFace = era.fontes.display,
+			TextSize = 13,
+			TextColor3 = if CORES_PODIO[i] then Color3.fromRGB(40, 28, 18) else c.inkMuted,
+		}, linha)
+		novo("UICorner", { CornerRadius = UDim.new(1, 0) }, pos)
+		local foto = novo("ImageLabel", {
+			Name = "Foto",
+			AnchorPoint = Vector2.new(0, 0.5),
+			Position = UDim2.new(0, 28, 0.5, 0),
+			Size = UDim2.fromOffset(30, 30),
+			BackgroundColor3 = c.rule,
+			Image = "",
+		}, linha)
+		novo("UICorner", { CornerRadius = UDim.new(1, 0) }, foto)
+		novo("UIStroke", { Color = c.ink, Thickness = 1.5, Transparency = 0.3 }, foto)
+		local nomeL = novo("TextLabel", {
+			Position = UDim2.fromOffset(66, 0),
+			Size = UDim2.new(1, -66 - 70, 1, 0),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Bold),
+			TextSize = 14,
+			TextColor3 = c.ink,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextTruncate = Enum.TextTruncate.AtEnd,
+		}, linha)
+		local nivelL = novo("TextLabel", {
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -4, 0, 2),
+			Size = UDim2.fromOffset(68, 17),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Bold),
+			TextSize = 14,
+			TextColor3 = c.accent,
+			TextXAlignment = Enum.TextXAlignment.Right,
+		}, linha)
+		local linhasL = novo("TextLabel", {
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -4, 0, 19),
+			Size = UDim2.fromOffset(68, 14),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = era.fontes.body,
+			TextSize = 12,
+			TextColor3 = c.inkMuted,
+			TextXAlignment = Enum.TextXAlignment.Right,
+		}, linha)
+		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, nivel = nivelL, linhas = linhasL }
 	end
+	local remotes = ReplicatedStorage:WaitForChild("Remotes")
 	local function atualizarRanking()
-		local lista = {}
-		for _, j in Players:GetPlayers() do
-			local pasta = j:FindFirstChild("leaderstats")
-			local nivelJ = pasta and pasta:FindFirstChild("Nível") :: IntValue?
-			local rendaJ = pasta and pasta:FindFirstChild("Renda/s") :: StringValue?
-			table.insert(lista, {
-				nome = j.DisplayName,
-				nivel = if nivelJ then nivelJ.Value else 0,
-				renda = if rendaJ then rendaJ.Value else "",
-				eu = j == Players.LocalPlayer,
-			})
+		local remote = remotes:FindFirstChild("Ranking") :: RemoteFunction?
+		if not remote then
+			return
 		end
-		table.sort(lista, function(a, b)
-			return a.nivel > b.nivel
+		local ok, r = pcall(function()
+			return remote:InvokeServer()
 		end)
+		if not ok or type(r) ~= "table" or not conteudo.Parent then
+			return
+		end
+		local lista = r.lista or {}
+		avisoRanking.Visible = #lista == 0
+		avisoRanking.Text = if r.disponivel == false
+			then L("O ranking global aparece no jogo publicado.", "The global leaderboard shows up in the published game.")
+			else L("Ainda ninguém no ranking. Ele atualiza a cada poucos minutos.", "No one on the leaderboard yet. It updates every few minutes.")
 		for i, l in linhasRanking do
 			local item = lista[i]
-			l.Visible = item ~= nil
+			l.frame.Visible = item ~= nil
 			if item then
-				local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
-				local renda = if item.renda ~= "" then `  ·  {item.renda}/s` else ""
-				l.Text = `{i}. {nome}  ·  {L("nível", "level")} {item.nivel}{renda}`
+				local eu = item.userId == (jogador and jogador.UserId)
+				l.frame.BackgroundTransparency = if eu then 0.8 else 1
+				l.nome.Text = tostring(item.nome)
+				l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
+				l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)
+				local id = item.userId
+				if fotos[id] then
+					l.foto.Image = fotos[id]
+				else
+					l.foto.Image = ""
+					task.spawn(function()
+						local okFoto, img = pcall(function()
+							return Players:GetUserThumbnailAsync(id, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+						end)
+						if okFoto and img then
+							fotos[id] = img
+							if l.frame.Parent and lista[i] == item then
+								l.foto.Image = img
+							end
+						end
+					end)
+				end
 			end
 		end
 	end
-	atualizarRanking()
 	task.spawn(function()
 		while conteudo.Parent do
-			task.wait(2)
-			if self.aberto and conteudo.Parent then
+			if self.aberto then
 				atualizarRanking()
 			end
+			task.wait(30)
 		end
 	end)
 

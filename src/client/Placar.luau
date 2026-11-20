@@ -1,15 +1,15 @@
 --!strict
--- Ranking dos jogadores deste servidor, no canto de cima à direita: foto, nome, companhia e dinheiro,
--- do mais rico para o mais pobre. Clicar no título recolhe e abre. Some quando o painel do trecho
--- (que abre no mesmo canto) está aberto.
+-- Ranking dos jogadores deste servidor, no canto de cima à direita: foto, nome, companhia, nível e
+-- linhas completas. Ranking justo: ordena pelo nível (e linhas completas no desempate), que vêm de
+-- jogar; o dinheiro não entra porque dá para comprar na loja. Clicar no título recolhe e abre. Some
+-- quando o painel do trecho (que abre no mesmo canto) está aberto.
 -- Os números vêm dos atributos que o servidor põe em cada jogador (Jogo.atualizarPlacar):
--- Dinheiro, Nivel e Companhia (nome já filtrado pelo Roblox).
+-- Nivel, Linhas, Companhia (nome já filtrado pelo Roblox) e Pinturas (selo ✦ do passe).
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Economia = require(Shared:WaitForChild("Economia"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
@@ -181,21 +181,34 @@ function Placar.new(tela: ScreenGui, era: any, simbolo: string?): Placar
 			TextTruncate = Enum.TextTruncate.AtEnd,
 			ZIndex = 28,
 		}, linha)
-		local dinheiro = novo("TextLabel", {
-			Name = "Dinheiro",
-			AnchorPoint = Vector2.new(1, 0.5),
-			Position = UDim2.new(1, -4, 0.5, 0),
-			Size = UDim2.fromOffset(76, 20),
+		-- à direita: o nível em destaque e, embaixo, as linhas completas
+		local nivel = novo("TextLabel", {
+			Name = "Nivel",
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -4, 0, 3),
+			Size = UDim2.fromOffset(76, 17),
 			BackgroundTransparency = 1,
 			Text = "",
 			FontFace = Font.new(f.body.Family, Enum.FontWeight.Bold),
 			TextSize = 14,
-			TextColor3 = c.positive,
+			TextColor3 = c.accent,
 			TextXAlignment = Enum.TextXAlignment.Right,
-			TextScaled = false,
 			ZIndex = 28,
 		}, linha)
-		self.linhas[i] = { frame = linha, foto = foto, nome = nome, companhia = companhia, dinheiro = dinheiro, nivel = 0 }
+		local linhasTxt = novo("TextLabel", {
+			Name = "Linhas",
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -4, 0, 20),
+			Size = UDim2.fromOffset(76, 14),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = f.body,
+			TextSize = 12,
+			TextColor3 = c.inkMuted,
+			TextXAlignment = Enum.TextXAlignment.Right,
+			ZIndex = 28,
+		}, linha)
+		self.linhas[i] = { frame = linha, foto = foto, nome = nome, companhia = companhia, nivel = nivel, linhas = linhasTxt }
 	end
 
 	self:atualizar()
@@ -243,14 +256,17 @@ function Placar.atualizar(self: Placar)
 	for _, j in Players:GetPlayers() do
 		table.insert(lista, {
 			jogador = j,
-			dinheiro = tonumber(j:GetAttribute("Dinheiro")) or 0,
+			linhas = tonumber(j:GetAttribute("Linhas")) or 0,
 			companhia = tostring(j:GetAttribute("Companhia") or ""),
 			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
+			pinturas = j:GetAttribute("Pinturas") == true,
 		})
 	end
 	table.sort(lista, function(a, b)
-		if a.dinheiro ~= b.dinheiro then
-			return a.dinheiro > b.dinheiro
+		if a.nivel ~= b.nivel then
+			return a.nivel > b.nivel
+		elseif a.linhas ~= b.linhas then
+			return a.linhas > b.linhas
 		end
 		return a.jogador.UserId < b.jogador.UserId
 	end)
@@ -263,10 +279,10 @@ function Placar.atualizar(self: Placar)
 		local eu = item.jogador == Players.LocalPlayer
 		-- a linha do próprio jogador ganha um fundo leve
 		l.frame.BackgroundTransparency = if eu then 0.8 else 1
-		l.nome.Text = item.jogador.DisplayName
-		local nivel = if item.nivel > 0 then `{L("Nív.", "Lv.")} {item.nivel}` else ""
-		l.companhia.Text = if item.companhia ~= "" then `{item.companhia} · {nivel}` else nivel
-		l.dinheiro.Text = Economia.formatar(item.dinheiro, self.simbolo)
+		l.nome.Text = item.jogador.DisplayName .. (if item.pinturas then " ✦" else "")
+		l.companhia.Text = if item.companhia ~= "" then item.companhia else Idioma.T("companhia_padrao")
+		l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
+		l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)
 		if l.foto:GetAttribute("UserId") ~= item.jogador.UserId then
 			l.foto:SetAttribute("UserId", item.jogador.UserId)
 			self:_foto(l.foto, item.jogador.UserId)

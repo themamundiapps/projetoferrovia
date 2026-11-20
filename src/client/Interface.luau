@@ -529,7 +529,10 @@ function Interface.atualizarEstado(self: Interface, estado: any)
 	self.lblEra.Text = self.era.nome
 	self.lblDinheiro.Text = Economia.formatar(estado.dinheiro, simbolo)
 	if estado.renda >= 0 then
-		self.lblRenda.Text = L(`+ {Economia.formatar(estado.renda, simbolo, true)} por segundo`, `+ {Economia.formatar(estado.renda, simbolo, true)} per second`)
+		-- Lucro em Dobro / Impulso 2x: o multiplicador aparece junto da renda
+		local fator = Economia.fatorLoja(estado)
+		local extra = if fator > 1 then `  {Emojis.velocidade}×{fator}` else ""
+		self.lblRenda.Text = L(`+ {Economia.formatar(estado.renda, simbolo, true)} por segundo{extra}`, `+ {Economia.formatar(estado.renda, simbolo, true)} per second{extra}`)
 		self.lblRenda.TextColor3 = self.coresTopo.verde
 	else
 		-- manutenção maior que a receita

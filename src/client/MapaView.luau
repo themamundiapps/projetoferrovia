@@ -130,6 +130,7 @@ export type MapaView = typeof(setmetatable(
 		foco: { min: Vector2, max: Vector2, margem: number }?,
 		interagiu: boolean,
 		frete: Frete,
+		pinturas: boolean?, -- passe Pinturas Especiais: locomotivas douradas
 		ultimoAviso: { [string]: number },
 	},
 	MapaView
@@ -169,6 +170,8 @@ local Z = {
 local MAX_TRENS_VISIVEIS = 8
 -- Vagões atrás de cada locomotiva (0: só a locomotiva; a carga aparece como emoji em cima do trem).
 local VAGOES = 0
+-- Locomotiva com o passe Pinturas Especiais.
+local COR_DOURADA = Color3.fromRGB(214, 168, 52)
 -- Por quanto tempo o selo da produtora some quando a carga embarca num trem.
 local SELO_SUMIDO = 3
 
@@ -896,7 +899,7 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 	for _, l in lista do
 		table.insert(partes, `{l.id}:{#l.pontos}:{l.n}:{l.situacao}`)
 	end
-	local assinatura = table.concat(partes, "|")
+	local assinatura = table.concat(partes, "|") .. tostring(self.pinturas)
 	if assinatura == self.assinaturaTrens then
 		return
 	end
@@ -968,7 +971,7 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 				local carro = novo("Frame", {
 					Name = `trem_{l.id}_{k}_{c}`,
 					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundColor3 = if c == 1 then (if l.situacao == "lotado" then cores.negative else cores.ink) else cores.panel,
+					BackgroundColor3 = if c == 1 then (if l.situacao == "lotado" then cores.negative elseif self.pinturas then COR_DOURADA else cores.ink) else cores.panel,
 					BackgroundTransparency = transp,
 					BorderSizePixel = 0,
 					Visible = self.mostrarTrens,
