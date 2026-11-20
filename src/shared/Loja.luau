@@ -53,38 +53,38 @@ Loja.PASSES = {
 
 Loja.PRODUTOS = {
 	{
-		id = "mala", produtoId = 0, emoji = "dinheiro", preco = 49, tipo = "dinheiro", horas = 0.5,
+		id = "mala", produtoId = 3733996753, emoji = "dinheiro", preco = 49, tipo = "dinheiro", horas = 0.5,
 		nome = { pt = "Mala de dinheiro", en = "Bag of money" },
 		descricao = { pt = "30 minutos da sua renda atual.", en = "30 minutes of your current income." },
 	},
 	{
-		id = "cofre", produtoId = 0, emoji = "banco", preco = 199, tipo = "dinheiro", horas = 3,
+		id = "cofre", produtoId = 3733996885, emoji = "banco", preco = 199, tipo = "dinheiro", horas = 3,
 		nome = { pt = "Cofre", en = "Safe" },
 		descricao = { pt = "3 horas da sua renda atual.", en = "3 hours of your current income." },
 	},
 	{
-		id = "banco", produtoId = 0, emoji = "prestigio", preco = 599, tipo = "dinheiro", horas = 12,
+		id = "banco", produtoId = 3733996814, emoji = "prestigio", preco = 599, tipo = "dinheiro", horas = 12,
 		nome = { pt = "Banco inteiro", en = "Whole bank" },
 		descricao = { pt = "12 horas da sua renda atual.", en = "12 hours of your current income." },
 	},
 	{
-		id = "impulso", produtoId = 0, emoji = "velocidade", preco = 79, tipo = "impulso",
+		id = "impulso", produtoId = 3733996820, emoji = "velocidade", preco = 79, tipo = "impulso",
 		nome = { pt = "Impulso 2x", en = "2x Boost" },
 		descricao = { pt = "Renda em dobro por 30 minutos. Soma com o Lucro em Dobro; comprar de novo acrescenta mais 30 minutos.", en = "Double income for 30 minutes. Stacks with Double Profit; buying again adds 30 more minutes." },
 	},
 	-- terminar o estudo na hora: três preços, conforme o tempo que falta
 	{
-		id = "estudo_curto", produtoId = 0, emoji = "gabinete", preco = 25, tipo = "estudo", ateSegundos = 10 * 60,
+		id = "estudo_curto", produtoId = 3733996826, emoji = "gabinete", preco = 25, tipo = "estudo", ateSegundos = 10 * 60,
 		nome = { pt = "Concluir estudo", en = "Finish study" },
 		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 10 min).", en = "Finishes the Cabinet study now (up to 10 min left)." },
 	},
 	{
-		id = "estudo_medio", produtoId = 0, emoji = "gabinete", preco = 49, tipo = "estudo", ateSegundos = 25 * 60,
+		id = "estudo_medio", produtoId = 3733996840, emoji = "gabinete", preco = 49, tipo = "estudo", ateSegundos = 25 * 60,
 		nome = { pt = "Concluir estudo", en = "Finish study" },
 		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 25 min).", en = "Finishes the Cabinet study now (up to 25 min left)." },
 	},
 	{
-		id = "estudo_longo", produtoId = 0, emoji = "gabinete", preco = 99, tipo = "estudo", ateSegundos = math.huge,
+		id = "estudo_longo", produtoId = 3733996850, emoji = "gabinete", preco = 99, tipo = "estudo", ateSegundos = math.huge,
 		nome = { pt = "Concluir estudo", en = "Finish study" },
 		descricao = { pt = "Termina agora o estudo do Gabinete.", en = "Finishes the Cabinet study now." },
 	},
