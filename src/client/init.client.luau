@@ -23,6 +23,9 @@ local Decisao = require(script:WaitForChild("Decisao"))
 local Estilo = require(script:WaitForChild("Estilo"))
 local Ficha = require(script:WaitForChild("Ficha"))
 local Som = require(script:WaitForChild("Som"))
+local Inicio = require(script:WaitForChild("Inicio"))
+local Vinheta = require(script:WaitForChild("Vinheta"))
+local RunService = game:GetService("RunService")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local remoteEstado = Remotes:WaitForChild("Estado") :: RemoteEvent
@@ -267,6 +270,8 @@ local function agir(tipo: string, args: any)
 	end
 end
 
+local abrirMenuInicial: () -> () -- definida mais abaixo (menu inicial)
+
 -- Monta (ou remonta, ao trocar de era) o mapa e a interface com o visual da era.
 local function montar(eraId: string)
 	local era = Theme.PorId[eraId] or Theme.PorId.vapor
@@ -351,6 +356,8 @@ local function montar(eraId: string)
 	table.insert(conexoesTela, menu.aoAjuste.Event:Connect(function(chave: string, valor: boolean)
 		if chave == "reenquadrar" then
 			mapa:focar(minimo, maximo, 80)
+		elseif chave == "menuInicial" then
+			abrirMenuInicial()
 		elseif chave == "musica" or chave == "efeitos" then
 			ajustesSalvos[chave] = valor
 			Som.definir(chave, valor)
@@ -459,29 +466,123 @@ end
 
 -- ---------------------------------------------------------------- estado vindo do servidor
 
+-- ---------------------------------------------------------------- menu inicial
+
+-- Enquanto o menu está aberto, a interface some e o mapa da companhia passeia devagar pelo país,
+-- de cidade grande em cidade grande (provisório: um fundo mais caprichado pode vir depois).
+local inicio = Inicio.new(playerGui)
+telaUI.Enabled = false
+local passeio: RBXScriptConnection? = nil
+local ROTEIRO = { "recife", "salvador", "brasilia", "rio", "sao_paulo", "curitiba", "porto_alegre" }
+local SEGUNDOS_POR_TRECHO = 16
+
+local function pararPasseio()
+	if passeio then
+		passeio:Disconnect()
+		passeio = nil
+	end
+	if mapa then
+		mapa.bloqueado = false
+	end
+end
+
+local function iniciarPasseio()
+	if passeio then
+		return
+	end
+	local pontos: { Vector2 } = {}
+	for _, id in ROTEIRO do
+		local e = DadosBrasil.estacoes[id]
+		if e then
+			table.insert(pontos, e.pos)
+		end
+	end
+	if #pontos < 2 then
+		return
+	end
+	local inicioPasseio = os.clock()
+	passeio = RunService.RenderStepped:Connect(function()
+		if not mapa or mapa.raiz.AbsoluteSize.X <= 0 then
+			return
+		end
+		mapa.bloqueado = true
+		-- vai e volta pelo roteiro; em cada trecho, desacelera perto das cidades
+		local n = #pontos - 1
+		local u = ((os.clock() - inicioPasseio) / SEGUNDOS_POR_TRECHO) % (2 * n)
+		if u > n then
+			u = 2 * n - u
+		end
+		local i = math.clamp(math.floor(u) + 1, 1, n)
+		local f = u - (i - 1)
+		f = f * f * (3 - 2 * f)
+		local p = pontos[i]:Lerp(pontos[i + 1], f)
+		local tela = mapa.raiz.AbsoluteSize
+		local z = math.max(mapa.zoomMin * 2.4, 0.5)
+		-- a cidade fica um pouco à direita do centro: a coluna do menu ocupa a esquerda
+		mapa:definirCamera(z, Vector2.new(tela.X * 0.62, tela.Y * 0.5) - p * z)
+	end)
+end
+
+inicio.aoJogar.Event:Connect(function(_mapaId: string)
+	inicio:fechar()
+	pararPasseio()
+	telaUI.Enabled = true
+	if mapa then
+		mapa.interagiu = true
+		mapa:focar(minimo, maximo, 80)
+	end
+end)
+
+abrirMenuInicial = function()
+	if ultimoEstado then
+		inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, DadosBrasil)
+	end
+	inicio:abrir()
+	telaUI.Enabled = false
+	iniciarPasseio()
+end
+
+-- ---------------------------------------------------------------- estado vindo do servidor
+
+local trocandoEra = false
+
 local function aplicarEstado(estado: any)
 	if not estado then
 		return
 	end
 	local primeiro = ultimoEstado == nil
 	ultimoEstado = estado
+	if trocandoEra then
+		return -- a vinheta está escura; o estado mais novo é aplicado quando ela remontar a tela
+	end
 	Som.musica(estado.era) -- a música só começa com a era do save (não toca o Vapor antes)
 	if estado.era ~= eraAtual then
-		local trocou = eraAtual ~= nil
-		montar(estado.era)
-		if trocou then
-			if not primeiro then
-				Som.efeito("era") -- só numa troca de verdade, não ao entrar num save que já está noutra era
-			end
-			local era = Theme.PorId[estado.era]
-			local emoji = (Emojis :: any)["era_" .. estado.era] or Emojis.era_diesel
-			ui:enfileirar(`{emoji} Bem-vindo à {era and era.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
+		if primeiro or not eraAtual then
+			-- entrando num save que já está noutra era: monta direto, sem vinheta
+			montar(estado.era)
+			avisarEventos(estado)
+		else
+			-- troca de era de verdade: escurece, remonta na era nova por baixo, mostra de onde para onde
+			trocandoEra = true
+			Som.efeito("era")
+			local eraDe, eraPara = Theme.PorId[eraAtual], Theme.PorId[estado.era]
+			Vinheta.mostrar(playerGui, eraDe, eraPara, function()
+				trocandoEra = false
+				local atual = ultimoEstado
+				montar(atual.era)
+				avisarEventos(atual)
+				local emoji = (Emojis :: any)["era_" .. atual.era] or Emojis.era_diesel
+				ui:enfileirar(`{emoji} Bem-vindo à {eraPara and eraPara.nome or "nova era"}! A receita dobrou e cada trem leva o dobro de passageiros.`, 6)
+			end)
 		end
+	else
+		aplicarNaTela(estado)
 		avisarEventos(estado)
-		return
 	end
-	aplicarNaTela(estado)
-	avisarEventos(estado)
+	if primeiro then
+		inicio:montar(estado, Theme.PorId[estado.era] or Theme.PorId.vapor, DadosBrasil)
+		iniciarPasseio()
+	end
 end
 
 montar("vapor")

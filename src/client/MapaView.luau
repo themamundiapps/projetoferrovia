@@ -101,6 +101,7 @@ export type MapaView = typeof(setmetatable(
 		tiles: { Tile },
 		segmentos: { Segmento },
 		segPorPontos: { [string]: Segmento },
+		bloqueado: boolean, -- menu inicial aberto: o mapa ignora mouse e toque
 		segsDoTrecho: { [string]: { Segmento } },
 		estacoes: { Estacao },
 		rotulosMapa: { RotuloMapa },
@@ -217,6 +218,7 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		tiles = {},
 		segmentos = {},
 		segPorPontos = {},
+		bloqueado = false,
 		segsDoTrecho = {},
 		estacoes = {},
 		rotulosMapa = {},
@@ -1206,7 +1208,7 @@ function MapaView._conectarEntrada(self: MapaView)
 	table.insert(
 		self.conexoes,
 		UserInputService.InputBegan:Connect(function(input: InputObject, processado: boolean)
-			if processado then
+			if processado or self.bloqueado then
 				return
 			end
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1241,7 +1243,7 @@ function MapaView._conectarEntrada(self: MapaView)
 				local pos = Vector2.new(input.Position.X, input.Position.Y)
 				self:definirCamera(self.zoom, self.pan + (pos - ultimo))
 				ultimo = pos
-			elseif input.UserInputType == Enum.UserInputType.MouseWheel and not processado then
+			elseif input.UserInputType == Enum.UserInputType.MouseWheel and not processado and not self.bloqueado then
 				local pos = Vector2.new(input.Position.X, input.Position.Y)
 				if dentro(pos) then
 					self.interagiu = true
@@ -1256,7 +1258,7 @@ function MapaView._conectarEntrada(self: MapaView)
 	table.insert(
 		self.conexoes,
 		UserInputService.TouchTap:Connect(function(toques: { Vector2 }, processado: boolean)
-			if not processado and toques[1] and dentro(toques[1]) then
+			if not processado and not self.bloqueado and toques[1] and dentro(toques[1]) then
 				self.aoTocar:Fire(self:telaParaMapa(toques[1]))
 			end
 		end)
@@ -1265,7 +1267,7 @@ function MapaView._conectarEntrada(self: MapaView)
 	table.insert(
 		self.conexoes,
 		UserInputService.TouchPan:Connect(function(_toques, translacao: Vector2, _vel, estado: Enum.UserInputState, processado: boolean)
-			if processado then
+			if processado or self.bloqueado then
 				return
 			end
 			if estado == Enum.UserInputState.Begin then
@@ -1281,7 +1283,7 @@ function MapaView._conectarEntrada(self: MapaView)
 	table.insert(
 		self.conexoes,
 		UserInputService.TouchPinch:Connect(function(toques: { Vector2 }, escala: number, _vel, estado: Enum.UserInputState, processado: boolean)
-			if processado then
+			if processado or self.bloqueado then
 				return
 			end
 			if estado == Enum.UserInputState.Begin then
