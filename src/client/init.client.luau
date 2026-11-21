@@ -15,7 +15,12 @@ local Jornal = require(Shared:WaitForChild("Jornal"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local L = Idioma.L
 local Emojis = require(Shared:WaitForChild("Emojis"))
-local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
+-- Mapas jogáveis; dadosAtual é o do mapa aberto (o servidor diz qual no estado: estado.mapa).
+local DADOS: { [string]: any } = {
+	brasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil")),
+	eua = require(Shared:WaitForChild("Dados"):WaitForChild("EUA")),
+}
+local dadosAtual: any = DADOS.brasil
 local MapaView = require(script:WaitForChild("MapaView"))
 local Interface = require(script:WaitForChild("Interface"))
 local Menu = require(script:WaitForChild("Menu"))
@@ -130,8 +135,24 @@ areaSegura:GetPropertyChangedSignal("AbsoluteSize"):Connect(atualizarEscala)
 atualizarEscala()
 
 -- Onde a câmera começa (e volta, em "Reenquadrar"): a região das primeiras linhas, definida nos dados.
-local minimo: Vector2 = DadosBrasil.foco.min
-local maximo: Vector2 = DadosBrasil.foco.max
+local minimo: Vector2 = dadosAtual.foco.min
+local maximo: Vector2 = dadosAtual.foco.max
+
+-- Nomes de estações, linhas e projetos no idioma (só alguns mudam, como "Nova York" / "New York").
+local function traduzirNomes(idioma: string)
+	for _, dados in DADOS do
+		local listas = { dados.estacoes, dados.linhas, dados.projetos or {} }
+		for _, lista in listas do
+			for _, x in lista do
+				if x.nomeEn then
+					x.nomePt = x.nomePt or x.nome
+					x.nome = if idioma == "en" then x.nomeEn else x.nomePt
+				end
+			end
+		end
+	end
+end
+traduzirNomes(Idioma.atual)
 
 local mapa: any = nil
 local ui: any = nil
@@ -147,9 +168,9 @@ local conexoesTela: { RBXScriptConnection } = {}
 
 local function situacoes(estado: any): { [string]: string }
 	local s = {}
-	for i, linha in DadosBrasil.linhas do
+	for i, linha in dadosAtual.linhas do
 		for j, t in linha.trechos do
-			s[t.id] = Economia.situacaoTrecho(estado, DadosBrasil, i, j)
+			s[t.id] = Economia.situacaoTrecho(estado, dadosAtual, i, j)
 		end
 	end
 	return s
@@ -158,27 +179,27 @@ end
 -- Trens de cada linha para o mapa animar: a trilha são os trechos construídos, em ordem.
 local function trensDoMapa(estado: any): { any }
 	local lista = {}
-	local rede = Economia.rede(estado, DadosBrasil)
-	for _, linha in DadosBrasil.linhas do
+	local rede = Economia.rede(estado, dadosAtual)
+	for _, linha in dadosAtual.linhas do
 		local pontos: { Vector2 } = {}
 		local ids: { string } = {}
 		for _, t in linha.trechos do
 			if estado.trechos[t.id] then
 				if #pontos == 0 then
-					table.insert(pontos, DadosBrasil.estacoes[t.de].pos)
+					table.insert(pontos, dadosAtual.estacoes[t.de].pos)
 					table.insert(ids, t.de)
 				end
 				for _, v in t.via or {} do -- desvios do traçado (ver MapaView._criarLinhas): não são estações
 					table.insert(pontos, v)
 					table.insert(ids, "")
 				end
-				table.insert(pontos, DadosBrasil.estacoes[t.para].pos)
+				table.insert(pontos, dadosAtual.estacoes[t.para].pos)
 				table.insert(ids, t.para)
 			end
 		end
 		if #pontos >= 2 then
-			local situacao = if Economia.trensFaltando(estado, DadosBrasil, linha, rede) > 0 then "lotado"
-				elseif Economia.trensSobrando(estado, DadosBrasil, linha, rede) > 0 then "vazio"
+			local situacao = if Economia.trensFaltando(estado, dadosAtual, linha, rede) > 0 then "lotado"
+				elseif Economia.trensSobrando(estado, dadosAtual, linha, rede) > 0 then "vazio"
 				else "normal"
 			table.insert(lista, { id = linha.id, pontos = pontos, ids = ids, n = estado.trens[linha.id] or 0, situacao = situacao })
 		end
@@ -190,7 +211,7 @@ end
 -- até a cidade onde a linha começa. O valor de cada coleta é o que a produtora rende em 4 s.
 local function freteDoMapa(estado: any): any
 	local coletas: { [string]: { carga: string, valor: number } } = {}
-	for id, v in (Economia.valorCargas(estado, DadosBrasil)) do
+	for id, v in (Economia.valorCargas(estado, dadosAtual)) do
 		if v.conectada and v.reaisDia > 0 then
 			coletas[id] = { carga = v.carga, valor = v.reaisDia * 4 / 60 }
 		end
@@ -203,14 +224,14 @@ local function freteDoMapa(estado: any): any
 		emojis = emojis,
 		coletas = coletas,
 		formatar = function(v: number): string
-			return Economia.formatar(v, DadosBrasil.simbolo)
+			return Economia.formatar(v, dadosAtual.simbolo)
 		end,
 	}
 end
 
 local function aplicarNaTela(estado: any)
 	mapa:definirSituacao(situacoes(estado))
-	mapa:definirCargas(Economia.conectadasAoPorto(estado, DadosBrasil))
+	mapa:definirCargas(Economia.conectadasAoPorto(estado, dadosAtual))
 	mapa:definirNiveis(estado.estacoes or {})
 	mapa.pinturas = (estado.loja or {}).pinturas == true -- passe Pinturas Especiais: locomotivas douradas
 	mapa:definirTrens(trensDoMapa(estado))
@@ -224,7 +245,7 @@ end
 
 -- Novidades que o servidor manda uma vez só (contrato, medalha, nível, linha completa): viram avisos em fila.
 local function avisarEventos(estado: any)
-	local simbolo = DadosBrasil.simbolo
+	local simbolo = dadosAtual.simbolo
 	for _, ev in estado.eventos or {} do
 		if ev.tipo == "contrato" and ev.cumprido then
 			Som.efeito("premio")
@@ -251,7 +272,7 @@ local function avisarEventos(estado: any)
 			ui:enfileirar(L(`{Emojis.banco} Empréstimo quitado!`, `{Emojis.banco} Loan paid off!`), 4)
 		elseif ev.tipo == "jornal" then
 			Som.efeito("jornal")
-			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, DadosBrasil, Idioma.atual)
+			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, dadosAtual, Idioma.atual)
 			ui:enfileirar(L(`{Emojis.jornal} EXTRA! {manchete}`, `{Emojis.jornal} EXTRA! {manchete}`), 6)
 			menu:marcarJornal()
 		end
@@ -288,9 +309,9 @@ local function agir(tipo: string, args: any)
 			ui:avisar(L(`{Emojis.construir} Trecho construído!`, `{Emojis.construir} Section built!`), 2)
 			-- se o trecho novo fez a linha precisar de mais trens, avisa
 			task.delay(0.4, function()
-				local linha = Economia.acharTrecho(DadosBrasil, args.trecho)
+				local linha = Economia.acharTrecho(dadosAtual, args.trecho)
 				local estado = ui.estado
-				local faltando = if linha and estado then Economia.trensFaltando(estado, DadosBrasil, linha) else 0
+				local faltando = if linha and estado then Economia.trensFaltando(estado, dadosAtual, linha) else 0
 				if linha and faltando > 0 then
 					ui:avisar(L(`{Emojis.trens} A linha {linha.nome} cresceu: faltam {faltando} trem(ns) para levar todos os passageiros.`, `{Emojis.trens} The {linha.nome} line grew: {faltando} more train(s) needed to carry every passenger.`), 5)
 				end
@@ -302,7 +323,7 @@ end
 local abrirMenuInicial: () -> () -- definida mais abaixo (menu inicial)
 
 -- Monta (ou remonta, ao trocar de era) o mapa e a interface com o visual da era.
-local function montar(eraId: string)
+local function montar(eraId: string, mapaNovo: boolean?)
 	local era = Theme.PorId[eraId] or Theme.PorId.vapor
 	local idMar = era.marPadrao and (Assets.Ids :: any)[era.marPadrao]
 	era.marTextura = if idMar and idMar ~= "rbxassetid://0" then idMar else nil
@@ -311,9 +332,11 @@ local function montar(eraId: string)
 	local selecionado: string? = nil
 	local cidadeAberta: string? = nil
 	if mapa then
-		camera = { zoom = mapa.zoom, pan = mapa.pan }
-		selecionado = ui.trechoAberto
-		cidadeAberta = ficha.aberta
+		if not mapaNovo then -- outro país: começa enquadrado nas primeiras linhas dele
+			camera = { zoom = mapa.zoom, pan = mapa.pan }
+			selecionado = ui.trechoAberto
+			cidadeAberta = ficha.aberta
+		end
 		ficha:destruir()
 		for _, c in conexoesTela do
 			c:Disconnect()
@@ -327,7 +350,7 @@ local function montar(eraId: string)
 		mapa:destruir()
 	end
 
-	mapa = MapaView.new(tela, Mapas.brasil, DadosBrasil, era)
+	mapa = MapaView.new(tela, (Mapas :: any)[dadosAtual.id], dadosAtual, era)
 	-- vinheta: bordas do mapa escurecidas (só com o kit clássico); não pega cliques
 	local vinheta = tela:FindFirstChild("Vinheta") :: ImageLabel?
 	if not vinheta then
@@ -354,14 +377,14 @@ local function montar(eraId: string)
 	if dupla then
 		dupla.Image = imgVinheta.Image
 	end
-	ui = Interface.new(telaUI, era, DadosBrasil)
+	ui = Interface.new(telaUI, era, dadosAtual)
 	ui.eras = Theme.PorId
-	menu = Menu.new(telaUI, era, DadosBrasil)
-	tutorial = Tutorial.new(telaUI, era, DadosBrasil)
-	decisao = Decisao.new(telaUI, era, DadosBrasil)
-	ficha = Ficha.new(telaUI, era, DadosBrasil)
+	menu = Menu.new(telaUI, era, dadosAtual)
+	tutorial = Tutorial.new(telaUI, era, dadosAtual)
+	decisao = Decisao.new(telaUI, era, dadosAtual)
+	ficha = Ficha.new(telaUI, era, dadosAtual)
 	-- ranking dos jogadores do servidor (canto de cima à direita); some quando o painel do trecho abre ali
-	placar = Placar.new(telaUI, era, DadosBrasil.simbolo)
+	placar = Placar.new(telaUI, era, dadosAtual.simbolo)
 	table.insert(conexoesTela, ui.painel:GetPropertyChangedSignal("Visible"):Connect(function()
 		placar:esconder(ui.painel.Visible)
 	end))
@@ -399,6 +422,7 @@ local function montar(eraId: string)
 			Economia.traduzir(Idioma.atual)
 			Theme.traduzir(Idioma.atual)
 			Metas.traduzir(Idioma.atual)
+			traduzirNomes(Idioma.atual)
 			task.spawn(function()
 				remoteAcao:InvokeServer("idioma", { idioma = Idioma.atual })
 			end)
@@ -419,14 +443,14 @@ local function montar(eraId: string)
 		local mn = Vector2.new(math.huge, math.huge)
 		local mx = Vector2.new(-math.huge, -math.huge)
 		local alvo: string? = nil
-		for i, linha in DadosBrasil.linhas do
+		for i, linha in dadosAtual.linhas do
 			if linha.id == linhaId then
 				for j, t in linha.trechos do
 					for _, id in { t.de, t.para } do
-						local p = DadosBrasil.estacoes[id].pos
+						local p = dadosAtual.estacoes[id].pos
 						mn, mx = mn:Min(p), mx:Max(p)
 					end
-					if not alvo and ultimoEstado and Economia.situacaoTrecho(ultimoEstado, DadosBrasil, i, j) ~= "construido" then
+					if not alvo and ultimoEstado and Economia.situacaoTrecho(ultimoEstado, dadosAtual, i, j) ~= "construido" then
 						alvo = t.id
 					end
 				end
@@ -456,7 +480,7 @@ local function montar(eraId: string)
 		if acao == "linha" and alvo then
 			focarLinha(alvo)
 		elseif acao == "estacao" and alvo then
-			local p = DadosBrasil.estacoes[alvo].pos
+			local p = dadosAtual.estacoes[alvo].pos
 			local folga = Vector2.new(60, 60)
 			mapa.interagiu = true
 			mapa:focar(p - folga, p + folga, 140)
@@ -519,7 +543,10 @@ end
 local inicio = Inicio.new(playerGui)
 telaUI.Enabled = false
 local passeio: RBXScriptConnection? = nil
-local ROTEIRO = { "recife", "salvador", "brasilia", "rio", "sao_paulo", "curitiba", "porto_alegre" }
+local ROTEIROS: { [string]: { string } } = {
+	brasil = { "recife", "salvador", "brasilia", "rio", "sao_paulo", "curitiba", "porto_alegre" },
+	eua = { "seattle", "san_francisco", "los_angeles", "denver", "chicago", "new_york", "washington", "atlanta", "new_orleans", "houston" },
+}
 local SEGUNDOS_POR_TRECHO = 16
 
 local function pararPasseio()
@@ -537,8 +564,8 @@ local function iniciarPasseio()
 		return
 	end
 	local pontos: { Vector2 } = {}
-	for _, id in ROTEIRO do
-		local e = DadosBrasil.estacoes[id]
+	for _, id in ROTEIROS[dadosAtual.id] or {} do
+		local e = dadosAtual.estacoes[id]
 		if e then
 			table.insert(pontos, e.pos)
 		end
@@ -569,7 +596,18 @@ local function iniciarPasseio()
 	end)
 end
 
-inicio.aoJogar.Event:Connect(function(_mapaId: string)
+inicio.aoJogar.Event:Connect(function(mapaId: string)
+	-- outro país: o servidor troca o mapa e manda o estado; espera chegar antes de fechar o menu
+	if ultimoEstado and mapaId and mapaId ~= ultimoEstado.mapa then
+		local resposta = remoteAcao:InvokeServer("mapa", { mapa = mapaId })
+		if not (resposta and resposta.ok) then
+			return
+		end
+		local t0 = os.clock()
+		while (not ultimoEstado or ultimoEstado.mapa ~= mapaId) and os.clock() - t0 < 8 do
+			task.wait(0.1)
+		end
+	end
 	inicio:fechar()
 	pararPasseio()
 	telaUI.Enabled = true
@@ -581,7 +619,7 @@ end)
 
 abrirMenuInicial = function()
 	if ultimoEstado then
-		inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, DadosBrasil)
+		inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, dadosAtual)
 	end
 	inicio:abrir()
 	telaUI.Enabled = false
@@ -592,6 +630,24 @@ end
 
 local trocandoEra = false
 
+-- O servidor mudou o mapa aberto (o jogador escolheu outro país no menu inicial): troca os dados, os
+-- anos das eras e a música, e remonta tudo do zero.
+local function trocarMapa(id: string)
+	local dados = DADOS[id]
+	if not dados then
+		return
+	end
+	dadosAtual = dados
+	minimo, maximo = dados.foco.min, dados.foco.max
+	Theme.definirAnos(dados)
+	Theme.traduzir(Idioma.atual)
+	Som.definirMapa(id)
+	if passeio then -- o passeio do fundo do menu segue as cidades do país novo
+		pararPasseio()
+		iniciarPasseio()
+	end
+end
+
 local function aplicarEstado(estado: any)
 	if not estado then
 		return
@@ -600,6 +656,18 @@ local function aplicarEstado(estado: any)
 	ultimoEstado = estado
 	if trocandoEra then
 		return -- a vinheta está escura; o estado mais novo é aplicado quando ela remontar a tela
+	end
+	local mapaNovo = estado.mapa ~= nil and estado.mapa ~= dadosAtual.id
+	if mapaNovo then
+		trocarMapa(estado.mapa)
+		montar(estado.era, true)
+		avisarEventos(estado)
+		Som.musica(estado.era)
+		if primeiro then
+			inicio:montar(estado, Theme.PorId[estado.era] or Theme.PorId.vapor, dadosAtual)
+			iniciarPasseio()
+		end
+		return
 	end
 	Som.musica(estado.era) -- a música só começa com a era do save (não toca o Vapor antes)
 	if estado.era ~= eraAtual then
@@ -626,7 +694,7 @@ local function aplicarEstado(estado: any)
 		avisarEventos(estado)
 	end
 	if primeiro then
-		inicio:montar(estado, Theme.PorId[estado.era] or Theme.PorId.vapor, DadosBrasil)
+		inicio:montar(estado, Theme.PorId[estado.era] or Theme.PorId.vapor, dadosAtual)
 		iniciarPasseio()
 	end
 end
@@ -638,4 +706,4 @@ task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())
 end)
 
-print(`[Ferrovia] Cliente iniciado: mapa do Brasil com {#DadosBrasil.linhas} linhas.`)
+print(`[Ferrovia] Cliente iniciado: mapa do Brasil com {#DADOS.brasil.linhas} linhas.`)

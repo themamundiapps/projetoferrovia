@@ -18,6 +18,19 @@ Jornal.TRECHOS_MINIMOS = 4 -- antes disso a companhia é pequena demais para sai
 Jornal.CUSTO_RESOLVER_SEGUNDOS = 45 -- resolver custa ~45 s do lucro atual (no mínimo R$ 1.000)
 
 -- Nome do jornal em cada era.
+-- Nome do jornal nos EUA, por era.
+Jornal.NOMES_EUA = {
+	vapor = { pt = "Gazeta da Ferrovia", en = "The Railroad Gazette" },
+	diesel = { pt = "Notícias dos Trilhos", en = "The Rail News" },
+	eletrico = { pt = "Diário da Linha", en = "The Line Daily" },
+	alta = { pt = "Trilhos Online", en = "Rails Online" },
+}
+
+function Jornal.nome(eraId: string, mapaId: string?): { pt: string, en: string }
+	local nomes = if mapaId == "eua" then Jornal.NOMES_EUA else Jornal.NOMES
+	return (nomes :: any)[eraId] or nomes.vapor
+end
+
 Jornal.NOMES = {
 	vapor = { pt = "Gazeta da Corte", en = "The Court Gazette" },
 	diesel = { pt = "Correio Ferroviário", en = "The Railway Post" },
@@ -27,6 +40,7 @@ Jornal.NOMES = {
 
 export type Definicao = {
 	id: string,
+	mapa: string?, -- mapa do evento ("brasil", "eua"); nil = Brasil, menos os que servem em todo país (GERAIS)
 	eras: { string }?, -- nil = todas
 	peso: number,
 	duracao: number, -- segundos
@@ -189,6 +203,91 @@ Jornal.EVENTOS = {
 		titulo = { pt = "Apagão!", en = "Blackout!" },
 		texto = { pt = "Falta luz em boa parte do país e os trens elétricos param: −30% em toda a receita até religar.", en = "Power is out across much of the country and electric trains stop: −30% on all income until it's back." },
 	},
+	-- ================================================================ EUA (mapa = "eua")
+	{
+		id = "eua_ouro", mapa = "eua", eras = { "vapor" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("san_francisco"),
+		titulo = { pt = "Corrida do ouro!", en = "Gold rush!" },
+		texto = { pt = "Garimpeiros do mundo inteiro querem chegar a %s. As linhas que chegam lá rendem 50% a mais.", en = "Prospectors from all over the world want to reach %s. Lines reaching it earn 50% more." },
+	},
+	{
+		id = "eua_boiadas", mapa = "eua", eras = { "vapor", "diesel" }, peso = 3, duracao = 180, tipo = "carga", mult = 1.6,
+		alvo = cargaNoPorto("gado"),
+		titulo = { pt = "As boiadas do Texas chegam aos trilhos", en = "The Texas cattle drives reach the rails" },
+		texto = { pt = "Caubóis tocam milhares de cabeças até as estações. As linhas do gado rendem 60% a mais.", en = "Cowboys drive thousands of head to the stations. Cattle lines earn 60% more." },
+	},
+	{
+		id = "eua_trigo", mapa = "eua", peso = 3, duracao = 180, tipo = "carga", mult = 1.7,
+		alvo = cargaNoPorto("graos"),
+		titulo = { pt = "Supersafra de trigo nas Grandes Planícies", en = "Bumper wheat crop on the Great Plains" },
+		texto = { pt = "Os silos transbordam. As linhas que levam grãos rendem 70% a mais.", en = "The elevators are overflowing. Grain lines earn 70% more." },
+	},
+	{
+		id = "eua_exposicao", mapa = "eua", eras = { "vapor" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("chicago"),
+		titulo = { pt = "Exposição Mundial em Chicago", en = "World's Fair in Chicago" },
+		texto = { pt = "Milhões de visitantes vêm ver a roda-gigante e a luz elétrica: as linhas que chegam a %s rendem 50% a mais.", en = "Millions come to see the Ferris wheel and electric light: lines reaching %s earn 50% more." },
+	},
+	{
+		id = "eua_petroleo", mapa = "eua", eras = { "vapor", "diesel" }, peso = 2, duracao = 180, tipo = "carga", mult = 1.8,
+		alvo = cargaNoPorto("petroleo"),
+		titulo = { pt = "Jorra petróleo no Texas!", en = "Oil gushes in Texas!" },
+		texto = { pt = "Um poço novo jorra dia e noite e os vagões-tanque não dão conta: as linhas do petróleo rendem 80% a mais.", en = "A new well gushes day and night and the tank cars can't keep up: oil lines earn 80% more." },
+	},
+	{
+		id = "eua_guerra", mapa = "eua", eras = { "diesel" }, peso = 2, duracao = 180, tipo = "carga", mult = 1.8,
+		alvo = cargaNoPorto("aco"),
+		titulo = { pt = "Esforço de guerra: o país precisa de aço", en = "War effort: the nation needs steel" },
+		texto = { pt = "As usinas trabalham sem parar e os trens também: as linhas do aço rendem 80% a mais.", en = "The mills run around the clock and so do the trains: steel lines earn 80% more." },
+	},
+	{
+		id = "eua_inverno", mapa = "eua", eras = { "vapor", "diesel" }, peso = 2, duracao = 180, tipo = "carga", mult = 1.6,
+		alvo = cargaNoPorto("carvao"),
+		titulo = { pt = "Inverno rigoroso: todo mundo quer carvão", en = "Harsh winter: everyone wants coal" },
+		texto = { pt = "As cidades do Norte precisam de carvão para se aquecer. As linhas do carvão rendem 60% a mais.", en = "Northern cities need coal for heat. Coal lines earn 60% more." },
+	},
+	{
+		id = "eua_imigrantes", mapa = "eua", eras = { "vapor", "diesel" }, peso = 2, duracao = 180, tipo = "regiao", mult = 1.35,
+		alvo = regiaoNaRede("ne"),
+		titulo = { pt = "Navios de imigrantes chegam a Nova York", en = "Immigrant ships arrive in New York" },
+		texto = { pt = "Milhares de famílias passam por Ellis Island e seguem de trem. As linhas do %s rendem 35% a mais.", en = "Thousands of families pass through Ellis Island and go on by train. Lines in the %s earn 35% more." },
+	},
+	{
+		id = "eua_feira_ny", mapa = "eua", eras = { "diesel" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("new_york"),
+		titulo = { pt = "Feira Mundial de Nova York", en = "New York World's Fair" },
+		texto = { pt = "\"O mundo de amanhã\" atrai visitantes de todo o país: as linhas que chegam a %s rendem 50% a mais.", en = "\"The World of Tomorrow\" draws visitors from across the country: lines reaching %s earn 50% more." },
+	},
+	{
+		id = "eua_olimpiada", mapa = "eua", eras = { "eletrico", "alta" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.6,
+		alvo = cidadeNaRede("los_angeles"),
+		titulo = { pt = "Jogos Olímpicos em Los Angeles", en = "Olympic Games in Los Angeles" },
+		texto = { pt = "O mundo inteiro vem a %s. As linhas que chegam lá rendem 60% a mais.", en = "The whole world comes to %s. Lines reaching it earn 60% more." },
+	},
+	{
+		id = "eua_copa", mapa = "eua", eras = { "alta" }, peso = 2, duracao = 150, tipo = "geral", mult = 1.3,
+		alvo = semAlvo,
+		titulo = { pt = "A Copa do Mundo é nos Estados Unidos!", en = "The World Cup is in the United States!" },
+		texto = { pt = "Torcedores viajam de cidade em cidade para ver os jogos: +30% em toda a receita.", en = "Fans travel from city to city to see the matches: +30% on all income." },
+	},
+	{
+		id = "eua_poeira", mapa = "eua", eras = { "diesel" }, peso = 2, duracao = 180, tipo = "carga", mult = 0.6,
+		alvo = cargaNoPorto("graos"),
+		titulo = { pt = "Tempestades de poeira nas planícies", en = "Dust storms on the plains" },
+		texto = { pt = "A seca levanta nuvens de poeira e as colheitas somem: as linhas dos grãos rendem 40% a menos.", en = "Drought raises clouds of dust and the crops vanish: grain lines earn 40% less." },
+	},
+	{
+		id = "eua_febre", mapa = "eua", eras = { "vapor" }, peso = 2, duracao = 150, tipo = "cidade", mult = 0.6,
+		alvo = cidadeNaRede("new_orleans"),
+		titulo = { pt = "Febre amarela em %s", en = "Yellow fever in %s" },
+		texto = { pt = "A cidade entra em quarentena e os passageiros somem: as linhas que chegam lá rendem 40% a menos.", en = "The city goes into quarantine and passengers vanish: lines reaching it earn 40% less." },
+	},
+	{
+		id = "eua_nevasca", mapa = "eua", peso = 2, duracao = 180, tipo = "linha", mult = 0.4, resolvivel = true,
+		alvo = linhaConstruida,
+		titulo = { pt = "Nevasca bloqueia a linha %s", en = "Blizzard blocks the %s line" },
+		texto = { pt = "A neve cobriu os trilhos: a linha roda a 40% até os limpa-neves passarem.", en = "Snow buried the tracks: the line runs at 40% until the snowplows get through." },
+	},
 } :: { Definicao }
 
 function Jornal.acharEvento(id: string): Definicao?
@@ -198,6 +297,16 @@ function Jornal.acharEvento(id: string): Definicao?
 		end
 	end
 	return nil
+end
+
+-- Notícias que servem em qualquer país (as outras sem `mapa` são do Brasil).
+local GERAIS = { enchente = true, greve = true, crise_petroleo = true, apagao = true }
+
+local function doMapa(def: Definicao, mapaId: string?): boolean
+	if GERAIS[def.id] then
+		return true
+	end
+	return (def.mapa or "brasil") == (mapaId or "brasil")
 end
 
 local function vale(def: Definicao, eraId: string): boolean
@@ -221,7 +330,7 @@ function Jornal.sortear(estado: EstadoMapa, dados: any, rng: Random): (Economia.
 	local opcoes: { { def: Definicao, alvo: string? } } = {}
 	local total = 0
 	for _, def in Jornal.EVENTOS do
-		if vale(def, estado.era) and not ativos[def.id] and def.alvo then
+		if vale(def, estado.era) and doMapa(def, dados.id) and not ativos[def.id] and def.alvo then
 			local alvo = def.alvo(estado, dados, rng)
 			if alvo then
 				table.insert(opcoes, { def = def, alvo = if alvo == "" then nil else alvo })

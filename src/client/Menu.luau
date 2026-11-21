@@ -615,7 +615,7 @@ function Menu._abaProjetos(self: Menu)
 	est:titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), r, 1)
 	est:texto(
 		"fraco",
-		L("Ferrovias que o Brasil planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways Brazil planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."),
+		L("Ferrovias que o país planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways the country planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."),
 		r,
 		2
 	)
@@ -975,10 +975,14 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 			return img, dados.estacoes[id].nome
 		end
 	end
-	return Assets.imagemCidade("rio", estado.era), dados.estacoes.rio and dados.estacoes.rio.nome
+	if not dados.estacoes.rio then
+		return nil, nil -- nos EUA ainda não há imagens das cidades
+	end
+	return Assets.imagemCidade("rio", estado.era), dados.estacoes.rio.nome
 end
 
 local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = L("grátis", "free") }
+local PRECO_JORNAL_EUA = { vapor = "5 cents", diesel = "10 cents", eletrico = "25 cents", alta = L("grátis", "free") }
 local MESES_JORNAL_EN = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }
 local MESES_JORNAL = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
 local PAPEL = Color3.fromRGB(238, 228, 204) -- papel de jornal
@@ -990,7 +994,7 @@ local TINTA_FRACA = Color3.fromRGB(96, 82, 64)
 function Menu._abaJornal(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	local eraId = if estado then estado.era else "vapor"
-	local nomeJornal = Idioma.t(Jornal.NOMES[eraId] or Jornal.NOMES.vapor)
+	local nomeJornal = Idioma.t(Jornal.nome(eraId, self.dados.id))
 	local f = est.f
 	local gotica = Font.new("rbxasset://fonts/families/GrenzeGotisch.json", Enum.FontWeight.Bold)
 	local italico = Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic)
@@ -1105,7 +1109,7 @@ function Menu._abaJornal(self: Menu)
 	end
 	linha("Rio de Janeiro", Enum.TextXAlignment.Left)
 	linha(data, Enum.TextXAlignment.Center)
-	linha(`Nº {#edicoes + 1} · {PRECO_JORNAL[eraId] or ""}`, Enum.TextXAlignment.Right)
+	linha(`Nº {#edicoes + 1} · {(if self.dados.id == "eua" then PRECO_JORNAL_EUA else PRECO_JORNAL)[eraId] or ""}`, Enum.TextXAlignment.Right)
 	fio(folha, 4, 1)
 	if not estado then
 		return

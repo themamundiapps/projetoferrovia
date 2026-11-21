@@ -8,6 +8,14 @@ export type Novidade = { data: string, titulo: Texto, texto: Texto }
 local Novidades: { Novidade } = {
 	{
 		data = "2026-11-20",
+		titulo = { pt = "Novo mapa: Estados Unidos", en = "New map: United States" },
+		texto = {
+			pt = "33 ferrovias, do Baltimore and Ohio de 1830 à Primeira Transcontinental, com carvão, petróleo e aço. Cada mapa é uma companhia separada.",
+			en = "33 railroads, from the 1830 Baltimore and Ohio to the First Transcontinental, with coal, oil and steel. Each map is a separate company.",
+		},
+	},
+	{
+		data = "2026-11-20",
 		titulo = { pt = "Trilha de bossa nova", en = "Bossa nova soundtrack" },
 		texto = {
 			pt = "O mapa do Brasil agora toca bossa nova em todas as eras: 15 faixas.",

@@ -1,8 +1,8 @@
 --!strict
--- Menu inicial: boas-vindas, escolha do mapa (Brasil; EUA e Europa em breve) e novidades.
+-- Menu inicial: boas-vindas, escolha do mapa (Brasil e EUA; Europa em breve), novidades e ranking global.
 -- Fica por cima de tudo; o mapa da companhia passa devagar no fundo (o init.client cuida do passeio).
 -- Uso: Inicio.new(playerGui) mostra "Carregando…"; :montar(estado, era, dados) monta o menu;
--- aoJogar dispara no botão do Brasil; :fechar() some com fade; :destruir().
+-- aoJogar dispara com o id do mapa escolhido; :fechar() some com fade; :destruir().
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -12,6 +12,8 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Novidades = require(Shared:WaitForChild("Novidades"))
+local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
+local DadosEUA = require(Shared:WaitForChild("Dados"):WaitForChild("EUA"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
@@ -185,14 +187,20 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		BackgroundTransparency = 1,
 	}, coluna)
 	est:lista(fileira, 10, true)
+	local nLinhasBrasil, nLinhasEUA = #DadosBrasil.linhas, #DadosEUA.linhas
 	local mapas = {
 		{
 			id = "brasil",
 			nome = L("Brasil", "Brazil"),
-			info = L(`{#dados.linhas} linhas · 1854 até hoje`, `{#dados.linhas} lines · 1854 to today`),
+			info = L(`{nLinhasBrasil} linhas · 1854 até hoje`, `{nLinhasBrasil} lines · 1854 to today`),
 			pronto = true,
 		},
-		{ id = "eua", nome = L("Estados Unidos", "United States"), info = L("Em breve", "Coming soon"), pronto = false },
+		{
+			id = "eua",
+			nome = L("Estados Unidos", "United States"),
+			info = L(`{nLinhasEUA} linhas · 1830 até hoje`, `{nLinhasEUA} lines · 1830 to today`),
+			pronto = true,
+		},
 		{ id = "europa", nome = L("Europa", "Europe"), info = L("Em breve", "Coming soon"), pronto = false },
 	}
 	for i, m in mapas do
@@ -207,7 +215,9 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		local inf = est:texto("fraco", m.info, cartao, 2)
 		inf.TextSize = 13
 		if m.pronto then
-			local b = est:botao("principal", if temCompanhia then L("Continuar", "Continue") else L("Jogar", "Play"), cartao, 4)
+			-- cada mapa é uma companhia separada: "Continuar" só no mapa aberto agora
+			local continuar = temCompanhia and m.id == (dados.id or "brasil")
+			local b = est:botao(if continuar or m.id == (dados.id or "brasil") then "principal" else "discreto", if continuar then L("Continuar", "Continue") else L("Jogar", "Play"), cartao, 4)
 			b.Size = UDim2.new(1, 0, 0, 40)
 			b.Name = "Jogar"
 			b.Activated:Connect(function()

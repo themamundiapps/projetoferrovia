@@ -16,7 +16,10 @@ const CUSTO_POR_KM = 6;        // R$ por km no primeiro trecho do jogo
 const CRESCIMENTO_LINHA = 2.4; // cada degrau (onda de linhas) custa ~70% mais por km
 const SINUOSIDADE = 1.25;      // trilho real é mais longo que a linha reta
 
-const MAPAS = { brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" } };
+const MAPAS = {
+  brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" },
+  eua: { arquivo: "eua.json", modulo: "EUA", moeda: "USD", simbolo: "US$" },
+};
 
 function projecao(def) {
   const p = def.projecao;
@@ -80,13 +83,19 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push(`\tid = ${lua(id)},`);
   L.push(`\tmoeda = ${lua(cfg.moeda)},`);
   L.push(`\tsimbolo = ${lua(cfg.simbolo)},`);
+  // anos de cada era neste país (a data no jogo e o rótulo das eras); sem isso, os de Economia.ERAS
+  if (dados.anos) {
+    L.push("\tanos = {");
+    for (const [era, [ini, fim]] of Object.entries(dados.anos)) L.push(`\t\t${era} = { ${ini}, ${fim} },`);
+    L.push("\t},");
+  }
   L.push("\tterrenos = {");
   for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, nomes = { pt = ${lua(t.nome)}, en = ${lua(t.nomeEn ?? t.nome)} }, custo = ${lua(t.custo)} },`);
   L.push("\t},");
   L.push("\testacoes = {");
   for (const e of dados.estacoes) {
     const [x, y] = proj([e.lon, e.lat]);
-    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)}, estado = ${lua(dados.estados[e.uf][0])}, regiao = ${lua(dados.estados[e.uf][1])}, historia = { pt = ${lua(e.historia.pt)}, en = ${lua(e.historia.en)} } },`);
+    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, nomeEn = ${lua(e.nomeEn)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)}, estado = ${lua(dados.estados[e.uf][0])}, regiao = ${lua(dados.estados[e.uf][1])}, historia = { pt = ${lua(e.historia.pt)}, en = ${lua(e.historia.en)} } },`);
   }
   L.push("\t},");
   // Enquadramento inicial da câmera: as estações das linhas listadas em "foco".
@@ -105,7 +114,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     const degrau = l.degrau;
     const fator = CUSTO_POR_KM * Math.pow(CRESCIMENTO_LINHA, degrau);
     L.push("\t\t{");
-    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)}, nota = ${lua(l.nota)},`);
+    L.push(`\t\t\tid = ${lua(l.id)}, nome = ${lua(l.nome)}, nomeEn = ${lua(l.nomeEn)}, ano = ${lua(l.ano)}, cor = ${lua(l.cor)}, ordem = ${ordem + 1}, degrau = ${degrau}, projeto = ${lua(l.projeto)}, nota = ${lua(l.nota)},`);
     L.push("\t\t\ttrechos = {");
     l.trechos.forEach((t, i) => {
       const k = km(t.de, t.para, t.via);
@@ -136,7 +145,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     if (r.projeto && ordemProjeto[r.projeto] === undefined) throw new Error(`Projeto requer desconhecido "${r.projeto}"`);
     const linha = linhas.find((l) => l.projeto === p.id);
     if (!linha) throw new Error(`Projeto ${p.id} sem linha`);
-    L.push(`\t\t{ id = ${lua(p.id)}, nome = ${lua(p.nome)}, emoji = ${lua(p.emoji)}, linha = ${lua(linha.id)}, custo = ${lua(p.custo)}, segundos = ${lua(Math.round(p.minutos * 60))}, ficticio = ${lua(!!p.ficticio)}, descricao = ${lua(p.descricao)}, requer = { linhasCompletas = ${lua(r.linhasCompletas)}, era = ${lua(r.era)}, projeto = ${lua(r.projeto)} } },`);
+    L.push(`\t\t{ id = ${lua(p.id)}, nome = ${lua(p.nome)}, nomeEn = ${lua(p.nomeEn)}, emoji = ${lua(p.emoji)}, linha = ${lua(linha.id)}, custo = ${lua(p.custo)}, segundos = ${lua(Math.round(p.minutos * 60))}, ficticio = ${lua(!!p.ficticio)}, descricao = ${lua(p.descricao)}, requer = { linhasCompletas = ${lua(r.linhasCompletas)}, era = ${lua(r.era)}, projeto = ${lua(r.projeto)} } },`);
   }
   L.push("\t},");
   // Rótulos do mapa (estados, regiões, rios, oceano). Estados e oceano com letras espaçadas, estilo carta antiga.

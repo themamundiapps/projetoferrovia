@@ -75,7 +75,7 @@ Economia.POPULACAO_POR_PORTE = { 4000, 12000, 35000, 90000, 280000 }
 Economia.CRESCIMENTO_POPULACAO_ERA = 4
 
 -- Produção das cidades produtoras, por dia de jogo, por ponto de porte.
-Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200, acucar = 500, madeira = 600, gado = 150, borracha = 80 }
+Economia.PRODUCAO_POR_PORTE = { cafe = 400, minerio = 900, graos = 1200, acucar = 500, madeira = 600, gado = 150, borracha = 80, carvao = 1100, petroleo = 700, aco = 500 }
 Economia.HORAS_DE_OPERACAO = 18 -- os trens rodam 18 h por dia
 
 -- Cargas: cada cidade produtora ligada por trilho até um porto dá um bônus na renda da linha dela.
@@ -88,9 +88,13 @@ Economia.CARGAS = {
 	madeira = { nome = "Madeira", emoji = "carga_madeira", bonus = 0.3, unidade = "t", nomes = { pt = "Madeira", en = "Timber" }, unidades = { pt = "t", en = "t" } },
 	gado = { nome = "Gado", emoji = "carga_gado", bonus = 0.3, unidade = "cabeças", nomes = { pt = "Gado", en = "Cattle" }, unidades = { pt = "cabeças", en = "head" } },
 	borracha = { nome = "Borracha", emoji = "carga_borracha", bonus = 0.6, unidade = "t", nomes = { pt = "Borracha", en = "Rubber" }, unidades = { pt = "t", en = "t" } },
+	-- cargas que aparecem nos EUA
+	carvao = { nome = "Carvão", emoji = "carga_carvao", bonus = 0.4, unidade = "t", nomes = { pt = "Carvão", en = "Coal" }, unidades = { pt = "t", en = "t" } },
+	petroleo = { nome = "Petróleo", emoji = "carga_petroleo", bonus = 0.5, unidade = "barris", nomes = { pt = "Petróleo", en = "Oil" }, unidades = { pt = "barris", en = "barrels" } },
+	aco = { nome = "Aço", emoji = "carga_aco", bonus = 0.5, unidade = "t", nomes = { pt = "Aço", en = "Steel" }, unidades = { pt = "t", en = "t" } },
 }
 -- Ordem em que as cargas aparecem nas listas.
-Economia.ORDEM_CARGAS = { "cafe", "acucar", "minerio", "madeira", "gado", "borracha", "graos" }
+Economia.ORDEM_CARGAS = { "cafe", "acucar", "minerio", "madeira", "gado", "borracha", "graos", "carvao", "petroleo", "aco" }
 
 -- Gabinete de Projetos: uma pesquisa por vez; acelerar custa até 60% do preço do projeto,
 -- proporcional ao tempo que ainda falta.
@@ -291,7 +295,12 @@ end
 -- Ano mostrado no caixa: avança com o trecho mais recente construído e com as linhas completas,
 -- sempre dentro dos anos da era (o Vapor vai de 1852 a 1930, o Diesel de 1930 a 1965...).
 function Economia.anoAtual(estado: EstadoMapa, dados: any): number
-	local era = Economia.ERAS[Economia.indiceEra(estado)]
+	local era = table.clone(Economia.ERAS[Economia.indiceEra(estado)]) :: any
+	-- cada país tem os seus anos (nos EUA o Vapor vai de 1830 a 1935)
+	local anosMapa = dados.anos and dados.anos[era.id]
+	if anosMapa then
+		era.anoInicio, era.anoFim = anosMapa[1], anosMapa[2]
+	end
 	local ano = era.anoInicio
 	for _, linha in dados.linhas do
 		for _, t in linha.trechos do

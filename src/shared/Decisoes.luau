@@ -872,7 +872,8 @@ function Decisoes.sortear(estado: EstadoMapa, dados: any, vistas: { [string]: bo
 	local function candidatas(ignorarVistas: boolean): { { def: Definicao, tipo: string, alvo: string? } }
 		local lista = {}
 		for _, def in CATALOGO do
-			if def.era == estado.era and (ignorarVistas or not vistas[def.id]) then
+			-- as decisões sem `mapa` são do Brasil (a história é a do país)
+			if def.era == estado.era and ((def :: any).mapa or "brasil") == (dados.id or "brasil") and (ignorarVistas or not vistas[def.id]) then
 				local tipo, alvo = Decisoes.resolverAlvo(def, estado, dados, rng)
 				if tipo then
 					table.insert(lista, { def = def, tipo = tipo, alvo = alvo })
