@@ -14,7 +14,7 @@ Economia.DINHEIRO_INICIAL = 2500
 -- O prazo cresce a cada "degrau" de linha (as linhas mais novas demoram mais para se pagar),
 -- e a era seguinte volta a acelerar tudo.
 Economia.PAYBACK_SEGUNDOS = 30
-Economia.CRESCIMENTO_PAYBACK = 2.5
+Economia.CRESCIMENTO_PAYBACK = 3.2 -- 2.5 até 22/11; 3.2 leva um mapa completo para ~20 h de jogo
 Economia.FATOR_CUSTO_TREM = 0.4 -- trem custa 40% do custo médio dos trechos da linha
 Economia.OFFLINE_MAX_SEGUNDOS = 2 * 60 * 60
 
@@ -132,9 +132,9 @@ Economia.CUSTO_BASE_ESTACAO = 60 -- por porte da cidade, no nível 1 da primeira
 Economia.ERAS = {
 	-- cada era dobra a receita e o tamanho dos trens; o custo e as linhas completas pedidas sobem
 	{ id = "vapor", nome = { pt = "Era do Vapor", en = "Steam Era" }, multiplicador = 1, custo = 0, linhasCompletas = 0, capacidade = 350, anoInicio = 1852, anoFim = 1930 },
-	{ id = "diesel", nome = { pt = "Era do Diesel", en = "Diesel Era" }, multiplicador = 2, custo = 400000, linhasCompletas = 10, capacidade = 700, anoInicio = 1930, anoFim = 1965 },
-	{ id = "eletrico", nome = { pt = "Era Elétrica", en = "Electric Era" }, multiplicador = 4, custo = 6000000, linhasCompletas = 14, capacidade = 1400, anoInicio = 1965, anoFim = 2000 },
-	{ id = "alta", nome = { pt = "Era da Alta Velocidade", en = "High-Speed Era" }, multiplicador = 8, custo = 60000000, linhasCompletas = 17, capacidade = 2800, anoInicio = 2000, anoFim = 2030 },
+	{ id = "diesel", nome = { pt = "Era do Diesel", en = "Diesel Era" }, multiplicador = 2, custo = 1200000, linhasCompletas = 10, capacidade = 700, anoInicio = 1930, anoFim = 1965 },
+	{ id = "eletrico", nome = { pt = "Era Elétrica", en = "Electric Era" }, multiplicador = 4, custo = 18000000, linhasCompletas = 14, capacidade = 1400, anoInicio = 1965, anoFim = 2000 },
+	{ id = "alta", nome = { pt = "Era da Alta Velocidade", en = "High-Speed Era" }, multiplicador = 8, custo = 180000000, linhasCompletas = 17, capacidade = 2800, anoInicio = 2000, anoFim = 2030 },
 }
 
 -- Estado salvo de um jogador em um mapa.

@@ -2426,7 +2426,7 @@
       "nome": "EF-118 Vitória–Rio",
       "emoji": "conectar",
       "custo": 150000,
-      "minutos": 5,
+      "minutos": 20,
       "requer": {
         "linhasCompletas": 6
       },
@@ -2440,7 +2440,7 @@
       "nome": "Transnordestina",
       "emoji": "carga_graos",
       "custo": 400000,
-      "minutos": 10,
+      "minutos": 40,
       "requer": {
         "era": "diesel"
       },
@@ -2454,7 +2454,7 @@
       "nome": "Ramal Salgueiro–Suape",
       "emoji": "carga_mercadorias",
       "custo": 300000,
-      "minutos": 8,
+      "minutos": 32,
       "requer": {
         "projeto": "transnordestina"
       },
@@ -2468,7 +2468,7 @@
       "nome": "Ferrogrão (EF-170)",
       "emoji": "carga_graos",
       "custo": 800000,
-      "minutos": 15,
+      "minutos": 60,
       "requer": {
         "era": "eletrico"
       },
@@ -2482,7 +2482,7 @@
       "nome": "Transcontinental (FICO)",
       "emoji": "mapa_mundo",
       "custo": 1500000,
-      "minutos": 20,
+      "minutos": 80,
       "requer": {
         "projeto": "ferrograo"
       },
@@ -2496,7 +2496,7 @@
       "nome": "Trem-bala Rio–SP–Campinas",
       "emoji": "era_alta",
       "custo": 5000000,
-      "minutos": 30,
+      "minutos": 120,
       "requer": {
         "era": "alta",
         "projeto": "ef118"
@@ -2511,7 +2511,7 @@
       "nome": "Litorânea do Sul",
       "emoji": "terreno_ponte",
       "custo": 800000,
-      "minutos": 20,
+      "minutos": 80,
       "ficticio": true,
       "requer": {
         "era": "diesel",
@@ -2527,7 +2527,7 @@
       "nome": "Ferrovia do Planalto",
       "emoji": "estacoes",
       "custo": 2500000,
-      "minutos": 25,
+      "minutos": 100,
       "ficticio": true,
       "requer": {
         "era": "eletrico"
@@ -2542,7 +2542,7 @@
       "nome": "Litorânea do Nordeste",
       "emoji": "carga_acucar",
       "custo": 4000000,
-      "minutos": 30,
+      "minutos": 120,
       "ficticio": true,
       "requer": {
         "era": "eletrico",
@@ -2558,7 +2558,7 @@
       "nome": "Ferrovia da Amazônia",
       "emoji": "terreno_floresta",
       "custo": 6000000,
-      "minutos": 30,
+      "minutos": 120,
       "ficticio": true,
       "requer": {
         "era": "eletrico",
@@ -2574,7 +2574,7 @@
       "nome": "Trem-bala do Sul",
       "emoji": "era_alta",
       "custo": 40000000,
-      "minutos": 40,
+      "minutos": 160,
       "ficticio": true,
       "requer": {
         "era": "alta",

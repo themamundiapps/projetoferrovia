@@ -3137,7 +3137,7 @@
       "nome": "Texas Central",
       "emoji": "velocidade",
       "custo": 2500000,
-      "minutos": 20,
+      "minutos": 80,
       "requer": {
         "era": "diesel"
       },
@@ -3151,7 +3151,7 @@
       "nome": "Alta Velocidade da Califórnia",
       "emoji": "velocidade",
       "custo": 8000000,
-      "minutos": 35,
+      "minutos": 240,
       "requer": {
         "era": "eletrico"
       },
@@ -3166,7 +3166,7 @@
       "nome": "Brightline West",
       "emoji": "velocidade",
       "custo": 12000000,
-      "minutos": 40,
+      "minutos": 240,
       "requer": {
         "era": "eletrico",
         "projeto": "chsr"
@@ -3181,7 +3181,7 @@
       "nome": "Maglev do Nordeste",
       "emoji": "velocidade",
       "custo": 30000000,
-      "minutos": 40,
+      "minutos": 180,
       "requer": {
         "era": "alta"
       },
@@ -3196,7 +3196,7 @@
       "nome": "Trem-bala do Meio-Oeste",
       "emoji": "velocidade",
       "custo": 40000000,
-      "minutos": 45,
+      "minutos": 180,
       "ficticio": true,
       "requer": {
         "era": "alta",

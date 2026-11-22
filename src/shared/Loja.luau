@@ -74,14 +74,14 @@ Loja.PRODUTOS = {
 	},
 	-- terminar o estudo na hora: três preços, conforme o tempo que falta
 	{
-		id = "estudo_curto", produtoId = 3733996826, emoji = "gabinete", preco = 25, tipo = "estudo", ateSegundos = 10 * 60,
+		id = "estudo_curto", produtoId = 3733996826, emoji = "gabinete", preco = 25, tipo = "estudo", ateSegundos = 40 * 60,
 		nome = { pt = "Concluir estudo", en = "Finish study" },
-		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 10 min).", en = "Finishes the Cabinet study now (up to 10 min left)." },
+		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 40 min).", en = "Finishes the Cabinet study now (up to 40 min left)." },
 	},
 	{
-		id = "estudo_medio", produtoId = 3733996840, emoji = "gabinete", preco = 49, tipo = "estudo", ateSegundos = 25 * 60,
+		id = "estudo_medio", produtoId = 3733996840, emoji = "gabinete", preco = 49, tipo = "estudo", ateSegundos = 100 * 60,
 		nome = { pt = "Concluir estudo", en = "Finish study" },
-		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 25 min).", en = "Finishes the Cabinet study now (up to 25 min left)." },
+		descricao = { pt = "Termina agora o estudo do Gabinete (faltando até 1 h 40).", en = "Finishes the Cabinet study now (up to 1 h 40 left)." },
 	},
 	{
 		id = "estudo_longo", produtoId = 3733996850, emoji = "gabinete", preco = 99, tipo = "estudo", ateSegundos = math.huge,
