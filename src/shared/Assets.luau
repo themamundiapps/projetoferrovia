@@ -376,6 +376,11 @@ Assets.Musicas = {
 -- Trilha própria de um mapa, a mesma em todas as eras (no lugar de Assets.Musicas). O Brasil é todo em
 -- bossa nova (pedido do Leonardo em 20/11). APM e DistroKid: as duas fontes que o Roblox libera para
 -- todos os criadores usarem de graça.
+-- Faixa que toca primeiro ao entrar no mapa (o "tema"); as outras seguem embaralhadas.
+Assets.TemaMapa = {
+	europa = "rbxassetid://9045765295", -- O Danúbio Azul no piano
+}
+
 Assets.MusicasMapa = {
 	brasil = {
 		"rbxassetid://9043921564", -- A Dream Of Bossa Nova (APM)
@@ -395,21 +400,20 @@ Assets.MusicasMapa = {
 		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
 	},
 	-- Europa: valsas e música de câmara (Viena, Paris, o "Grand Tour" de trem)
+	-- Europa: piano clássico (álbuns de piano da APM); o Danúbio Azul é o tema (Assets.TemaMapa)
 	europa = {
-		"rbxassetid://1835403738", -- De Salzbourg à Vienne (APM)
-		"rbxassetid://1842282196", -- Classical Waltz, Brahms para harpa (APM)
-		"rbxassetid://1835403737", -- La Vie de Château (APM)
-		"rbxassetid://1835403788", -- Valse des Montagnes (APM)
-		"rbxassetid://1835403934", -- Carnet de Voyage (APM)
-		"rbxassetid://1835403929", -- Jean le Chevalier (APM)
-		"rbxassetid://1835403840", -- Gaieté et Fantaisie (APM)
-		"rbxassetid://1835403789", -- La Danse du Roi (APM)
-		"rbxassetid://9042220392", -- Chaconne des Tendres (APM)
-		"rbxassetid://9043644061", -- Quarteto de cordas nº 62, Haydn (APM)
-		"rbxassetid://9043650018", -- Quarteto de cordas, Debussy, IV (APM)
-		"rbxassetid://86967539363022", -- Classical Evening Waltz (DistroKid)
-		"rbxassetid://95662868157170", -- Classical Mountain Waltz (DistroKid)
-		"rbxassetid://1848052268", -- As Quatro Estações, Inverno, Largo (APM)
+		"rbxassetid://9045765295", -- O Danúbio Azul, Strauss (APM, piano)
+		"rbxassetid://9045765634", -- Noturno op. 9 nº 2, Chopin (APM, piano)
+		"rbxassetid://9045766377", -- Gymnopédie nº 1, Satie (APM, piano)
+		"rbxassetid://9045764969", -- Arabesque nº 1, Debussy (APM, piano)
+		"rbxassetid://9045766074", -- Primavera, Vivaldi (APM, piano)
+		"rbxassetid://9043486120", -- Für Elise, Beethoven (APM, piano)
+		"rbxassetid://9043485735", -- Marcha Turca, Mozart (APM, piano)
+		"rbxassetid://9043486594", -- Sonata ao Luar, Beethoven (APM, piano)
+		"rbxassetid://9045766372", -- Marcha Radetzky, Strauss (APM, piano)
+		"rbxassetid://9045765647", -- Sinfonia nº 5, Beethoven (APM, piano)
+		"rbxassetid://1848058483", -- Prelúdio op. 28 nº 20, Chopin (APM, piano)
+		"rbxassetid://1847114467", -- Prelúdio op. 28 nº 4, Chopin (APM, piano)
 	},
 	-- Menu inicial: trilha de viagem de trem, calma (não é de nenhum país)
 	menu = {

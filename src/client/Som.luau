@@ -143,6 +143,19 @@ function Som.definirMapa(id: string)
 	end
 	mapaAtual = id
 	fila = {} -- a fila embaralhada era do mapa anterior
+	-- mapa com tema: a primeira faixa ao entrar é sempre o tema, depois o resto embaralhado
+	local tema = (Assets.TemaMapa :: any)[id]
+	local lista = (Assets.MusicasMapa :: any)[id]
+	if tema and lista then
+		fila = embaralhar(lista)
+		for i, f in fila do
+			if f == tema then
+				table.remove(fila, i)
+				break
+			end
+		end
+		table.insert(fila, 1, tema)
+	end
 	if tocando then
 		local s = tocando
 		tocando = nil

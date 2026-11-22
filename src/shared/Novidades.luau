@@ -10,8 +10,8 @@ local Novidades: { Novidade } = {
 		data = "2026-11-22",
 		titulo = { pt = "Novo mapa: Europa", en = "New map: Europe" },
 		texto = {
-			pt = "Da Stockton and Darlington de 1825 ao Expresso do Oriente, passando pelos túneis dos Alpes, com valsas de trilha sonora.",
-			en = "From the 1825 Stockton and Darlington to the Orient Express, through the Alpine tunnels, with waltzes on the soundtrack.",
+			pt = "Da Stockton and Darlington de 1825 ao Expresso do Oriente, passando pelos túneis dos Alpes, com piano clássico de trilha sonora.",
+			en = "From the 1825 Stockton and Darlington to the Orient Express, through the Alpine tunnels, with classical piano on the soundtrack.",
 		},
 	},
 	{
