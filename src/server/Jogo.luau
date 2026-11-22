@@ -884,7 +884,7 @@ function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 		return false, L("Você já está na era mais moderna.", "You are already in the most modern era.")
 	end
 	if not liberada then
-		return false, L(`Complete {proxima.linhasCompletas} linhas para liberar a próxima era.`, `Complete {proxima.linhasCompletas} lines to unlock the next era.`)
+		return false, L(`Complete {Economia.metaEra(proxima, dados)} linhas para liberar a próxima era.`, `Complete {Economia.metaEra(proxima, dados)} lines to unlock the next era.`)
 	end
 	if e.dinheiro < proxima.custo then
 		return false, L("Dinheiro insuficiente.", "Not enough money.")

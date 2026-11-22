@@ -89,6 +89,12 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
     for (const [era, [ini, fim]] of Object.entries(dados.anos)) L.push(`\t\t${era} = { ${ini}, ${fim} },`);
     L.push("\t},");
   }
+  // linhas completas para liberar cada era neste país; sem isso, as de Economia.ERAS
+  if (dados.metasEra) {
+    L.push("\tmetasEra = {");
+    for (const [era, n] of Object.entries(dados.metasEra)) L.push(`\t\t${era} = ${n},`);
+    L.push("\t},");
+  }
   L.push("\tterrenos = {");
   for (const [tid, t] of Object.entries(dados.terrenos)) L.push(`\t\t${tid} = { nome = ${lua(t.nome)}, nomes = { pt = ${lua(t.nome)}, en = ${lua(t.nomeEn ?? t.nome)} }, custo = ${lua(t.custo)} },`);
   L.push("\t},");

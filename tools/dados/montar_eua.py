@@ -266,7 +266,7 @@ PROJETOS = [
      "descricao": T("Trem-bala entre Dallas e Houston, planejado nos anos 2010 com a tecnologia do Shinkansen. Esbarrou em fazendeiros e na Justiça.",
                     "A bullet train between Dallas and Houston, planned in the 2010s with Shinkansen technology. It ran into landowners and the courts.")},
     {"id": "chsr", "nome": "Alta Velocidade da Califórnia", "emoji": "velocidade", "custo": 8000000, "minutos": 25,
-     "requer": {"era": "eletrico", "linhasCompletas": 14},
+     "requer": {"era": "eletrico", "linhasCompletas": 21},
      "descricao": T("São Francisco a Los Angeles em menos de 3 horas. As obras começaram em 2015 e seguem no Vale Central.",
                     "San Francisco to Los Angeles in under 3 hours. Construction began in 2015 and continues in the Central Valley.")},
     {"id": "brightline_west", "nome": "Brightline West", "emoji": "velocidade", "custo": 12000000, "minutos": 30,
@@ -274,7 +274,7 @@ PROJETOS = [
      "descricao": T("Trem rápido privado de Las Vegas até o sul da Califórnia, pelo meio da rodovia I-15.",
                     "A private fast train from Las Vegas to Southern California, along the middle of the I-15 highway.")},
     {"id": "ne_maglev", "nome": "Maglev do Nordeste", "emoji": "velocidade", "custo": 30000000, "minutos": 35,
-     "requer": {"era": "alta", "linhasCompletas": 20},
+     "requer": {"era": "alta", "linhasCompletas": 26},
      "descricao": T("Trem de levitação magnética de Washington a Nova York em uma hora. Hoje só existe no papel.",
                     "A magnetic levitation train from Washington to New York in one hour. Today it only exists on paper.")},
     {"id": "midwest_hsr", "nome": "Trem-bala do Meio-Oeste", "emoji": "velocidade", "custo": 40000000, "minutos": 40, "ficticio": True,
@@ -372,9 +372,16 @@ for (eid, nome, lon, lat, porte, produz, porto, paisagem, uf, hpt, hen) in E:
         e["paisagem"] = paisagem
     estacoes.append(e)
 
+# Ondas (degraus) no mesmo formato do Brasil: as linhas históricas vão do degrau 0 ao 4 e os degraus
+# 5 a 8 ficam para as linhas de projeto. Assim a renda não dispara antes das eras modernas.
+# Ondas históricas: 2, 5, 9, 5 e 7 linhas.
+DEGRAU_HISTORICO = {0: 0, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 4}
+DEGRAU_PROJETO = {"texas_central": 5, "chsr": 6, "brightline_west": 7, "ne_maglev": 8, "midwest_hsr": 8}
+
 linhas = []
 for item in LINHAS:
     lid, nome, ano, cor, degrau, trechos, nota = item[:7]
+    degrau = DEGRAU_PROJETO[lid] if len(item) > 7 else DEGRAU_HISTORICO[degrau]
     l = {"id": lid, "nome": nome, "ano": ano, "cor": cor, "trechos": trechos, "degrau": degrau, "nota": nota}
     if lid in NOMES_EN:
         l["nomeEn"] = NOMES_EN[lid]
@@ -395,6 +402,8 @@ dados = {
     "rotulos": ROTULOS,
     "projetos": PROJETOS,
     "foco": ["b_o", "sc_rr", "boston_albany", "erie"],
+    # linhas completas para liberar cada era (no Brasil: 10, 14 e 17 de 24; aqui, na mesma proporção das 33)
+    "metasEra": {"diesel": 15, "eletrico": 21, "alta": 25},
     "estados": ESTADOS,
     "regioes": REGIOES,
 }

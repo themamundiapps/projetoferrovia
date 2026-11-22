@@ -675,7 +675,12 @@ function Economia.proximaEra(estado: EstadoMapa, dados: any): (any?, boolean)
 	if not proxima then
 		return nil, false
 	end
-	return proxima, Economia.linhasCompletas(estado, dados) >= proxima.linhasCompletas
+	return proxima, Economia.linhasCompletas(estado, dados) >= Economia.metaEra(proxima, dados)
+end
+
+-- Linhas completas para liberar a era neste mapa (cada país pode ter as suas: dados.metasEra).
+function Economia.metaEra(era: any, dados: any): number
+	return (dados and dados.metasEra and dados.metasEra[era.id]) or era.linhasCompletas
 end
 
 -- ---------------------------------------------------------------- estações

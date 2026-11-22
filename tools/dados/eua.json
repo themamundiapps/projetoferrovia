@@ -1595,7 +1595,7 @@
           "terreno": "apalaches"
         }
       ],
-      "degrau": 2,
+      "degrau": 1,
       "nota": {
         "pt": "A Curva da Ferradura, aberta em 1854, deixou os trens subirem os Apalaches sem planos inclinados.",
         "en": "The Horseshoe Curve, opened in 1854, let trains climb the Appalachians without inclined planes."
@@ -1632,7 +1632,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 2,
+      "degrau": 1,
       "nota": {
         "pt": "A \"rota de nível d'água\": seguia o Hudson e o vale do Mohawk sem subir montanhas.",
         "en": "The \"Water Level Route\": it followed the Hudson and the Mohawk Valley without climbing mountains."
@@ -1657,7 +1657,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 2,
+      "degrau": 1,
       "nota": {
         "pt": "Chegou a Chicago em 1852, uma das primeiras ligações do leste com a cidade.",
         "en": "It reached Chicago in 1852, one of the first links between the East and the city."
@@ -1688,7 +1688,7 @@
           "terreno": "costa"
         }
       ],
-      "degrau": 3,
+      "degrau": 2,
       "nota": {
         "pt": "Atlanta nasceu como ponta desta ferrovia do estado da Geórgia, em 1837.",
         "en": "Atlanta was born as the end of this Georgia state railroad, in 1837."
@@ -1731,7 +1731,7 @@
           "terreno": "pantano"
         }
       ],
-      "degrau": 3,
+      "degrau": 2,
       "nota": {
         "pt": "Primeira ferrovia com terras doadas pelo governo, em 1850. Abraham Lincoln foi advogado da companhia.",
         "en": "The first railroad built on federal land grants, in 1850. Abraham Lincoln was one of its lawyers."
@@ -1762,7 +1762,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 3,
+      "degrau": 2,
       "nota": {
         "pt": "A Burlington levava os grãos das pradarias para Chicago e chegou a Omaha a tempo da Union Pacific.",
         "en": "The Burlington carried prairie grain to Chicago and reached Omaha in time for the Union Pacific."
@@ -1787,7 +1787,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 3,
+      "degrau": 2,
       "nota": {
         "pt": "Na viagem inaugural, em 1855, a ponte do rio Gasconade desabou. A linha só chegou a Kansas City depois da Guerra Civil.",
         "en": "On the opening run in 1855, the Gasconade River bridge collapsed. The line only reached Kansas City after the Civil War."
@@ -1855,7 +1855,7 @@
           ]
         }
       ],
-      "degrau": 4,
+      "degrau": 2,
       "nota": {
         "pt": "Union Pacific e Central Pacific se encontraram em Promontory, Utah, em 10 de maio de 1869, com um prego de ouro.",
         "en": "The Union Pacific and the Central Pacific met at Promontory, Utah, on May 10, 1869, with a golden spike."
@@ -1893,7 +1893,7 @@
           "terreno": "pantano"
         }
       ],
-      "degrau": 4,
+      "degrau": 2,
       "nota": {
         "pt": "Uma das poucas ferrovias do Sul que saíram mais fortes da Guerra Civil; ajudou a criar Birmingham.",
         "en": "One of the few Southern railroads to come out of the Civil War stronger; it helped create Birmingham."
@@ -1924,7 +1924,7 @@
           "terreno": "vale"
         }
       ],
-      "degrau": 4,
+      "degrau": 2,
       "nota": {
         "pt": "Collis Huntington, da Central Pacific, levou a C&O até o rio Ohio para escoar o carvão da Virgínia Ocidental.",
         "en": "Collis Huntington, of the Central Pacific, pushed the C&O to the Ohio River to haul West Virginia coal."
@@ -1975,7 +1975,7 @@
           "terreno": "costa"
         }
       ],
-      "degrau": 4,
+      "degrau": 2,
       "nota": {
         "pt": "Várias pequenas ferrovias do litoral viraram uma só, levando turistas e algodão de Richmond à Flórida.",
         "en": "Several small coastal railroads became one, carrying tourists and cotton from Richmond to Florida."
@@ -2000,7 +2000,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 4,
+      "degrau": 2,
       "nota": {
         "pt": "A Chicago, Milwaukee and St. Paul ligou os moinhos de Minneapolis aos portos dos Grandes Lagos.",
         "en": "The Chicago, Milwaukee and St. Paul linked the Minneapolis mills to the Great Lakes ports."
@@ -2055,7 +2055,7 @@
           "terreno": "montanhas"
         }
       ],
-      "degrau": 5,
+      "degrau": 3,
       "nota": {
         "pt": "Seguiu a velha Trilha de Santa Fe e chegou a Los Angeles em 1887, provocando uma guerra de passagens com a Southern Pacific.",
         "en": "It followed the old Santa Fe Trail and reached Los Angeles in 1887, sparking a fare war with the Southern Pacific."
@@ -2098,7 +2098,7 @@
           "terreno": "pantano"
         }
       ],
-      "degrau": 5,
+      "degrau": 3,
       "nota": {
         "pt": "A segunda transcontinental, pelo sul, terminada em 1883 entre Los Angeles e Nova Orleans.",
         "en": "The second transcontinental, along the south, finished in 1883 between Los Angeles and New Orleans."
@@ -2148,7 +2148,7 @@
           "terreno": "montanhas"
         }
       ],
-      "degrau": 5,
+      "degrau": 3,
       "nota": {
         "pt": "A falência de 1873 parou a obra em Bismarck. Ela só ficou pronta em 1883, com um prego de ouro em Montana.",
         "en": "Its 1873 bankruptcy halted work at Bismarck. It was only finished in 1883, with a golden spike in Montana."
@@ -2185,7 +2185,7 @@
           "terreno": "deserto"
         }
       ],
-      "degrau": 5,
+      "degrau": 3,
       "nota": {
         "pt": "Era para chegar a San Diego, mas parou no oeste do Texas e se juntou à Southern Pacific em 1881.",
         "en": "It was meant to reach San Diego, but stopped in West Texas and joined the Southern Pacific in 1881."
@@ -2204,7 +2204,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 5,
+      "degrau": 3,
       "nota": {
         "pt": "A Union Pacific passou longe de Denver; a cidade construiu ela mesma o ramal até Cheyenne para não morrer.",
         "en": "The Union Pacific bypassed Denver; the city built its own branch to Cheyenne so as not to wither away."
@@ -2241,7 +2241,7 @@
           "terreno": "deserto"
         }
       ],
-      "degrau": 6,
+      "degrau": 4,
       "nota": {
         "pt": "Ferrovia de bitola estreita que atravessou as Rochosas pelo Royal Gorge depois de uma guerra armada com a Santa Fe.",
         "en": "A narrow-gauge railroad that crossed the Rockies through the Royal Gorge after an armed war with the Santa Fe."
@@ -2272,7 +2272,7 @@
           "terreno": "vale"
         }
       ],
-      "degrau": 6,
+      "degrau": 4,
       "nota": {
         "pt": "A Union Pacific ganhou seu caminho até o Pacífico Norte seguindo a velha Trilha do Oregon.",
         "en": "The Union Pacific got its own way to the Pacific Northwest following the old Oregon Trail."
@@ -2303,7 +2303,7 @@
           "terreno": "vale"
         }
       ],
-      "degrau": 6,
+      "degrau": 4,
       "nota": {
         "pt": "Ligou a Califórnia ao Oregon em 1887, subindo as montanhas Siskiyou.",
         "en": "It linked California to Oregon in 1887, climbing the Siskiyou Mountains."
@@ -2335,7 +2335,7 @@
           "terreno": "apalaches"
         }
       ],
-      "degrau": 6,
+      "degrau": 4,
       "nota": {
         "pt": "Carvão do campo Pocahontas até o porto de Norfolk: por décadas, uma das ferrovias mais lucrativas do país.",
         "en": "Pocahontas coal to the port of Norfolk: for decades, one of the most profitable railroads in the country."
@@ -2366,7 +2366,7 @@
           "terreno": "colinas"
         }
       ],
-      "degrau": 6,
+      "degrau": 4,
       "nota": {
         "pt": "Formada em 1894 juntando ferrovias falidas do Sul; seu trem Crescent ia de Nova York a Nova Orleans.",
         "en": "Formed in 1894 from bankrupt Southern lines; its Crescent train ran from New York to New Orleans."
@@ -2409,7 +2409,7 @@
           "terreno": "montanhas"
         }
       ],
-      "degrau": 7,
+      "degrau": 4,
       "nota": {
         "pt": "James J. Hill a construiu sem terras do governo e sem falir: a única transcontinental privada de verdade.",
         "en": "James J. Hill built it without government land grants and without going bankrupt: the only truly private transcontinental."
@@ -2470,7 +2470,7 @@
           ]
         }
       ],
-      "degrau": 7,
+      "degrau": 4,
       "nota": {
         "pt": "Henry Flagler levou os trilhos até Key West em 1912, sobre pontes de ilha em ilha. Um furacão destruiu a linha em 1935.",
         "en": "Henry Flagler carried the rails to Key West in 1912, on bridges from island to island. A hurricane destroyed the line in 1935."
@@ -2489,7 +2489,7 @@
           "terreno": "planicie"
         }
       ],
-      "degrau": 6,
+      "degrau": 5,
       "nota": {
         "pt": "Trem-bala planejado entre Dallas e Houston, em 90 minutos, com tecnologia do Shinkansen japonês.",
         "en": "A planned bullet train between Dallas and Houston in 90 minutes, using Japanese Shinkansen technology."
@@ -2543,7 +2543,7 @@
           "terreno": "montanhas"
         }
       ],
-      "degrau": 7,
+      "degrau": 6,
       "nota": {
         "pt": "Aprovada pelos eleitores em 2008, a linha São Francisco–Los Angeles começou pelo Vale Central e segue em obras.",
         "en": "Approved by voters in 2008, the San Francisco–Los Angeles line started in the Central Valley and is still under construction."
@@ -3154,7 +3154,7 @@
       "minutos": 25,
       "requer": {
         "era": "eletrico",
-        "linhasCompletas": 14
+        "linhasCompletas": 21
       },
       "descricao": {
         "pt": "São Francisco a Los Angeles em menos de 3 horas. As obras começaram em 2015 e seguem no Vale Central.",
@@ -3185,7 +3185,7 @@
       "minutos": 35,
       "requer": {
         "era": "alta",
-        "linhasCompletas": 20
+        "linhasCompletas": 26
       },
       "descricao": {
         "pt": "Trem de levitação magnética de Washington a Nova York em uma hora. Hoje só existe no papel.",
@@ -3217,6 +3217,11 @@
     "boston_albany",
     "erie"
   ],
+  "metasEra": {
+    "diesel": 15,
+    "eletrico": 21,
+    "alta": 25
+  },
   "estados": {
     "MA": [
       "Massachusetts",
