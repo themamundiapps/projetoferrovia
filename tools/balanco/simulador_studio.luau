@@ -3,6 +3,7 @@
 --   local r = require(ServerStorage._Simulador:Clone())("EUA", { horas = 30 }, valorDeSaida)
 -- Parâmetros opcionais para testar ajustes sem mudar o código: payback, crescimento, fatorEra,
 -- fatorEstudo, fatorCustoEstudo, dt (passo em segundos, padrão 5). Roda sobre cópias dos módulos.
+-- Europa (55 linhas, 22/11): diesel 4,1 h · elétrica 6,0 h · alta 14,2 h · fim 18,2 h.
 -- Resultado de 22/11/2026: Brasil diesel 1,3 h · elétrica 4,6 h · alta 15,6 h · fim 20,4 h;
 --                          EUA    diesel 2,4 h · elétrica 4,1 h · alta 12,1 h · fim 18,1 h.
 -- Apagar o _Simulador do ServerStorage depois (não deve ir para o jogo publicado).
