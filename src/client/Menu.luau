@@ -1119,7 +1119,7 @@ function Menu._abaJornal(self: Menu)
 			ZIndex = 33,
 		}, linhaData)
 	end
-	linha("Rio de Janeiro", Enum.TextXAlignment.Left)
+	linha(if (self.dados.id or "brasil") == "eua" then "New York" else "Rio de Janeiro", Enum.TextXAlignment.Left)
 	linha(data, Enum.TextXAlignment.Center)
 	linha(`Nº {#edicoes + 1} · {(if self.dados.id == "eua" then PRECO_JORNAL_EUA else PRECO_JORNAL)[eraId] or ""}`, Enum.TextXAlignment.Right)
 	fio(folha, 4, 1)
@@ -1610,7 +1610,7 @@ function Menu._abaCompanhia(self: Menu)
 	local lista = {}
 	for _, j in Players:GetPlayers() do
 		table.insert(lista, {
-			nome = j.DisplayName .. (if j:GetAttribute("Pinturas") == true then " ✦" else ""),
+			nome = j.DisplayName .. (if j:GetAttribute("Pinturas") == true then " ✨" else ""),
 			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
 			linhas = tonumber(j:GetAttribute("Linhas")) or 0,
 			eu = j == Players.LocalPlayer,

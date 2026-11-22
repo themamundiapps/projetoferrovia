@@ -47,7 +47,7 @@ Loja.PASSES = {
 	{
 		id = "pinturas", passId = 2094551625, emoji = "trens", preco = 99,
 		nome = { pt = "Pinturas Especiais", en = "Special Liveries" },
-		descricao = { pt = "Locomotivas douradas no mapa e um selo ✦ ao lado do seu nome nos rankings. Só visual.", en = "Golden locomotives on the map and a ✦ badge next to your name on the leaderboards. Cosmetic only." },
+		descricao = { pt = "Locomotivas douradas no mapa e um selo ✨ ao lado do seu nome nos rankings. Só visual.", en = "Golden locomotives on the map and a ✨ badge next to your name on the leaderboards. Cosmetic only." },
 	},
 } :: { Passe }
 

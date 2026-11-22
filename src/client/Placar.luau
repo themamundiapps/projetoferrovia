@@ -4,7 +4,7 @@
 -- jogar; o dinheiro não entra porque dá para comprar na loja. Clicar no título recolhe e abre. Some
 -- quando o painel do trecho (que abre no mesmo canto) está aberto.
 -- Os números vêm dos atributos que o servidor põe em cada jogador (Jogo.atualizarPlacar):
--- Nivel, Linhas, Companhia (nome já filtrado pelo Roblox) e Pinturas (selo ✦ do passe).
+-- Nivel, Linhas, Companhia (nome já filtrado pelo Roblox) e Pinturas (selo ✨ do passe).
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -279,7 +279,7 @@ function Placar.atualizar(self: Placar)
 		local eu = item.jogador == Players.LocalPlayer
 		-- a linha do próprio jogador ganha um fundo leve
 		l.frame.BackgroundTransparency = if eu then 0.8 else 1
-		l.nome.Text = item.jogador.DisplayName .. (if item.pinturas then " ✦" else "")
+		l.nome.Text = item.jogador.DisplayName .. (if item.pinturas then " ✨" else "")
 		l.companhia.Text = if item.companhia ~= "" then item.companhia else Idioma.T("companhia_padrao")
 		l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
 		l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)

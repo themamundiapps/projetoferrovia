@@ -90,7 +90,7 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	est:divisor(caixa, 3)
 	self.opcoes = novo("Frame", { Name = "Opcoes", LayoutOrder = 4, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, BackgroundTransparency = 1 }, caixa)
 	est:lista(self.opcoes, 8)
-	self.btnDepois = est:botao("discreto", "Decidir depois", caixa, 5)
+	self.btnDepois = est:botao("discreto", L("Decidir depois", "Decide later"), caixa, 5)
 	self.btnDepois.Name = "BtnDepois"
 	self.btnDepois.Size = UDim2.new(1, 0, 0, 34)
 	self.btnDepois.TextSize = 14
