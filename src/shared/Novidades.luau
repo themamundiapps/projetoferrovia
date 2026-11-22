@@ -7,6 +7,22 @@ export type Novidade = { data: string, titulo: Texto, texto: Texto }
 
 local Novidades: { Novidade } = {
 	{
+		data = "2026-11-22",
+		titulo = { pt = "Novo mapa: Europa", en = "New map: Europe" },
+		texto = {
+			pt = "Da Stockton and Darlington de 1825 ao Expresso do Oriente, passando pelos túneis dos Alpes, com valsas de trilha sonora.",
+			en = "From the 1825 Stockton and Darlington to the Orient Express, through the Alpine tunnels, with waltzes on the soundtrack.",
+		},
+	},
+	{
+		data = "2026-11-22",
+		titulo = { pt = "Conquistas e menus novos", en = "Achievements and new menus" },
+		texto = {
+			pt = "Galeria de conquistas com medalhas, conquistas de mapa completo e menus mais limpos.",
+			en = "An achievements gallery with medals, map-complete achievements and cleaner menus.",
+		},
+	},
+	{
 		data = "2026-11-20",
 		titulo = { pt = "Novo mapa: Estados Unidos", en = "New map: United States" },
 		texto = {
