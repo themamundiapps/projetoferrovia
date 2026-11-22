@@ -26,7 +26,7 @@ Inicio.__index = Inicio
 export type Inicio = typeof(setmetatable(
 	{} :: {
 		gui: ScreenGui,
-		raiz: CanvasGroup,
+		raiz: Frame,
 		escalado: Frame,
 		escala: UIScale,
 		conteudo: Frame,
@@ -51,13 +51,13 @@ function Inicio.new(playerGui: Instance): Inicio
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		ScreenInsets = Enum.ScreenInsets.None,
 	}, playerGui) :: ScreenGui
-	local raiz = novo("CanvasGroup", {
+	local raiz = novo("Frame", {
 		Name = "Raiz",
 		Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0, -- tela preta até o estado chegar
 		Active = true, -- segura cliques e roda do mouse: o mapa de fundo não mexe
-	}, gui) :: CanvasGroup
+	}, gui) :: Frame
 	local carregando = novo("TextLabel", {
 		Name = "Carregando",
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -70,9 +70,9 @@ function Inicio.new(playerGui: Instance): Inicio
 		TextSize = 20,
 	}, raiz)
 	carregando.Name = "Carregando"
-	-- O conteúdo do menu fica num quadro "Escalado" com UIScale. A raiz é um CanvasGroup (para o fade):
-	-- se a escala ficasse nela, o CanvasGroup desenhava numa textura menor e esticava, e o menu
-	-- saía pixelizado. Assim a raiz desenha na resolução da tela e só o quadro de dentro escala.
+	-- O conteúdo do menu fica num quadro "Escalado" com UIScale (a raiz cobre a tela, sem escala).
+	-- A raiz é um Frame comum: com CanvasGroup (que dava o fade) o menu saía pixelizado, porque ele
+	-- desenha tudo numa textura de resolução limitada. A saída agora é deslizando para a esquerda.
 	local escalado = novo("Frame", {
 		Name = "Escalado",
 		Size = UDim2.fromScale(1, 1),
@@ -418,16 +418,18 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	end)
 end
 
--- Some com fade (o mapa continua embaixo) e para de segurar os cliques.
+-- Desliza para a esquerda (o mapa continua embaixo) e para de segurar os cliques.
 function Inicio.fechar(self: Inicio, duracao: number?)
 	if not self.aberto then
 		return
 	end
 	self.aberto = false
-	local d = duracao or 0.5
-	local tw = TweenService:Create(self.raiz, TweenInfo.new(d, Enum.EasingStyle.Quad), { GroupTransparency = 1 })
+	local d = duracao or 0.45
+	local tw = TweenService:Create(self.raiz, TweenInfo.new(d, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = UDim2.fromScale(-1, 0) })
 	tw.Completed:Once(function()
-		self.gui.Enabled = false
+		if not self.aberto then
+			self.gui.Enabled = false
+		end
 	end)
 	tw:Play()
 end
@@ -436,8 +438,8 @@ end
 function Inicio.abrir(self: Inicio)
 	self.aberto = true
 	self.gui.Enabled = true
-	self.raiz.GroupTransparency = 1
-	TweenService:Create(self.raiz, TweenInfo.new(0.4, Enum.EasingStyle.Quad), { GroupTransparency = 0 }):Play()
+	self.raiz.Position = UDim2.fromScale(-1, 0)
+	TweenService:Create(self.raiz, TweenInfo.new(0.4, Enum.EasingStyle.Quad), { Position = UDim2.fromScale(0, 0) }):Play()
 end
 
 function Inicio.destruir(self: Inicio)

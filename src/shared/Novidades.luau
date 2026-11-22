@@ -26,8 +26,8 @@ local Novidades: { Novidade } = {
 		data = "2026-11-20",
 		titulo = { pt = "Ranking do servidor", en = "Server leaderboard" },
 		texto = {
-			pt = "No canto da tela, quem está no servidor com você: foto, companhia e quanto dinheiro cada um tem.",
-			en = "In the corner of the screen, everyone on your server: picture, company and how much money each one has.",
+			pt = "No canto da tela, quem está no servidor com você: foto, companhia, nível e linhas completas.",
+			en = "In the corner of the screen, everyone on your server: picture, company, level and complete lines.",
 		},
 	},
 	{
