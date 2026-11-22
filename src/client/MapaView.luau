@@ -925,6 +925,17 @@ function MapaView._tamanhoTrens(self: MapaView)
 	end
 end
 
+-- Número entre 0 e 1 fixo para cada texto (o mesmo em toda sessão), para variar os trens sem
+-- que eles pulem de lugar quando a frota é redesenhada.
+local function sorteio(texto: string): number
+	local h = 2166136261
+	for i = 1, #texto do
+		h = bit32.bxor(h, string.byte(texto, i))
+		h = (h * 16777619) % 4294967296
+	end
+	return (h % 100003) / 100003
+end
+
 -- Define os trens de cada linha. Só recria os desenhos quando a frota, a trilha ou a lotação mudam.
 function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 	local partes = {}
@@ -992,8 +1003,13 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 			segs = segsTrilha,
 			antes = antes,
 			depois = depois,
-			duracao = math.clamp(5 * (paradas - 1), 7, 30), -- segundos de uma ponta à outra
+			-- segundos de uma ponta à outra; cada linha um pouco mais rápida ou mais lenta (±12%), para
+			-- as linhas do mapa não ficarem no mesmo compasso
+			duracao = math.clamp(5 * (paradas - 1), 7, 30) * (0.88 + 0.24 * sorteio(l.id .. "/vel")),
 		}
+		-- ponto de partida próprio da linha e uma folga diferente para cada trem: sem isso todos os
+		-- trens do mapa chegavam nas estações no mesmo instante
+		local inicioLinha = sorteio(l.id) * 2
 		-- trem lotado: locomotiva vermelha; trem rodando vazio (frota demais): o trem todo apagado
 		local transp = if l.situacao == "vazio" then 0.55 else 0
 		local visiveis = math.min(l.n, MAX_TRENS_VISIVEIS)
@@ -1024,7 +1040,9 @@ function MapaView.definirTrens(self: MapaView, lista: { LinhaTrens })
 				Visible = false,
 				ZIndex = Z.rotulo,
 			}, self.conteudo) :: TextLabel
-			table.insert(self.trens, { carros = carros, emoji = emoji, trilha = trilha, fase = (k - 1) / visiveis * 2 })
+			local espaco = 2 / visiveis
+			local fase = inicioLinha + (k - 1) * espaco + (sorteio(l.id .. "/" .. k) - 0.5) * espaco * 0.5
+			table.insert(self.trens, { carros = carros, emoji = emoji, trilha = trilha, fase = fase })
 		end
 	end
 	self:_tamanhoTrens()
