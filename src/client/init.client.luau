@@ -447,7 +447,7 @@ local function montar(eraId: string, mapaNovo: boolean?)
 			ficha:fechar()
 			mapa.interagiu = true
 			mapa:focar(mn, mx, 140)
-			mapa:selecionar(alvo)
+			mapa:selecionar(alvo, linhaId)
 			ui:abrir(alvo)
 		end
 	end
