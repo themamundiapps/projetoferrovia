@@ -940,8 +940,7 @@ end
 -- Foto da notícia: a cidade do alvo (ou uma da rede ligada a ele); sem cidade, a maior da rede.
 local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	local function imagem(id: string): string?
-		local e = dados.estacoes[id]
-		return Assets.imagemCidade(id, estado.era) or (e and (Assets.Paisagens :: any)[e.paisagem or ""])
+		return Assets.imagemExata(id, estado.era)
 	end
 	local candidatas: { string } = {}
 	if ev.tipo == "cidade" and ev.alvo and dados.estacoes[ev.alvo] then
@@ -967,7 +966,7 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	-- a maior cidade com imagem própria primeiro
 	table.sort(candidatas, function(a, b)
 		local pa, pb = dados.estacoes[a].porte, dados.estacoes[b].porte
-		local ia, ib = (Assets.Cidades :: any)[a] ~= nil, (Assets.Cidades :: any)[b] ~= nil
+		local ia, ib = imagem(a) ~= nil, imagem(b) ~= nil
 		if ia ~= ib then
 			return ia
 		end
@@ -979,10 +978,17 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 			return img, dados.estacoes[id].nome
 		end
 	end
-	if not dados.estacoes.rio then
-		return nil, nil -- nos EUA ainda não há imagens das cidades
+	-- sem foto desta época para nenhuma cidade da notícia: a maior cidade do mapa que tenha uma
+	local melhor: string? = nil
+	for id, e in dados.estacoes do
+		if imagem(id) and (not melhor or e.porte > dados.estacoes[melhor].porte) then
+			melhor = id
+		end
 	end
-	return Assets.imagemCidade("rio", estado.era), dados.estacoes.rio.nome
+	if melhor then
+		return imagem(melhor), dados.estacoes[melhor].nome
+	end
+	return nil, nil -- nos EUA ainda não há imagens das cidades
 end
 
 local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = L("grátis", "free") }

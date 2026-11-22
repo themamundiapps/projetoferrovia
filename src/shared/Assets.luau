@@ -65,8 +65,8 @@ Assets.Cidades = {
 } :: { [string]: string } -- id da cidade -> imagem
 
 -- A mesma cidade em outras épocas (fotos do Wikimedia Commons, baixadas por tools/assetgen/baixar_commons.py
--- para arte/cidades_jogo/<id>_<era>.jpg): a ficha e o jornal mostram a da era
--- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
+-- para arte/cidades_jogo/<id>_<era>.jpg): a ficha e o jornal só mostram a da era atual
+-- (Assets.imagemExata); sem ela, a ficha diz "foto desta época em breve".
 -- Créditos e licenças em arte/cidades/CREDITOS.md.
 Assets.CidadesPorEra = {
 	-- REGRA: nada de foto com texto, legenda, marca-d'água, site ou marca comercial legível (a moderação
@@ -124,6 +124,21 @@ function Assets.imagemCidade(id: string, eraId: string?): string?
 		end
 	end
 	return Assets.Cidades[id]
+end
+-- Só a imagem desta cidade nesta era (sem voltar para outra época nem usar paisagem genérica).
+-- Sem ela, a ficha mostra "foto em breve" e o jornal sai sem foto.
+function Assets.imagemExata(id: string, eraId: string?): string?
+	local img: string?
+	if (eraId or "vapor") == "vapor" then
+		img = Assets.Cidades[id]
+	else
+		local daEra = Assets.CidadesPorEra[eraId :: string]
+		img = daEra and daEra[id]
+	end
+	if img and img ~= "rbxassetid://0" then
+		return img
+	end
+	return nil
 end
 -- Kit de UI (imagens fatiadas em 9, arte/ui/<kit>/). slice = SliceCenter na imagem de 512 px;
 -- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).

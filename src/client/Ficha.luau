@@ -264,7 +264,7 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 	}, r)
 	novo("UIStroke", { Color = c.ink, Thickness = 1.5 }, moldura)
 	est:cantos(moldura)
-	local imagem = Assets.imagemCidade(id, est.era.id) or (Assets.Paisagens :: any)[e.paisagem or ""]
+	local imagem = Assets.imagemExata(id, est.era.id)
 	if imagem then
 		local img = novo("ImageLabel", {
 			Size = UDim2.fromScale(1, 1),
@@ -275,14 +275,23 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 		}, moldura)
 		est:cantos(img)
 	else
+		-- ainda sem foto desta cidade nesta época
 		novo("TextLabel", {
-			Size = UDim2.fromScale(1, 1),
+			Size = UDim2.new(1, 0, 0.6, 0),
 			BackgroundTransparency = 1,
 			Text = (Emojis :: any)[EMOJI_PAISAGEM[e.paisagem or ""] or "estacoes"] or "",
-			TextSize = 48,
+			TextSize = 40,
 			TextTransparency = 0.45,
 			ZIndex = 32,
 		}, moldura)
+		local aviso = est:texto("fraco", Idioma.L("Foto desta época em breve", "Photo of this era coming soon"), moldura, 1)
+		aviso.AnchorPoint = Vector2.new(0.5, 0)
+		aviso.Position = UDim2.fromScale(0.5, 0.62)
+		aviso.AutomaticSize = Enum.AutomaticSize.None
+		aviso.Size = UDim2.new(1, -16, 0.3, 0)
+		aviso.TextXAlignment = Enum.TextXAlignment.Center
+		aviso.TextYAlignment = Enum.TextYAlignment.Top
+		aviso.ZIndex = 32
 	end
 
 	-- três números
