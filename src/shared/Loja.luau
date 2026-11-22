@@ -25,27 +25,27 @@ export type Produto = {
 
 Loja.PASSES = {
 	{
-		id = "dobro", passId = 0, emoji = "dinheiro", preco = 399,
+		id = "dobro", passId = 2096933556, emoji = "dinheiro", preco = 399,
 		nome = { pt = "Lucro em Dobro", en = "Double Profit" },
 		descricao = { pt = "Toda a renda das linhas vale o dobro, para sempre.", en = "All line income is doubled, forever." },
 	},
 	{
-		id = "gerente", passId = 0, emoji = "companhia", preco = 249,
+		id = "gerente", passId = 2092907817, emoji = "companhia", preco = 249,
 		nome = { pt = "Gerente Automático", en = "Auto Manager" },
 		descricao = { pt = "Compra os trens que faltam e constrói os trechos liberados sozinho, do mais barato ao mais caro. Dá para desligar aqui na loja.", en = "Buys missing trains and builds unlocked sections on its own, cheapest first. You can turn it off here in the shop." },
 	},
 	{
-		id = "estudos", passId = 0, emoji = "gabinete", preco = 199,
+		id = "estudos", passId = 2094269704, emoji = "gabinete", preco = 199,
 		nome = { pt = "Estudos Rápidos", en = "Fast Studies" },
 		descricao = { pt = "Os estudos do Gabinete de Projetos levam metade do tempo.", en = "Projects Cabinet studies take half the time." },
 	},
 	{
-		id = "offline", passId = 0, emoji = "relogio", preco = 149,
+		id = "offline", passId = 2092271750, emoji = "relogio", preco = 149,
 		nome = { pt = "Renda Offline Longa", en = "Long Offline Income" },
 		descricao = { pt = "Com o jogo fechado, a renda acumula por até 24 h (sem o passe, até 2 h).", en = "With the game closed, income builds up for up to 24 h (without the pass, up to 2 h)." },
 	},
 	{
-		id = "pinturas", passId = 0, emoji = "trens", preco = 99,
+		id = "pinturas", passId = 2094551625, emoji = "trens", preco = 99,
 		nome = { pt = "Pinturas Especiais", en = "Special Liveries" },
 		descricao = { pt = "Locomotivas douradas no mapa e um selo ✦ ao lado do seu nome nos rankings. Só visual.", en = "Golden locomotives on the map and a ✦ badge next to your name on the leaderboards. Cosmetic only." },
 	},
