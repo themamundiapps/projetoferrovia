@@ -224,10 +224,10 @@ PROJETOS = [
      "requer": {"era": "eletrico", "projeto": "rail_baltica"},
      "texto": T("Estudar o túnel sob o Báltico entre Hamburgo e Copenhague.",
                 "Study the tunnel under the Baltic between Hamburg and Copenhagen.")},
-    {"id": "lyon_turin", "nome": "Túnel Lyon–Turim", "emoji": "pesquisa", "custo": 30000000, "minutos": 180,
+    {"id": "lyon_turin", "nome": "Túnel Lyon–Turim", "emoji": "pesquisa", "custo": 30000000, "minutos": 120,
      "requer": {"era": "alta"},
      "texto": T("Estudar o túnel de base de 57 km sob os Alpes.", "Study the 57 km base tunnel under the Alps.")},
-    {"id": "messina", "nome": "Ponte do Estreito de Messina", "emoji": "pesquisa", "custo": 40000000, "minutos": 180, "ficticio": True,
+    {"id": "messina", "nome": "Ponte do Estreito de Messina", "emoji": "pesquisa", "custo": 40000000, "minutos": 120, "ficticio": True,
      "requer": {"era": "alta", "projeto": "lyon_turin"},
      "texto": T("E se a Sicília ganhasse uma ponte até o continente?", "What if Sicily got a bridge to the mainland?")},
 ]

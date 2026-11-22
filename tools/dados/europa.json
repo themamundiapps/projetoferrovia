@@ -2368,7 +2368,7 @@
       "nome": "Túnel Lyon–Turim",
       "emoji": "pesquisa",
       "custo": 30000000,
-      "minutos": 180,
+      "minutos": 120,
       "requer": {
         "era": "alta"
       },
@@ -2383,7 +2383,7 @@
       "nome": "Ponte do Estreito de Messina",
       "emoji": "pesquisa",
       "custo": 40000000,
-      "minutos": 180,
+      "minutos": 120,
       "ficticio": true,
       "requer": {
         "era": "alta",

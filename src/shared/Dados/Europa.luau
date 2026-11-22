@@ -342,8 +342,8 @@ return {
 		{ id = "hs2", nome = "HS2", nomeEn = nil, emoji = "pesquisa", linha = "hs2", custo = 2500000, segundos = 4800, ficticio = false, descricao = nil, requer = { linhasCompletas = nil, era = "diesel", projeto = nil } },
 		{ id = "rail_baltica", nome = "Rail Baltica", nomeEn = nil, emoji = "pesquisa", linha = "rail_baltica", custo = 8000000, segundos = 14400, ficticio = false, descricao = nil, requer = { linhasCompletas = nil, era = "eletrico", projeto = nil } },
 		{ id = "fehmarn", nome = "Túnel do Fehmarnbelt", nomeEn = "Fehmarnbelt Tunnel", emoji = "pesquisa", linha = "fehmarn", custo = 12000000, segundos = 14400, ficticio = false, descricao = nil, requer = { linhasCompletas = nil, era = "eletrico", projeto = "rail_baltica" } },
-		{ id = "lyon_turin", nome = "Túnel Lyon–Turim", nomeEn = "Lyon–Turin Tunnel", emoji = "pesquisa", linha = "lyon_turin", custo = 30000000, segundos = 10800, ficticio = false, descricao = nil, requer = { linhasCompletas = nil, era = "alta", projeto = nil } },
-		{ id = "messina", nome = "Ponte do Estreito de Messina", nomeEn = "Strait of Messina Bridge", emoji = "pesquisa", linha = "messina", custo = 40000000, segundos = 10800, ficticio = true, descricao = nil, requer = { linhasCompletas = nil, era = "alta", projeto = "lyon_turin" } },
+		{ id = "lyon_turin", nome = "Túnel Lyon–Turim", nomeEn = "Lyon–Turin Tunnel", emoji = "pesquisa", linha = "lyon_turin", custo = 30000000, segundos = 7200, ficticio = false, descricao = nil, requer = { linhasCompletas = nil, era = "alta", projeto = nil } },
+		{ id = "messina", nome = "Ponte do Estreito de Messina", nomeEn = "Strait of Messina Bridge", emoji = "pesquisa", linha = "messina", custo = 40000000, segundos = 7200, ficticio = true, descricao = nil, requer = { linhasCompletas = nil, era = "alta", projeto = "lyon_turin" } },
 	},
 	rotulos = {
 		{ tipo = "estado", texto = "R E I N O    U N I D O", textoEn = "U N I T E D    K I N G D O M", pos = Vector2.new(649.9, 529.3), angulo = 0, zoomMin = 0, zoomMax = 4 },
