@@ -510,7 +510,7 @@ function Menu._abaLinhas(self: Menu)
 	bFrota.Activated:Connect(function()
 		self.aoAgir:Fire("completarFrotas", {})
 	end)
-	est:texto("fraco", L("Construir tudo compra os trechos liberados do mais barato para o mais caro. Completar frotas compra trens até todos os passageiros embarcarem.", "Build everything buys the unlocked sections from cheapest to most expensive. Fill up fleets buys trains until every passenger can board."), r, 4)
+	est:texto("fraco", L("Construir tudo compra os trechos liberados do mais barato para o mais caro. Completar frotas compra trens até todos os passageiros embarcarem e vende os que estão rodando vazios.", "Build everything buys the unlocked sections from cheapest to most expensive. Fill up fleets buys trains until every passenger can board and sells the ones running empty."), r, 4)
 
 	local balanco = Economia.balanco(estado, dados)
 	local rede = Economia.rede(estado, dados)
@@ -1641,7 +1641,8 @@ local GRUPOS_CONQUISTAS = {
 	{ nome = { pt = "Operação", en = "Operations" }, ids = { "ninguem_na_plataforma", "passageiros_felizes", "grande_estacao", "malha_integrada" } },
 	{ nome = { pt = "Negócios", en = "Business" }, ids = { "bom_pagador", "palavra_cumprida", "primeiro_milhao" } },
 	{ nome = { pt = "Eras", en = "Eras" }, ids = { "adeus_vapor", "fio_no_trilho", "bala_de_prata" } },
-	{ nome = { pt = "Grandes obras", en = "Great works" }, ids = { "obra_entregue", "sonhador", "pais_nos_trilhos" } },
+	{ nome = { pt = "Grandes obras", en = "Great works" }, ids = { "obra_entregue", "sonhador" } },
+	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo" } },
 }
 
 local OURO = Color3.fromRGB(214, 168, 72)

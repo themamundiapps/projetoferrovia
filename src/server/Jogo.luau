@@ -293,8 +293,16 @@ end
 local function pacoteEstado(s: Sessao, renda: number?): any
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
+	-- linhas completas em cada mapa já jogado (o menu inicial marca os mapas completos)
+	local progressoMapas = {}
+	for id, em in s.mapas do
+		if MAPAS[id] then
+			progressoMapas[id] = { linhas = Economia.linhasCompletas(em, MAPAS[id]), total = #MAPAS[id].linhas }
+		end
+	end
 	return {
 		mapa = s.mapaAtual,
+		progressoMapas = progressoMapas,
 		dinheiro = e.dinheiro,
 		renda = renda or Economia.rendaTotal(e, dados),
 		xp = e.xp,
@@ -793,9 +801,29 @@ function Acoes.construirTudo(s: Sessao, _args: any): (boolean, string?)
 end
 
 -- Compra os trens que faltam em todas as linhas, enquanto houver dinheiro.
+-- Vende os trens que sobram (sem passageiro para levar), pelo valor de venda. Devolve quantos saíram.
+-- Acontece sobretudo na troca de era: os trens novos levam o dobro, e metade da frota antiga fica vazia.
+local function venderSobras(e: any, dados: any): (number, number)
+	local vendidos, valor = 0, 0
+	for _, linha in dados.linhas do
+		local sobra = Economia.trensSobrando(e, dados, linha)
+		local podeTirar = math.max(0, (e.trens[linha.id] or 0) - 1) -- toda linha fica com ao menos 1
+		local n = math.min(sobra, podeTirar)
+		if n > 0 then
+			e.trens[linha.id] -= n
+			local v = Economia.valorVendaTrem(e, linha) * n
+			e.dinheiro += v
+			vendidos += n
+			valor += v
+		end
+	end
+	return vendidos, valor
+end
+
 function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
+	local vendidos, valor = venderSobras(e, dados)
 	local comprados = 0
 	for _, linha in dados.linhas do
 		while Economia.podeComprarTrem(e, dados, linha) and e.dinheiro >= Economia.custoTrem(e, linha) do
@@ -806,8 +834,13 @@ function Acoes.completarFrotas(s: Sessao, _args: any): (boolean, string?)
 			comprados += 1
 		end
 	end
-	if comprados == 0 then
+	local simbolo = dados.simbolo
+	if comprados == 0 and vendidos == 0 then
 		return false, L("Nenhuma linha precisa de trem, ou falta dinheiro.", "No line needs a train, or there is not enough money.")
+	elseif vendidos > 0 and comprados > 0 then
+		return true, L(`{comprados} trem(ns) comprado(s) e {vendidos} vazio(s) vendido(s) (+ {Economia.formatar(valor, simbolo)}).`, `{comprados} train(s) bought and {vendidos} empty one(s) sold (+ {Economia.formatar(valor, simbolo)}).`)
+	elseif vendidos > 0 then
+		return true, L(`{vendidos} trem(ns) vazio(s) vendido(s) (+ {Economia.formatar(valor, simbolo)}).`, `{vendidos} empty train(s) sold (+ {Economia.formatar(valor, simbolo)}).`)
 	end
 	return true, L(`{comprados} trem(ns) comprado(s).`, `{comprados} train(s) bought.`)
 end
@@ -892,6 +925,11 @@ function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 	e.dinheiro -= proxima.custo
 	e.era = proxima.id
 	ganharXp(s, e, Metas.XP.era)
+	-- os trens da era nova levam mais gente: os que ficariam vazios são vendidos na hora
+	local vendidos, valor = venderSobras(e, dados)
+	if vendidos > 0 then
+		return true, L(`Os trens novos levam mais passageiros: {vendidos} trem(ns) antigo(s) vendido(s) (+ {Economia.formatar(valor, dados.simbolo)}).`, `The new trains carry more passengers: {vendidos} old train(s) sold (+ {Economia.formatar(valor, dados.simbolo)}).`)
+	end
 	return true, nil
 end
 

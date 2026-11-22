@@ -611,8 +611,18 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
-		id = "pais_nos_trilhos", nome = "O país nos trilhos", emoji = "mapa_mundo", xp = 150,
-		descricao = "Complete todas as linhas do mapa.",
+		id = "pais_nos_trilhos", nome = "O Brasil nos trilhos", emoji = "mapa_mundo", xp = 300, mapa = "brasil",
+		descricao = "Complete o mapa do Brasil: todas as linhas.",
+		progresso = function(estado: EstadoMapa, dados: any): (number, number)
+			return Economia.linhasCompletas(estado, dados), #dados.linhas
+		end,
+		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
+			return Economia.linhasCompletas(estado, dados) == #dados.linhas
+		end,
+	},
+	{
+		id = "eua_completo", nome = "De costa a costa", emoji = "mapa_mundo", xp = 300, mapa = "eua",
+		descricao = "Complete o mapa dos EUA: todas as linhas.",
 		progresso = function(estado: EstadoMapa, dados: any): (number, number)
 			return Economia.linhasCompletas(estado, dados), #dados.linhas
 		end,
@@ -645,7 +655,8 @@ local EN_MEDALHAS = {
 	malha_integrada = { "Integrated network", "Have a line linked to 5 big cities of other lines." },
 	palavra_cumprida = { "A promise kept", "Complete 10 contracts." },
 	primeiro_milhao = { "First million", "Have 1 million in cash." },
-	pais_nos_trilhos = { "A nation on rails", "Complete every line on the map." },
+	pais_nos_trilhos = { "Brazil on rails", "Complete the Brazil map: every line." },
+	eua_completo = { "Coast to coast", "Complete the USA map: every line." },
 	carvao_no_porto = { "Coal for the mills", "Link a coal mine to a port." },
 }
 

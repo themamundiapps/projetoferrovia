@@ -183,7 +183,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	local fileira = novo("Frame", {
 		Name = "Mapas",
 		LayoutOrder = 6,
-		Size = UDim2.new(1, 0, 0, 128),
+		Size = UDim2.new(1, 0, 0, 146),
 		BackgroundTransparency = 1,
 	}, coluna)
 	est:lista(fileira, 10, true)
@@ -214,6 +214,16 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		n.TextSize = 19
 		local inf = est:texto("fraco", m.info, cartao, 2)
 		inf.TextSize = 13
+		local prog = ((estado or {}).progressoMapas or {})[m.id]
+		if m.pronto and prog and prog.linhas > 0 then
+			local completo = prog.linhas >= prog.total
+			local lProg = est:texto("rotulo", if completo then L(`{Emojis.medalha} Mapa completo`, `{Emojis.medalha} Map complete`)
+				else L(`{prog.linhas} de {prog.total} linhas completas`, `{prog.linhas} of {prog.total} lines complete`), cartao, 3)
+			lProg.TextSize = 12
+			if completo then
+				lProg.TextColor3 = est:paleta(cartao).positive
+			end
+		end
 		if m.pronto then
 			-- cada mapa é uma companhia separada: "Continuar" só no mapa aberto agora
 			local continuar = temCompanhia and m.id == (dados.id or "brasil")
