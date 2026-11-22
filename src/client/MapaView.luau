@@ -439,7 +439,7 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 		local cor: Color3 = self.era.linhas[linha.cor] or cores.ink
 		usosCor[linha.cor] = (usosCor[linha.cor] or 0) + 1
 		local padrao = usosCor[linha.cor]
-		for _, trecho in linha.trechos do
+		for it, trecho in linha.trechos do
 			-- o trecho vai de estação a estação passando pelos pontos de "via" (desvios para não cortar o
 			-- mar); cada pedaço é um segmento com o mesmo id
 			local pde: Vector2 = dados.estacoes[trecho.de].pos
@@ -488,8 +488,21 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 				local junta: { linha: Frame, casing: Frame }? = nil
 				-- nos arcos as dobras entre pedacinhos são suaves: a bolinha só vai onde a dobra é forte
 				local dobraForte = false
+				-- próximo ponto depois de b: no mesmo trecho ou, na estação do fim, no começo do trecho
+				-- seguinte da linha (sem a bolinha, a dobra numa estação abre um "corte" com o zoom longe,
+				-- quando a estação fica menor que a espessura da linha)
+				local seguinte: Vector2? = nil
 				if p < #pontos - 1 then
-					local d1, d2 = b - a, pontos[p + 2] - b
+					seguinte = pontos[p + 2]
+				else
+					local prox = linha.trechos[it + 1]
+					if prox and prox.de == trecho.para then
+						local pfim: Vector2 = dados.estacoes[prox.para].pos
+						seguinte = Tracado.via(ppara, prox.via, pfim)[1] or pfim
+					end
+				end
+				if seguinte then
+					local d1, d2 = b - a, seguinte - b
 					dobraForte = d1.Magnitude > 1e-3 and d2.Magnitude > 1e-3 and d1.Unit:Dot(d2.Unit) < math.cos(math.rad(20))
 				end
 				if dobraForte then
