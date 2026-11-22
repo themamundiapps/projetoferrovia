@@ -1,21 +1,27 @@
-"""Grade de detalhe do Brasil: blocos de 256 px do mapa base desenhados a 4x, só onde passam trilhos.
+"""Grade de detalhe de um mapa: blocos de 256 px do mapa base desenhados a 4x, só onde passam trilhos.
 
-Passos:
-  python3 render_detalhes.py --grade <grade.json>          # calcula as células a partir das linhas
-  node detalhe_grade.mjs <grade.json> <faixas.json>         # caminhos SVG por faixa
-  python3 render_detalhes.py --render <grade.json> <faixas.json> <arte/mapas>   # tiles + manifesto
+Passos (MAPA = brasil ou eua; padrão brasil):
+  python3 render_detalhes.py --grade <grade.json> [MAPA]          # calcula as células a partir das linhas
+  node detalhe_grade.mjs <grade.json> <faixas.json> [MAPA]         # caminhos SVG por faixa
+  python3 render_detalhes.py --render <grade.json> <faixas.json> <arte/mapas> [MAPA]   # tiles + manifesto
+  python3 mapas_detalhe.py [MAPA]                                  # escreve Mapas.<mapa>.detalhes
 Os estilos repetem os do Sudeste original (traços conferidos pixel a pixel).
 """
 import io, json, os, re, sys
 
-C, OX, OY, ESCALA, MARGEM = 256, 208, 144, 4, 40  # grade alinhada à antiga caixa do Sudeste
+C, ESCALA, MARGEM = 256, 4, 40
+# origem da grade de cada mapa (no Brasil, alinhada à antiga caixa do Sudeste)
+ORIGEM = {"brasil": (208, 144), "eua": (0, 0)}
+ARQ_DADOS = {"brasil": "Brasil", "eua": "EUA"}
+MAPA = "brasil"
+OX, OY = ORIGEM[MAPA]
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 
 
 def grade(saida):
-    s = open(os.path.join(RAIZ, "src/shared/Dados/Brasil.luau")).read()
-    pts = {m[0]: (float(m[1]), float(m[2])) for m in re.findall(r'(\w+) = \{ nome = "[^"]*", pos = Vector2\.new\(([\d.]+), ([\d.]+)\)', s)}
-    d = json.load(open(os.path.join(RAIZ, "tools/dados/brasil.json")))
+    s = open(os.path.join(RAIZ, f"src/shared/Dados/{ARQ_DADOS[MAPA]}.luau")).read()
+    pts = {m[0]: (float(m[1]), float(m[2])) for m in re.findall(r'(\w+) = \{ nome = "[^"]*",[^\n]*? pos = Vector2\.new\(([\d.]+), ([\d.]+)\)', s)}
+    d = json.load(open(os.path.join(RAIZ, f"tools/dados/{MAPA}.json")))
     cel = set()
     for linha in d["linhas"]:
         for t in linha["trechos"]:
@@ -35,7 +41,7 @@ def render(grade_json, faixas_json, arte):
     from PIL import Image
     g = json.load(open(grade_json))
     celulas = {tuple(c) for c in g["celulas"]}
-    pasta = os.path.join(arte, "brasil_detalhe")
+    pasta = os.path.join(arte, f"{MAPA}_detalhe")
     os.makedirs(pasta, exist_ok=True)
     T = C * ESCALA
     RIOS = {4: 4.2, 5: 3.6, 6: 3.0, 7: 2.6, 8: 2.2}
@@ -64,9 +70,9 @@ def render(grade_json, faixas_json, arte):
                 c = img.crop((i * T, 0, (i + 1) * T, T))
                 if c.getchannel("A").getbbox() is None:
                     continue  # bloco vazio (mar aberto, sem rio): nem envia
-                arq = f"brasil_detalhe_{cx}_{cy}_{nome}.png"
+                arq = f"{MAPA}_detalhe_{cx}_{cy}_{nome}.png"
                 c.save(os.path.join(pasta, arq), optimize=True)
-                bloco["tiles"].append({"camada": nome, "arquivo": f"mapas/brasil_detalhe/{arq}"})
+                bloco["tiles"].append({"camada": nome, "arquivo": f"mapas/{MAPA}_detalhe/{arq}"})
             manifesto.append(bloco)
         print("faixa", cy, "ok")
     json.dump(manifesto, open(os.path.join(pasta, "manifesto.json"), "w"), indent=1)
@@ -75,6 +81,10 @@ def render(grade_json, faixas_json, arte):
 
 if __name__ == "__main__":
     if sys.argv[1] == "--grade":
+        MAPA = sys.argv[3] if len(sys.argv) > 3 else "brasil"
+        OX, OY = ORIGEM[MAPA]
         grade(sys.argv[2])
     else:
+        MAPA = sys.argv[5] if len(sys.argv) > 5 else "brasil"
+        OX, OY = ORIGEM[MAPA]
         render(sys.argv[2], sys.argv[3], sys.argv[4])
