@@ -382,15 +382,15 @@ return {
 		{
 			id = "mza", nome = "Madri–Córdoba–Sevilha", nomeEn = "Madrid–Córdoba–Seville", ano = 1866, cor = 8, ordem = 36, degrau = 5, projeto = nil, nota = { pt = "A companhia MZA desceu da meseta para a Andaluzia pelo desfiladeiro de Despeñaperros.", en = "The MZA company came down from the plateau into Andalusia through the Despeñaperros gorge." },
 			trechos = {
-				{ id = "mza_1", de = "madrid", para = "cordoba", ano = 1866, km = 451, terreno = "montanhas", custo = 430937, degrau = 5, via = { Vector2.new(484.5, 1225.1), Vector2.new(463.4, 1275.8) } },
+				{ id = "mza_1", de = "madrid", para = "cordoba", ano = 1866, km = 370, terreno = "montanhas", custo = 353541, degrau = 5 },
 				{ id = "mza_2", de = "cordoba", para = "sevilla", ano = 1859, km = 150, terreno = "vale", custo = 85996, degrau = 5 },
 			},
 		},
 		{
 			id = "leste", nome = "Lisboa–Badajoz–Madri", nomeEn = "Lisbon–Badajoz–Madrid", ano = 1866, cor = 2, ordem = 37, degrau = 6, projeto = nil, nota = { pt = "A Linha do Leste saiu de Lisboa pelo vale do Tejo e encontrou a ferrovia espanhola em Badajoz.", en = "The Eastern Line left Lisbon up the Tagus valley and met the Spanish railway at Badajoz." },
 			trechos = {
-				{ id = "leste_1", de = "lisboa", para = "badajoz", ano = 1863, km = 311, terreno = "planicie", custo = 356598, degrau = 6, via = { Vector2.new(240.9, 1203.9), Vector2.new(245.2, 1198.5), Vector2.new(248.3, 1196.0), Vector2.new(274.6, 1176.6), Vector2.new(305.2, 1203.6), Vector2.new(320.0, 1219.0) } },
-				{ id = "leste_2", de = "badajoz", para = "madrid", ano = 1866, km = 534, terreno = "colinas", custo = 857212, degrau = 6, via = { Vector2.new(353.9, 1224.4), Vector2.new(451.9, 1241.1), Vector2.new(474.2, 1189.0) } },
+				{ id = "leste_1", de = "lisboa", para = "badajoz", ano = 1863, km = 266, terreno = "planicie", custo = 305000, degrau = 6, via = { Vector2.new(240.9, 1203.9), Vector2.new(247.8, 1196.4), Vector2.new(277.8, 1194.2) } },
+				{ id = "leste_2", de = "badajoz", para = "madrid", ano = 1866, km = 410, terreno = "colinas", custo = 658159, degrau = 6 },
 			},
 		},
 		{
@@ -438,7 +438,7 @@ return {
 		{
 			id = "arlberg", nome = "Ferrovia do Arlberg", nomeEn = "Arlberg Railway", ano = 1884, cor = 6, ordem = 44, degrau = 6, projeto = nil, nota = { pt = "O túnel do Arlberg, de 10 km, ligou o Tirol à Suíça sem passar pela Alemanha.", en = "The 10 km Arlberg tunnel linked the Tyrol to Switzerland without passing through Germany." },
 			trechos = {
-				{ id = "arlberg_1", de = "innsbruck", para = "zurich", ano = 1884, km = 301, terreno = "alpes", custo = 897343, degrau = 6, via = { Vector2.new(1031.2, 864.6), Vector2.new(1009.6, 858.7), Vector2.new(1003.8, 868.7), Vector2.new(991.6, 864.4) } },
+				{ id = "arlberg_1", de = "innsbruck", para = "zurich", ano = 1884, km = 276, terreno = "alpes", custo = 822813, degrau = 6, via = { Vector2.new(1031.2, 864.6), Vector2.new(1007.8, 862.4) } },
 			},
 		},
 		{
@@ -453,7 +453,7 @@ return {
 		{
 			id = "forth", nome = "Ponte do Forth", nomeEn = "Forth Bridge", ano = 1890, cor = 4, ordem = 46, degrau = 7, projeto = nil, nota = { pt = "A ponte do Forth, de 1890, com seus grandes balanços de aço vermelho, levou o trem de Edimburgo para o norte da Escócia.", en = "The 1890 Forth Bridge, with its great red steel cantilevers, carried the train from Edinburgh to the north of Scotland." },
 			trechos = {
-				{ id = "forth_1", de = "edinburgh", para = "aberdeen", ano = 1890, km = 215, terreno = "costa", custo = 650820, degrau = 7, via = { Vector2.new(630.9, 359.3), Vector2.new(638.6, 354.8), Vector2.new(647.6, 337.6), Vector2.new(659.7, 334.4), Vector2.new(664.3, 327.2), Vector2.new(674.0, 315.4) } },
+				{ id = "forth_1", de = "edinburgh", para = "aberdeen", ano = 1890, km = 204, terreno = "costa", custo = 617523, degrau = 7, via = { Vector2.new(633.9, 357.7), Vector2.new(638.6, 354.8), Vector2.new(647.6, 337.6), Vector2.new(659.7, 334.4), Vector2.new(664.3, 327.2), Vector2.new(674.0, 315.4) } },
 			},
 		},
 		{
@@ -480,7 +480,7 @@ return {
 			trechos = {
 				{ id = "vardar_1", de = "beograd", para = "skopje", ano = 1888, km = 440, terreno = "vale", custo = 1452994, degrau = 7, via = { Vector2.new(1480.5, 1029.1) } },
 				{ id = "vardar_2", de = "skopje", para = "thessaloniki", ano = 1888, km = 246, terreno = "vale", custo = 812356, degrau = 7 },
-				{ id = "vardar_3", de = "thessaloniki", para = "athina", ano = 1916, km = 470, terreno = "montanhas", custo = 2586770, degrau = 7, via = { Vector2.new(1529.1, 1165.3), Vector2.new(1527.9, 1184.2), Vector2.new(1532.8, 1203.1), Vector2.new(1529.6, 1217.5), Vector2.new(1535.8, 1255.9), Vector2.new(1576.8, 1279.8) } },
+				{ id = "vardar_3", de = "thessaloniki", para = "athina", ano = 1916, km = 459, terreno = "montanhas", custo = 2526228, degrau = 7, via = { Vector2.new(1535.2, 1165.4), Vector2.new(1528.1, 1179.9), Vector2.new(1527.9, 1184.2), Vector2.new(1532.8, 1203.1), Vector2.new(1529.6, 1217.5), Vector2.new(1535.8, 1255.9), Vector2.new(1576.8, 1279.8) } },
 			},
 		},
 		{

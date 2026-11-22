@@ -250,7 +250,7 @@ LINHAS = [
     ], T("A Porrettana cruzou os Apeninos com dezenas de túneis e juntou o norte e o centro da Itália recém-unificada.",
          "The Porrettana crossed the Apennines through dozens of tunnels and joined the north and centre of newly united Italy.")),
     ("mza", "Madri–Córdoba–Sevilha", 1866, 8, 5, [
-        tr("madrid", "cordoba", 1866, "montanhas", [[-3.21, 39.39], [-3.52, 38.37]]),
+        tr("madrid", "cordoba", 1866, "montanhas"),
         tr("cordoba", "sevilla", 1859, "vale"),
     ], T("A companhia MZA desceu da meseta para a Andaluzia pelo desfiladeiro de Despeñaperros.",
          "The MZA company came down from the plateau into Andalusia through the Despeñaperros gorge.")),
@@ -259,8 +259,8 @@ LINHAS = [
     ], T("A linha do Mediterrâneo espanhol, entre laranjais, vinhedos e o delta do Ebro.",
          "The Spanish Mediterranean line, among orange groves, vineyards and the Ebro delta.")),
     ("leste", "Lisboa–Badajoz–Madri", 1866, 2, 6, [
-        tr("lisboa", "badajoz", 1863, "planicie", [[-9.12, 38.8], [-9.05, 38.92], [-8.99, 38.98], [-8.47, 39.46], [-7.6, 39.1], [-7.17, 38.88]]),
-        tr("badajoz", "madrid", 1866, "colinas", [[-6.34, 38.92], [-3.93, 38.98], [-3.6, 40.03]]),
+        tr("lisboa", "badajoz", 1863, "planicie", [[-9.12, 38.8], [-9.0, 38.97], [-8.3, 39.15]]),
+        tr("badajoz", "madrid", 1866, "colinas"),
     ], T("A Linha do Leste saiu de Lisboa pelo vale do Tejo e encontrou a ferrovia espanhola em Badajoz.",
          "The Eastern Line left Lisbon up the Tagus valley and met the Spanish railway at Badajoz.")),
     ("sodra", "Södra stambanan", 1864, 3, 6, [
@@ -268,11 +268,11 @@ LINHAS = [
     ], T("A linha principal do sul da Suécia, construída pelo Estado entre florestas e lagos até o estreito de Öresund.",
          "Sweden's southern main line, built by the state through forests and lakes to the Øresund strait.")),
     ("arlberg", "Ferrovia do Arlberg", 1884, 6, 6, [
-        tr("innsbruck", "zurich", 1884, "alpes", [[10.2, 47.13], [9.6, 47.24], [9.44, 47.05], [9.1, 47.13]]),
+        tr("innsbruck", "zurich", 1884, "alpes", [[10.2, 47.13], [9.55, 47.17]]),
     ], T("O túnel do Arlberg, de 10 km, ligou o Tirol à Suíça sem passar pela Alemanha.",
          "The 10 km Arlberg tunnel linked the Tyrol to Switzerland without passing through Germany.")),
     ("forth", "Ponte do Forth", 1890, 4, 7, [
-        tr("edinburgh", "aberdeen", 1890, "costa", [[-3.39, 56.0], [-3.16, 56.11], [-2.97, 56.46], [-2.58, 56.56], [-2.47, 56.71], [-2.21, 56.96]]),
+        tr("edinburgh", "aberdeen", 1890, "costa", [[-3.3, 56.04], [-3.16, 56.11], [-2.97, 56.46], [-2.58, 56.56], [-2.47, 56.71], [-2.21, 56.96]]),
     ], T("A ponte do Forth, de 1890, com seus grandes balanços de aço vermelho, levou o trem de Edimburgo para o norte da Escócia.",
          "The 1890 Forth Bridge, with its great red steel cantilevers, carried the train from Edinburgh to the north of Scotland.")),
     ("bergensbanen", "Bergensbanen", 1909, 7, 7, [
@@ -282,7 +282,7 @@ LINHAS = [
     ("vardar", "Belgrado–Salônica–Atenas", 1916, 1, 7, [
         tr("beograd", "skopje", 1888, "vale", [[21.9, 43.32]]),
         tr("skopje", "thessaloniki", 1888, "vale"),
-        tr("thessaloniki", "athina", 1916, "montanhas", [[22.6, 40.62], [22.5, 40.27], [22.55, 39.9], [22.42, 39.64], [22.43, 38.9], [23.32, 38.32]]),
+        tr("thessaloniki", "athina", 1916, "montanhas", [[22.75, 40.6], [22.52, 40.35], [22.5, 40.27], [22.55, 39.9], [22.42, 39.64], [22.43, 38.9], [23.32, 38.32]]),
     ], T("Desce o vale do Vardar até o mar Egeu; o trecho até Atenas só ficou pronto durante a Primeira Guerra.",
          "It runs down the Vardar valley to the Aegean; the stretch to Athens was finished only during the First World War.")),
     ("carpatos", "Budapeste–Bucareste–Constança", 1895, 8, 7, [
