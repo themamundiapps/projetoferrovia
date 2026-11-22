@@ -41,8 +41,17 @@ function Vinheta.mostrar(playerGui: Instance, eraDe: any, eraPara: any, aoEscure
 	fundo.BackgroundTransparency = 1
 	fundo.Active = true
 	fundo.Parent = gui
+	-- os textos ficam num miolo centrado; a escala vai nele (no fundo, o UIScale encolhia ou esticava
+	-- a partir do canto de cima à esquerda e tirava tudo do centro)
+	local miolo = Instance.new("Frame")
+	miolo.Name = "Miolo"
+	miolo.AnchorPoint = Vector2.new(0.5, 0.5)
+	miolo.Position = UDim2.fromScale(0.5, 0.5)
+	miolo.Size = UDim2.fromScale(1, 1)
+	miolo.BackgroundTransparency = 1
+	miolo.Parent = fundo
 	local escala = Instance.new("UIScale")
-	escala.Parent = fundo
+	escala.Parent = miolo
 	local t = fundo.AbsoluteSize
 	if t.X > 0 then
 		escala.Scale = math.clamp(math.min(t.X / 1000, t.Y / 560), 0.6, 1.25)
@@ -60,7 +69,7 @@ function Vinheta.mostrar(playerGui: Instance, eraDe: any, eraPara: any, aoEscure
 		FontFace = fonteDe,
 		TextSize = 24,
 		TextColor3 = claro,
-	}, fundo)
+	}, miolo)
 	local seta = rotulo({
 		Position = UDim2.fromScale(0.5, 0.46),
 		Size = UDim2.new(1, 0, 0, 30),
@@ -68,7 +77,7 @@ function Vinheta.mostrar(playerGui: Instance, eraDe: any, eraPara: any, aoEscure
 		FontFace = Font.fromEnum(Enum.Font.GothamBold),
 		TextSize = 22,
 		TextColor3 = claro,
-	}, fundo)
+	}, miolo)
 	local depois = rotulo({
 		Position = UDim2.fromScale(0.5, 0.58),
 		Size = UDim2.new(1, 0, 0, 64),
@@ -76,7 +85,7 @@ function Vinheta.mostrar(playerGui: Instance, eraDe: any, eraPara: any, aoEscure
 		FontFace = fontePara,
 		TextSize = 52,
 		TextColor3 = claro,
-	}, fundo)
+	}, miolo)
 	local anos = rotulo({
 		Position = UDim2.fromScale(0.5, 0.68),
 		Size = UDim2.new(1, 0, 0, 30),
@@ -84,7 +93,7 @@ function Vinheta.mostrar(playerGui: Instance, eraDe: any, eraPara: any, aoEscure
 		FontFace = fontePara,
 		TextSize = 22,
 		TextColor3 = corPara:Lerp(claro, 0.35),
-	}, fundo)
+	}, miolo)
 
 	local function tw(obj: Instance, d: number, props: { [string]: any }): Tween
 		local x = TweenService:Create(obj, TweenInfo.new(d, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props)
