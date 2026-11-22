@@ -56,6 +56,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.aoAjuste = Instance.new("BindableEvent") -- (chave, valor)
 	self.aoZoom = Instance.new("BindableEvent") -- (fator)
 	self.aoConcluirProjeto = Instance.new("BindableEvent") -- (projeto) quando um estudo termina
+	self.aoAbrirDireita = Instance.new("BindableEvent") -- painel aberto à direita: a ficha e a concessão saem da frente
 	self.instancias = {} :: { Instance }
 	self.vivos = {} :: { () -> () } -- atualizações a cada segundo que não recriam o painel (cronômetros, botões)
 	self._concluidos = {} :: { [string]: boolean }
@@ -255,6 +256,9 @@ function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 	if aba then
 		self.ultimaAba = aba
 		self.lado = lado or "esq"
+		if self.lado == "dir" then
+			self.aoAbrirDireita:Fire()
+		end
 		if self._topoY then
 			self:posicionarAbaixoDe(self._topoY)
 		end
