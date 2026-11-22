@@ -31,6 +31,7 @@ ESTADOS = {
     "IT": ["Itália", "s"], "ES": ["Espanha", "s"], "PT": ["Portugal", "s"],
     "HU": ["Hungria", "l"], "RS": ["Sérvia", "l"], "BG": ["Bulgária", "l"], "TR": ["Turquia", "l"],
     "SE": ["Suécia", "n"], "LT": ["Lituânia", "n"], "LV": ["Letônia", "n"], "EE": ["Estônia", "n"],
+    "NO": ["Noruega", "n"], "MK": ["Macedônia do Norte", "l"], "GR": ["Grécia", "l"], "RO": ["Romênia", "l"],
 }
 REGIOES = {
     "o": T("Europa Ocidental", "Western Europe"), "c": T("Europa Central", "Central Europe"),
@@ -183,6 +184,112 @@ LINHAS = [
         tr("lausanne", "milano", 1906, "alpes"),
     ], T("Em 1906, com 19,8 km, o Simplon virou o túnel ferroviário mais longo do mundo e encurtou o Paris–Milão.",
          "In 1906, at 19.8 km, the Simplon became the world's longest railway tunnel and shortened Paris–Milan.")),
+    # ---------------------------------------------------------------- mais linhas (22/11)
+    ("edinburgh_glasgow", "Edinburgh and Glasgow", 1842, 3, 1, [
+        tr("edinburgh", "glasgow", 1842, "planicie"),
+    ], T("Ligou as duas maiores cidades da Escócia em 1842, quase em linha reta, com o viaduto do Almond.",
+         "It linked Scotland's two largest cities in 1842, almost in a straight line, with the Almond viaduct.")),
+    ("liege_koln", "Bruxelas–Liège–Colônia", 1843, 8, 2, [
+        tr("bruxelles", "liege", 1842, "planicie"),
+        tr("liege", "koln", 1843, "colinas", [[6.08, 50.78]]),
+    ], T("A primeira ferrovia internacional da Europa: subia o planalto de Liège com cabos e cruzava a fronteira em Aachen.",
+         "Europe's first international railway: it climbed the Liège plateau by cable and crossed the border at Aachen.")),
+    ("berlin_breslau", "Niederschlesisch-Märkische", 1846, 6, 2, [
+        tr("berlin", "wroclaw", 1846, "planicie", [[14.55, 52.34], [15.5, 51.7]]),
+    ], T("Ligou Berlim à Silésia e ao seu carvão; foi estatizada pela Prússia em 1852.",
+         "It linked Berlin to Silesia and its coal; Prussia took it over in 1852.")),
+    ("paris_orleans", "Paris–Orléans–Bordéus", 1853, 4, 2, [
+        tr("paris", "orleans", 1843, "planicie"),
+        tr("orleans", "bordeaux", 1853, "planicie", [[0.69, 47.39], [0.34, 46.58], [0.16, 45.65]]),
+    ], T("A companhia Paris–Orléans levou os trens de Paris ao vale do Loire e, depois, ao porto do vinho em Bordéus.",
+         "The Paris–Orléans company took trains from Paris to the Loire valley and then to the wine port of Bordeaux.")),
+    ("est", "Chemin de fer de l'Est", 1852, 2, 3, [
+        tr("paris", "nancy", 1852, "planicie", [[4.36, 48.96], [5.16, 48.77]]),
+        tr("nancy", "strasbourg", 1852, "colinas"),
+    ], T("A linha de Paris a Estrasburgo, pelo vale do Marne e pela Lorena, saindo da Gare de l'Est.",
+         "The line from Paris to Strasbourg, through the Marne valley and Lorraine, from the Gare de l'Est.")),
+    ("reno", "Ferrovia do Vale do Reno", 1859, 5, 3, [
+        tr("koln", "koblenz", 1858, "vale"),
+        tr("koblenz", "frankfurt", 1859, "vale", [[7.75, 50.1], [8.27, 50.0]]),
+    ], T("Segue as curvas do Reno entre castelos, vinhedos e o rochedo de Lorelei.",
+         "It follows the bends of the Rhine past castles, vineyards and the Lorelei rock.")),
+    ("praga", "Dresden–Praga–Brno", 1851, 7, 3, [
+        tr("dresden", "praha", 1851, "vale", [[14.21, 50.78]]),
+        tr("praha", "brno", 1849, "colinas", [[15.78, 50.04], [16.44, 49.9]]),
+    ], T("A Ferrovia Estatal do Norte ligou Viena a Praga e desceu o vale do Elba até a Saxônia.",
+         "The Northern State Railway linked Vienna to Prague and went down the Elbe valley to Saxony.")),
+    ("west_coast", "West Coast Main Line", 1848, 1, 4, [
+        tr("crewe", "carlisle", 1846, "colinas", [[-2.7, 53.76], [-2.8, 54.05], [-2.68, 54.53]]),
+        tr("carlisle", "glasgow", 1848, "colinas"),
+    ], T("Subia a rampa de Shap e cruzava a fronteira escocesa: na \"corrida para o norte\" de 1895, trens disputavam quem chegava primeiro.",
+         "It climbed Shap and crossed the Scottish border: in the 1895 \"Race to the North\", trains competed to arrive first.")),
+    ("westbahn", "Westbahn", 1860, 3, 4, [
+        tr("wien", "linz", 1858, "colinas"),
+        tr("linz", "salzburg", 1860, "colinas"),
+    ], T("A Ferrovia da Imperatriz Elisabeth levou os trens de Viena, pelo vale do Danúbio, até a fronteira da Baviera.",
+         "The Empress Elisabeth Railway took trains from Vienna, along the Danube valley, to the Bavarian border.")),
+    ("giovi", "Turim–Gênova (Giovi)", 1853, 6, 4, [
+        tr("torino", "genova", 1853, "montanhas", [[8.61, 44.91]]),
+    ], T("O reino do Piemonte cruzou os Apeninos pela rampa dos Giovi para levar o porto de Gênova até Turim.",
+         "The Kingdom of Piedmont crossed the Apennines by the Giovi incline to bring the port of Genoa to Turin.")),
+    ("midi", "Chemin de fer du Midi", 1858, 7, 5, [
+        tr("bordeaux", "toulouse", 1856, "vale", [[0.62, 44.2]]),
+        tr("toulouse", "montpellier", 1857, "planicie", [[3.0, 43.18], [3.22, 43.34]]),
+        tr("montpellier", "marseille", 1858, "costa", [[4.36, 43.84], [4.63, 43.68]]),
+    ], T("Os irmãos Pereire ligaram o Atlântico ao Mediterrâneo ao lado do Canal du Midi.",
+         "The Pereire brothers linked the Atlantic to the Mediterranean alongside the Canal du Midi.")),
+    ("wurttemberg", "Frankfurt–Stuttgart–Munique", 1854, 1, 5, [
+        tr("frankfurt", "stuttgart", 1846, "colinas", [[8.69, 49.4]]),
+        tr("stuttgart", "munchen", 1854, "montanhas", [[9.99, 48.4], [10.9, 48.37]]),
+    ], T("A rampa de Geislingen, de 1850, subia o Jura da Suábia com locomotivas empurrando atrás.",
+         "The Geislingen incline, from 1850, climbed the Swabian Jura with banking locomotives pushing behind.")),
+    ("porrettana", "Milão–Bolonha–Florença–Roma", 1874, 4, 5, [
+        tr("milano", "bologna", 1859, "planicie"),
+        tr("bologna", "firenze", 1864, "montanhas"),
+        tr("firenze", "roma", 1874, "colinas", [[11.88, 43.46], [12.1, 42.72]]),
+    ], T("A Porrettana cruzou os Apeninos com dezenas de túneis e juntou o norte e o centro da Itália recém-unificada.",
+         "The Porrettana crossed the Apennines through dozens of tunnels and joined the north and centre of newly united Italy.")),
+    ("mza", "Madri–Córdoba–Sevilha", 1866, 8, 5, [
+        tr("madrid", "cordoba", 1866, "montanhas", [[-3.21, 39.39], [-3.52, 38.37]]),
+        tr("cordoba", "sevilla", 1859, "vale"),
+    ], T("A companhia MZA desceu da meseta para a Andaluzia pelo desfiladeiro de Despeñaperros.",
+         "The MZA company came down from the plateau into Andalusia through the Despeñaperros gorge.")),
+    ("barcelona_valencia", "Barcelona–Valência", 1868, 5, 6, [
+        tr("barcelona", "valencia", 1868, "costa", [[1.25, 41.12], [0.95, 41.05], [0.6, 40.88], [0.3, 40.6], [-0.04, 39.99]]),
+    ], T("A linha do Mediterrâneo espanhol, entre laranjais, vinhedos e o delta do Ebro.",
+         "The Spanish Mediterranean line, among orange groves, vineyards and the Ebro delta.")),
+    ("leste", "Lisboa–Badajoz–Madri", 1866, 2, 6, [
+        tr("lisboa", "badajoz", 1863, "planicie", [[-9.12, 38.8], [-9.05, 38.92], [-8.99, 38.98], [-8.47, 39.46], [-7.6, 39.1], [-7.17, 38.88]]),
+        tr("badajoz", "madrid", 1866, "colinas", [[-6.34, 38.92], [-3.93, 38.98], [-3.6, 40.03]]),
+    ], T("A Linha do Leste saiu de Lisboa pelo vale do Tejo e encontrou a ferrovia espanhola em Badajoz.",
+         "The Eastern Line left Lisbon up the Tagus valley and met the Spanish railway at Badajoz.")),
+    ("sodra", "Södra stambanan", 1864, 3, 6, [
+        tr("stockholm", "malmo", 1864, "colinas", [[16.18, 58.59], [14.69, 57.65], [13.77, 56.16]]),
+    ], T("A linha principal do sul da Suécia, construída pelo Estado entre florestas e lagos até o estreito de Öresund.",
+         "Sweden's southern main line, built by the state through forests and lakes to the Øresund strait.")),
+    ("arlberg", "Ferrovia do Arlberg", 1884, 6, 6, [
+        tr("innsbruck", "zurich", 1884, "alpes", [[10.2, 47.13], [9.6, 47.24], [9.44, 47.05], [9.1, 47.13]]),
+    ], T("O túnel do Arlberg, de 10 km, ligou o Tirol à Suíça sem passar pela Alemanha.",
+         "The 10 km Arlberg tunnel linked the Tyrol to Switzerland without passing through Germany.")),
+    ("forth", "Ponte do Forth", 1890, 4, 7, [
+        tr("edinburgh", "aberdeen", 1890, "costa", [[-3.39, 56.0], [-3.16, 56.11], [-2.97, 56.46], [-2.58, 56.56], [-2.47, 56.71], [-2.21, 56.96]]),
+    ], T("A ponte do Forth, de 1890, com seus grandes balanços de aço vermelho, levou o trem de Edimburgo para o norte da Escócia.",
+         "The 1890 Forth Bridge, with its great red steel cantilevers, carried the train from Edinburgh to the north of Scotland.")),
+    ("bergensbanen", "Bergensbanen", 1909, 7, 7, [
+        tr("oslo", "bergen", 1909, "montanhas", [[10.26, 60.17], [8.3, 60.6], [7.5, 60.6], [6.42, 60.63]]),
+    ], T("Atravessa o planalto de Hardangervidda a 1.222 m de altitude, com galerias para proteger os trilhos da neve.",
+         "It crosses the Hardangervidda plateau at 1,222 m, with snow sheds to protect the tracks.")),
+    ("vardar", "Belgrado–Salônica–Atenas", 1916, 1, 7, [
+        tr("beograd", "skopje", 1888, "vale", [[21.9, 43.32]]),
+        tr("skopje", "thessaloniki", 1888, "vale"),
+        tr("thessaloniki", "athina", 1916, "montanhas", [[22.6, 40.62], [22.5, 40.27], [22.55, 39.9], [22.42, 39.64], [22.43, 38.9], [23.32, 38.32]]),
+    ], T("Desce o vale do Vardar até o mar Egeu; o trecho até Atenas só ficou pronto durante a Primeira Guerra.",
+         "It runs down the Vardar valley to the Aegean; the stretch to Athens was finished only during the First World War.")),
+    ("carpatos", "Budapeste–Bucareste–Constança", 1895, 8, 7, [
+        tr("budapest", "bucuresti", 1879, "montanhas", [[23.6, 46.77], [25.6, 45.65], [26.02, 44.94]]),
+        tr("bucuresti", "constanta", 1895, "planicie", [[28.03, 44.34]]),
+    ], T("Cruzava os Cárpatos pela Transilvânia; a ponte de Cernavodă sobre o Danúbio, de 1895, era a mais longa da Europa.",
+         "It crossed the Carpathians through Transylvania; the 1895 Cernavodă bridge over the Danube was Europe's longest.")),
     # ---------------------------------------------------------------- Gabinete de Projetos
     ("hs2", "HS2", 2033, 3, 5, [
         tr("london", "birmingham", 2033, "colinas"),
@@ -314,6 +421,14 @@ NOMES_EN = {
     "gotthard": "Gotthard Railway", "orient": "Orient Express Route", "varsovia": "Berlin–Warsaw",
     "simplon": "Simplon Tunnel", "fehmarn": "Fehmarnbelt Tunnel", "lyon_turin": "Lyon–Turin Tunnel",
     "messina": "Strait of Messina Bridge",
+    "bordeaux": "Bordeaux", "strasbourg": "Strasbourg", "wroclaw": "Wrocław", "praha": "Prague", "salzburg": "Salzburg",
+    "genova": "Genoa", "firenze": "Florence", "bologna": "Bologna", "valencia": "Valencia", "cordoba": "Córdoba",
+    "sevilla": "Seville", "thessaloniki": "Thessaloniki", "athina": "Athens", "bucuresti": "Bucharest", "constanta": "Constanța",
+    "liege_koln": "Brussels–Liège–Cologne", "paris_orleans": "Paris–Orléans–Bordeaux", "reno": "Rhine Valley Railway",
+    "praga": "Dresden–Prague–Brno", "giovi": "Turin–Genoa (Giovi)", "wurttemberg": "Frankfurt–Stuttgart–Munich",
+    "porrettana": "Milan–Bologna–Florence–Rome", "mza": "Madrid–Córdoba–Seville", "leste": "Lisbon–Badajoz–Madrid",
+    "arlberg": "Arlberg Railway", "forth": "Forth Bridge", "vardar": "Belgrade–Thessaloniki–Athens",
+    "carpatos": "Budapest–Bucharest–Constanța", "barcelona_valencia": "Barcelona–Valencia",
 }
 
 estacoes = []
@@ -358,9 +473,9 @@ dados = {
     "rotulos": ROTULOS,
     "projetos": PROJETOS,
     "foco": ["stockton_darlington", "liverpool_manchester", "london_birmingham", "grand_junction"],
-    # Como nos EUA: Diesel com metade das históricas; Elétrica = as 28 históricas + HS2;
+    # Como nos EUA: Diesel com metade das históricas; Elétrica = as 50 históricas + HS2;
     # Alta Velocidade = + Rail Baltica e Fehmarnbelt.
-    "metasEra": {"diesel": 15, "eletrico": 29, "alta": 31},
+    "metasEra": {"diesel": 25, "eletrico": 51, "alta": 53},
     "estados": ESTADOS,
     "regioes": REGIOES,
 }

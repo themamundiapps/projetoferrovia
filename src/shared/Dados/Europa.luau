@@ -13,9 +13,9 @@ return {
 		alta = { 1990, 2040 },
 	},
 	metasEra = {
-		diesel = 15,
-		eletrico = 29,
-		alta = 31,
+		diesel = 25,
+		eletrico = 51,
+		alta = 53,
 	},
 	terrenos = {
 		planicie = { nome = "Planície", nomes = { pt = "Planície", en = "Plains" }, custo = 1 },
@@ -100,6 +100,38 @@ return {
 		kaunas = { nome = "Kaunas", nomeEn = nil, pos = Vector2.new(1443.3, 413.5), lon = 23.9, lat = 54.9, porte = 2, produz = nil, porto = false, paisagem = "eur_norte", estado = "Lituânia", regiao = "n", historia = { pt = "Antiga capital da Lituânia, no caminho da Rail Baltica.", en = "Lithuania's old capital, on the Rail Baltica route." } },
 		riga = { nome = "Riga", nomeEn = nil, pos = Vector2.new(1427.8, 305.9), lon = 24.11, lat = 56.95, porte = 3, produz = nil, porto = true, paisagem = nil, estado = "Letônia", regiao = "n", historia = { pt = "Capital da Letônia e porto do Báltico.", en = "Latvia's capital and a Baltic port." } },
 		tallinn = { nome = "Tallinn", nomeEn = nil, pos = Vector2.new(1417.7, 173.5), lon = 24.75, lat = 59.44, porte = 2, produz = nil, porto = true, paisagem = "eur_norte", estado = "Estônia", regiao = "n", historia = { pt = "Capital da Estônia, com a cidade velha murada de frente para o mar.", en = "Estonia's capital, with its walled old town facing the sea." } },
+		glasgow = { nome = "Glasgow", nomeEn = nil, pos = Vector2.new(604.5, 361.6), lon = -4.25, lat = 55.86, porte = 4, produz = "aco", porto = true, paisagem = nil, estado = "Reino Unido", regiao = "o", historia = { pt = "A segunda cidade do Império Britânico, dos estaleiros do rio Clyde e das locomotivas exportadas para o mundo todo.", en = "The Second City of the Empire, of the Clyde shipyards and locomotives exported all over the world." } },
+		carlisle = { nome = "Carlisle", nomeEn = nil, pos = Vector2.new(633.5, 419.5), lon = -2.93, lat = 54.89, porte = 1, produz = nil, porto = false, paisagem = "eur_campo", estado = "Reino Unido", regiao = "o", historia = { pt = "Cidade da fronteira com a Escócia, onde sete companhias ferroviárias dividiam a mesma estação.", en = "A border city with Scotland, where seven railway companies shared one station." } },
+		aberdeen = { nome = "Aberdeen", nomeEn = nil, pos = Vector2.new(679.1, 306.1), lon = -2.09, lat = 57.15, porte = 2, produz = nil, porto = true, paisagem = "eur_costa", estado = "Reino Unido", regiao = "o", historia = { pt = "A \"cidade de granito\" do nordeste da Escócia, porto de pesca no Mar do Norte.", en = "The \"Granite City\" of north-east Scotland, a fishing port on the North Sea." } },
+		orleans = { nome = "Orléans", nomeEn = nil, pos = Vector2.new(738.0, 808.2), lon = 1.91, lat = 47.9, porte = 2, produz = "graos", porto = false, paisagem = "eur_campo", estado = "França", regiao = "o", historia = { pt = "Cidade de Joana d'Arc, no Loire, primeira parada das linhas que saíam de Paris para o sudoeste.", en = "Joan of Arc's city on the Loire, the first stop on the lines from Paris to the south-west." } },
+		bordeaux = { nome = "Bordéus", nomeEn = "Bordeaux", pos = Vector2.new(628.4, 957.2), lon = -0.58, lat = 44.84, porte = 4, produz = nil, porto = true, paisagem = nil, estado = "França", regiao = "o", historia = { pt = "O porto do vinho, no rio Garona, ligado a Paris pela companhia Paris–Orléans em 1853.", en = "The wine port on the Garonne, linked to Paris by the Paris–Orléans company in 1853." } },
+		toulouse = { nome = "Toulouse", nomeEn = nil, pos = Vector2.new(696.5, 1032.0), lon = 1.44, lat = 43.6, porte = 3, produz = nil, porto = false, paisagem = nil, estado = "França", regiao = "o", historia = { pt = "A \"cidade rosa\", ao lado do Canal du Midi, que a ferrovia dos irmãos Pereire passou a acompanhar.", en = "The \"Pink City\", beside the Canal du Midi, which the Pereire brothers' railway came to follow." } },
+		montpellier = { nome = "Montpellier", nomeEn = nil, pos = Vector2.new(789.6, 1040.6), lon = 3.88, lat = 43.61, porte = 2, produz = nil, porto = false, paisagem = "eur_mediterraneo", estado = "França", regiao = "o", historia = { pt = "Cidade universitária do Languedoc, entre os vinhedos e o Mediterrâneo.", en = "A university city in Languedoc, between the vineyards and the Mediterranean." } },
+		nancy = { nome = "Nancy", nomeEn = nil, pos = Vector2.new(890.8, 778.7), lon = 6.18, lat = 48.69, porte = 2, produz = "aco", porto = false, paisagem = "eur_industria", estado = "França", regiao = "o", historia = { pt = "Capital da Lorena, das minas de ferro e das siderúrgicas do leste da França.", en = "Capital of Lorraine, of iron mines and the steelworks of eastern France." } },
+		strasbourg = { nome = "Estrasburgo", nomeEn = "Strasbourg", pos = Vector2.new(945.3, 786.8), lon = 7.75, lat = 48.58, porte = 3, produz = nil, porto = false, paisagem = nil, estado = "França", regiao = "o", historia = { pt = "Cidade da catedral, à beira do Reno, que trocou de país várias vezes entre a França e a Alemanha.", en = "The cathedral city on the Rhine, which changed hands between France and Germany several times." } },
+		liege = { nome = "Liège", nomeEn = nil, pos = Vector2.new(875.6, 675.2), lon = 5.57, lat = 50.63, porte = 2, produz = "carvao", porto = false, paisagem = "eur_industria", estado = "Bélgica", regiao = "o", historia = { pt = "Cidade do carvão e do aço no vale do Mosa; aqui nasceu a primeira ferrovia internacional da Europa.", en = "A city of coal and steel in the Meuse valley; Europe's first international railway began here." } },
+		koblenz = { nome = "Koblenz", nomeEn = nil, pos = Vector2.new(942.8, 692.7), lon = 7.59, lat = 50.36, porte = 2, produz = nil, porto = false, paisagem = "eur_campo", estado = "Alemanha", regiao = "c", historia = { pt = "Onde o Mosela encontra o Reno, entre castelos e vinhedos.", en = "Where the Moselle meets the Rhine, among castles and vineyards." } },
+		frankfurt = { nome = "Frankfurt", nomeEn = nil, pos = Vector2.new(979.3, 706.8), lon = 8.68, lat = 50.11, porte = 4, produz = nil, porto = false, paisagem = nil, estado = "Alemanha", regiao = "c", historia = { pt = "Cidade dos bancos e das feiras, no rio Meno; sua estação central, de 1888, era a maior da Europa.", en = "A city of banks and trade fairs on the Main; its central station, from 1888, was Europe's largest." } },
+		stuttgart = { nome = "Stuttgart", nomeEn = nil, pos = Vector2.new(995.4, 777.3), lon = 9.18, lat = 48.78, porte = 3, produz = nil, porto = false, paisagem = nil, estado = "Alemanha", regiao = "c", historia = { pt = "Capital de Württemberg, num vale cercado de colinas e vinhedos.", en = "Capital of Württemberg, in a valley ringed by hills and vineyards." } },
+		wroclaw = { nome = "Breslávia", nomeEn = "Wrocław", pos = Vector2.new(1257.1, 643.1), lon = 17.04, lat = 51.11, porte = 3, produz = "carvao", porto = false, paisagem = nil, estado = "Polônia", regiao = "c", historia = { pt = "Grande cidade da Silésia, no rio Óder, ligada a Berlim em 1846.", en = "A great Silesian city on the Oder, linked to Berlin in 1846." } },
+		praha = { nome = "Praga", nomeEn = "Prague", pos = Vector2.new(1173.8, 704.3), lon = 14.42, lat = 50.08, porte = 4, produz = nil, porto = false, paisagem = nil, estado = "Tchéquia", regiao = "c", historia = { pt = "A cidade das cem torres, capital da Boêmia, à beira do rio Moldava.", en = "The city of a hundred spires, capital of Bohemia, on the Vltava." } },
+		linz = { nome = "Linz", nomeEn = nil, pos = Vector2.new(1174.7, 797.9), lon = 14.29, lat = 48.31, porte = 2, produz = "aco", porto = false, paisagem = "eur_industria", estado = "Áustria", regiao = "c", historia = { pt = "Cidade do Danúbio onde passou, em 1832, uma das primeiras ferrovias do continente, puxada a cavalo.", en = "A Danube city where one of the continent's first railways, horse-drawn, passed in 1832." } },
+		salzburg = { nome = "Salzburgo", nomeEn = "Salzburg", pos = Vector2.new(1131.9, 827.0), lon = 13.04, lat = 47.8, porte = 2, produz = nil, porto = false, paisagem = "eur_alpes", estado = "Áustria", regiao = "c", historia = { pt = "A cidade de Mozart, ao pé dos Alpes, na fronteira com a Baviera.", en = "Mozart's city, at the foot of the Alps, on the border with Bavaria." } },
+		malmo = { nome = "Malmö", nomeEn = nil, pos = Vector2.new(1113.5, 414.8), lon = 13, lat = 55.61, porte = 3, produz = "graos", porto = true, paisagem = nil, estado = "Suécia", regiao = "n", historia = { pt = "Porto do sul da Suécia, de frente para Copenhague, do outro lado do estreito.", en = "A port in southern Sweden, facing Copenhagen across the strait." } },
+		oslo = { nome = "Oslo", nomeEn = nil, pos = Vector2.new(1043.9, 189.8), lon = 10.75, lat = 59.91, porte = 4, produz = "madeira", porto = true, paisagem = nil, estado = "Noruega", regiao = "n", historia = { pt = "Capital da Noruega, no fundo de um fiorde; a primeira ferrovia norueguesa saiu daqui em 1854.", en = "Norway's capital, at the head of a fjord; the first Norwegian railway left from here in 1854." } },
+		bergen = { nome = "Bergen", nomeEn = nil, pos = Vector2.new(901.6, 160.5), lon = 5.32, lat = 60.39, porte = 3, produz = nil, porto = true, paisagem = nil, estado = "Noruega", regiao = "n", historia = { pt = "O porto dos fiordes do oeste, ligado a Oslo por uma ferrovia que cruza o planalto gelado.", en = "The port of the western fjords, linked to Oslo by a railway across the frozen plateau." } },
+		genova = { nome = "Gênova", nomeEn = "Genoa", pos = Vector2.new(983.5, 1007.7), lon = 8.93, lat = 44.41, porte = 3, produz = nil, porto = true, paisagem = nil, estado = "Itália", regiao = "s", historia = { pt = "O grande porto da Itália, apertado entre o mar e os Apeninos.", en = "Italy's great port, squeezed between the sea and the Apennines." } },
+		bologna = { nome = "Bolonha", nomeEn = "Bologna", pos = Vector2.new(1074.6, 1003.4), lon = 11.34, lat = 44.49, porte = 3, produz = nil, porto = false, paisagem = nil, estado = "Itália", regiao = "s", historia = { pt = "Cidade da universidade mais antiga do mundo e grande entroncamento das ferrovias italianas.", en = "City of the world's oldest university and a great junction of Italian railways." } },
+		firenze = { nome = "Florença", nomeEn = "Florence", pos = Vector2.new(1071.8, 1041.4), lon = 11.25, lat = 43.77, porte = 4, produz = nil, porto = false, paisagem = nil, estado = "Itália", regiao = "s", historia = { pt = "O berço do Renascimento, no rio Arno; foi capital da Itália de 1865 a 1871.", en = "The cradle of the Renaissance, on the Arno; Italy's capital from 1865 to 1871." } },
+		valencia = { nome = "Valência", nomeEn = "Valencia", pos = Vector2.new(599.7, 1238.9), lon = -0.38, lat = 39.47, porte = 4, produz = nil, porto = true, paisagem = nil, estado = "Espanha", regiao = "s", historia = { pt = "Cidade das laranjas e do arroz, no Mediterrâneo; seu primeiro trem, de 1852, ia até o porto do Grau.", en = "City of oranges and rice on the Mediterranean; its first train, in 1852, ran to the port of Grau." } },
+		cordoba = { nome = "Córdoba", nomeEn = nil, pos = Vector2.new(407.5, 1290.9), lon = -4.78, lat = 37.89, porte = 2, produz = nil, porto = false, paisagem = "eur_mediterraneo", estado = "Espanha", regiao = "s", historia = { pt = "Cidade da grande mesquita, no vale do Guadalquivir.", en = "City of the great mosque, in the Guadalquivir valley." } },
+		sevilla = { nome = "Sevilha", nomeEn = "Seville", pos = Vector2.new(352.9, 1306.5), lon = -5.99, lat = 37.39, porte = 4, produz = nil, porto = true, paisagem = nil, estado = "Espanha", regiao = "s", historia = { pt = "Capital da Andaluzia e antigo porto das Américas, no rio Guadalquivir.", en = "Capital of Andalusia and the old port for the Americas, on the Guadalquivir." } },
+		badajoz = { nome = "Badajoz", nomeEn = nil, pos = Vector2.new(328.1, 1220.8), lon = -6.97, lat = 38.88, porte = 1, produz = nil, porto = false, paisagem = "eur_campo", estado = "Espanha", regiao = "s", historia = { pt = "Cidade da fronteira, onde a linha de Lisboa entrava na Espanha.", en = "A border town where the line from Lisbon entered Spain." } },
+		skopje = { nome = "Skopje", nomeEn = nil, pos = Vector2.new(1472.5, 1100.8), lon = 21.43, lat = 42, porte = 2, produz = nil, porto = false, paisagem = "eur_mediterraneo", estado = "Macedônia do Norte", regiao = "l", historia = { pt = "Cidade do vale do Vardar, no caminho dos trens de Belgrado para o mar Egeu.", en = "A city in the Vardar valley, on the way of trains from Belgrade to the Aegean." } },
+		thessaloniki = { nome = "Salônica", nomeEn = "Thessaloniki", pos = Vector2.new(1542.4, 1162.0), lon = 22.94, lat = 40.64, porte = 3, produz = nil, porto = true, paisagem = nil, estado = "Grécia", regiao = "l", historia = { pt = "O porto do norte da Grécia, que recebia os trens do Expresso do Oriente vindos de Belgrado.", en = "Northern Greece's port, which received Orient Express trains from Belgrade." } },
+		athina = { nome = "Atenas", nomeEn = "Athens", pos = Vector2.new(1596.5, 1294.5), lon = 23.73, lat = 37.98, porte = 4, produz = nil, porto = true, paisagem = nil, estado = "Grécia", regiao = "l", historia = { pt = "A capital grega; a primeira ferrovia do país, de 1869, ligava Atenas ao porto do Pireu.", en = "The Greek capital; the country's first railway, in 1869, linked Athens to the port of Piraeus." } },
+		bucuresti = { nome = "Bucareste", nomeEn = "Bucharest", pos = Vector2.new(1627.3, 941.5), lon = 26.1, lat = 44.43, porte = 4, produz = "graos", porto = false, paisagem = nil, estado = "Romênia", regiao = "l", historia = { pt = "A \"pequena Paris\" do Leste, capital da Romênia, no meio das planícies de trigo.", en = "The \"Little Paris\" of the East, Romania's capital, amid the wheat plains." } },
+		constanta = { nome = "Constança", nomeEn = "Constanța", pos = Vector2.new(1723.1, 932.2), lon = 28.63, lat = 44.18, porte = 2, produz = nil, porto = true, paisagem = "eur_costa", estado = "Romênia", regiao = "l", historia = { pt = "O porto romeno no Mar Negro; a ponte de Cernavodă levou o trem até aqui em 1895.", en = "Romania's Black Sea port; the Cernavodă bridge brought the train here in 1895." } },
 	},
 	foco = { min = Vector2.new(617.8, 444.4), max = Vector2.new(692.2, 610.1) },
 	regioes = {
@@ -168,34 +200,60 @@ return {
 			},
 		},
 		{
-			id = "paris_rouen", nome = "Paris–Rouen–Le Havre", nomeEn = nil, ano = 1843, cor = 8, ordem = 10, degrau = 2, projeto = nil, nota = { pt = "Construída com dinheiro e operários ingleses, levou Paris até o mar pelo vale do Sena.", en = "Built with English money and navvies, it took Paris to the sea along the Seine valley." },
+			id = "edinburgh_glasgow", nome = "Edinburgh and Glasgow", nomeEn = nil, ano = 1842, cor = 3, ordem = 10, degrau = 1, projeto = nil, nota = { pt = "Ligou as duas maiores cidades da Escócia em 1842, quase em linha reta, com o viaduto do Almond.", en = "It linked Scotland's two largest cities in 1842, almost in a straight line, with the Almond viaduct." },
+			trechos = {
+				{ id = "edinburgh_glasgow_1", de = "edinburgh", para = "glasgow", ano = 1842, km = 84, terreno = "planicie", custo = 1210, degrau = 1 },
+			},
+		},
+		{
+			id = "paris_rouen", nome = "Paris–Rouen–Le Havre", nomeEn = nil, ano = 1843, cor = 8, ordem = 11, degrau = 2, projeto = nil, nota = { pt = "Construída com dinheiro e operários ingleses, levou Paris até o mar pelo vale do Sena.", en = "Built with English money and navvies, it took Paris to the sea along the Seine valley." },
 			trechos = {
 				{ id = "paris_rouen_1", de = "paris", para = "rouen", ano = 1843, km = 139, terreno = "vale", custo = 5765, degrau = 2 },
 				{ id = "paris_rouen_2", de = "rouen", para = "le_havre", ano = 1847, km = 90, terreno = "costa", custo = 3421, degrau = 2 },
 			},
 		},
 		{
-			id = "nord", nome = "Chemin de fer du Nord", nomeEn = nil, ano = 1846, cor = 1, ordem = 11, degrau = 3, projeto = nil, nota = { pt = "A companhia dos Rothschild ligou Paris ao norte industrial e à Bélgica.", en = "The Rothschilds' company linked Paris to the industrial north and to Belgium." },
+			id = "liege_koln", nome = "Bruxelas–Liège–Colônia", nomeEn = "Brussels–Liège–Cologne", ano = 1843, cor = 8, ordem = 12, degrau = 2, projeto = nil, nota = { pt = "A primeira ferrovia internacional da Europa: subia o planalto de Liège com cabos e cruzava a fronteira em Aachen.", en = "Europe's first international railway: it climbed the Liège plateau by cable and crossed the border at Aachen." },
+			trechos = {
+				{ id = "liege_koln_1", de = "bruxelles", para = "liege", ano = 1842, km = 112, terreno = "planicie", custo = 3871, degrau = 2 },
+				{ id = "liege_koln_2", de = "liege", para = "koln", ano = 1843, km = 130, terreno = "colinas", custo = 6290, degrau = 2, via = { Vector2.new(893.1, 668.3) } },
+			},
+		},
+		{
+			id = "nord", nome = "Chemin de fer du Nord", nomeEn = nil, ano = 1846, cor = 1, ordem = 13, degrau = 3, projeto = nil, nota = { pt = "A companhia dos Rothschild ligou Paris ao norte industrial e à Bélgica.", en = "The Rothschilds' company linked Paris to the industrial north and to Belgium." },
 			trechos = {
 				{ id = "nord_1", de = "paris", para = "lille", ano = 1846, km = 254, terreno = "planicie", custo = 21068, degrau = 3 },
 				{ id = "nord_2", de = "lille", para = "bruxelles", ano = 1846, km = 118, terreno = "planicie", custo = 9787, degrau = 3 },
 			},
 		},
 		{
-			id = "berlin_hamburg", nome = "Berlim–Hamburgo", nomeEn = "Berlin–Hamburg", ano = 1846, cor = 5, ordem = 12, degrau = 3, projeto = nil, nota = { pt = "Ligou a capital prussiana ao maior porto alemão pela planície do norte.", en = "It linked the Prussian capital to Germany's largest port across the northern plain." },
+			id = "berlin_hamburg", nome = "Berlim–Hamburgo", nomeEn = "Berlin–Hamburg", ano = 1846, cor = 5, ordem = 14, degrau = 3, projeto = nil, nota = { pt = "Ligou a capital prussiana ao maior porto alemão pela planície do norte.", en = "It linked the Prussian capital to Germany's largest port across the northern plain." },
 			trechos = {
 				{ id = "berlin_hamburg_1", de = "berlin", para = "hamburg", ano = 1846, km = 319, terreno = "planicie", custo = 26459, degrau = 3 },
 			},
 		},
 		{
-			id = "koln_minden", nome = "Köln-Mindener", nomeEn = nil, ano = 1847, cor = 4, ordem = 13, degrau = 3, projeto = nil, nota = { pt = "Atravessou o Vale do Ruhr e transformou as minas de carvão no coração industrial da Alemanha.", en = "It crossed the Ruhr Valley and turned the coal mines into Germany's industrial heart." },
+			id = "berlin_breslau", nome = "Niederschlesisch-Märkische", nomeEn = nil, ano = 1846, cor = 6, ordem = 15, degrau = 2, projeto = nil, nota = { pt = "Ligou Berlim à Silésia e ao seu carvão; foi estatizada pela Prússia em 1852.", en = "It linked Berlin to Silesia and its coal; Prussia took it over in 1852." },
+			trechos = {
+				{ id = "berlin_breslau_1", de = "berlin", para = "wroclaw", ano = 1846, km = 378, terreno = "planicie", custo = 13064, degrau = 2, via = { Vector2.new(1170.7, 584.8), Vector2.new(1203.9, 616.4) } },
+			},
+		},
+		{
+			id = "koln_minden", nome = "Köln-Mindener", nomeEn = nil, ano = 1847, cor = 4, ordem = 16, degrau = 3, projeto = nil, nota = { pt = "Atravessou o Vale do Ruhr e transformou as minas de carvão no coração industrial da Alemanha.", en = "It crossed the Ruhr Valley and turned the coal mines into Germany's industrial heart." },
 			trechos = {
 				{ id = "koln_minden_1", de = "koln", para = "essen", ano = 1847, km = 72, terreno = "planicie", custo = 5972, degrau = 3 },
 				{ id = "koln_minden_2", de = "essen", para = "hannover", ano = 1847, km = 265, terreno = "planicie", custo = 21980, degrau = 3 },
 			},
 		},
 		{
-			id = "east_coast", nome = "East Coast Main Line", nomeEn = nil, ano = 1850, cor = 7, ordem = 14, degrau = 4, projeto = nil, nota = { pt = "A linha do Flying Scotsman, entre Londres e Edimburgo; a Mallard bateu aqui o recorde mundial do vapor, 203 km/h.", en = "The Flying Scotsman's line between London and Edinburgh; Mallard set the world steam record here, 203 km/h." },
+			id = "west_coast", nome = "West Coast Main Line", nomeEn = nil, ano = 1848, cor = 1, ordem = 17, degrau = 4, projeto = nil, nota = { pt = "Subia a rampa de Shap e cruzava a fronteira escocesa: na \"corrida para o norte\" de 1895, trens disputavam quem chegava primeiro.", en = "It climbed Shap and crossed the Scottish border: in the 1895 \"Race to the North\", trains competed to arrive first." },
+			trechos = {
+				{ id = "west_coast_1", de = "crewe", para = "carlisle", ano = 1846, km = 257, terreno = "colinas", custo = 71624, degrau = 4, via = { Vector2.new(629.7, 479.6), Vector2.new(629.4, 464.0), Vector2.new(637.5, 439.6) } },
+				{ id = "west_coast_2", de = "carlisle", para = "glasgow", ano = 1848, km = 170, terreno = "colinas", custo = 47378, degrau = 4 },
+			},
+		},
+		{
+			id = "east_coast", nome = "East Coast Main Line", nomeEn = nil, ano = 1850, cor = 7, ordem = 18, degrau = 4, projeto = nil, nota = { pt = "A linha do Flying Scotsman, entre Londres e Edimburgo; a Mallard bateu aqui o recorde mundial do vapor, 203 km/h.", en = "The Flying Scotsman's line between London and Edinburgh; Mallard set the world steam record here, 203 km/h." },
 			trechos = {
 				{ id = "east_coast_1", de = "london", para = "york", ano = 1850, km = 350, terreno = "planicie", custo = 69673, degrau = 4 },
 				{ id = "east_coast_2", de = "york", para = "newcastle", ano = 1850, km = 147, terreno = "planicie", custo = 29263, degrau = 4 },
@@ -203,7 +261,41 @@ return {
 			},
 		},
 		{
-			id = "plm", nome = "Paris–Lyon–Méditerranée", nomeEn = nil, ano = 1857, cor = 3, ordem = 15, degrau = 3, projeto = nil, nota = { pt = "A \"linha imperial\", que levava Paris ao Mediterrâneo pelo vale do Ródano.", en = "The \"imperial line\", which took Paris to the Mediterranean down the Rhône valley." },
+			id = "praga", nome = "Dresden–Praga–Brno", nomeEn = "Dresden–Prague–Brno", ano = 1851, cor = 7, ordem = 19, degrau = 3, projeto = nil, nota = { pt = "A Ferrovia Estatal do Norte ligou Viena a Praga e desceu o vale do Elba até a Saxônia.", en = "The Northern State Railway linked Vienna to Prague and went down the Elbe valley to Saxony." },
+			trechos = {
+				{ id = "praga_1", de = "dresden", para = "praha", ano = 1851, km = 155, terreno = "vale", custo = 15428, degrau = 3, via = { Vector2.new(1164.5, 667.8) } },
+				{ id = "praga_2", de = "praha", para = "brno", ano = 1849, km = 282, terreno = "colinas", custo = 32746, degrau = 3, via = { Vector2.new(1219.9, 703.2), Vector2.new(1242.8, 708.7) } },
+			},
+		},
+		{
+			id = "est", nome = "Chemin de fer de l'Est", nomeEn = nil, ano = 1852, cor = 2, ordem = 20, degrau = 3, projeto = nil, nota = { pt = "A linha de Paris a Estrasburgo, pelo vale do Marne e pela Lorena, saindo da Gare de l'Est.", en = "The line from Paris to Strasbourg, through the Marne valley and Lorraine, from the Gare de l'Est." },
+			trechos = {
+				{ id = "est_1", de = "paris", para = "nancy", ano = 1852, km = 356, terreno = "planicie", custo = 29528, degrau = 3, via = { Vector2.new(828.5, 760.4), Vector2.new(855.6, 772.4) } },
+				{ id = "est_2", de = "nancy", para = "strasbourg", ano = 1852, km = 145, terreno = "colinas", custo = 16838, degrau = 3 },
+			},
+		},
+		{
+			id = "paris_orleans", nome = "Paris–Orléans–Bordéus", nomeEn = "Paris–Orléans–Bordeaux", ano = 1853, cor = 4, ordem = 21, degrau = 2, projeto = nil, nota = { pt = "A companhia Paris–Orléans levou os trens de Paris ao vale do Loire e, depois, ao porto do vinho em Bordéus.", en = "The Paris–Orléans company took trains from Paris to the Loire valley and then to the wine port of Bordeaux." },
+			trechos = {
+				{ id = "paris_orleans_1", de = "paris", para = "orleans", ano = 1843, km = 139, terreno = "planicie", custo = 4804, degrau = 2 },
+				{ id = "paris_orleans_2", de = "orleans", para = "bordeaux", ano = 1853, km = 516, terreno = "planicie", custo = 17833, degrau = 2, via = { Vector2.new(691.8, 829.9), Vector2.new(674.0, 870.7), Vector2.new(661.3, 918.6) } },
+			},
+		},
+		{
+			id = "giovi", nome = "Turim–Gênova (Giovi)", nomeEn = "Turin–Genoa (Giovi)", ano = 1853, cor = 6, ordem = 22, degrau = 4, projeto = nil, nota = { pt = "O reino do Piemonte cruzou os Apeninos pela rampa dos Giovi para levar o porto de Gênova até Turim.", en = "The Kingdom of Piedmont crossed the Apennines by the Giovi incline to bring the port of Genoa to Turin." },
+			trechos = {
+				{ id = "giovi_1", de = "torino", para = "genova", ano = 1853, km = 169, terreno = "montanhas", custo = 67284, degrau = 4, via = { Vector2.new(971.9, 981.2) } },
+			},
+		},
+		{
+			id = "wurttemberg", nome = "Frankfurt–Stuttgart–Munique", nomeEn = "Frankfurt–Stuttgart–Munich", ano = 1854, cor = 1, ordem = 23, degrau = 5, projeto = nil, nota = { pt = "A rampa de Geislingen, de 1850, subia o Jura da Suábia com locomotivas empurrando atrás.", en = "The Geislingen incline, from 1850, climbed the Swabian Jura with banking locomotives pushing behind." },
+			trechos = {
+				{ id = "wurttemberg_1", de = "frankfurt", para = "stuttgart", ano = 1846, km = 196, terreno = "colinas", custo = 131097, degrau = 5, via = { Vector2.new(979.0, 744.3) } },
+				{ id = "wurttemberg_2", de = "stuttgart", para = "munchen", ano = 1854, km = 246, terreno = "montanhas", custo = 235057, degrau = 5, via = { Vector2.new(1023.6, 797.5), Vector2.new(1055.6, 798.9) } },
+			},
+		},
+		{
+			id = "plm", nome = "Paris–Lyon–Méditerranée", nomeEn = nil, ano = 1857, cor = 3, ordem = 24, degrau = 3, projeto = nil, nota = { pt = "A \"linha imperial\", que levava Paris ao Mediterrâneo pelo vale do Ródano.", en = "The \"imperial line\", which took Paris to the Mediterranean down the Rhône valley." },
 			trechos = {
 				{ id = "plm_1", de = "paris", para = "dijon", ano = 1851, km = 329, terreno = "colinas", custo = 38204, degrau = 3 },
 				{ id = "plm_2", de = "dijon", para = "lyon", ano = 1854, km = 218, terreno = "vale", custo = 21698, degrau = 3 },
@@ -211,7 +303,7 @@ return {
 			},
 		},
 		{
-			id = "sudbahn", nome = "Südbahn (Semmering)", nomeEn = nil, ano = 1857, cor = 8, ordem = 16, degrau = 4, projeto = nil, nota = { pt = "A ferrovia do Semmering, de 1854, foi a primeira a cruzar uma cordilheira dos Alpes. Hoje é Patrimônio da Humanidade.", en = "The Semmering railway, from 1854, was the first to cross an Alpine range. It is now a World Heritage Site." },
+			id = "sudbahn", nome = "Südbahn (Semmering)", nomeEn = nil, ano = 1857, cor = 8, ordem = 25, degrau = 4, projeto = nil, nota = { pt = "A ferrovia do Semmering, de 1854, foi a primeira a cruzar uma cordilheira dos Alpes. Hoje é Patrimônio da Humanidade.", en = "The Semmering railway, from 1854, was the first to cross an Alpine range. It is now a World Heritage Site." },
 			trechos = {
 				{ id = "sudbahn_1", de = "wien", para = "graz", ano = 1854, km = 181, terreno = "alpes", custo = 93680, degrau = 4 },
 				{ id = "sudbahn_2", de = "graz", para = "ljubljana", ano = 1849, km = 166, terreno = "colinas", custo = 46263, degrau = 4 },
@@ -219,40 +311,62 @@ return {
 			},
 		},
 		{
-			id = "lombardo_veneta", nome = "Turim–Milão–Veneza", nomeEn = "Turin–Milan–Venice", ano = 1857, cor = 1, ordem = 17, degrau = 5, projeto = nil, nota = { pt = "A ferrovia da planície do Pó; a ponte da laguna, de 1846, levou o trem até Veneza.", en = "The Po plain railway; the lagoon bridge of 1846 brought the train into Venice." },
+			id = "lombardo_veneta", nome = "Turim–Milão–Veneza", nomeEn = "Turin–Milan–Venice", ano = 1857, cor = 1, ordem = 26, degrau = 5, projeto = nil, nota = { pt = "A ferrovia da planície do Pó; a ponte da laguna, de 1846, levou o trem até Veneza.", en = "The Po plain railway; the lagoon bridge of 1846 brought the train into Venice." },
 			trechos = {
 				{ id = "lombardo_veneta_1", de = "torino", para = "milano", ano = 1859, km = 156, terreno = "planicie", custo = 74530, degrau = 5 },
 				{ id = "lombardo_veneta_2", de = "milano", para = "venezia", ano = 1857, km = 305, terreno = "planicie", custo = 145716, degrau = 5 },
 			},
 		},
 		{
-			id = "suecia", nome = "Västra stambanan", nomeEn = nil, ano = 1862, cor = 6, ordem = 18, degrau = 6, projeto = nil, nota = { pt = "A linha principal do oeste da Suécia, construída pelo Estado para ligar a capital ao Mar do Norte.", en = "Sweden's western main line, built by the state to link the capital to the North Sea." },
+			id = "midi", nome = "Chemin de fer du Midi", nomeEn = nil, ano = 1858, cor = 7, ordem = 27, degrau = 5, projeto = nil, nota = { pt = "Os irmãos Pereire ligaram o Atlântico ao Mediterrâneo ao lado do Canal du Midi.", en = "The Pereire brothers linked the Atlantic to the Mediterranean alongside the Canal du Midi." },
+			trechos = {
+				{ id = "midi_1", de = "bordeaux", para = "toulouse", ano = 1856, km = 266, terreno = "vale", custo = 152500, degrau = 5, via = { Vector2.new(669.0, 996.8) } },
+				{ id = "midi_2", de = "toulouse", para = "montpellier", ano = 1857, km = 276, terreno = "planicie", custo = 131861, degrau = 5, via = { Vector2.new(754.0, 1060.2), Vector2.new(763.2, 1052.6) } },
+				{ id = "midi_3", de = "montpellier", para = "marseille", ano = 1858, km = 184, terreno = "costa", custo = 96698, degrau = 5, via = { Vector2.new(808.8, 1030.0), Vector2.new(818.5, 1039.1) } },
+			},
+		},
+		{
+			id = "reno", nome = "Ferrovia do Vale do Reno", nomeEn = "Rhine Valley Railway", ano = 1859, cor = 5, ordem = 28, degrau = 3, projeto = nil, nota = { pt = "Segue as curvas do Reno entre castelos, vinhedos e o rochedo de Lorelei.", en = "It follows the bends of the Rhine past castles, vineyards and the Lorelei rock." },
+			trechos = {
+				{ id = "reno_1", de = "koln", para = "koblenz", ano = 1858, km = 98, terreno = "vale", custo = 9754, degrau = 3 },
+				{ id = "reno_2", de = "koblenz", para = "frankfurt", ano = 1859, km = 127, terreno = "vale", custo = 12641, degrau = 3, via = { Vector2.new(947.8, 706.6), Vector2.new(965.3, 712.3) } },
+			},
+		},
+		{
+			id = "westbahn", nome = "Westbahn", nomeEn = nil, ano = 1860, cor = 3, ordem = 29, degrau = 4, projeto = nil, nota = { pt = "A Ferrovia da Imperatriz Elisabeth levou os trens de Viena, pelo vale do Danúbio, até a fronteira da Baviera.", en = "The Empress Elisabeth Railway took trains from Vienna, along the Danube valley, to the Bavarian border." },
+			trechos = {
+				{ id = "westbahn_1", de = "wien", para = "linz", ano = 1858, km = 193, terreno = "colinas", custo = 53788, degrau = 4 },
+				{ id = "westbahn_2", de = "linz", para = "salzburg", ano = 1860, km = 136, terreno = "colinas", custo = 37902, degrau = 4 },
+			},
+		},
+		{
+			id = "suecia", nome = "Västra stambanan", nomeEn = nil, ano = 1862, cor = 6, ordem = 30, degrau = 6, projeto = nil, nota = { pt = "A linha principal do oeste da Suécia, construída pelo Estado para ligar a capital ao Mar do Norte.", en = "Sweden's western main line, built by the state to link the capital to the North Sea." },
 			trechos = {
 				{ id = "suecia_1", de = "stockholm", para = "goteborg", ano = 1862, km = 496, terreno = "colinas", custo = 796211, degrau = 6 },
 			},
 		},
 		{
-			id = "madrid_barcelona", nome = "Madri–Saragoça–Barcelona", nomeEn = "Madrid–Zaragoza–Barcelona", ano = 1863, cor = 2, ordem = 19, degrau = 4, projeto = nil, nota = { pt = "Ligou a capital ao porto e à indústria da Catalunha, em bitola larga ibérica.", en = "It linked the capital to the port and industry of Catalonia, on broad Iberian gauge." },
+			id = "madrid_barcelona", nome = "Madri–Saragoça–Barcelona", nomeEn = "Madrid–Zaragoza–Barcelona", ano = 1863, cor = 2, ordem = 31, degrau = 4, projeto = nil, nota = { pt = "Ligou a capital ao porto e à indústria da Catalunha, em bitola larga ibérica.", en = "It linked the capital to the port and industry of Catalonia, on broad Iberian gauge." },
 			trechos = {
 				{ id = "madrid_barcelona_1", de = "barcelona", para = "zaragoza", ano = 1861, km = 319, terreno = "colinas", custo = 88903, degrau = 4 },
 				{ id = "madrid_barcelona_2", de = "zaragoza", para = "madrid", ano = 1863, km = 342, terreno = "colinas", custo = 95313, degrau = 4 },
 			},
 		},
 		{
-			id = "roma_napoli", nome = "Roma–Nápoles", nomeEn = "Rome–Naples", ano = 1863, cor = 3, ordem = 20, degrau = 5, projeto = nil, nota = { pt = "Ligou a cidade dos papas ao maior porto do sul da Itália, logo depois da unificação.", en = "It linked the city of the popes to southern Italy's largest port, right after unification." },
+			id = "roma_napoli", nome = "Roma–Nápoles", nomeEn = "Rome–Naples", ano = 1863, cor = 3, ordem = 32, degrau = 5, projeto = nil, nota = { pt = "Ligou a cidade dos papas ao maior porto do sul da Itália, logo depois da unificação.", en = "It linked the city of the popes to southern Italy's largest port, right after unification." },
 			trechos = {
 				{ id = "roma_napoli_1", de = "roma", para = "napoli", ano = 1863, km = 235, terreno = "colinas", custo = 157182, degrau = 5 },
 			},
 		},
 		{
-			id = "lisboa_porto", nome = "Linha do Norte", nomeEn = "Northern Line (Portugal)", ano = 1864, cor = 6, ordem = 21, degrau = 4, projeto = nil, nota = { pt = "A espinha dorsal de Portugal; a ponte Maria Pia, de Eiffel, levou os trens até o Porto em 1877.", en = "Portugal's backbone; Eiffel's Maria Pia bridge carried the trains into Porto in 1877." },
+			id = "lisboa_porto", nome = "Linha do Norte", nomeEn = "Northern Line (Portugal)", ano = 1864, cor = 6, ordem = 33, degrau = 4, projeto = nil, nota = { pt = "A espinha dorsal de Portugal; a ponte Maria Pia, de Eiffel, levou os trens até o Porto em 1877.", en = "Portugal's backbone; Eiffel's Maria Pia bridge carried the trains into Porto in 1877." },
 			trechos = {
 				{ id = "lisboa_porto_1", de = "lisboa", para = "coimbra", ano = 1864, km = 221, terreno = "costa", custo = 48393, degrau = 4 },
 				{ id = "lisboa_porto_2", de = "coimbra", para = "porto", ano = 1864, km = 132, terreno = "colinas", custo = 36787, degrau = 4 },
 			},
 		},
 		{
-			id = "norte_espana", nome = "Caminhos de Ferro do Norte", nomeEn = "Northern Railway of Spain", ano = 1864, cor = 5, ordem = 22, degrau = 5, projeto = nil, nota = { pt = "Subia a meseta castelhana e descia até o País Basco, de onde saía o minério de ferro.", en = "It climbed the Castilian plateau and came down to the Basque Country, where iron ore was shipped." },
+			id = "norte_espana", nome = "Caminhos de Ferro do Norte", nomeEn = "Northern Railway of Spain", ano = 1864, cor = 5, ordem = 34, degrau = 5, projeto = nil, nota = { pt = "Subia a meseta castelhana e descia até o País Basco, de onde saía o minério de ferro.", en = "It climbed the Castilian plateau and came down to the Basque Country, where iron ore was shipped." },
 			trechos = {
 				{ id = "norte_espana_1", de = "madrid", para = "valladolid", ano = 1860, km = 202, terreno = "colinas", custo = 135110, degrau = 5 },
 				{ id = "norte_espana_2", de = "valladolid", para = "burgos", ano = 1860, km = 142, terreno = "planicie", custo = 67842, degrau = 5 },
@@ -260,35 +374,75 @@ return {
 			},
 		},
 		{
-			id = "brenner", nome = "Ferrovia do Brenner", nomeEn = "Brenner Railway", ano = 1867, cor = 7, ordem = 23, degrau = 6, projeto = nil, nota = { pt = "A primeira ferrovia a cruzar os Alpes por cima, pelo Passo do Brenner, sem túnel de cume.", en = "The first railway over the Alps, through the Brenner Pass, without a summit tunnel." },
+			id = "sodra", nome = "Södra stambanan", nomeEn = nil, ano = 1864, cor = 3, ordem = 35, degrau = 6, projeto = nil, nota = { pt = "A linha principal do sul da Suécia, construída pelo Estado entre florestas e lagos até o estreito de Öresund.", en = "Sweden's southern main line, built by the state through forests and lakes to the Øresund strait." },
+			trechos = {
+				{ id = "sodra_1", de = "stockholm", para = "malmo", ano = 1864, km = 656, terreno = "colinas", custo = 1053054, degrau = 6, via = { Vector2.new(1194.2, 252.0), Vector2.new(1156.6, 304.7), Vector2.new(1134.9, 384.8) } },
+			},
+		},
+		{
+			id = "mza", nome = "Madri–Córdoba–Sevilha", nomeEn = "Madrid–Córdoba–Seville", ano = 1866, cor = 8, ordem = 36, degrau = 5, projeto = nil, nota = { pt = "A companhia MZA desceu da meseta para a Andaluzia pelo desfiladeiro de Despeñaperros.", en = "The MZA company came down from the plateau into Andalusia through the Despeñaperros gorge." },
+			trechos = {
+				{ id = "mza_1", de = "madrid", para = "cordoba", ano = 1866, km = 451, terreno = "montanhas", custo = 430937, degrau = 5, via = { Vector2.new(484.5, 1225.1), Vector2.new(463.4, 1275.8) } },
+				{ id = "mza_2", de = "cordoba", para = "sevilla", ano = 1859, km = 150, terreno = "vale", custo = 85996, degrau = 5 },
+			},
+		},
+		{
+			id = "leste", nome = "Lisboa–Badajoz–Madri", nomeEn = "Lisbon–Badajoz–Madrid", ano = 1866, cor = 2, ordem = 37, degrau = 6, projeto = nil, nota = { pt = "A Linha do Leste saiu de Lisboa pelo vale do Tejo e encontrou a ferrovia espanhola em Badajoz.", en = "The Eastern Line left Lisbon up the Tagus valley and met the Spanish railway at Badajoz." },
+			trechos = {
+				{ id = "leste_1", de = "lisboa", para = "badajoz", ano = 1863, km = 311, terreno = "planicie", custo = 356598, degrau = 6, via = { Vector2.new(240.9, 1203.9), Vector2.new(245.2, 1198.5), Vector2.new(248.3, 1196.0), Vector2.new(274.6, 1176.6), Vector2.new(305.2, 1203.6), Vector2.new(320.0, 1219.0) } },
+				{ id = "leste_2", de = "badajoz", para = "madrid", ano = 1866, km = 534, terreno = "colinas", custo = 857212, degrau = 6, via = { Vector2.new(353.9, 1224.4), Vector2.new(451.9, 1241.1), Vector2.new(474.2, 1189.0) } },
+			},
+		},
+		{
+			id = "brenner", nome = "Ferrovia do Brenner", nomeEn = "Brenner Railway", ano = 1867, cor = 7, ordem = 38, degrau = 6, projeto = nil, nota = { pt = "A primeira ferrovia a cruzar os Alpes por cima, pelo Passo do Brenner, sem túnel de cume.", en = "The first railway over the Alps, through the Brenner Pass, without a summit tunnel." },
 			trechos = {
 				{ id = "brenner_1", de = "munchen", para = "innsbruck", ano = 1858, km = 122, terreno = "vale", custo = 167865, degrau = 6 },
 				{ id = "brenner_2", de = "innsbruck", para = "verona", ano = 1867, km = 257, terreno = "alpes", custo = 766170, degrau = 6 },
 			},
 		},
 		{
-			id = "varsovia", nome = "Berlim–Varsóvia", nomeEn = "Berlin–Warsaw", ano = 1870, cor = 1, ordem = 24, degrau = 7, projeto = nil, nota = { pt = "A ligação entre Berlim e Varsóvia pela planície do norte, depois parte do Expresso Nord.", en = "The link between Berlin and Warsaw across the northern plain, later part of the Nord Express." },
+			id = "barcelona_valencia", nome = "Barcelona–Valência", nomeEn = "Barcelona–Valencia", ano = 1868, cor = 5, ordem = 39, degrau = 6, projeto = nil, nota = { pt = "A linha do Mediterrâneo espanhol, entre laranjais, vinhedos e o delta do Ebro.", en = "The Spanish Mediterranean line, among orange groves, vineyards and the Ebro delta." },
+			trechos = {
+				{ id = "barcelona_valencia_1", de = "barcelona", para = "valencia", ano = 1868, km = 403, terreno = "costa", custo = 508296, degrau = 6, via = { Vector2.new(675.1, 1161.0), Vector2.new(662.8, 1163.3), Vector2.new(647.9, 1170.4), Vector2.new(634.2, 1183.6), Vector2.new(616.8, 1213.6) } },
+			},
+		},
+		{
+			id = "varsovia", nome = "Berlim–Varsóvia", nomeEn = "Berlin–Warsaw", ano = 1870, cor = 1, ordem = 40, degrau = 7, projeto = nil, nota = { pt = "A ligação entre Berlim e Varsóvia pela planície do norte, depois parte do Expresso Nord.", en = "The link between Berlin and Warsaw across the northern plain, later part of the Nord Express." },
 			trechos = {
 				{ id = "varsovia_1", de = "berlin", para = "poznan", ano = 1870, km = 299, terreno = "planicie", custo = 822813, degrau = 7 },
 				{ id = "varsovia_2", de = "poznan", para = "warszawa", ano = 1870, km = 347, terreno = "planicie", custo = 954903, degrau = 7 },
 			},
 		},
 		{
-			id = "frejus", nome = "Túnel do Fréjus (Mont Cenis)", nomeEn = "Fréjus Tunnel (Mont Cenis)", ano = 1871, cor = 4, ordem = 25, degrau = 5, projeto = nil, nota = { pt = "O primeiro grande túnel sob os Alpes, com 13 km, cavado com perfuratrizes de ar comprimido.", en = "The first great tunnel under the Alps, 13 km long, dug with compressed-air drills." },
+			id = "frejus", nome = "Túnel do Fréjus (Mont Cenis)", nomeEn = "Fréjus Tunnel (Mont Cenis)", ano = 1871, cor = 4, ordem = 41, degrau = 5, projeto = nil, nota = { pt = "O primeiro grande túnel sob os Alpes, com 13 km, cavado com perfuratrizes de ar comprimido.", en = "The first great tunnel under the Alps, 13 km long, dug with compressed-air drills." },
 			trechos = {
 				{ id = "frejus_1", de = "lyon", para = "chambery", ano = 1857, km = 108, terreno = "vale", custo = 61917, degrau = 5 },
 				{ id = "frejus_2", de = "chambery", para = "torino", ano = 1871, km = 186, terreno = "alpes", custo = 231043, degrau = 5 },
 			},
 		},
 		{
-			id = "gotthard", nome = "Ferrovia do Gotardo", nomeEn = "Gotthard Railway", ano = 1882, cor = 2, ordem = 26, degrau = 6, projeto = nil, nota = { pt = "O túnel do Gotardo, de 15 km, custou a vida de quase 200 operários; as voltas em espiral de Wassen viraram cartão-postal.", en = "The 15 km Gotthard tunnel cost nearly 200 workers their lives; the spiral loops at Wassen became a postcard." },
+			id = "porrettana", nome = "Milão–Bolonha–Florença–Roma", nomeEn = "Milan–Bologna–Florence–Rome", ano = 1874, cor = 4, ordem = 42, degrau = 5, projeto = nil, nota = { pt = "A Porrettana cruzou os Apeninos com dezenas de túneis e juntou o norte e o centro da Itália recém-unificada.", en = "The Porrettana crossed the Apennines through dozens of tunnels and joined the north and centre of newly united Italy." },
+			trechos = {
+				{ id = "porrettana_1", de = "milano", para = "bologna", ano = 1859, km = 251, terreno = "planicie", custo = 119917, degrau = 5 },
+				{ id = "porrettana_2", de = "bologna", para = "firenze", ano = 1864, km = 100, terreno = "montanhas", custo = 95551, degrau = 5 },
+				{ id = "porrettana_3", de = "firenze", para = "roma", ano = 1874, km = 303, terreno = "colinas", custo = 202665, degrau = 5, via = { Vector2.new(1096.3, 1057.2), Vector2.new(1105.8, 1095.9) } },
+			},
+		},
+		{
+			id = "gotthard", nome = "Ferrovia do Gotardo", nomeEn = "Gotthard Railway", ano = 1882, cor = 2, ordem = 43, degrau = 6, projeto = nil, nota = { pt = "O túnel do Gotardo, de 15 km, custou a vida de quase 200 operários; as voltas em espiral de Wassen viraram cartão-postal.", en = "The 15 km Gotthard tunnel cost nearly 200 workers their lives; the spiral loops at Wassen became a postcard." },
 			trechos = {
 				{ id = "gotthard_1", de = "zurich", para = "luzern", ano = 1864, km = 49, terreno = "colinas", custo = 78658, degrau = 6 },
 				{ id = "gotthard_2", de = "luzern", para = "milano", ano = 1882, km = 237, terreno = "alpes", custo = 706546, degrau = 6 },
 			},
 		},
 		{
-			id = "orient", nome = "Rota do Expresso do Oriente", nomeEn = "Orient Express Route", ano = 1888, cor = 8, ordem = 27, degrau = 6, projeto = nil, nota = { pt = "Em 1889 o Expresso do Oriente passou a ir de Paris a Constantinopla só de trem, com vagões-leito de luxo.", en = "In 1889 the Orient Express began running from Paris to Constantinople entirely by train, with luxury sleeping cars." },
+			id = "arlberg", nome = "Ferrovia do Arlberg", nomeEn = "Arlberg Railway", ano = 1884, cor = 6, ordem = 44, degrau = 6, projeto = nil, nota = { pt = "O túnel do Arlberg, de 10 km, ligou o Tirol à Suíça sem passar pela Alemanha.", en = "The 10 km Arlberg tunnel linked the Tyrol to Switzerland without passing through Germany." },
+			trechos = {
+				{ id = "arlberg_1", de = "innsbruck", para = "zurich", ano = 1884, km = 301, terreno = "alpes", custo = 897343, degrau = 6, via = { Vector2.new(1031.2, 864.6), Vector2.new(1009.6, 858.7), Vector2.new(1003.8, 868.7), Vector2.new(991.6, 864.4) } },
+			},
+		},
+		{
+			id = "orient", nome = "Rota do Expresso do Oriente", nomeEn = "Orient Express Route", ano = 1888, cor = 8, ordem = 45, degrau = 6, projeto = nil, nota = { pt = "Em 1889 o Expresso do Oriente passou a ir de Paris a Constantinopla só de trem, com vagões-leito de luxo.", en = "In 1889 the Orient Express began running from Paris to Constantinople entirely by train, with luxury sleeping cars." },
 			trechos = {
 				{ id = "orient_1", de = "wien", para = "budapest", ano = 1846, km = 268, terreno = "planicie", custo = 307294, degrau = 6 },
 				{ id = "orient_2", de = "budapest", para = "beograd", ano = 1884, km = 401, terreno = "planicie", custo = 459794, degrau = 6 },
@@ -297,20 +451,47 @@ return {
 			},
 		},
 		{
-			id = "simplon", nome = "Túnel do Simplon", nomeEn = "Simplon Tunnel", ano = 1906, cor = 5, ordem = 28, degrau = 7, projeto = nil, nota = { pt = "Em 1906, com 19,8 km, o Simplon virou o túnel ferroviário mais longo do mundo e encurtou o Paris–Milão.", en = "In 1906, at 19.8 km, the Simplon became the world's longest railway tunnel and shortened Paris–Milan." },
+			id = "forth", nome = "Ponte do Forth", nomeEn = "Forth Bridge", ano = 1890, cor = 4, ordem = 46, degrau = 7, projeto = nil, nota = { pt = "A ponte do Forth, de 1890, com seus grandes balanços de aço vermelho, levou o trem de Edimburgo para o norte da Escócia.", en = "The 1890 Forth Bridge, with its great red steel cantilevers, carried the train from Edinburgh to the north of Scotland." },
+			trechos = {
+				{ id = "forth_1", de = "edinburgh", para = "aberdeen", ano = 1890, km = 215, terreno = "costa", custo = 650820, degrau = 7, via = { Vector2.new(630.9, 359.3), Vector2.new(638.6, 354.8), Vector2.new(647.6, 337.6), Vector2.new(659.7, 334.4), Vector2.new(664.3, 327.2), Vector2.new(674.0, 315.4) } },
+			},
+		},
+		{
+			id = "carpatos", nome = "Budapeste–Bucareste–Constança", nomeEn = "Budapest–Bucharest–Constanța", ano = 1895, cor = 8, ordem = 47, degrau = 7, projeto = nil, nota = { pt = "Cruzava os Cárpatos pela Transilvânia; a ponte de Cernavodă sobre o Danúbio, de 1895, era a mais longa da Europa.", en = "It crossed the Carpathians through Transylvania; the 1895 Cernavodă bridge over the Danube was Europe's longest." },
+			trechos = {
+				{ id = "carpatos_1", de = "budapest", para = "bucuresti", ano = 1879, km = 869, terreno = "montanhas", custo = 4782772, degrau = 7, via = { Vector2.new(1513.4, 838.4), Vector2.new(1596.1, 882.2), Vector2.new(1618.9, 915.7) } },
+				{ id = "carpatos_2", de = "bucuresti", para = "constanta", ano = 1895, km = 256, terreno = "planicie", custo = 704482, degrau = 7, via = { Vector2.new(1699.2, 929.5) } },
+			},
+		},
+		{
+			id = "simplon", nome = "Túnel do Simplon", nomeEn = "Simplon Tunnel", ano = 1906, cor = 5, ordem = 48, degrau = 7, projeto = nil, nota = { pt = "Em 1906, com 19,8 km, o Simplon virou o túnel ferroviário mais longo do mundo e encurtou o Paris–Milão.", en = "In 1906, at 19.8 km, the Simplon became the world's longest railway tunnel and shortened Paris–Milan." },
 			trechos = {
 				{ id = "simplon_1", de = "lausanne", para = "milano", ano = 1906, km = 288, terreno = "alpes", custo = 2060610, degrau = 7 },
 			},
 		},
 		{
-			id = "hs2", nome = "HS2", nomeEn = nil, ano = 2033, cor = 3, ordem = 29, degrau = 5, projeto = "hs2", nota = { pt = "A nova linha de alta velocidade britânica: Londres–Birmingham em obras, e o trecho até Manchester cortado em 2023.", en = "Britain's new high-speed line: London–Birmingham under construction, with the stretch to Manchester cancelled in 2023." },
+			id = "bergensbanen", nome = "Bergensbanen", nomeEn = nil, ano = 1909, cor = 7, ordem = 49, degrau = 7, projeto = nil, nota = { pt = "Atravessa o planalto de Hardangervidda a 1.222 m de altitude, com galerias para proteger os trilhos da neve.", en = "It crosses the Hardangervidda plateau at 1,222 m, with snow sheds to protect the tracks." },
+			trechos = {
+				{ id = "bergensbanen_1", de = "oslo", para = "bergen", ano = 1909, km = 408, terreno = "montanhas", custo = 2245536, degrau = 7, via = { Vector2.new(1030.8, 176.1), Vector2.new(979.8, 153.0), Vector2.new(959.0, 152.4), Vector2.new(931.0, 149.6) } },
+			},
+		},
+		{
+			id = "vardar", nome = "Belgrado–Salônica–Atenas", nomeEn = "Belgrade–Thessaloniki–Athens", ano = 1916, cor = 1, ordem = 50, degrau = 7, projeto = nil, nota = { pt = "Desce o vale do Vardar até o mar Egeu; o trecho até Atenas só ficou pronto durante a Primeira Guerra.", en = "It runs down the Vardar valley to the Aegean; the stretch to Athens was finished only during the First World War." },
+			trechos = {
+				{ id = "vardar_1", de = "beograd", para = "skopje", ano = 1888, km = 440, terreno = "vale", custo = 1452994, degrau = 7, via = { Vector2.new(1480.5, 1029.1) } },
+				{ id = "vardar_2", de = "skopje", para = "thessaloniki", ano = 1888, km = 246, terreno = "vale", custo = 812356, degrau = 7 },
+				{ id = "vardar_3", de = "thessaloniki", para = "athina", ano = 1916, km = 470, terreno = "montanhas", custo = 2586770, degrau = 7, via = { Vector2.new(1529.1, 1165.3), Vector2.new(1527.9, 1184.2), Vector2.new(1532.8, 1203.1), Vector2.new(1529.6, 1217.5), Vector2.new(1535.8, 1255.9), Vector2.new(1576.8, 1279.8) } },
+			},
+		},
+		{
+			id = "hs2", nome = "HS2", nomeEn = nil, ano = 2033, cor = 3, ordem = 51, degrau = 5, projeto = "hs2", nota = { pt = "A nova linha de alta velocidade britânica: Londres–Birmingham em obras, e o trecho até Manchester cortado em 2023.", en = "Britain's new high-speed line: London–Birmingham under construction, with the stretch to Manchester cancelled in 2023." },
 			trechos = {
 				{ id = "hs2_1", de = "london", para = "birmingham", ano = 2033, km = 203, terreno = "colinas", custo = 135779, degrau = 5 },
 				{ id = "hs2_2", de = "birmingham", para = "manchester", ano = 2040, km = 142, terreno = "colinas", custo = 94978, degrau = 5 },
 			},
 		},
 		{
-			id = "rail_baltica", nome = "Rail Baltica", nomeEn = nil, ano = 2030, cor = 4, ordem = 30, degrau = 6, projeto = "rail_baltica", nota = { pt = "Uma ferrovia em bitola europeia para ligar os países bálticos a Varsóvia e ao resto do continente.", en = "A European-gauge railway linking the Baltic states to Warsaw and the rest of the continent." },
+			id = "rail_baltica", nome = "Rail Baltica", nomeEn = nil, ano = 2030, cor = 4, ordem = 52, degrau = 6, projeto = "rail_baltica", nota = { pt = "Uma ferrovia em bitola europeia para ligar os países bálticos a Varsóvia e ao resto do continente.", en = "A European-gauge railway linking the Baltic states to Warsaw and the rest of the continent." },
 			trechos = {
 				{ id = "rail_baltica_1", de = "warszawa", para = "kaunas", ano = 2030, km = 441, terreno = "planicie", custo = 505658, degrau = 6 },
 				{ id = "rail_baltica_2", de = "kaunas", para = "riga", ano = 2030, km = 285, terreno = "planicie", custo = 326786, degrau = 6 },
@@ -318,19 +499,19 @@ return {
 			},
 		},
 		{
-			id = "fehmarn", nome = "Túnel do Fehmarnbelt", nomeEn = "Fehmarnbelt Tunnel", ano = 2031, cor = 7, ordem = 31, degrau = 7, projeto = "fehmarn", nota = { pt = "Um túnel submerso de 18 km sob o Báltico, entre a Alemanha e a Dinamarca, em obras desde 2020.", en = "An 18 km immersed tunnel under the Baltic, between Germany and Denmark, under construction since 2020." },
+			id = "fehmarn", nome = "Túnel do Fehmarnbelt", nomeEn = "Fehmarnbelt Tunnel", ano = 2031, cor = 7, ordem = 53, degrau = 7, projeto = "fehmarn", nota = { pt = "Um túnel submerso de 18 km sob o Báltico, entre a Alemanha e a Dinamarca, em obras desde 2020.", en = "An 18 km immersed tunnel under the Baltic, between Germany and Denmark, under construction since 2020." },
 			trechos = {
 				{ id = "fehmarn_1", de = "hamburg", para = "kobenhavn", ano = 2031, km = 362, terreno = "mar", custo = 3486636, degrau = 7 },
 			},
 		},
 		{
-			id = "lyon_turin", nome = "Túnel Lyon–Turim", nomeEn = "Lyon–Turin Tunnel", ano = 2033, cor = 1, ordem = 32, degrau = 8, projeto = "lyon_turin", nota = { pt = "Um túnel de base de 57 km sob os Alpes, para trens de carga e de alta velocidade entre a França e a Itália.", en = "A 57 km base tunnel under the Alps for freight and high-speed trains between France and Italy." },
+			id = "lyon_turin", nome = "Túnel Lyon–Turim", nomeEn = "Lyon–Turin Tunnel", ano = 2033, cor = 1, ordem = 54, degrau = 8, projeto = "lyon_turin", nota = { pt = "Um túnel de base de 57 km sob os Alpes, para trens de carga e de alta velocidade entre a França e a Itália.", en = "A 57 km base tunnel under the Alps for freight and high-speed trains between France and Italy." },
 			trechos = {
 				{ id = "lyon_turin_1", de = "lyon", para = "torino", ano = 2033, km = 294, terreno = "tunel_base", custo = 6213531, degrau = 8 },
 			},
 		},
 		{
-			id = "messina", nome = "Ponte do Estreito de Messina", nomeEn = "Strait of Messina Bridge", ano = 2040, cor = 2, ordem = 33, degrau = 8, projeto = "messina", nota = { pt = "E se a Sicília tivesse, enfim, a ponte suspensa mais longa do mundo? O projeto vai e volta há mais de 50 anos.", en = "What if Sicily finally got the world's longest suspension bridge? The plan has come and gone for over 50 years." },
+			id = "messina", nome = "Ponte do Estreito de Messina", nomeEn = "Strait of Messina Bridge", ano = 2040, cor = 2, ordem = 55, degrau = 8, projeto = "messina", nota = { pt = "E se a Sicília tivesse, enfim, a ponte suspensa mais longa do mundo? O projeto vai e volta há mais de 50 anos.", en = "What if Sicily finally got the world's longest suspension bridge? The plan has come and gone for over 50 years." },
 			trechos = {
 				{ id = "messina_1", de = "napoli", para = "reggio", ano = 2040, km = 528, terreno = "colinas", custo = 4882060, degrau = 8, via = { Vector2.new(1225.1, 1196.7), Vector2.new(1250.4, 1213.4), Vector2.new(1273.1, 1245.9), Vector2.new(1281.1, 1271.6), Vector2.new(1290.8, 1289.2), Vector2.new(1278.2, 1316.6) } },
 				{ id = "messina_2", de = "reggio", para = "messina", ano = 2040, km = 16, terreno = "mar", custo = 369853, degrau = 8 },

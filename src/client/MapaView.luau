@@ -648,8 +648,8 @@ end
 
 -- Distância entre as faixas de um corredor, em pixels de tela.
 local function larguraFaixa(zoom: number): number
-	-- menos que a largura da linha: as cores ficam coladas, uma levemente por cima da outra
-	return math.clamp(2 + zoom * 0.9, 3, 10) * 0.6
+	-- a largura da linha mais uma folga: cada linha fica separada, com um fio do fundo entre elas
+	return math.clamp(2 + zoom * 0.9, 3, 10) + 2.5
 end
 
 function MapaView._criarEstacoes(self: MapaView, dados: any)
