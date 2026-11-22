@@ -940,7 +940,7 @@ end
 -- Foto da notícia: a cidade do alvo (ou uma da rede ligada a ele); sem cidade, a maior da rede.
 local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	local function imagem(id: string): string?
-		return Assets.imagemExata(id, estado.era)
+		return Assets.imagemFicha(id, estado.era, dados.estacoes[id])
 	end
 	local candidatas: { string } = {}
 	if ev.tipo == "cidade" and ev.alvo and dados.estacoes[ev.alvo] then

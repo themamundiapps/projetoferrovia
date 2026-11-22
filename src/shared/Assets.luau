@@ -140,6 +140,21 @@ function Assets.imagemExata(id: string, eraId: string?): string?
 	end
 	return nil
 end
+-- Imagem da ficha: a desta cidade nesta era; cidade pequena (porte até 3) sem foto própria usa a
+-- paisagem genérica da região. Cidade grande sem foto da era: nil ("foto desta época em breve").
+function Assets.imagemFicha(id: string, eraId: string?, estacao: any): string?
+	local img = Assets.imagemExata(id, eraId)
+	if img then
+		return img
+	end
+	if estacao and (estacao.porte or 0) <= 3 then
+		local p = (Assets.Paisagens :: any)[estacao.paisagem or ""]
+		if p and p ~= "rbxassetid://0" then
+			return p
+		end
+	end
+	return nil
+end
 -- Kit de UI (imagens fatiadas em 9, arte/ui/<kit>/). slice = SliceCenter na imagem de 512 px;
 -- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).
 Assets.KitUI = {

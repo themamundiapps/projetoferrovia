@@ -264,7 +264,7 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 	}, r)
 	novo("UIStroke", { Color = c.ink, Thickness = 1.5 }, moldura)
 	est:cantos(moldura)
-	local imagem = Assets.imagemExata(id, est.era.id)
+	local imagem = Assets.imagemFicha(id, est.era.id, e)
 	if imagem then
 		local img = novo("ImageLabel", {
 			Size = UDim2.fromScale(1, 1),
