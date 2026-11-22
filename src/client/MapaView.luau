@@ -1459,7 +1459,8 @@ function MapaView._layout(self: MapaView)
 			e.selo.Visible = z >= 1.2
 		end
 	end
-	local ordem = (self :: any).ordemRotulos
+	local eu = self :: any
+	local ordem = eu.ordemRotulos
 	if not ordem then
 		ordem = table.clone(self.estacoes)
 		table.sort(ordem, function(x: Estacao, y: Estacao)
@@ -1468,7 +1469,7 @@ function MapaView._layout(self: MapaView)
 			end
 			return x.id < y.id
 		end)
-		(self :: any).ordemRotulos = ordem
+		eu.ordemRotulos = ordem
 	end
 	for _, e in ordem do
 		local p = e.pos * z
