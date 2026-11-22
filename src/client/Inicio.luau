@@ -80,17 +80,21 @@ function Inicio.new(playerGui: Instance): Inicio
 		conexoes = {},
 		_medir = function() end,
 	}, Inicio)
+	-- O UIScale fica na raiz, que encolhe/estica a partir do canto de cima à esquerda; por isso a raiz
+	-- tem tamanho 1/escala: depois de escalada, ela cobre a tela exata e o centro fica no centro.
 	local function medir()
-		local t = raiz.AbsoluteSize
+		local t = gui.AbsoluteSize
 		if t.X > 0 and t.Y > 0 then
 			-- cabe na tela: pela largura e pela altura da coluna (em pontos virtuais)
 			local coluna = self.conteudo and self.conteudo:FindFirstChild("Coluna") :: Frame?
 			local alturaColuna = if coluna then coluna.AbsoluteSize.Y / math.max(escala.Scale, 0.01) else 560
 			escala.Scale = math.clamp(math.min(t.X / 1000, t.Y * 0.92 / math.max(alturaColuna, 400)), 0.55, 1.1)
+			local k = 1 / math.max(escala.Scale, 0.01)
+			raiz.Size = UDim2.fromScale(k, k)
 		end
 	end
 	self._medir = medir
-	table.insert(self.conexoes, raiz:GetPropertyChangedSignal("AbsoluteSize"):Connect(medir))
+	table.insert(self.conexoes, gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(medir))
 	medir()
 	return self
 end
@@ -107,19 +111,13 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	self.raiz.BackgroundTransparency = 1
 	local est = Estilo.new(era)
 	local c = est.c
-	local s = 1 / math.max(self.escala.Scale, 0.01)
-
-	-- tudo dentro de um quadro em "pontos virtuais" (a escala vale para o quadro inteiro)
+	-- tudo dentro de um quadro em "pontos virtuais" (a raiz já compensa a escala: o quadro ocupa a raiz toda)
 	local conteudo = novo("Frame", {
 		Name = "Conteudo",
-		Size = UDim2.fromScale(s, s),
+		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 	}, self.raiz) :: Frame
 	self.conteudo = conteudo
-	table.insert(self.conexoes, self.escala:GetPropertyChangedSignal("Scale"):Connect(function()
-		local k = 1 / math.max(self.escala.Scale, 0.01)
-		conteudo.Size = UDim2.fromScale(k, k)
-	end))
 
 	-- faixa à esquerda na cor do painel da era, sumindo para a direita: o mapa aparece à direita
 	local faixa = novo("Frame", {
