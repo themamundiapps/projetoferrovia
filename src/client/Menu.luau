@@ -1316,6 +1316,15 @@ end
 
 -- ---------------------------------------------------------------- aba Tarifas
 
+local function pct(x: number): string
+	return `{math.round(x * 100)}%`
+end
+
+local function sinal(x: number): string
+	local n = math.round(x)
+	return if n > 0 then `+{n}` elseif n < 0 then `−{-n}` else "0"
+end
+
 function Menu._abaTarifas(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	self:_titulo(L(`{Emojis.tarifas} Tarifas`, `{Emojis.tarifas} Fares`), L("O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", "Each class's ticket price applies to every line. Pricier tickets earn more per passenger but drive people away; too pricey annoys travellers. Onboard service makes each class willing to pay more."))
