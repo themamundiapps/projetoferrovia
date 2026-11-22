@@ -16,7 +16,6 @@ local Idioma = require(Shared:WaitForChild("Idioma"))
 local L = Idioma.L
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
-local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Loja = require(Shared:WaitForChild("Loja"))
@@ -206,18 +205,7 @@ local function sanear(salvo: any): EstadoMapa
 	if type(salvo.nomeCompanhia) == "string" and #salvo.nomeCompanhia <= 64 then
 		e.nomeCompanhia = salvo.nomeCompanhia
 	end
-	-- empréstimo: só números válidos; dívida nunca maior que o total
-	local emp = salvo.emprestimo
-	if type(emp) == "table" and type(emp.valor) == "number" and type(emp.total) == "number" and type(emp.divida) == "number"
-		and emp.divida > 0 and emp.total >= emp.divida and emp.divida == emp.divida then
-		e.emprestimo = {
-			valor = emp.valor,
-			total = emp.total,
-			divida = emp.divida,
-			classe = if type(emp.classe) == "string" then emp.classe else "C",
-			em = if type(emp.em) == "number" then emp.em else os.time(),
-		}
-	end
+	-- (o banco saiu em 22/11: empréstimos de saves antigos são perdoados, por isso salvo.emprestimo é ignorado)
 	-- decisões: pendente só se existir no catálogo; efeitos com números dentro dos limites
 	local dc = salvo.decisoes
 	if type(dc) == "table" then
@@ -319,7 +307,6 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 		loja = e.loja,
 		tutorial = e.tutorial,
 		nomeCompanhia = e.nomeCompanhia,
-		emprestimo = e.emprestimo,
 		decisoes = e.decisoes,
 		tarifas = e.tarifas,
 		jornal = e.jornal,
@@ -1104,44 +1091,6 @@ function Acoes.escolherDecisao(s: Sessao, args: any): (boolean, string?)
 	return true, L("Decisão tomada.", "Decision made.")
 end
 
--- Banco: pega um dos empréstimos oferecidos (args.opcao = 1, 2 ou 3).
-function Acoes.tomarEmprestimo(s: Sessao, args: any): (boolean, string?)
-	if type(args) ~= "table" or type(args.opcao) ~= "number" then
-		return false, L("Pedido inválido.", "Invalid request.")
-	end
-	local dados = MAPAS[s.mapaAtual]
-	local e = s.mapas[s.mapaAtual]
-	local motivo = Banco.impedimento(e)
-	if motivo then
-		return false, motivo
-	end
-	local b = Economia.balanco(e, dados)
-	local ofertas, classe = Banco.ofertas(e, b.lucro, b.satisfacao)
-	local o = ofertas[math.floor(args.opcao)]
-	if not o then
-		return false, L("Pedido inválido.", "Invalid request.")
-	end
-	e.emprestimo = { valor = o.valor, total = o.total, divida = o.total, classe = classe.id, em = os.time() }
-	e.dinheiro += o.valor
-	return true, L(`Empréstimo de {Economia.formatar(o.valor, dados.simbolo)} liberado.`, `Loan of {Economia.formatar(o.valor, dados.simbolo)} granted.`)
-end
-
--- Banco: paga de uma vez o que falta da dívida.
-function Acoes.quitarEmprestimo(s: Sessao, _args: any): (boolean, string?)
-	local e = s.mapas[s.mapaAtual]
-	local emp = e.emprestimo
-	if not emp then
-		return false, L("Você não deve nada ao banco.", "You owe the bank nothing.")
-	end
-	if e.dinheiro < emp.divida then
-		return false, L("Dinheiro insuficiente para quitar.", "Not enough money to pay it off.")
-	end
-	e.dinheiro -= emp.divida
-	e.emprestimo = nil
-	Metas.contar(e, "emprestimos", 1)
-	return true, L("Empréstimo quitado. O banco agradece!", "Loan paid off. The bank thanks you!")
-end
-
 -- Tarifas: muda o preço de uma classe (args.classe = 1 a 3, args.preco = 0,5 a 2).
 function Acoes.definirTarifa(s: Sessao, args: any): (boolean, string?)
 	if type(args) ~= "table" or type(args.classe) ~= "number" or type(args.preco) ~= "number" or args.preco ~= args.preco then
@@ -1362,16 +1311,6 @@ local function aoEntrar(jogador: Player)
 			loja.impulsoAte = 0
 			local ganho = math.max(-e.dinheiro, Economia.rendaTotal(e, dados) * decorrido)
 			loja.impulsoAte = impulso
-			-- o banco também recebe enquanto o jogador está fora
-			if e.emprestimo and ganho > 0 then
-				local pago = math.min(e.emprestimo.divida, ganho * Banco.PARCELA)
-				ganho -= pago
-				e.emprestimo.divida -= pago
-				if e.emprestimo.divida <= 0.01 then
-					e.emprestimo = nil
-					Metas.contar(e, "emprestimos", 1)
-				end
-			end
 			e.dinheiro += ganho
 			if id == s.mapaAtual then
 				s.ganhoOffline = ganho
@@ -1662,17 +1601,6 @@ task.spawn(function()
 				local lucro = ctx.balanco.lucro
 				-- com prejuízo (manutenção maior que a receita) o caixa desce, mas nunca abaixo de zero
 				e.dinheiro = math.max(0, e.dinheiro + lucro * dt)
-				-- banco: uma parte do lucro vai para a dívida
-				if e.emprestimo then
-					local pago = math.min(Banco.parcela(e, lucro, dt), e.dinheiro)
-					e.dinheiro -= pago
-					e.emprestimo.divida -= pago
-					if e.emprestimo.divida <= 0.01 then
-						e.emprestimo = nil
-						Metas.contar(e, "emprestimos", 1)
-						table.insert(s.eventos, { tipo = "banco" })
-					end
-				end
 				-- 1 minuto de verdade = 1 dia da ferrovia
 				Metas.contar(e, "lucro", math.max(0, lucro) * dt)
 				Metas.contar(e, "passageiros", ctx.passageirosDia / Metas.SEGUNDOS_POR_DIA * dt)

@@ -535,13 +535,6 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
-		id = "bom_pagador", nome = "Bom pagador", emoji = "banco", xp = 60,
-		descricao = "Termine de pagar um empréstimo do banco.",
-		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
-			return (estado.contadores.emprestimos or 0) >= 1
-		end,
-	},
-	{
 		id = "sonhador", nome = "Sonhador", emoji = "pesquisa", xp = 100,
 		descricao = "Complete uma linha \"E se?\" do Gabinete.",
 		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
@@ -648,7 +641,6 @@ local EN_MEDALHAS = {
 	adeus_vapor = { "Farewell, steam", "Modernize the company to the next era." },
 	fio_no_trilho = { "Wired rails", "Reach the Electric Era." },
 	bala_de_prata = { "Silver bullet", "Reach the High Speed Era." },
-	bom_pagador = { "Good payer", "Pay off a bank loan." },
 	sonhador = { "Dreamer", "Complete a \"What if?\" line from the Cabinet." },
 	do_papel_ao_trilho = { "From paper to rail", "Finish a study in the Projects Cabinet." },
 	obra_entregue = { "Work delivered", "Complete a railway that only existed on paper." },

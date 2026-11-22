@@ -17,7 +17,6 @@ local L = Idioma.L
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Assets = require(Shared:WaitForChild("Assets"))
 local Creditos = require(Shared:WaitForChild("Creditos"))
-local Banco = require(Shared:WaitForChild("Banco"))
 local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Loja = require(Shared:WaitForChild("Loja"))
@@ -35,7 +34,7 @@ local ABAS = {
 	{ id = "projetos", nome = { pt = "Gabinete", en = "Cabinet" }, emoji = "gabinete" },
 	{ id = "metas", nome = { pt = "Contratos", en = "Contracts" }, emoji = "contratos" },
 	{ id = "jornal", nome = { pt = "Jornal", en = "Newspaper" }, emoji = "jornal" },
-	{ id = "financas", nome = { pt = "Finanças", en = "Finances" }, emoji = "banco" }, -- banco e tarifas
+	{ id = "tarifas", nome = { pt = "Tarifas", en = "Fares" }, emoji = "tarifas" },
 	{ id = "companhia", nome = { pt = "Companhia", en = "Company" }, emoji = "companhia" },
 	{ id = "loja", nome = { pt = "Loja", en = "Shop" }, emoji = "loja" },
 	{ id = "ajustes", nome = { pt = "Ajustes", en = "Settings" }, emoji = "configuracoes" },
@@ -50,7 +49,6 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.aba = nil :: string?
 	self.verCreditos = false -- dentro de Ajustes: lista de créditos no lugar das opções
 	self.verConquistas = false -- dentro de Companhia: a galeria de conquistas no lugar do resumo
-	self.subFinancas = "banco" -- dentro de Finanças: "banco" ou "tarifas"
 	self.ajudaAberta = {} :: { [string]: boolean } -- explicação aberta pelo botão "?" de cada aba
 	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
@@ -293,9 +291,6 @@ function Menu._assinatura(self: Menu, estado: any): string
 		table.insert(metas, ev.id .. ev.tipo .. ev.inicio)
 	end
 	table.insert(metas, #((estado.jornal or {}).edicoes or {}))
-	-- banco: redesenha quando pega/quita empréstimo ou quando muda a classe de crédito
-	table.insert(metas, if estado.emprestimo then estado.emprestimo.em else 0)
-	table.insert(metas, Banco.classe(Banco.nota(estado, Economia.satisfacao(estado, self.dados))).id)
 	-- loja: redesenha quando compra um passe, liga/desliga o gerente ou guarda um estudo
 	local lj = estado.loja or {}
 	table.insert(metas, `{lj.dobro}{lj.estudos}{lj.offline}{lj.gerente}{lj.gerenteLigado}{lj.pinturas}{lj.estudosGuardados}`)
@@ -495,8 +490,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaMetas()
 	elseif self.aba == "jornal" then
 		self:_abaJornal()
-	elseif self.aba == "financas" then
-		self:_abaFinancas()
+	elseif self.aba == "tarifas" then
+		self:_abaTarifas()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	elseif self.aba == "loja" then
@@ -1319,154 +1314,11 @@ function Menu._abaJornal(self: Menu)
 	end
 end
 
--- ---------------------------------------------------------------- aba Banco
-
--- Finanças: o banco e as tarifas numa aba só, com um seletor no alto.
-function Menu._abaFinancas(self: Menu)
-	local est, estado, r = self.est, self.estado, self.rolagem
-	local sub = self.subFinancas
-	local nomeBanco = Idioma.t(Banco.NOMES[if estado then estado.era else "vapor"] or Banco.NOMES.vapor)
-	local ajuda = if sub == "banco"
-		then L(`{nomeBanco}: empréstimos para construir mais cedo. O limite e os juros dependem do seu crédito (satisfação dos passageiros e nível da companhia); mais trens nas linhas lotadas e estações melhores baixam os juros. A dívida é paga sozinha com {math.round(Banco.PARCELA * 100)}% do lucro, e dá para quitar quando quiser.`, `{nomeBanco}: loans to build sooner. The limit and interest depend on your credit (passenger satisfaction and company level); more trains on crowded lines and better stations lower interest. The debt pays itself off with {math.round(Banco.PARCELA * 100)}% of profit, and you can settle it any time.`)
-		else L("O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", "Each class's ticket price applies to every line. Pricier tickets earn more per passenger but drive people away; too pricey annoys travellers. Onboard service makes each class willing to pay more.")
-	self:_titulo(L(`{Emojis.banco} Finanças`, `{Emojis.banco} Finances`), ajuda)
-	local seletor = novo("Frame", {
-		Name = "Seletor",
-		LayoutOrder = 3,
-		Size = UDim2.new(1, 0, 0, 40),
-		BackgroundTransparency = 1,
-		ZIndex = 31,
-	}, r)
-	est:lista(seletor, 8, true)
-	for i, op in { { id = "banco", nome = L(`{Emojis.banco} Banco`, `{Emojis.banco} Bank`) }, { id = "tarifas", nome = L(`{Emojis.tarifas} Tarifas`, `{Emojis.tarifas} Fares`) } } do
-		local b = est:botao(if sub == op.id then "principal" else "secundario", op.nome, seletor, i)
-		b.Name = "Sub_" .. op.id
-		b.Size = UDim2.new(0.5, -4, 1, 0)
-		b.Activated:Connect(function()
-			if self.subFinancas ~= op.id then
-				self.subFinancas = op.id
-				self.rolagem.CanvasPosition = Vector2.zero
-				self:_redesenhar()
-			end
-		end)
-	end
-	local conteudo = novo("Frame", {
-		Name = "Conteudo",
-		LayoutOrder = 4,
-		Size = UDim2.new(1, 0, 0, 0),
-		AutomaticSize = Enum.AutomaticSize.Y,
-		BackgroundTransparency = 1,
-		ZIndex = 31,
-	}, r)
-	est:lista(conteudo, 8)
-	if sub == "banco" then
-		self:_abaBanco(conteudo)
-	else
-		self:_abaTarifas(conteudo)
-	end
-end
-
-function Menu._abaBanco(self: Menu, pai: Instance)
-	local est, dados, estado, r = self.est, self.dados, self.estado, pai
-	if not estado then
-		return
-	end
-	local simbolo = dados.simbolo
-	local function fmt(v: number): string
-		return Economia.formatar(v, simbolo)
-	end
-
-	-- crédito da companhia
-	local cartao, txt = novoCartao(est, r, "Credito", 3)
-	local lClasse = txt("subtitulo", "", 1)
-	local cheioNota = novaBarra(est, cartao, 2)
-	local lDetalhe = txt("fraco", "", 3)
-	local function atualizarCredito()
-		local b = Economia.balanco(self.estado, dados)
-		local limite, classe, nota = Banco.limite(self.estado, b.lucro, b.satisfacao)
-		lClasse.Text = L(`Crédito {classe.id} · {Idioma.t(classe.nome)}`, `Credit {classe.id} · {Idioma.t(classe.nome)}`)
-		cheioNota.Size = UDim2.fromScale(nota, 1)
-		lDetalhe.Text = L(`Satisfação {math.round(b.satisfacao * 100)}% · nível {(Economia.nivel(self.estado))} · juros de {math.round(classe.juros * 100)}% · limite {fmt(limite)}`, `Satisfaction {math.round(b.satisfacao * 100)}% · level {(Economia.nivel(self.estado))} · {math.round(classe.juros * 100)}% interest · limit {fmt(limite)}`)
-	end
-	atualizarCredito()
-	table.insert(self.vivos, atualizarCredito)
-
-	local emp = estado.emprestimo
-	if emp then
-		local cartao2, txt2 = novoCartao(est, r, "Emprestimo", 10, true)
-		txt2("subtitulo", L("Empréstimo em andamento", "Loan in progress"), 1)
-		local lDivida = txt2("corpo", "", 2)
-		local cheio = novaBarra(est, cartao2, 3)
-		local lTempo = txt2("fraco", "", 4)
-		local bQuitar = est:botao("principal", "", cartao2, 5)
-		bQuitar.Name = "BtnQuitar"
-		bQuitar.ZIndex = 33
-		bQuitar.Size = UDim2.new(1, 0, 0, 38)
-		bQuitar.Activated:Connect(function()
-			self.aoAgir:Fire("quitarEmprestimo", {})
-		end)
-		local function atualizar()
-			local e = self.estado.emprestimo
-			if not e then
-				return
-			end
-			lDivida.Text = L(`Falta pagar <b>{fmt(e.divida)}</b> de {fmt(e.total)} (você pegou {fmt(e.valor)})`, `<b>{fmt(e.divida)}</b> of {fmt(e.total)} left to pay (you borrowed {fmt(e.valor)})`)
-			cheio.Size = UDim2.fromScale(math.clamp(1 - e.divida / e.total, 0, 1), 1)
-			local resta = Banco.tempoRestante(self.estado, self.estado.renda or 0)
-			lTempo.Text = if resta == math.huge
-				then L(`{Emojis.alerta} Sem lucro, a dívida não diminui.`, `{Emojis.alerta} With no profit, the debt does not go down.`)
-				else L(`{Emojis.relogio} Pagando {math.round(Banco.PARCELA * 100)}% do lucro, termina em ~{relogio(resta)}`, `{Emojis.relogio} Paying {math.round(Banco.PARCELA * 100)}% of profit, done in ~{relogio(resta)}`)
-			bQuitar.Text = L(`{Emojis.dinheiro} Quitar agora · {fmt(e.divida)}`, `{Emojis.dinheiro} Pay off now · {fmt(e.divida)}`)
-			est:habilitar(bQuitar, self.estado.dinheiro >= e.divida)
-		end
-		atualizar()
-		table.insert(self.vivos, atualizar)
-		return
-	end
-
-	est:texto("subtitulo", L("Ofertas do banco", "Bank offers"), r, 10)
-	local motivo = Banco.impedimento(estado)
-	local botoes: { TextButton } = {}
-	for i = 1, #Banco.OPCOES do
-		local b = est:botao(if i == #Banco.OPCOES then "principal" else "secundario", "", r, 10 + i)
-		b.Name = `BtnEmprestimo_{i}`
-		b.Size = UDim2.new(1, 0, 0, 40)
-		b.Activated:Connect(function()
-			self.aoAgir:Fire("tomarEmprestimo", { opcao = i })
-		end)
-		botoes[i] = b
-	end
-	local lMotivo = est:texto("fraco", motivo or "", r, 20)
-	lMotivo.Visible = motivo ~= nil
-	local function atualizarOfertas()
-		local b = Economia.balanco(self.estado, dados)
-		local ofertas = Banco.ofertas(self.estado, b.lucro, b.satisfacao)
-		local bloqueado = Banco.impedimento(self.estado) ~= nil
-		for i, o in ofertas do
-			local bt = botoes[i]
-			if bt then
-				bt.Text = L(`Pegar {fmt(o.valor)} · devolve {fmt(o.total)}`, `Borrow {fmt(o.valor)} · repay {fmt(o.total)}`)
-				est:habilitar(bt, not bloqueado)
-			end
-		end
-	end
-	atualizarOfertas()
-	table.insert(self.vivos, atualizarOfertas)
-end
-
 -- ---------------------------------------------------------------- aba Tarifas
 
-local function pct(x: number): string
-	return `{math.round(x * 100)}%`
-end
-
-local function sinal(x: number): string
-	local n = math.round(x)
-	return if n > 0 then `+{n}` elseif n < 0 then `−{-n}` else "0"
-end
-
-function Menu._abaTarifas(self: Menu, pai: Instance)
-	local est, dados, estado, r = self.est, self.dados, self.estado, pai
+function Menu._abaTarifas(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	self:_titulo(L(`{Emojis.tarifas} Tarifas`, `{Emojis.tarifas} Fares`), L("O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", "Each class's ticket price applies to every line. Pricier tickets earn more per passenger but drive people away; too pricey annoys travellers. Onboard service makes each class willing to pay more."))
 	if not estado then
 		return
 	end
@@ -1713,7 +1565,7 @@ local GRUPOS_CONQUISTAS = {
 	{ nome = { pt = "Primeiros passos", en = "First steps" }, ids = { "primeiro_apito", "linha_inaugurada", "frota_10", "do_papel_ao_trilho" } },
 	{ nome = { pt = "Cargas", en = "Cargo" }, ids = { "cafe_no_porto", "carvao_no_porto", "minerio_no_porto", "graos_no_porto" } },
 	{ nome = { pt = "Operação", en = "Operations" }, ids = { "ninguem_na_plataforma", "passageiros_felizes", "grande_estacao", "malha_integrada" } },
-	{ nome = { pt = "Negócios", en = "Business" }, ids = { "bom_pagador", "palavra_cumprida", "primeiro_milhao" } },
+	{ nome = { pt = "Negócios", en = "Business" }, ids = { "palavra_cumprida", "primeiro_milhao" } },
 	{ nome = { pt = "Eras", en = "Eras" }, ids = { "adeus_vapor", "fio_no_trilho", "bala_de_prata" } },
 	{ nome = { pt = "Grandes obras", en = "Great works" }, ids = { "obra_entregue", "sonhador" } },
 	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo" } },

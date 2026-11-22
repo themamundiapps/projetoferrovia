@@ -267,9 +267,6 @@ local function avisarEventos(estado: any)
 		elseif ev.tipo == "compra" then
 			Som.efeito("premio")
 			ui:enfileirar(`{Emojis.loja} {L("Obrigado pela compra!", "Thanks for your purchase!")} {ev.texto or ""}`, 5)
-		elseif ev.tipo == "banco" then
-			Som.efeito("premio")
-			ui:enfileirar(L(`{Emojis.banco} Empréstimo quitado!`, `{Emojis.banco} Loan paid off!`), 4)
 		elseif ev.tipo == "jornal" then
 			Som.efeito("jornal")
 			local manchete = Jornal.textos({ id = ev.id, alvo = ev.alvo, tipo = ev.tipoEfeito or "" }, dadosAtual, Idioma.atual)

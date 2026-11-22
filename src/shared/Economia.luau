@@ -156,7 +156,6 @@ export type EstadoMapa = {
 	missoes: { dia: number, lista: { any } }, -- missões do dia
 	tutorial: boolean, -- tutorial concluído ou pulado
 	nomeCompanhia: string?, -- nome escolhido pelo jogador (já passado pelo filtro do Roblox)
-	emprestimo: { valor: number, total: number, divida: number, classe: string, em: number }?, -- ver Banco.luau
 	jornal: Jornal, -- eventos do Jornal da Companhia (ver Jornal.luau)
 	decisoes: EstadoDecisoes, -- eventos com escolha (ver Decisoes.luau)
 	tarifas: Tarifas.EstadoTarifas?, -- preço por classe e serviço de bordo (ver Tarifas.luau)
