@@ -435,10 +435,17 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
-		id = "cafe_no_porto", nome = "Café no porto", emoji = "carga_cafe", xp = 30,
+		id = "cafe_no_porto", nome = "Café no porto", emoji = "carga_cafe", xp = 30, mapa = "brasil",
 		descricao = "Ligue uma cidade do café a um porto.",
 		teste = function(_estado: EstadoMapa, _dados: any, ctx: Contexto): boolean
 			return (ctx.cargaDia.cafe or 0) > 0
+		end,
+	},
+	{
+		id = "carvao_no_porto", nome = "Carvão para as usinas", emoji = "carga_carvao", xp = 30, mapa = "eua",
+		descricao = "Ligue uma mina de carvão a um porto.",
+		teste = function(_estado: EstadoMapa, _dados: any, ctx: Contexto): boolean
+			return (ctx.cargaDia.carvao or 0) > 0
 		end,
 	},
 	{
@@ -458,6 +465,13 @@ Metas.MEDALHAS = {
 	{
 		id = "frota_10", nome = "Dez locomotivas", emoji = "era_vapor", xp = 30,
 		descricao = "Tenha 10 trens rodando.",
+		progresso = function(estado: EstadoMapa, _dados: any): (number, number)
+			local n = 0
+			for _, t in estado.trens do
+				n += t
+			end
+			return n, 10
+		end,
 		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
 			local n = 0
 			for _, t in estado.trens do
@@ -469,6 +483,13 @@ Metas.MEDALHAS = {
 	{
 		id = "grande_estacao", nome = "Grande estação", emoji = "estacoes", xp = 50,
 		descricao = "Leve uma estação ao nível máximo.",
+		progresso = function(estado: EstadoMapa, _dados: any): (number, number)
+			local maior = 0
+			for _, nivel in estado.estacoes do
+				maior = math.max(maior, nivel)
+			end
+			return maior, #Economia.NIVEIS_ESTACAO
+		end,
 		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
 			for _, nivel in estado.estacoes do
 				if nivel >= #Economia.NIVEIS_ESTACAO then
@@ -572,6 +593,9 @@ Metas.MEDALHAS = {
 	{
 		id = "palavra_cumprida", nome = "Palavra cumprida", emoji = "menu", xp = 60,
 		descricao = "Cumpra 10 contratos.",
+		progresso = function(estado: EstadoMapa, _dados: any): (number, number)
+			return estado.contadores.contratos or 0, 10
+		end,
 		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
 			return (estado.contadores.contratos or 0) >= 10
 		end,
@@ -579,6 +603,9 @@ Metas.MEDALHAS = {
 	{
 		id = "primeiro_milhao", nome = "Primeiro milhão", emoji = "dinheiro", xp = 80,
 		descricao = "Junte 1 milhão no caixa.",
+		progresso = function(estado: EstadoMapa, _dados: any): (number, number)
+			return estado.dinheiro, 1e6
+		end,
 		teste = function(estado: EstadoMapa, _dados: any, _ctx: Contexto): boolean
 			return estado.dinheiro >= 1e6
 		end,
@@ -586,6 +613,9 @@ Metas.MEDALHAS = {
 	{
 		id = "pais_nos_trilhos", nome = "O país nos trilhos", emoji = "mapa_mundo", xp = 150,
 		descricao = "Complete todas as linhas do mapa.",
+		progresso = function(estado: EstadoMapa, dados: any): (number, number)
+			return Economia.linhasCompletas(estado, dados), #dados.linhas
+		end,
 		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
 			return Economia.linhasCompletas(estado, dados) == #dados.linhas
 		end,
@@ -616,6 +646,7 @@ local EN_MEDALHAS = {
 	palavra_cumprida = { "A promise kept", "Complete 10 contracts." },
 	primeiro_milhao = { "First million", "Have 1 million in cash." },
 	pais_nos_trilhos = { "A nation on rails", "Complete every line on the map." },
+	carvao_no_porto = { "Coal for the mills", "Link a coal mine to a port." },
 }
 
 function Metas.traduzir(idioma: string)
@@ -637,10 +668,29 @@ function Metas.traduzir(idioma: string)
 	end
 end
 
+-- Medalhas que valem neste mapa (algumas são de um país só, como o café no Brasil).
+function Metas.medalhasDoMapa(dados: any): { any }
+	local lista = {}
+	for _, m in Metas.MEDALHAS do
+		if m.mapa == nil or m.mapa == (dados.id or "brasil") then
+			table.insert(lista, m)
+		end
+	end
+	return lista
+end
+
+-- Progresso de uma medalha que conta algo (trens, contratos...): atual, alvo. Nil se não conta.
+function Metas.progressoMedalha(m: any, estado: EstadoMapa, dados: any): (number?, number?)
+	if m.progresso then
+		return m.progresso(estado, dados)
+	end
+	return nil, nil
+end
+
 -- Medalhas que a companhia acabou de merecer (ainda não registradas no estado).
 function Metas.novasMedalhas(estado: EstadoMapa, dados: any, ctx: Contexto): { any }
 	local novas = {}
-	for _, m in Metas.MEDALHAS do
+	for _, m in Metas.medalhasDoMapa(dados) do
 		if not estado.medalhas[m.id] and m.teste(estado, dados, ctx) then
 			table.insert(novas, m)
 		end
