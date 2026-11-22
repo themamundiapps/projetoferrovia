@@ -77,6 +77,10 @@ remoteAcao.Parent = pastaRemotes
 local remotePedirEstado = Instance.new("RemoteFunction")
 remotePedirEstado.Name = "PedirEstado"
 remotePedirEstado.Parent = pastaRemotes
+-- conquista de outro jogador do servidor (nome, id da medalha): aparece embaixo da barra de cima
+local remoteConquista = Instance.new("RemoteEvent")
+remoteConquista.Name = "Conquista"
+remoteConquista.Parent = pastaRemotes
 pastaRemotes.Parent = ReplicatedStorage
 
 -- ---------------------------------------------------------------- estado
@@ -472,6 +476,12 @@ local function atualizarMetas(s: Sessao, e: EstadoMapa, dados: any, ctx: Metas.C
 		e.medalhas[m.id] = os.time()
 		table.insert(s.eventos, { tipo = "medalha", id = m.id })
 		ganharXp(s, e, m.xp)
+		-- avisa os outros jogadores do servidor
+		for _, outro in Players:GetPlayers() do
+			if outro ~= s.jogador then
+				remoteConquista:FireClient(outro, s.jogador.DisplayName, m.id)
+			end
+		end
 	end
 end
 

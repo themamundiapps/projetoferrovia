@@ -447,7 +447,7 @@ local function montar(eraId: string, mapaNovo: boolean?)
 			ficha:fechar()
 			mapa.interagiu = true
 			mapa:focar(mn, mx, 140)
-			mapa:selecionar(alvo)
+			mapa:selecionar(alvo, linhaId)
 			ui:abrir(alvo)
 		end
 	end
@@ -601,6 +601,7 @@ inicio.aoJogar.Event:Connect(function(mapaId: string)
 		end
 	end
 	inicio:fechar()
+	Som.definirMenu(false)
 	pararPasseio()
 	telaUI.Enabled = true
 	if mapa then
@@ -614,6 +615,7 @@ abrirMenuInicial = function()
 		inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, dadosAtual)
 	end
 	inicio:abrir()
+	Som.definirMenu(true)
 	telaUI.Enabled = false
 	iniciarPasseio()
 end
@@ -713,6 +715,16 @@ Idioma.aoMudarNoRoblox(function(novo: string)
 	end)
 end)
 remoteEstado.OnClientEvent:Connect(aplicarEstado)
+-- conquista de outro jogador do servidor
+local remoteConquista = Remotes:WaitForChild("Conquista", 10) :: RemoteEvent?
+if remoteConquista then
+	remoteConquista.OnClientEvent:Connect(function(nome: string, medalhaId: string)
+		local m = Metas.acharMedalha(medalhaId)
+		if m and ui and type(nome) == "string" then
+			ui:conquistaDeOutro(L(`{Emojis.medalha} <b>{nome}</b> ganhou a conquista <b>{m.nome}</b>`, `{Emojis.medalha} <b>{nome}</b> earned the achievement <b>{m.nome}</b>`))
+		end
+	end)
+end
 task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())
 end)

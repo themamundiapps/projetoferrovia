@@ -102,8 +102,9 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	-- botão para voltar à decisão (canto direito, acima do zoom)
 	self.btnPendente = est:botao("principal", L(`{Emojis.contratos} Decisão pendente`, `{Emojis.contratos} Pending decision`), tela)
 	self.btnPendente.Name = "DecisaoPendente"
-	self.btnPendente.AnchorPoint = Vector2.new(1, 1)
-	self.btnPendente.Position = UDim2.new(1, -14, 1, -132)
+	-- no meio, logo acima da barra de baixo: não cobre a ficha nem o painel do trecho (que ficam à direita)
+	self.btnPendente.AnchorPoint = Vector2.new(0.5, 1)
+	self.btnPendente.Position = UDim2.new(0.5, 0, 1, -132)
 	self.btnPendente.Size = UDim2.fromOffset(200, 40)
 	self.btnPendente.Visible = false
 	self.btnPendente.ZIndex = 40
@@ -117,11 +118,13 @@ function Decisao.new(tela: ScreenGui, era: any, dados: any): Decisao
 	if achado then
 		local zoom: GuiObject = achado
 		local function acimaDoZoom()
-			if zoom.Visible then
+			-- o botão fica no meio; só sobe se o zoom (celular estreito) estiver no meio da tela
+			local meio = zoom.Visible and math.abs((zoom.AbsolutePosition.X + zoom.AbsoluteSize.X / 2) - (tela.AbsolutePosition.X + tela.AbsoluteSize.X / 2)) < 160
+			if meio then
 				local base = Estilo.px(tela.AbsolutePosition.Y + tela.AbsoluteSize.Y - zoom.AbsolutePosition.Y) + 6
-				self.btnPendente.Position = UDim2.new(1, -14, 1, -math.max(132, base))
+				self.btnPendente.Position = UDim2.new(0.5, 0, 1, -math.max(132, base))
 			else
-				self.btnPendente.Position = UDim2.new(1, -14, 1, -132)
+				self.btnPendente.Position = UDim2.new(0.5, 0, 1, -132)
 			end
 		end
 		zoom:GetPropertyChangedSignal("AbsolutePosition"):Connect(acimaDoZoom)

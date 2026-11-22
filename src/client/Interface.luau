@@ -318,24 +318,50 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	end)
 
 	-- ---------------------------------------------------- aviso (topo, centro)
-	self.aviso = caixa({
+	-- sem caixa: só o texto, claro com contorno escuro (o mesmo jeito das conquistas dos outros jogadores)
+	self.aviso = novo("Frame", {
 		Name = "Aviso",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 12),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 14),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
+		BackgroundTransparency = 1,
 		Visible = false,
-	})
-	padding(self.aviso, 10)
+		ZIndex = 30,
+	}, tela)
 	self.lblAviso = novo("TextLabel", {
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundTransparency = 1,
 		Text = "",
+		RichText = true,
 		FontFace = f.body,
-		TextSize = 16,
-		TextColor3 = c.ink,
+		TextSize = 18,
+		TextColor3 = Color3.fromRGB(250, 245, 230),
+		TextStrokeColor3 = Color3.fromRGB(25, 20, 15),
+		TextStrokeTransparency = 0.2,
 		ZIndex = 31,
 	}, self.aviso)
+
+	-- ---------------------------------------------------- conquistas de outros jogadores (logo abaixo da barra)
+	self.feed = novo("TextLabel", {
+		Name = "FeedConquistas",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 46),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		Size = UDim2.fromOffset(0, 0),
+		BackgroundTransparency = 1,
+		Text = "",
+		RichText = true,
+		FontFace = f.body,
+		TextSize = 16,
+		TextColor3 = Color3.fromRGB(250, 245, 230),
+		TextTransparency = 1,
+		-- sem fundo: texto claro com contorno escuro, legível sobre o mapa claro ou escuro
+		TextStrokeColor3 = Color3.fromRGB(25, 20, 15),
+		TextStrokeTransparency = 1,
+		ZIndex = 29,
+	}, tela)
+	self._filaFeed = {} :: { string }
 
 	-- ---------------------------------------------------- painel da concessão (direita)
 	local painel = caixa({
@@ -367,6 +393,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 			BackgroundTransparency = 1,
 			Text = "",
 			TextWrapped = true,
+			RichText = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			FontFace = fonte,
 			TextSize = tam,
@@ -431,6 +458,8 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.lblNota = texto(14, Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic), 14, c.inkMuted)
 	self.lblNota.Visible = false
 	self.lblCarga.LineHeight = 1.2
+	self.lblDetalhes.LineHeight = 1.25
+	self.lblTrens.LineHeight = 1.2
 
 	self.btnFechar = novo("TextButton", {
 		Name = "Fechar",
@@ -474,6 +503,7 @@ end
 function Interface.destruir(self: Interface)
 	self.hud:Destroy()
 	self.aviso:Destroy()
+	self.feed:Destroy()
 	self.painel:Destroy()
 	self.aoAgir:Destroy()
 	self.aoFechar:Destroy()
@@ -488,6 +518,31 @@ function Interface.avisar(self: Interface, msg: string, segundos: number?)
 		if self._marcaAviso == marca then
 			self.aviso.Visible = false
 		end
+	end)
+end
+
+-- Faixa discreta embaixo da barra de cima: "Fulano ganhou a conquista X". Uma de cada vez, some sozinha.
+function Interface.conquistaDeOutro(self: Interface, msg: string)
+	table.insert(self._filaFeed, msg)
+	if #self._filaFeed > 4 then
+		table.remove(self._filaFeed, 1) -- muitas de uma vez: fica só com as mais recentes
+	end
+	if self._feedRodando then
+		return
+	end
+	self._feedRodando = true
+	task.spawn(function()
+		local TweenService = game:GetService("TweenService")
+		while #self._filaFeed > 0 and self.feed.Parent do
+			local texto = table.remove(self._filaFeed, 1)
+			self.feed.Text = texto
+			local info = TweenInfo.new(0.35)
+			TweenService:Create(self.feed, info, { TextTransparency = 0, TextStrokeTransparency = 0.3 }):Play()
+			task.wait(4.5)
+			TweenService:Create(self.feed, info, { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()
+			task.wait(0.5)
+		end
+		self._feedRodando = false
 	end)
 end
 
@@ -701,12 +756,12 @@ function Interface._preencher(self: Interface)
 	end
 	local era = Economia.multiplicadorEra(estado)
 	local estA, estB = dados.estacoes[trecho.de], dados.estacoes[trecho.para]
+	-- duas linhas curtas: o trecho (km e terreno) e o que ele dá (receita, manutenção, passageiros)
+	local receita = Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)
+	local manut = Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)
 	self.lblDetalhes.Text = table.concat({
-		L(`{Emojis.distancia} Extensão: {opcao.km} km`, `{Emojis.distancia} Length: {opcao.km} km`),
-		L(`{Emojis.terreno_montanha} Terreno: {nomeTerreno} (custo ×{string.format("%.1f", terreno.custo):gsub("%.", ",")})`, `{Emojis.terreno_montanha} Terrain: {nomeTerreno} (cost ×{string.format("%.1f", terreno.custo)})`),
-		L(`{Emojis.passageiros} Demanda: {Economia.numero(passageiros)} passageiros/h (cidades de porte {estA.porte} e {estB.porte})`, `{Emojis.passageiros} Demand: {Economia.numero(passageiros)} passengers/h (cities of size {estA.porte} and {estB.porte})`),
-		L(`{Emojis.renda} Receita: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} da era)` else ""}`, `{Emojis.renda} Income: + {Economia.formatar(Economia.rendaTrecho(dados, trecho, escolhida) * era, simbolo, true)}/s{if era > 1 then ` (×{era} from the era)` else ""}`),
-		L(`{Emojis.manutencao} Manutenção: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`, `{Emojis.manutencao} Upkeep: − {Economia.formatar(Economia.manutencaoTrecho(trecho, escolhida), simbolo, true)}/s`),
+		`{Emojis.distancia} {opcao.km} km   {Emojis.terreno_montanha} {nomeTerreno}{if terreno.custo ~= 1 then ` ×{string.format("%.1f", terreno.custo)}` else ""}`,
+		L(`{Emojis.renda} <b>+{receita}/s</b>   {Emojis.manutencao} −{manut}/s   {Emojis.passageiros} {Economia.numero(passageiros)}/h`, `{Emojis.renda} <b>+{receita}/s</b>   {Emojis.manutencao} −{manut}/s   {Emojis.passageiros} {Economia.numero(passageiros)}/h`),
 	}, "\n")
 
 	-- opções de traçado (só antes de construir). Só recria os botões quando algo muda,
@@ -810,15 +865,15 @@ function Interface._preencher(self: Interface)
 		self.lblTrens.TextColor3 = c.inkMuted
 		self.btnTrem.Visible = false
 	else
-		local linhaFrota = L(`{Emojis.trens} Frota: {trens} {if trens == 1 then "trem" else "trens"} · leva {fmt(capacidade)} de {fmt(demanda)} passageiros/h`, `{Emojis.trens} Fleet: {trens} {if trens == 1 then "train" else "trains"} · carries {fmt(capacidade)} of {fmt(demanda)} passengers/h`)
+		local linhaFrota = L(`{Emojis.trens} <b>{trens}</b> {if trens == 1 then "trem" else "trens"} · {fmt(capacidade)} lugares para {fmt(demanda)}/h`, `{Emojis.trens} <b>{trens}</b> {if trens == 1 then "train" else "trains"} · {fmt(capacidade)} seats for {fmt(demanda)}/h`)
 		if faltando > 0 then
-			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} Lotado: só {servico}% dos passageiros embarcam. Faltam {faltando} {if faltando == 1 then "trem" else "trens"} (cada um custa {manutTrem}/s de manutenção).`, `{linhaFrota}\n{Emojis.alerta} Crowded: only {servico}% of passengers board. {faltando} more {if faltando == 1 then "train" else "trains"} needed (each costs {manutTrem}/s upkeep).`)
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} Só {servico}% embarcam: faltam {faltando}`, `{linhaFrota}\n{Emojis.alerta} Only {servico}% board: {faltando} more needed`)
 			self.lblTrens.TextColor3 = c.negative
 		elseif sobrando > 0 then
-			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "trem rodando vazio" else "trens rodando vazios"}: cada um custa {manutTrem}/s de manutenção.`, `{linhaFrota}\n{Emojis.alerta} {sobrando} {if sobrando == 1 then "train running empty" else "trains running empty"}: each costs {manutTrem}/s upkeep.`)
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.alerta} {sobrando} vazio(s), custando {manutTrem}/s cada`, `{linhaFrota}\n{Emojis.alerta} {sobrando} empty, costing {manutTrem}/s each`)
 			self.lblTrens.TextColor3 = c.negative
 		else
-			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.confirmar} Todos os passageiros embarcam.`, `{linhaFrota}\n{Emojis.confirmar} All passengers board.`)
+			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.confirmar} Todos embarcam`, `{linhaFrota}\n{Emojis.confirmar} Everyone boards`)
 			self.lblTrens.TextColor3 = c.positive
 		end
 		self.btnTrem.Visible = faltando > 0
@@ -845,14 +900,13 @@ function Interface._preencher(self: Interface)
 		local nome = dados.estacoes[info.estacao].nome
 		local v = valores[info.estacao]
 		local unidade = def.unidade:gsub("s$", "")
+		-- uma linha curta por carga: de onde, se chega ao porto e quanto rende por dia
+		local _ = unidade
 		if info.conectada then
-			local frete = if v and v.unidadesDia > 0
-				then L(` · {Economia.formatar(v.preco, simbolo, true)} por {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/dia`, ` · {Economia.formatar(v.preco, simbolo, true)} per {unidade}, {Economia.formatar(v.reaisDia, simbolo)}/day`)
-				else ""
-			table.insert(linhasTexto, L(`{emoji} {def.nome} de {nome} chega a um porto: +{math.round(def.bonus * 100)}% na renda{frete}`, `{emoji} {def.nome} from {nome} reaches a port: +{math.round(def.bonus * 100)}% income{frete}`))
+			local dia = if v and v.reaisDia > 0 then L(` · {Economia.formatar(v.reaisDia, simbolo)}/dia`, ` · {Economia.formatar(v.reaisDia, simbolo)}/day`) else ""
+			table.insert(linhasTexto, `{emoji} {nome}  <b>+{math.round(def.bonus * 100)}%</b>{dia}`)
 		else
-			local renderia = if v and v.reaisDia > 0 then L(` (renderia {Economia.formatar(v.reaisDia, simbolo)}/dia)`, ` (would earn {Economia.formatar(v.reaisDia, simbolo)}/day)`) else ""
-			table.insert(linhasTexto, L(`{emoji} {def.nome} de {nome} ainda sem trilho até um porto{renderia}`, `{emoji} {def.nome} from {nome} has no rail to a port yet{renderia}`))
+			table.insert(linhasTexto, L(`{emoji} {nome}  <i>sem porto</i>`, `{emoji} {nome}  <i>no port</i>`))
 		end
 	end
 	local temCarga = #linhasTexto > 0

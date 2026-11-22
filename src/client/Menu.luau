@@ -35,8 +35,7 @@ local ABAS = {
 	{ id = "projetos", nome = { pt = "Gabinete", en = "Cabinet" }, emoji = "gabinete" },
 	{ id = "metas", nome = { pt = "Contratos", en = "Contracts" }, emoji = "contratos" },
 	{ id = "jornal", nome = { pt = "Jornal", en = "Newspaper" }, emoji = "jornal" },
-	{ id = "banco", nome = { pt = "Banco", en = "Bank" }, emoji = "banco" },
-	{ id = "tarifas", nome = { pt = "Tarifas", en = "Fares" }, emoji = "tarifas" },
+	{ id = "financas", nome = { pt = "Finanças", en = "Finances" }, emoji = "banco" }, -- banco e tarifas
 	{ id = "companhia", nome = { pt = "Companhia", en = "Company" }, emoji = "companhia" },
 	{ id = "loja", nome = { pt = "Loja", en = "Shop" }, emoji = "loja" },
 	{ id = "ajustes", nome = { pt = "Ajustes", en = "Settings" }, emoji = "configuracoes" },
@@ -51,6 +50,8 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.aba = nil :: string?
 	self.verCreditos = false -- dentro de Ajustes: lista de créditos no lugar das opções
 	self.verConquistas = false -- dentro de Companhia: a galeria de conquistas no lugar do resumo
+	self.subFinancas = "banco" -- dentro de Finanças: "banco" ou "tarifas"
+	self.ajudaAberta = {} :: { [string]: boolean } -- explicação aberta pelo botão "?" de cada aba
 	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFocarLinha = Instance.new("BindableEvent") -- (linhaId)
@@ -460,6 +461,43 @@ function Menu._limpar(self: Menu)
 	end
 end
 
+-- Título da aba com um botão "?" que mostra (ou esconde) a explicação logo abaixo.
+-- A explicação começa escondida: quem já sabe como funciona vê o conteúdo direto.
+function Menu._titulo(self: Menu, texto: string, ajuda: string?, pai: Instance?)
+	local est, r = self.est, pai or self.rolagem
+	local l = est:titulo(texto, r, 1)
+	if not ajuda then
+		return
+	end
+	local chave = self.aba or ""
+	local aberta = self.ajudaAberta[chave] == true
+	local alvo: Instance = if l.Parent and l.Parent.Name == "Cabecalho" then l.Parent else l
+	local c = est:paleta(alvo)
+	local b = novo("TextButton", {
+		Name = "Ajuda",
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -12, 0.5, 0),
+		Size = UDim2.fromOffset(26, 26),
+		BackgroundColor3 = if aberta then c.accent else c.panel,
+		BackgroundTransparency = if aberta then 0 else 0.2,
+		Text = "?",
+		TextColor3 = if aberta then c.onAccent else c.ink,
+		FontFace = est.f.number,
+		TextSize = 16,
+		AutoButtonColor = true,
+		ZIndex = 40,
+	}, alvo)
+	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, b)
+	novo("UIStroke", { Color = c.rule, Thickness = 1 }, b)
+	b.Activated:Connect(function()
+		self.ajudaAberta[chave] = not aberta
+		self:_redesenhar()
+	end)
+	if aberta then
+		est:texto("fraco", ajuda, r, 2)
+	end
+end
+
 function Menu._redesenhar(self: Menu)
 	if not self.aba then
 		return
@@ -476,10 +514,8 @@ function Menu._redesenhar(self: Menu)
 		self:_abaMetas()
 	elseif self.aba == "jornal" then
 		self:_abaJornal()
-	elseif self.aba == "banco" then
-		self:_abaBanco()
-	elseif self.aba == "tarifas" then
-		self:_abaTarifas()
+	elseif self.aba == "financas" then
+		self:_abaFinancas()
 	elseif self.aba == "companhia" then
 		self:_abaCompanhia()
 	elseif self.aba == "loja" then
@@ -494,23 +530,33 @@ end
 
 function Menu._abaLinhas(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:titulo(L(`{Emojis.linhas} Linhas`, `{Emojis.linhas} Lines`), r, 1)
+	self:_titulo(L(`{Emojis.linhas} Linhas`, `{Emojis.linhas} Lines`), L("Construir tudo compra os trechos liberados do mais barato para o mais caro. Completar frotas compra trens até todos os passageiros embarcarem e vende os que estão rodando vazios. Toque numa linha para vê-la no mapa.", "Build everything buys the unlocked sections from cheapest to most expensive. Fill up fleets buys trains until every passenger can board and sells the ones running empty. Tap a line to see it on the map."))
 	if not estado then
 		return
 	end
 	local simbolo = dados.simbolo
 
-	local bTudo = est:botao("principal", L(`{Emojis.construir} Construir tudo que der`, `{Emojis.construir} Build everything you can`), r, 2)
+	-- os dois botões lado a lado, para sobrar espaço para as linhas
+	local botoes = novo("Frame", {
+		Name = "Botoes",
+		LayoutOrder = 3,
+		Size = UDim2.new(1, 0, 0, 44),
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, r)
+	est:lista(botoes, 8, true)
+	local bTudo = est:botao("principal", L(`{Emojis.construir} Construir tudo`, `{Emojis.construir} Build all`), botoes, 1)
 	bTudo.Name = "BtnConstruirTudo"
+	bTudo.Size = UDim2.new(0.5, -4, 1, 0)
 	bTudo.Activated:Connect(function()
 		self.aoAgir:Fire("construirTudo", {})
 	end)
-	local bFrota = est:botao("secundario", L(`{Emojis.trens} Completar frotas`, `{Emojis.trens} Fill up fleets`), r, 3)
+	local bFrota = est:botao("secundario", L(`{Emojis.trens} Completar frotas`, `{Emojis.trens} Fill fleets`), botoes, 2)
+	bFrota.Size = UDim2.new(0.5, -4, 1, 0)
 	bFrota.Name = "BtnCompletarFrotas"
 	bFrota.Activated:Connect(function()
 		self.aoAgir:Fire("completarFrotas", {})
 	end)
-	est:texto("fraco", L("Construir tudo compra os trechos liberados do mais barato para o mais caro. Completar frotas compra trens até todos os passageiros embarcarem e vende os que estão rodando vazios.", "Build everything buys the unlocked sections from cheapest to most expensive. Fill up fleets buys trains until every passenger can board and sells the ones running empty."), r, 4)
 
 	local balanco = Economia.balanco(estado, dados)
 	local rede = Economia.rede(estado, dados)
@@ -552,36 +598,69 @@ function Menu._abaLinhas(self: Menu)
 		}, linhaBtn)
 		est:lista(textos, 2)
 
-		local titulo = est:texto("subtitulo", `{linha.nome} <font size="13">· {linha.ano}</font>`, textos, 1)
+		-- 1ª fila: nome e ano à esquerda, lucro em destaque à direita
+		local fila = novo("Frame", {
+			Name = "Fila",
+			LayoutOrder = 1,
+			Size = UDim2.new(1, 0, 0, 22),
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, textos)
+		local titulo = est:texto("subtitulo", `{linha.nome} <font size="12">· {linha.ano}</font>`, fila, 1)
+		titulo.AutomaticSize = Enum.AutomaticSize.None
+		titulo.TextWrapped = false
+		titulo.TextTruncate = Enum.TextTruncate.AtEnd
+		titulo.TextSize = 16
 		titulo.ZIndex = 33
+		local lucro = if bl then bl.lucro else 0
+		local temValor = liberada and construidos > 0
+		titulo.Size = UDim2.new(1, if temValor then -96 else 0, 1, 0)
+		if temValor then
+			local lLucro = est:texto("numero", (if lucro >= 0 then "+" else "−") .. Economia.formatar(math.abs(lucro), simbolo, true) .. "/s", fila, 2)
+			lLucro.AutomaticSize = Enum.AutomaticSize.None
+			lLucro.AnchorPoint = Vector2.new(1, 0)
+			lLucro.Position = UDim2.fromScale(1, 0)
+			lLucro.Size = UDim2.new(0, 94, 1, 0)
+			lLucro.TextXAlignment = Enum.TextXAlignment.Right
+			lLucro.TextWrapped = false
+			lLucro.TextSize = 15
+			lLucro.TextColor3 = if lucro >= 0 then est.c.positive else est.c.negative
+			lLucro.ZIndex = 33
+		end
+		-- 2ª fila: números curtos com ícones (ou o motivo de estar fechada)
 		local info
 		if not liberada and linha.projeto then
-			info = L(`{Emojis.gabinete} Projeto: estude no Gabinete para liberar`, `{Emojis.gabinete} Project: study it in the Cabinet to unlock`)
+			info = L(`{Emojis.gabinete} Estude no Gabinete para liberar`, `{Emojis.gabinete} Study it in the Cabinet to unlock`)
 		elseif not liberada then
 			info = L(`{Emojis.cadeado} Complete antes: {table.concat(Economia.faltaParaLiberar(estado, dados, i), ", ")}`, `{Emojis.cadeado} Finish first: {table.concat(Economia.faltaParaLiberar(estado, dados, i), ", ")}`)
 		else
-			local lucro = if bl then bl.lucro else 0
-			local txtLucro = if lucro >= 0 then L(`lucro {Economia.formatar(lucro, simbolo, true)}/s`, `profit {Economia.formatar(lucro, simbolo, true)}/s`)
-				else L(`prejuízo {Economia.formatar(-lucro, simbolo, true)}/s`, `loss {Economia.formatar(-lucro, simbolo, true)}/s`)
-			local txtRede = if bl and bl.rede > 0 then L(` · rede +{math.round((bl.fatorRede - 1) * 100)}%`, ` · network +{math.round((bl.fatorRede - 1) * 100)}%`) else ""
-			info = L(`{construidos}/{#linha.trechos} trechos · {estado.trens[linha.id] or 0} trens · {txtLucro}{txtRede}`, `{construidos}/{#linha.trechos} sections · {estado.trens[linha.id] or 0} trains · {txtLucro}{txtRede}`)
+			local partes = { `{Emojis.construir} {construidos}/{#linha.trechos}{if completa then " " .. Emojis.confirmar else ""}` }
+			if construidos > 0 then
+				table.insert(partes, `{Emojis.trens} {estado.trens[linha.id] or 0}`)
+			end
+			if bl and bl.rede > 0 then
+				table.insert(partes, `{Emojis.conectar} +{math.round((bl.fatorRede - 1) * 100)}%`)
+			end
+			info = table.concat(partes, "   ")
 		end
 		local l2 = est:texto("fraco", info, textos, 2)
+		l2.TextSize = 13
 		l2.ZIndex = 33
-		local situacao = if not liberada then ""
-			elseif faltando > 0 then L(`{Emojis.alerta} Lotada: só {math.round((bl and bl.servico or 0) * 100)}% embarcam · faltam {faltando} trem(ns)`, `{Emojis.alerta} Crowded: only {math.round((bl and bl.servico or 0) * 100)}% board · {faltando} more train(s) needed`)
-			elseif sobrando > 0 then L(`{Emojis.alerta} {sobrando} trem(ns) rodando vazio(s)`, `{Emojis.alerta} {sobrando} train(s) running empty`)
-			elseif completa then L(`{Emojis.confirmar} Linha completa`, `{Emojis.confirmar} Line complete`)
-			elseif construidos == 0 then L(`{Emojis.construir} Pronta para começar`, `{Emojis.construir} Ready to start`)
-			else L(`{Emojis.construir} Em construção`, `{Emojis.construir} Under construction`)
-		if situacao ~= "" then
-			local l3 = est:texto("fraco", situacao, textos, 3)
+		if not liberada then
+			l2.TextWrapped = false
+			l2.TextTruncate = Enum.TextTruncate.AtEnd
+			titulo.TextTransparency = 0.35
+		end
+		-- 3ª fila: só quando há algo a fazer
+		local alerta = if not liberada then nil
+			elseif faltando > 0 then L(`{Emojis.alerta} Lotada: faltam {faltando} trem(ns)`, `{Emojis.alerta} Crowded: {faltando} more train(s) needed`)
+			elseif sobrando > 0 then L(`{Emojis.alerta} {sobrando} trem(ns) vazio(s)`, `{Emojis.alerta} {sobrando} empty train(s)`)
+			else nil
+		if alerta then
+			local l3 = est:texto("fraco", alerta, textos, 3)
+			l3.TextSize = 13
+			l3.TextColor3 = est.c.negative
 			l3.ZIndex = 33
-			if faltando > 0 or sobrando > 0 then
-				l3.TextColor3 = est.c.negative
-			elseif completa then
-				l3.TextColor3 = est.c.positive
-			end
 		end
 		linhaBtn.Activated:Connect(function()
 			self.aoFocarLinha:Fire(linha.id)
@@ -618,13 +697,7 @@ end
 
 function Menu._abaProjetos(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), r, 1)
-	est:texto(
-		"fraco",
-		L("Ferrovias que o país planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways the country planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."),
-		r,
-		2
-	)
+	self:_titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), L("Ferrovias que o país planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways the country planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."))
 	if not estado then
 		return
 	end
@@ -774,7 +847,7 @@ end
 
 function Menu._abaMetas(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:titulo(L(`{Emojis.contratos} Contratos`, `{Emojis.contratos} Contracts`), r, 1)
+	self:_titulo(L(`{Emojis.contratos} Contratos`, `{Emojis.contratos} Contracts`), L("Escolha um contrato por vez. O prazo só corre com o jogo aberto, e não há multa se ele acabar.", "Pick one contract at a time. The deadline only runs while the game is open, and there is no penalty if it runs out."))
 	if not estado then
 		return
 	end
@@ -810,7 +883,6 @@ function Menu._abaMetas(self: Menu)
 		atualizar()
 		table.insert(self.vivos, atualizar)
 	elseif #ofertas > 0 then
-		est:texto("fraco", L("Escolha um contrato por vez. O prazo só corre com o jogo aberto, e não há multa se ele acabar.", "Pick one contract at a time. The deadline only runs while the game is open, and there is no penalty if it runs out."), r, 2)
 		for i, o in ofertas do
 			local emoji, titulo, dica = Metas.descreverContrato(o, dados)
 			local dif = Metas.dificuldade(o.dificuldade)
@@ -1268,11 +1340,53 @@ end
 
 -- ---------------------------------------------------------------- aba Banco
 
-function Menu._abaBanco(self: Menu)
-	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+-- Finanças: o banco e as tarifas numa aba só, com um seletor no alto.
+function Menu._abaFinancas(self: Menu)
+	local est, estado, r = self.est, self.estado, self.rolagem
+	local sub = self.subFinancas
 	local nomeBanco = Idioma.t(Banco.NOMES[if estado then estado.era else "vapor"] or Banco.NOMES.vapor)
-	est:titulo(`{Emojis.banco} {nomeBanco}`, r, 1)
-	est:texto("fraco", L(`Empréstimos para construir mais cedo. O limite e os juros dependem do seu crédito: satisfação dos passageiros e nível da companhia. A dívida é paga sozinha com {math.round(Banco.PARCELA * 100)}% do lucro, e dá para quitar quando quiser.`, `Loans to build sooner. The limit and interest depend on your credit: passenger satisfaction and company level. The debt pays itself off with {math.round(Banco.PARCELA * 100)}% of profit, and you can settle it any time.`), r, 2)
+	local ajuda = if sub == "banco"
+		then L(`{nomeBanco}: empréstimos para construir mais cedo. O limite e os juros dependem do seu crédito (satisfação dos passageiros e nível da companhia); mais trens nas linhas lotadas e estações melhores baixam os juros. A dívida é paga sozinha com {math.round(Banco.PARCELA * 100)}% do lucro, e dá para quitar quando quiser.`, `{nomeBanco}: loans to build sooner. The limit and interest depend on your credit (passenger satisfaction and company level); more trains on crowded lines and better stations lower interest. The debt pays itself off with {math.round(Banco.PARCELA * 100)}% of profit, and you can settle it any time.`)
+		else L("O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", "Each class's ticket price applies to every line. Pricier tickets earn more per passenger but drive people away; too pricey annoys travellers. Onboard service makes each class willing to pay more.")
+	self:_titulo(L(`{Emojis.banco} Finanças`, `{Emojis.banco} Finances`), ajuda)
+	local seletor = novo("Frame", {
+		Name = "Seletor",
+		LayoutOrder = 3,
+		Size = UDim2.new(1, 0, 0, 40),
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, r)
+	est:lista(seletor, 8, true)
+	for i, op in { { id = "banco", nome = L(`{Emojis.banco} Banco`, `{Emojis.banco} Bank`) }, { id = "tarifas", nome = L(`{Emojis.tarifas} Tarifas`, `{Emojis.tarifas} Fares`) } } do
+		local b = est:botao(if sub == op.id then "principal" else "secundario", op.nome, seletor, i)
+		b.Name = "Sub_" .. op.id
+		b.Size = UDim2.new(0.5, -4, 1, 0)
+		b.Activated:Connect(function()
+			if self.subFinancas ~= op.id then
+				self.subFinancas = op.id
+				self.rolagem.CanvasPosition = Vector2.zero
+				self:_redesenhar()
+			end
+		end)
+	end
+	local conteudo = novo("Frame", {
+		Name = "Conteudo",
+		LayoutOrder = 4,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, r)
+	est:lista(conteudo, 8)
+	if sub == "banco" then
+		self:_abaBanco(conteudo)
+	else
+		self:_abaTarifas(conteudo)
+	end
+end
+
+function Menu._abaBanco(self: Menu, pai: Instance)
+	local est, dados, estado, r = self.est, self.dados, self.estado, pai
 	if not estado then
 		return
 	end
@@ -1295,8 +1409,6 @@ function Menu._abaBanco(self: Menu)
 	end
 	atualizarCredito()
 	table.insert(self.vivos, atualizarCredito)
-	local dica = est:texto("fraco", L(`{Emojis.dica} Mais trens nas linhas lotadas e estações melhores aumentam a satisfação e baixam os juros.`, `{Emojis.dica} More trains on crowded lines and better stations raise satisfaction and lower interest.`), r, 4)
-	dica.TextSize = 13
 
 	local emp = estado.emprestimo
 	if emp then
@@ -1372,10 +1484,8 @@ local function sinal(x: number): string
 	return if n > 0 then `+{n}` elseif n < 0 then `−{-n}` else "0"
 end
 
-function Menu._abaTarifas(self: Menu)
-	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	est:titulo(L(`{Emojis.tarifas} Tarifas`, `{Emojis.tarifas} Fares`), r, 1)
-	est:texto("fraco", L("O preço da passagem de cada classe vale para todas as linhas. Mais caro rende mais por passageiro, mas afasta gente; caro demais irrita quem viaja. O serviço de bordo deixa cada classe aceitar pagar mais.", "Each class's ticket price applies to every line. Pricier tickets earn more per passenger but drive people away; too pricey annoys travellers. Onboard service makes each class willing to pay more."), r, 2)
+function Menu._abaTarifas(self: Menu, pai: Instance)
+	local est, dados, estado, r = self.est, self.dados, self.estado, pai
 	if not estado then
 		return
 	end
@@ -1558,6 +1668,16 @@ function Menu._abaCompanhia(self: Menu)
 	est:divisor(r, 24)
 	est:texto("subtitulo", L(`{Emojis.cargas} Cargas e fretes`, `{Emojis.cargas} Cargo and freight`), r, 25)
 	local temCarga = false
+	-- as cargas ficam num contêiner próprio: são muitas (13 tipos) e não podem invadir a seção seguinte
+	local listaCargas = novo("Frame", {
+		Name = "Cargas",
+		LayoutOrder = 26,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, r)
+	est:lista(listaCargas, 6)
 	for i, id in Economia.ORDEM_CARGAS do
 		local v = st.cargaValor[id]
 		if v and v.unidadesDia > 0 then
@@ -1567,11 +1687,11 @@ function Menu._abaCompanhia(self: Menu)
 			est:texto("corpo", L(`{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(v.unidadesDia))}</b> {carga.unidade}/dia · `
 				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> por {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/dia`,
 				`{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(v.unidadesDia))}</b> {carga.unidade}/day · `
-				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> per {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/day`), r, 25 + i)
+				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> per {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/day`), listaCargas, i)
 		end
 	end
 	if not temCarga then
-		est:texto("fraco", L("Nenhuma carga chega a um porto ainda. Ligue uma cidade produtora (café, minério…) a um porto pelos trilhos: o frete entra na renda da linha.", "No cargo reaches a port yet. Link a producing city (coffee, ore…) to a port by rail: the freight adds to the line's income."), r, 26)
+		est:texto("fraco", L("Nenhuma carga chega a um porto ainda. Ligue uma cidade produtora (café, minério…) a um porto pelos trilhos: o frete entra na renda da linha.", "No cargo reaches a port yet. Link a producing city (coffee, ore…) to a port by rail: the freight adds to the line's income."), listaCargas, 1)
 	end
 
 	-- nome da companhia
@@ -1603,33 +1723,6 @@ function Menu._abaCompanhia(self: Menu)
 		self.aoAgir:Fire("renomear", { nome = caixaNome.Text })
 	end)
 	est:texto("fraco", Idioma.T("companhia_dica_nome"), r, 34)
-
-	-- ranking de quem está neste servidor: nível e linhas completas (o mesmo critério do placar do canto)
-	est:divisor(r, 35)
-	est:texto("subtitulo", L(`{Emojis.nivel} Ranking do servidor`, `{Emojis.nivel} Server leaderboard`), r, 36)
-	local lista = {}
-	for _, j in Players:GetPlayers() do
-		table.insert(lista, {
-			nome = j.DisplayName .. (if j:GetAttribute("Pinturas") == true then " ✨" else ""),
-			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
-			linhas = tonumber(j:GetAttribute("Linhas")) or 0,
-			eu = j == Players.LocalPlayer,
-		})
-	end
-	table.sort(lista, function(a, b)
-		if a.nivel ~= b.nivel then
-			return a.nivel > b.nivel
-		end
-		return a.linhas > b.linhas
-	end)
-	local linhasRanking = {}
-	for i = 1, math.min(10, #lista) do
-		local item = lista[i]
-		local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
-		table.insert(linhasRanking, L(`{i}. {nome} · nível {item.nivel} · {item.linhas} linhas completas`, `{i}. {nome} · level {item.nivel} · {item.linhas} complete lines`))
-	end
-	est:texto("corpo", table.concat(linhasRanking, "\n"), r, 37)
-	est:texto("fraco", L("O ranking conta o nível e as linhas completas, que vêm de jogar. Dinheiro não entra.", "The leaderboard counts level and complete lines, which come from playing. Money doesn't count."), r, 38)
 end
 
 -- ---------------------------------------------------------------- conquistas (medalhas)
@@ -1645,7 +1738,6 @@ local GRUPOS_CONQUISTAS = {
 	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo" } },
 }
 
-local OURO = Color3.fromRGB(214, 168, 72)
 
 -- Medalhão redondo com o emoji: colorido quando ganho, apagado com cadeado quando não.
 local function medalhaoConquista(est: any, pai: Instance, emoji: string, ganha: boolean, tamanho: number, ordem: number?): Frame
@@ -1654,12 +1746,21 @@ local function medalhaoConquista(est: any, pai: Instance, emoji: string, ganha: 
 		Name = "Medalhao",
 		LayoutOrder = ordem or 0,
 		Size = UDim2.fromOffset(tamanho, tamanho),
-		BackgroundColor3 = if ganha then c.accent else c.rule,
+		BackgroundColor3 = if ganha then Color3.new(1, 1, 1) else c.rule,
 		BackgroundTransparency = if ganha then 0 else 0.55,
 		ZIndex = 34,
 	}, pai) :: Frame
 	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, fr)
-	novo("UIStroke", { Color = if ganha then OURO else c.rule, Thickness = if ganha then 3 else 1.5 }, fr)
+	if ganha then
+		-- medalha de ouro: dourado claro em cima, mais escuro embaixo, com aro de ouro velho
+		novo("UIGradient", {
+			Rotation = 90,
+			Color = ColorSequence.new(Color3.fromRGB(250, 232, 170), Color3.fromRGB(205, 158, 64)),
+		}, fr)
+		novo("UIStroke", { Color = Color3.fromRGB(140, 100, 32), Thickness = 2 }, fr)
+	else
+		novo("UIStroke", { Color = c.rule, Thickness = 1.5 }, fr)
+	end
 	novo("TextLabel", {
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,

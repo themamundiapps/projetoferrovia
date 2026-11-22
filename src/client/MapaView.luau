@@ -748,7 +748,7 @@ end
 -- Aparência de cada situação: construído (cor cheia), disponível (cor clara, pode comprar), bloqueado (apagado).
 function MapaView._estilizar(self: MapaView, s: Segmento)
 	local cores = self.era.cores
-	local sel = self.selecionado == s.id
+	local sel = self.selecionado == s.id or (self :: any).linhaDestacada == s.linhaId
 	for _, t in s.tracos do
 		t.Visible = s.estado == "projeto"
 	end
@@ -828,8 +828,10 @@ function MapaView.definirCargas(self: MapaView, conectadas: { [string]: boolean 
 	end
 end
 
-function MapaView.selecionar(self: MapaView, trechoId: string?)
-	self.selecionado = trechoId
+-- Seleciona um trecho; com `linhaId`, contorna também a linha inteira (ao escolher a linha na lista).
+function MapaView.selecionar(self: MapaView, trechoId: string?, linhaId: string?)
+	self.selecionado = trechoId;
+	(self :: any).linhaDestacada = linhaId
 	for _, s in self.segmentos do
 		self:_estilizar(s)
 	end
@@ -1350,7 +1352,7 @@ function MapaView._layout(self: MapaView)
 		s.linha.Position = UDim2.fromOffset(meio.X, meio.Y)
 		s.linha.Size = UDim2.fromOffset(comprimento, espessura)
 		s.linha.Rotation = angulo
-		local extra = if self.selecionado == s.id then 8 else 4
+		local extra = if self.selecionado == s.id or (self :: any).linhaDestacada == s.linhaId then 8 else 4
 		s.casing.Position = s.linha.Position
 		s.casing.Size = UDim2.fromOffset(comprimento + 2, espessura + extra)
 		s.casing.Rotation = angulo
