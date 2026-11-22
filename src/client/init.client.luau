@@ -715,6 +715,16 @@ Idioma.aoMudarNoRoblox(function(novo: string)
 	end)
 end)
 remoteEstado.OnClientEvent:Connect(aplicarEstado)
+-- conquista de outro jogador do servidor
+local remoteConquista = Remotes:WaitForChild("Conquista", 10) :: RemoteEvent?
+if remoteConquista then
+	remoteConquista.OnClientEvent:Connect(function(nome: string, medalhaId: string)
+		local m = Metas.acharMedalha(medalhaId)
+		if m and ui and type(nome) == "string" then
+			ui:conquistaDeOutro(L(`{Emojis.medalha} <b>{nome}</b> ganhou a conquista <b>{m.nome}</b>`, `{Emojis.medalha} <b>{nome}</b> earned the achievement <b>{m.nome}</b>`))
+		end
+	end)
+end
 task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())
 end)

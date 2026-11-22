@@ -337,6 +337,27 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		ZIndex = 31,
 	}, self.aviso)
 
+	-- ---------------------------------------------------- conquistas de outros jogadores (logo abaixo da barra)
+	self.feed = novo("TextLabel", {
+		Name = "FeedConquistas",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 64),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		Size = UDim2.fromOffset(0, 0),
+		BackgroundColor3 = Color3.fromRGB(20, 20, 24),
+		BackgroundTransparency = 1,
+		Text = "",
+		RichText = true,
+		FontFace = f.body,
+		TextSize = 15,
+		TextColor3 = Color3.fromRGB(245, 238, 220),
+		TextTransparency = 1,
+		ZIndex = 29,
+	}, tela)
+	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, self.feed)
+	novo("UIPadding", { PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14), PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 6) }, self.feed)
+	self._filaFeed = {} :: { string }
+
 	-- ---------------------------------------------------- painel da concessão (direita)
 	local painel = caixa({
 		Name = "Concessao",
@@ -477,6 +498,7 @@ end
 function Interface.destruir(self: Interface)
 	self.hud:Destroy()
 	self.aviso:Destroy()
+	self.feed:Destroy()
 	self.painel:Destroy()
 	self.aoAgir:Destroy()
 	self.aoFechar:Destroy()
@@ -491,6 +513,31 @@ function Interface.avisar(self: Interface, msg: string, segundos: number?)
 		if self._marcaAviso == marca then
 			self.aviso.Visible = false
 		end
+	end)
+end
+
+-- Faixa discreta embaixo da barra de cima: "Fulano ganhou a conquista X". Uma de cada vez, some sozinha.
+function Interface.conquistaDeOutro(self: Interface, msg: string)
+	table.insert(self._filaFeed, msg)
+	if #self._filaFeed > 4 then
+		table.remove(self._filaFeed, 1) -- muitas de uma vez: fica só com as mais recentes
+	end
+	if self._feedRodando then
+		return
+	end
+	self._feedRodando = true
+	task.spawn(function()
+		local TweenService = game:GetService("TweenService")
+		while #self._filaFeed > 0 and self.feed.Parent do
+			local texto = table.remove(self._filaFeed, 1)
+			self.feed.Text = texto
+			local info = TweenInfo.new(0.35)
+			TweenService:Create(self.feed, info, { TextTransparency = 0, BackgroundTransparency = 0.35 }):Play()
+			task.wait(4.5)
+			TweenService:Create(self.feed, info, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
+			task.wait(0.5)
+		end
+		self._feedRodando = false
 	end)
 end
 
