@@ -344,18 +344,18 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 64),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
-		BackgroundColor3 = Color3.fromRGB(20, 20, 24),
 		BackgroundTransparency = 1,
 		Text = "",
 		RichText = true,
 		FontFace = f.body,
-		TextSize = 15,
-		TextColor3 = Color3.fromRGB(245, 238, 220),
+		TextSize = 16,
+		TextColor3 = Color3.fromRGB(250, 245, 230),
 		TextTransparency = 1,
+		-- sem fundo: texto claro com contorno escuro, legível sobre o mapa claro ou escuro
+		TextStrokeColor3 = Color3.fromRGB(25, 20, 15),
+		TextStrokeTransparency = 1,
 		ZIndex = 29,
 	}, tela)
-	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, self.feed)
-	novo("UIPadding", { PaddingLeft = UDim.new(0, 14), PaddingRight = UDim.new(0, 14), PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 6) }, self.feed)
 	self._filaFeed = {} :: { string }
 
 	-- ---------------------------------------------------- painel da concessão (direita)
@@ -532,9 +532,9 @@ function Interface.conquistaDeOutro(self: Interface, msg: string)
 			local texto = table.remove(self._filaFeed, 1)
 			self.feed.Text = texto
 			local info = TweenInfo.new(0.35)
-			TweenService:Create(self.feed, info, { TextTransparency = 0, BackgroundTransparency = 0.35 }):Play()
+			TweenService:Create(self.feed, info, { TextTransparency = 0, TextStrokeTransparency = 0.3 }):Play()
 			task.wait(4.5)
-			TweenService:Create(self.feed, info, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
+			TweenService:Create(self.feed, info, { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()
 			task.wait(0.5)
 		end
 		self._feedRodando = false
