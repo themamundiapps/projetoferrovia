@@ -318,22 +318,27 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	end)
 
 	-- ---------------------------------------------------- aviso (topo, centro)
-	self.aviso = caixa({
+	-- sem caixa: só o texto, claro com contorno escuro (o mesmo jeito das conquistas dos outros jogadores)
+	self.aviso = novo("Frame", {
 		Name = "Aviso",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 12),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 14),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
+		BackgroundTransparency = 1,
 		Visible = false,
-	})
-	padding(self.aviso, 10)
+		ZIndex = 30,
+	}, tela)
 	self.lblAviso = novo("TextLabel", {
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundTransparency = 1,
 		Text = "",
+		RichText = true,
 		FontFace = f.body,
-		TextSize = 16,
-		TextColor3 = c.ink,
+		TextSize = 18,
+		TextColor3 = Color3.fromRGB(250, 245, 230),
+		TextStrokeColor3 = Color3.fromRGB(25, 20, 15),
+		TextStrokeTransparency = 0.2,
 		ZIndex = 31,
 	}, self.aviso)
 
@@ -341,7 +346,7 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	self.feed = novo("TextLabel", {
 		Name = "FeedConquistas",
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 64),
+		Position = UDim2.new(0.5, 0, 0, Estilo.TOPO_TELA + 46),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
 		BackgroundTransparency = 1,
