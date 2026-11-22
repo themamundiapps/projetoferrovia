@@ -147,9 +147,9 @@ return {
 			},
 		},
 		{
-			id = "sc_rr", nome = "South Carolina Canal and Rail Road", nomeEn = nil, ano = 1833, cor = 6, ordem = 2, degrau = 1, projeto = nil, nota = { pt = "Em 1833 era a ferrovia mais longa do mundo. A locomotiva Best Friend of Charleston puxou o primeiro trem a vapor regular do país.", en = "In 1833 it was the longest railroad in the world. The Best Friend of Charleston locomotive pulled the country's first regular steam train." },
+			id = "sc_rr", nome = "South Carolina Canal and Rail Road", nomeEn = nil, ano = 1833, cor = 6, ordem = 2, degrau = 0, projeto = nil, nota = { pt = "Em 1833 era a ferrovia mais longa do mundo. A locomotiva Best Friend of Charleston puxou o primeiro trem a vapor regular do país.", en = "In 1833 it was the longest railroad in the world. The Best Friend of Charleston locomotive pulled the country's first regular steam train." },
 			trechos = {
-				{ id = "sc_rr_1", de = "charleston_sc", para = "augusta", ano = 1833, km = 256, terreno = "costa", custo = 4055, degrau = 1 },
+				{ id = "sc_rr_1", de = "charleston_sc", para = "augusta", ano = 1833, km = 256, terreno = "costa", custo = 1690, degrau = 0 },
 			},
 		},
 		{

@@ -55,7 +55,7 @@ LINHAS = [
         tr("cumberland", "wheeling", 1853, "apalaches"),
     ], T("A primeira ferrovia comercial do país: Baltimore queria um caminho para o oeste e começou a cavar em 1828.",
          "The country's first commercial railroad: Baltimore wanted a road west and broke ground in 1828.")),
-    ("sc_rr", "South Carolina Canal and Rail Road", 1833, 6, 1, [
+    ("sc_rr", "South Carolina Canal and Rail Road", 1833, 6, 0, [
         tr("charleston_sc", "augusta", 1833, "costa"),
     ], T("Em 1833 era a ferrovia mais longa do mundo. A locomotiva Best Friend of Charleston puxou o primeiro trem a vapor regular do país.",
          "In 1833 it was the longest railroad in the world. The Best Friend of Charleston locomotive pulled the country's first regular steam train.")),
