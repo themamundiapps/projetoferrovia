@@ -364,6 +364,25 @@ Assets.MusicasMapa = {
 		"rbxassetid://132521872324308", -- Beach Tropical Coffee Bossa Nova (DistroKid)
 		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
 	},
+	-- EUA: jazz (swing e dixieland dos anos 1920–30, mais o jazz de clube, mais calmo)
+	eua = {
+		"rbxassetid://104748407843789", -- 1930s Jazz Vibes (DistroKid)
+		"rbxassetid://101004452669583", -- Retro Jazz Swing (DistroKid)
+		"rbxassetid://100514571439295", -- 1920s Jazz Classics (DistroKid)
+		"rbxassetid://94784059565847", -- Classic Retro Jazz Flow (DistroKid)
+		"rbxassetid://97006702987518", -- 1930s Hot Swing (DistroKid)
+		"rbxassetid://132010103819517", -- Classic Swing & Smoke (DistroKid)
+		"rbxassetid://139380518285040", -- Steamboat Swing (DistroKid)
+		"rbxassetid://105410597171906", -- Stepping Out (APM)
+		"rbxassetid://115420825080811", -- Swingin' the Delta (DistroKid)
+		"rbxassetid://127096078553556", -- Riverboat Rhythms (DistroKid)
+		"rbxassetid://113662786769403", -- Bourbon Street Vibes (DistroKid)
+		"rbxassetid://128896004555699", -- Evening Dixie (DistroKid)
+		"rbxassetid://81617335589427", -- Blue Room Reverie (DistroKid)
+		"rbxassetid://109558786368038", -- The Saxophone Stayed Late (DistroKid)
+		"rbxassetid://131816993948681", -- Cool Jazz in Leather Chairs (DistroKid)
+		"rbxassetid://106655535358127", -- Silhouettes in the City (DistroKid)
+	},
 } :: { [string]: { string } }
 
 Assets.Sons = {
