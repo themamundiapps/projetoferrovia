@@ -47,7 +47,7 @@ Jornal.NOMES = {
 
 export type Definicao = {
 	id: string,
-	mapa: string?, -- mapa do evento ("brasil", "eua"); nil = Brasil, menos os que servem em todo país (GERAIS)
+	mapa: string?, -- mapa do evento ("brasil", "eua", "europa"); nil = Brasil, menos os que servem em todo país (GERAIS)
 	eras: { string }?, -- nil = todas
 	peso: number,
 	duracao: number, -- segundos
@@ -294,6 +294,91 @@ Jornal.EVENTOS = {
 		alvo = linhaConstruida,
 		titulo = { pt = "Nevasca bloqueia a linha %s", en = "Blizzard blocks the %s line" },
 		texto = { pt = "A neve cobriu os trilhos: a linha roda a 40% até os limpa-neves passarem.", en = "Snow buried the tracks: the line runs at 40% until the snowplows get through." },
+	},
+	-- ================================================================ Europa (mapa = "europa")
+	{
+		id = "eur_exposicao_londres", mapa = "europa", eras = { "vapor" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("london"),
+		titulo = { pt = "A Grande Exposição no Palácio de Cristal", en = "The Great Exhibition at the Crystal Palace" },
+		texto = { pt = "Seis milhões de visitantes vêm ver as maravilhas da indústria: as linhas que chegam a %s rendem 50% a mais.", en = "Six million visitors come to see the wonders of industry: lines reaching %s earn 50% more." },
+	},
+	{
+		id = "eur_exposicao_paris", mapa = "europa", eras = { "vapor" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("paris"),
+		titulo = { pt = "Exposição Universal: a Torre Eiffel está pronta", en = "Universal Exhibition: the Eiffel Tower is finished" },
+		texto = { pt = "Gente do mundo inteiro quer subir na torre de ferro: as linhas que chegam a %s rendem 50% a mais.", en = "People from all over the world want to climb the iron tower: lines reaching %s earn 50% more." },
+	},
+	{
+		id = "eur_carvao", mapa = "europa", eras = { "vapor", "diesel" }, peso = 3, duracao = 180, tipo = "carga", mult = 1.6,
+		alvo = cargaNoPorto("carvao"),
+		titulo = { pt = "As fábricas pedem mais carvão", en = "The factories want more coal" },
+		texto = { pt = "Os fornos não podem parar: as linhas do carvão rendem 60% a mais.", en = "The furnaces can't stop: coal lines earn 60% more." },
+	},
+	{
+		id = "eur_trigo", mapa = "europa", peso = 3, duracao = 180, tipo = "carga", mult = 1.6,
+		alvo = cargaNoPorto("graos"),
+		titulo = { pt = "Colheita farta nas planícies", en = "A rich harvest on the plains" },
+		texto = { pt = "Os celeiros da Hungria e de Castela transbordam: as linhas dos grãos rendem 60% a mais.", en = "The granaries of Hungary and Castile overflow: grain lines earn 60% more." },
+	},
+	{
+		id = "eur_minerio", mapa = "europa", eras = { "vapor", "diesel" }, peso = 2, duracao = 180, tipo = "carga", mult = 1.7,
+		alvo = cargaNoPorto("minerio"),
+		titulo = { pt = "As siderúrgicas inglesas querem o ferro basco", en = "English steelworks want Basque iron" },
+		texto = { pt = "Os navios fazem fila em Bilbau: as linhas do minério rendem 70% a mais.", en = "Ships queue up at Bilbao: ore lines earn 70% more." },
+	},
+	{
+		id = "eur_turismo_alpes", mapa = "europa", eras = { "vapor", "diesel", "eletrico" }, peso = 2, duracao = 180, tipo = "regiao", mult = 1.35,
+		alvo = regiaoNaRede("c"),
+		titulo = { pt = "A moda das férias nos Alpes", en = "Alpine holidays are all the rage" },
+		texto = { pt = "Hotéis lotados nas montanhas: as linhas da %s rendem 35% a mais.", en = "Mountain hotels are full: lines in %s earn 35% more." },
+	},
+	{
+		id = "eur_guerra", mapa = "europa", eras = { "diesel" }, peso = 2, duracao = 180, tipo = "geral", mult = 0.7,
+		alvo = semAlvo,
+		titulo = { pt = "A guerra corta as fronteiras", en = "War cuts across the borders" },
+		texto = { pt = "Trens requisitados e fronteiras fechadas: −30% em toda a receita até a paz.", en = "Trains requisitioned and borders closed: −30% on all income until peace returns." },
+	},
+	{
+		id = "eur_reconstrucao", mapa = "europa", eras = { "diesel" }, peso = 2, duracao = 180, tipo = "geral", mult = 1.3,
+		alvo = semAlvo,
+		titulo = { pt = "O Plano Marshall reconstrói as ferrovias", en = "The Marshall Plan rebuilds the railways" },
+		texto = { pt = "Pontes e estações voltam a funcionar: +30% em toda a receita.", en = "Bridges and stations are working again: +30% on all income." },
+	},
+	{
+		id = "eur_tee", mapa = "europa", eras = { "diesel", "eletrico" }, peso = 2, duracao = 150, tipo = "geral", mult = 1.25,
+		alvo = semAlvo,
+		titulo = { pt = "Nasce o Trans Europ Express", en = "The Trans Europ Express is born" },
+		texto = { pt = "Trens de primeira classe cruzam as fronteiras sem trocar de vagão: +25% em toda a receita.", en = "First-class trains cross borders without changing carriages: +25% on all income." },
+	},
+	{
+		id = "eur_olimpiada", mapa = "europa", eras = { "eletrico", "alta" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.6,
+		alvo = cidadeNaRede("barcelona"),
+		titulo = { pt = "Jogos Olímpicos em %s", en = "Olympic Games in %s" },
+		texto = { pt = "Atletas e torcedores do mundo inteiro: as linhas que chegam lá rendem 60% a mais.", en = "Athletes and fans from all over the world: lines reaching it earn 60% more." },
+	},
+	{
+		id = "eur_eurotunel", mapa = "europa", eras = { "alta" }, peso = 2, duracao = 150, tipo = "cidade", mult = 1.5,
+		alvo = cidadeNaRede("london"),
+		titulo = { pt = "O Eurotúnel liga a ilha ao continente", en = "The Channel Tunnel links the island to the continent" },
+		texto = { pt = "Londres fica a três horas de Paris: as linhas que chegam a %s rendem 50% a mais.", en = "London is three hours from Paris: lines reaching %s earn 50% more." },
+	},
+	{
+		id = "eur_interrail", mapa = "europa", eras = { "eletrico", "alta" }, peso = 2, duracao = 150, tipo = "geral", mult = 1.2,
+		alvo = semAlvo,
+		titulo = { pt = "Verão de Interrail", en = "An Interrail summer" },
+		texto = { pt = "Mochileiros de toda parte rodam o continente de trem: +20% em toda a receita.", en = "Backpackers from everywhere tour the continent by train: +20% on all income." },
+	},
+	{
+		id = "eur_nevoeiro", mapa = "europa", eras = { "vapor", "diesel" }, peso = 2, duracao = 150, tipo = "cidade", mult = 0.6,
+		alvo = cidadeNaRede("london"),
+		titulo = { pt = "Nevoeiro denso sobre %s", en = "Thick fog over %s" },
+		texto = { pt = "Não se vê um palmo à frente: as linhas que chegam lá rendem 40% a menos.", en = "You can't see a hand in front of you: lines reaching it earn 40% less." },
+	},
+	{
+		id = "eur_avalanche", mapa = "europa", peso = 2, duracao = 180, tipo = "linha", mult = 0.4, resolvivel = true,
+		alvo = linhaConstruida,
+		titulo = { pt = "Avalanche fecha a linha %s", en = "Avalanche closes the %s line" },
+		texto = { pt = "A neve desceu a montanha: a linha roda a 40% até a pista ser liberada.", en = "Snow came down the mountain: the line runs at 40% until the track is cleared." },
 	},
 } :: { Definicao }
 

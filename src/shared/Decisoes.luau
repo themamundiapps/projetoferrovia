@@ -58,7 +58,7 @@ export type Opcao = { pt: string, en: string, ef: { Efeito } }
 -- cidade/carga/regiao fixas (a decisão só aparece se aquilo estiver na rede). %s no texto = nome do alvo.
 export type Definicao = {
 	id: string,
-	mapa: string?, -- "eua"...; sem mapa = Brasil (as decisões contam a história do país)
+	mapa: string?, -- "eua", "europa"...; sem mapa = Brasil (as decisões contam a história do país)
 	era: string,
 	emoji: string,
 	alvo: any,
@@ -920,6 +920,228 @@ local CATALOGO: { Definicao } = {
 		opcoes = {
 			{ pt = "Criar trens expressos de carga", en = "Run express freight trains", ef = { D(-2), M("geral", 1.2, 15) } },
 			{ pt = "Seguir os horários de sempre", en = "Keep the usual timetable", ef = {} },
+		},
+	},
+	-- ================================================================ Europa (mapa = "europa")
+	-- Vapor
+	{
+		id = "eur_bitola", mapa = "europa", era = "vapor", emoji = "construir", alvo = nil,
+		titulo = { pt = "A guerra das bitolas", en = "The gauge war" },
+		texto = { pt = "Brunel usa trilhos de 7 pés; Stephenson, de 4 pés e 8½ polegadas. O Parlamento quer saber qual deve valer para todos.", en = "Brunel uses 7-foot track; Stephenson, 4 feet 8½ inches. Parliament wants to know which should be the standard." },
+		opcoes = {
+			{ pt = "Defender a bitola padrão", en = "Back the standard gauge", ef = { D(-1), M("manutencao", 0.85, 20), XP(40) } },
+			{ pt = "Defender a bitola larga", en = "Back the broad gauge", ef = { M("geral", 1.1, 10), M("manutencao", 1.1, 20) } },
+		},
+	},
+	{
+		id = "eur_febre_ferroviaria", mapa = "europa", era = "vapor", emoji = "dinheiro", alvo = nil,
+		titulo = { pt = "Febre das ações ferroviárias", en = "Railway mania" },
+		texto = { pt = "Todo mundo quer comprar ações de ferrovias, até de linhas que nunca serão construídas. Os bancos oferecem dinheiro fácil.", en = "Everyone wants railway shares, even in lines that will never be built. The banks are offering easy money." },
+		opcoes = {
+			{ pt = "Vender ações agora", en = "Sell shares now", ef = { D(6), SORTE(0.5, {}, { M("geral", 0.8, 15) }) } },
+			{ pt = "Ficar longe da bolha", en = "Stay away from the bubble", ef = { XP(40) } },
+		},
+	},
+	{
+		id = "eur_terceira_classe", mapa = "europa", era = "vapor", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "Os vagões abertos da 3ª classe", en = "The open third-class wagons" },
+		texto = { pt = "Uma lei obriga pelo menos um trem por dia com vagões cobertos e passagem barata para os trabalhadores.", en = "A law requires at least one train a day with covered carriages and a cheap fare for workers." },
+		opcoes = {
+			{ pt = "Cobrir todos os vagões", en = "Roof every carriage", ef = { D(-2), M("geral", 1.15, 15) } },
+			{ pt = "Cumprir só o mínimo", en = "Do only the minimum", ef = { XP(10) } },
+		},
+	},
+	{
+		id = "eur_hora_ferroviaria", mapa = "europa", era = "vapor", emoji = "relogio", alvo = nil,
+		titulo = { pt = "A hora de Greenwich", en = "Greenwich time" },
+		texto = { pt = "Cada cidade acerta o relógio pelo sol e os horários viram uma confusão. As ferrovias propõem usar a hora de Greenwich em todas as estações.", en = "Every town sets its clock by the sun and timetables are a mess. The railways propose using Greenwich time at every station." },
+		opcoes = {
+			{ pt = "Adotar a hora padrão", en = "Adopt standard time", ef = { D(-1), M("manutencao", 0.8, 20), XP(40) } },
+			{ pt = "Manter a hora de cada cidade", en = "Keep each town's own time", ef = { M("geral", 0.95, 10) } },
+		},
+	},
+	{
+		id = "eur_tunel_alpes", mapa = "europa", era = "vapor", emoji = "construir", alvo = "linha",
+		titulo = { pt = "Perfuratrizes de ar comprimido na linha %s", en = "Compressed-air drills on the %s line" },
+		texto = { pt = "Um engenheiro mostra máquinas que cavam a rocha três vezes mais rápido que a picareta. Custam caro e ainda quebram muito.", en = "An engineer shows machines that bore through rock three times faster than picks. They are expensive and still break down a lot." },
+		opcoes = {
+			{ pt = "Comprar as perfuratrizes", en = "Buy the drills", ef = { D(-2), ESTUDO(15), XP(30) } },
+			{ pt = "Seguir na picareta", en = "Stick with picks", ef = {} },
+		},
+	},
+	{
+		id = "eur_wagons_lits", mapa = "europa", era = "vapor", emoji = "estacoes", alvo = nil,
+		titulo = { pt = "Vagões-leito de luxo", en = "Luxury sleeping cars" },
+		texto = { pt = "Um empresário belga propõe vagões-leito com restaurante para viagens longas entre as capitais.", en = "A Belgian businessman proposes sleeping cars with a restaurant for long journeys between capitals." },
+		opcoes = {
+			{ pt = "Fazer parceria", en = "Go into partnership", ef = { D(-2), M("geral", 1.2, 15), XP(30) } },
+			{ pt = "Recusar", en = "Decline", ef = {} },
+		},
+	},
+	-- Diesel
+	{
+		id = "eur_nacionalizar", mapa = "europa", era = "diesel", emoji = "companhia", alvo = nil,
+		titulo = { pt = "O governo quer nacionalizar as ferrovias", en = "The government wants to nationalise the railways" },
+		texto = { pt = "Depois da guerra, os governos estão juntando as companhias numa empresa estatal. Oferecem uma indenização.", en = "After the war, governments are merging the companies into a state railway. They are offering compensation." },
+		opcoes = {
+			{ pt = "Aceitar a indenização e cooperar", en = "Take the compensation and cooperate", ef = { D(5), M("geral", 0.9, 15) } },
+			{ pt = "Brigar na Justiça", en = "Fight it in court", ef = { SORTE(0.5, { XP(60) }, { D(-3) }) } },
+		},
+	},
+	{
+		id = "eur_ponte_bombardeada", mapa = "europa", era = "diesel", emoji = "alerta", alvo = "linha",
+		titulo = { pt = "Ponte destruída na linha %s", en = "Bridge destroyed on the %s line" },
+		texto = { pt = "A guerra levou uma ponte da linha. Dá para fazer uma ponte provisória de madeira ou esperar o aço da reconstrução.", en = "The war took out a bridge on the line. You can build a temporary wooden bridge or wait for steel from the reconstruction." },
+		opcoes = {
+			{ pt = "Ponte provisória já", en = "Temporary bridge now", ef = { D(-1), M("linha", 0.9, 10) } },
+			{ pt = "Esperar a ponte de aço", en = "Wait for the steel bridge", ef = { M("linha", 0.5, 10), XP(20) } },
+		},
+	},
+	{
+		id = "eur_refugiados", mapa = "europa", era = "diesel", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "Trens de refugiados", en = "Refugee trains" },
+		texto = { pt = "Milhares de famílias precisam atravessar a Europa para recomeçar a vida. As organizações de ajuda pedem trens especiais.", en = "Thousands of families need to cross Europe to start their lives again. Aid organisations ask for special trains." },
+		opcoes = {
+			{ pt = "Ceder trens de graça", en = "Lend trains for free", ef = { D(-2), XP(80) } },
+			{ pt = "Cobrar a passagem normal", en = "Charge the normal fare", ef = { D(1) } },
+		},
+	},
+	{
+		id = "eur_diesel_ou_eletrico", mapa = "europa", era = "diesel", emoji = "construir", alvo = nil,
+		titulo = { pt = "Diesel ou eletrificação?", en = "Diesel or electrification?" },
+		texto = { pt = "Os engenheiros discutem: locomotivas a diesel saem logo, mas eletrificar as linhas sai mais barato a longo prazo.", en = "The engineers argue: diesel locomotives are available now, but electrifying the lines is cheaper in the long run." },
+		opcoes = {
+			{ pt = "Diesel agora", en = "Diesel now", ef = { M("geral", 1.15, 15) } },
+			{ pt = "Começar a eletrificar", en = "Start electrifying", ef = { D(-3), M("manutencao", 0.75, 25), XP(30) } },
+		},
+	},
+	{
+		id = "eur_carvao_ruhr", mapa = "europa", era = "diesel", emoji = "carga_carvao", alvo = { regiao = "c" },
+		titulo = { pt = "Comunidade do Carvão e do Aço", en = "The Coal and Steel Community" },
+		texto = { pt = "Seis países vão juntar o carvão e o aço para nunca mais fazerem guerra. As ferrovias da %s podem levar o carvão sem tarifas de fronteira.", en = "Six countries will pool coal and steel so they never go to war again. Railways in %s can carry coal without border tariffs." },
+		opcoes = {
+			{ pt = "Entrar no acordo", en = "Join the agreement", ef = { M("regiao", 1.3, 15), XP(40) } },
+			{ pt = "Ficar com as tarifas", en = "Keep the tariffs", ef = { D(2) } },
+		},
+	},
+	{
+		id = "eur_ramais", mapa = "europa", era = "diesel", emoji = "linhas", alvo = nil,
+		titulo = { pt = "Fechar os ramais que dão prejuízo?", en = "Close the loss-making branch lines?" },
+		texto = { pt = "Um relatório do governo recomenda fechar milhares de quilômetros de ramais rurais e trocar por ônibus.", en = "A government report recommends closing thousands of kilometres of rural branch lines and replacing them with buses." },
+		opcoes = {
+			{ pt = "Fechar os ramais", en = "Close the branches", ef = { M("manutencao", 0.8, 20), M("geral", 0.95, 15) } },
+			{ pt = "Manter os ramais", en = "Keep the branches", ef = { D(-1), XP(40) } },
+		},
+	},
+	-- Elétrica
+	{
+		id = "eur_tgv", mapa = "europa", era = "eletrico", emoji = "trens", alvo = "linha",
+		titulo = { pt = "Um trem de alta velocidade na linha %s?", en = "A high-speed train on the %s line?" },
+		texto = { pt = "Os franceses mostram um trem que passa dos 260 km/h numa linha nova, sem curvas apertadas. Querem testar na sua linha.", en = "The French show a train that tops 260 km/h on a new line with no tight curves. They want to test it on your line." },
+		opcoes = {
+			{ pt = "Liberar o teste", en = "Allow the test", ef = { D(-2), M("linha", 1.4, 15), XP(40) } },
+			{ pt = "Recusar", en = "Decline", ef = {} },
+		},
+	},
+	{
+		id = "eur_eurocity", mapa = "europa", era = "eletrico", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "Trens EuroCity entre as capitais", en = "EuroCity trains between capitals" },
+		texto = { pt = "As ferrovias de vários países propõem trens rápidos com horário cadenciado e sem trocar de trem na fronteira.", en = "Railways from several countries propose fast trains on a regular timetable, with no change at the border." },
+		opcoes = {
+			{ pt = "Entrar na rede", en = "Join the network", ef = { D(-2), M("geral", 1.2, 20) } },
+			{ pt = "Seguir sozinho", en = "Go it alone", ef = { XP(10) } },
+		},
+	},
+	{
+		id = "eur_greve_geral", mapa = "europa", era = "eletrico", emoji = "alerta", alvo = nil,
+		titulo = { pt = "Os ferroviários ameaçam greve", en = "Railway workers threaten to strike" },
+		texto = { pt = "O sindicato pede aumento e menos horas. Sem acordo, os trens param no fim de semana.", en = "The union wants a raise and shorter hours. Without a deal, the trains stop this weekend." },
+		opcoes = {
+			{ pt = "Dar o aumento", en = "Give the raise", ef = { D(-2), XP(30) } },
+			{ pt = "Negociar devagar", en = "Negotiate slowly", ef = { SORTE(0.5, {}, { M("geral", 0.7, 10) }) } },
+		},
+	},
+	{
+		id = "eur_carga_conteineres", mapa = "europa", era = "eletrico", emoji = "cargas", alvo = nil,
+		titulo = { pt = "Contêineres dos portos", en = "Containers from the ports" },
+		texto = { pt = "Roterdã e Hamburgo recebem navios cheios de contêineres. Os caminhões não dão conta; as ferrovias podem levar a carga para o interior.", en = "Rotterdam and Hamburg receive ships full of containers. The trucks can't cope; the railways can carry the cargo inland." },
+		opcoes = {
+			{ pt = "Montar terminais de contêiner", en = "Build container terminals", ef = { D(-3), M("geral", 1.25, 20), XP(30) } },
+			{ pt = "Deixar para os caminhões", en = "Leave it to the trucks", ef = {} },
+		},
+	},
+	{
+		id = "eur_queda_muro", mapa = "europa", era = "eletrico", emoji = "linhas", alvo = nil,
+		titulo = { pt = "O Muro de Berlim caiu", en = "The Berlin Wall has fallen" },
+		texto = { pt = "As fronteiras do Leste se abrem e milhões querem viajar. Os trilhos entre Leste e Oeste precisam ser religados.", en = "The borders to the East are opening and millions want to travel. The tracks between East and West need reconnecting." },
+		opcoes = {
+			{ pt = "Religar as linhas já", en = "Reconnect the lines now", ef = { D(-3), M("geral", 1.3, 20), XP(60) } },
+			{ pt = "Esperar os governos", en = "Wait for the governments", ef = { M("geral", 1.1, 10) } },
+		},
+	},
+	{
+		id = "eur_tunel_canal", mapa = "europa", era = "eletrico", emoji = "construir", alvo = nil,
+		titulo = { pt = "Um túnel sob o Canal da Mancha", en = "A tunnel under the English Channel" },
+		texto = { pt = "Ingleses e franceses decidem, enfim, cavar o túnel. Procuram companhias para investir nos trens que vão passar por ele.", en = "The British and French finally decide to dig the tunnel. They are looking for companies to invest in the trains that will run through it." },
+		opcoes = {
+			{ pt = "Investir", en = "Invest", ef = { D(-4), SORTE(0.6, { M("geral", 1.3, 20) }, { M("geral", 0.95, 10) }) } },
+			{ pt = "Ficar de fora", en = "Stay out", ef = {} },
+		},
+	},
+	-- Alta velocidade
+	{
+		id = "eur_liberalizacao", mapa = "europa", era = "alta", emoji = "companhia", alvo = nil,
+		titulo = { pt = "Os trilhos se abrem à concorrência", en = "The tracks open to competition" },
+		texto = { pt = "Uma nova regra europeia deixa qualquer companhia rodar trens em qualquer país. Concorrentes chegam com passagens baratas.", en = "A new European rule lets any company run trains in any country. Rivals arrive with cheap fares." },
+		opcoes = {
+			{ pt = "Baixar as passagens também", en = "Cut fares too", ef = { M("geral", 1.15, 15), M("manutencao", 1.1, 15) } },
+			{ pt = "Apostar no conforto", en = "Bet on comfort", ef = { D(-2), XP(40) } },
+		},
+	},
+	{
+		id = "eur_trens_noturnos", mapa = "europa", era = "alta", emoji = "relogio", alvo = nil,
+		titulo = { pt = "A volta dos trens noturnos", en = "The return of night trains" },
+		texto = { pt = "Viajantes querem fugir dos aviões. Um consórcio propõe trens-leito entre as capitais, como nos tempos do Expresso do Oriente.", en = "Travellers want to avoid planes. A consortium proposes sleeper trains between capitals, as in the days of the Orient Express." },
+		opcoes = {
+			{ pt = "Relançar os trens noturnos", en = "Relaunch night trains", ef = { D(-2), M("geral", 1.2, 20), XP(40) } },
+			{ pt = "Só trens de dia", en = "Day trains only", ef = {} },
+		},
+	},
+	{
+		id = "eur_voo_curto", mapa = "europa", era = "alta", emoji = "linhas", alvo = nil,
+		titulo = { pt = "Fim dos voos curtos", en = "An end to short flights" },
+		texto = { pt = "O governo pensa em proibir voos onde o trem leva menos de duas horas e meia. As companhias aéreas protestam.", en = "The government is considering banning flights where the train takes under two and a half hours. The airlines protest." },
+		opcoes = {
+			{ pt = "Apoiar a proibição", en = "Support the ban", ef = { M("geral", 1.25, 15), XP(30) } },
+			{ pt = "Ficar neutro", en = "Stay neutral", ef = { D(1) } },
+		},
+	},
+	{
+		id = "eur_onda_calor", mapa = "europa", era = "alta", emoji = "alerta", alvo = "linha",
+		titulo = { pt = "Onda de calor na linha %s", en = "Heatwave on the %s line" },
+		texto = { pt = "Os trilhos dilatam com o calor e os trens precisam andar devagar. Dá para pintar os trilhos de branco ou trocar o lastro.", en = "The rails expand in the heat and trains must slow down. You can paint the rails white or replace the ballast." },
+		opcoes = {
+			{ pt = "Pintar os trilhos de branco", en = "Paint the rails white", ef = { D(-1), M("linha", 1.05, 10) } },
+			{ pt = "Trocar o lastro", en = "Replace the ballast", ef = { D(-3), XP(40) } },
+			{ pt = "Andar devagar por enquanto", en = "Go slow for now", ef = { M("linha", 0.7, 10) } },
+		},
+	},
+	{
+		id = "eur_hidrogenio", mapa = "europa", era = "alta", emoji = "construir", alvo = nil,
+		titulo = { pt = "Trens a hidrogênio", en = "Hydrogen trains" },
+		texto = { pt = "Uma fábrica alemã oferece trens a hidrogênio para as linhas que nunca foram eletrificadas.", en = "A German factory offers hydrogen trains for lines that were never electrified." },
+		opcoes = {
+			{ pt = "Comprar uma frota", en = "Buy a fleet", ef = { D(-3), M("manutencao", 0.8, 25), XP(40) } },
+			{ pt = "Esperar a tecnologia baratear", en = "Wait for it to get cheaper", ef = {} },
+		},
+	},
+	{
+		id = "eur_patrimonio", mapa = "europa", era = "alta", emoji = "medalha", alvo = "linha",
+		titulo = { pt = "Patrimônio da Humanidade na linha %s", en = "World Heritage on the %s line" },
+		texto = { pt = "A UNESCO quer declarar os viadutos e túneis antigos da linha Patrimônio da Humanidade. Turistas viriam, mas as reformas ficariam mais caras.", en = "UNESCO wants to declare the line's old viaducts and tunnels a World Heritage Site. Tourists would come, but repairs would cost more." },
+		opcoes = {
+			{ pt = "Aceitar o título", en = "Accept the title", ef = { M("linha", 1.3, 20), M("manutencao", 1.1, 20), XP(50) } },
+			{ pt = "Recusar", en = "Decline", ef = {} },
 		},
 	},
 }

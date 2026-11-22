@@ -640,4 +640,202 @@ return {
 			en = "The subway grows every year, the 2028 Olympics are coming and high-speed rail should one day link it to San Francisco.",
 		},
 	},
+	-- ================================================================ Europa
+	-- Diesel = 1935–1960, Elétrica = 1960–1990, Alta Velocidade = 1990 em diante (anos do mapa da Europa).
+	london = {
+		diesel = {
+			pt = "Os trens a vapor ainda dominavam, mas o metrô elétrico serviu de abrigo durante os bombardeios da guerra.",
+			en = "Steam still ruled, but the electric Underground served as a shelter during the wartime bombing.",
+		},
+		eletrico = {
+			pt = "O vapor acabou em 1968. A velha Euston foi demolida, e o protesto salvou a estação de St Pancras.",
+			en = "Steam ended in 1968. Old Euston was demolished, and the outcry saved St Pancras station.",
+		},
+		alta = {
+			pt = "Desde 2007 o Eurostar sai de St Pancras e chega a Paris em pouco mais de duas horas.",
+			en = "Since 2007 the Eurostar has left from St Pancras and reached Paris in just over two hours.",
+		},
+	},
+	paris = {
+		diesel = {
+			pt = "As ferrovias francesas foram unidas na SNCF em 1938. A Gare de l'Est viu partir e voltar os soldados da guerra.",
+			en = "The French railways were merged into the SNCF in 1938. The Gare de l'Est saw soldiers leave and return from the war.",
+		},
+		eletrico = {
+			pt = "Em 1981 o TGV ligou Paris a Lyon em duas horas, a 260 km/h: o começo da alta velocidade na Europa.",
+			en = "In 1981 the TGV linked Paris to Lyon in two hours, at 260 km/h: the start of high-speed rail in Europe.",
+		},
+		alta = {
+			pt = "Centro da maior rede de alta velocidade da Europa, com trens para Londres, Bruxelas, Amsterdã e Barcelona.",
+			en = "Hub of Europe's largest high-speed network, with trains to London, Brussels, Amsterdam and Barcelona.",
+		},
+	},
+	berlin = {
+		diesel = {
+			pt = "A guerra destruiu as estações. Depois, a cidade foi dividida, e as linhas entre o Leste e o Oeste foram cortadas.",
+			en = "The war destroyed the stations. Afterwards the city was divided, and the lines between East and West were cut.",
+		},
+		eletrico = {
+			pt = "O Muro, de 1961, separou os trilhos. Os trens do Oeste cruzavam a Alemanha Oriental com as portas trancadas.",
+			en = "The Wall, from 1961, split the tracks. Western trains crossed East Germany with their doors locked.",
+		},
+		alta = {
+			pt = "A Hauptbahnhof, de 2006, reuniu a cidade num só lugar, com trens cruzando em dois níveis.",
+			en = "The Hauptbahnhof, opened in 2006, brought the city together in one place, with trains crossing on two levels.",
+		},
+	},
+	istanbul = {
+		diesel = {
+			pt = "A estação de Sirkeci, ponta final do Expresso do Oriente, recebia viajantes de toda a Europa.",
+			en = "Sirkeci station, the Orient Express terminus, welcomed travellers from all over Europe.",
+		},
+		eletrico = {
+			pt = "Os carros e os aviões tiraram passageiros do trem. O Expresso do Oriente parou de chegar aqui em 1977.",
+			en = "Cars and planes took passengers from the train. The Orient Express stopped coming here in 1977.",
+		},
+		alta = {
+			pt = "Desde 2013 o túnel Marmaray passa sob o Bósforo e liga, de trem, a Europa à Ásia.",
+			en = "Since 2013 the Marmaray tunnel has run under the Bosphorus, linking Europe to Asia by rail.",
+		},
+	},
+	wien = {
+		diesel = {
+			pt = "Depois da guerra, a cidade foi dividida entre os Aliados até 1955, e as estações tiveram que ser reconstruídas.",
+			en = "After the war the city was divided among the Allies until 1955, and the stations had to be rebuilt.",
+		},
+		eletrico = {
+			pt = "Os trens elétricos passaram a subir o Semmering, e Viena virou ponte entre o Leste e o Oeste.",
+			en = "Electric trains began climbing the Semmering, and Vienna became a bridge between East and West.",
+		},
+		alta = {
+			pt = "A nova Hauptbahnhof, de 2014, juntou as linhas do sul e do leste numa estação só.",
+			en = "The new Hauptbahnhof, opened in 2014, joined the southern and eastern lines in a single station.",
+		},
+	},
+	roma = {
+		diesel = {
+			pt = "A nova estação Termini, com seu saguão modernista, ficou pronta em 1950.",
+			en = "The new Termini station, with its modernist hall, was finished in 1950.",
+		},
+		eletrico = {
+			pt = "A Direttissima Roma–Florença, de 1977, foi a primeira linha de alta velocidade da Europa.",
+			en = "The Rome–Florence Direttissima, from 1977, was Europe's first high-speed line.",
+		},
+		alta = {
+			pt = "Os trens Frecciarossa ligam Roma a Milão em três horas.",
+			en = "Frecciarossa trains link Rome to Milan in three hours.",
+		},
+	},
+	madrid = {
+		diesel = {
+			pt = "Depois da Guerra Civil, as ferrovias espanholas foram unidas na RENFE, em 1941.",
+			en = "After the Civil War, the Spanish railways were merged into RENFE in 1941.",
+		},
+		eletrico = {
+			pt = "O trem Talgo, leve e articulado, começou a mudar de bitola sem parar na fronteira francesa.",
+			en = "The light, articulated Talgo train began changing gauge without stopping at the French border.",
+		},
+		alta = {
+			pt = "Em 1992 o AVE ligou Madri a Sevilha. Hoje a Espanha tem a maior rede de alta velocidade da Europa.",
+			en = "In 1992 the AVE linked Madrid to Seville. Today Spain has Europe's largest high-speed network.",
+		},
+	},
+	lisboa = {
+		diesel = {
+			pt = "A estação do Rossio, com fachada neomanuelina, recebia os trens que saíam de um túnel sob a cidade.",
+			en = "Rossio station, with its neo-Manueline façade, received trains coming out of a tunnel under the city.",
+		},
+		eletrico = {
+			pt = "Os trens elétricos chegaram à Linha do Norte, e a ponte 25 de Abril ganhou trilhos em 1999.",
+			en = "Electric trains reached the Northern Line, and the 25 de Abril bridge got rails in 1999.",
+		},
+		alta = {
+			pt = "A Gare do Oriente, de 1998, foi feita para a Expo e virou a porta de entrada da cidade.",
+			en = "Gare do Oriente, from 1998, was built for the Expo and became the city's gateway.",
+		},
+	},
+	amsterdam = {
+		diesel = {
+			pt = "A Centraal Station, sobre ilhas artificiais, seguia sendo o coração da rede holandesa.",
+			en = "Centraal Station, built on artificial islands, remained the heart of the Dutch network.",
+		},
+		eletrico = {
+			pt = "Os holandeses criaram trens com horário cadenciado: um trem a cada meia hora em quase todas as linhas.",
+			en = "The Dutch introduced clock-face timetables: a train every half hour on almost every line.",
+		},
+		alta = {
+			pt = "Trens de alta velocidade ligam Amsterdã a Paris, Bruxelas e Londres.",
+			en = "High-speed trains link Amsterdam to Paris, Brussels and London.",
+		},
+	},
+	bruxelles = {
+		diesel = {
+			pt = "A Junção Norte–Sul, um túnel sob o centro, começou a ser cavada para ligar as estações da cidade.",
+			en = "The North–South Junction, a tunnel under the centre, was begun to link the city's stations.",
+		},
+		eletrico = {
+			pt = "A Junção Norte–Sul ficou pronta em 1952 e virou uma das linhas mais movimentadas da Europa.",
+			en = "The North–South Junction opened in 1952 and became one of Europe's busiest lines.",
+		},
+		alta = {
+			pt = "Encruzilhada da alta velocidade entre Paris, Londres, Amsterdã e Colônia.",
+			en = "A high-speed crossroads between Paris, London, Amsterdam and Cologne.",
+		},
+	},
+	hamburg = {
+		diesel = {
+			pt = "O porto e a estação foram bombardeados; a reconstrução trouxe de volta os navios e os trens.",
+			en = "The port and the station were bombed; reconstruction brought back the ships and the trains.",
+		},
+		eletrico = {
+			pt = "O porto de contêineres cresceu e os trens de carga passaram a levar as caixas para toda a Europa Central.",
+			en = "The container port grew, and freight trains began carrying the boxes all over Central Europe.",
+		},
+		alta = {
+			pt = "Os trens ICE ligam Hamburgo a Berlim em menos de duas horas.",
+			en = "ICE trains link Hamburg to Berlin in under two hours.",
+		},
+	},
+	milano = {
+		diesel = {
+			pt = "A estação Centrale, monumental, ficou pronta em 1931; os trens do Gotardo e do Simplon chegavam aqui.",
+			en = "The monumental Centrale station was finished in 1931; Gotthard and Simplon trains arrived here.",
+		},
+		eletrico = {
+			pt = "Capital do milagre econômico italiano, com trens lotados de trabalhadores que vinham do sul.",
+			en = "Capital of Italy's economic miracle, with trains packed with workers coming from the south.",
+		},
+		alta = {
+			pt = "O túnel de base do Gotardo, de 2016, o mais longo do mundo, aproximou Milão de Zurique.",
+			en = "The Gotthard Base Tunnel, from 2016, the world's longest, brought Milan closer to Zurich.",
+		},
+	},
+	munchen = {
+		diesel = {
+			pt = "A estação central foi muito danificada na guerra e reconstruída nos anos 1950.",
+			en = "The central station was badly damaged in the war and rebuilt in the 1950s.",
+		},
+		eletrico = {
+			pt = "Para os Jogos Olímpicos de 1972, a cidade ganhou o S-Bahn, com trens elétricos sob o centro.",
+			en = "For the 1972 Olympics the city got the S-Bahn, with electric trains under the centre.",
+		},
+		alta = {
+			pt = "A nova linha de alta velocidade, de 2017, levou Munique a Berlim em menos de quatro horas.",
+			en = "The new high-speed line, from 2017, brought Munich to within four hours of Berlin.",
+		},
+	},
+	budapest = {
+		diesel = {
+			pt = "A estação Keleti, de 1884, seguia como a grande porta de entrada da Hungria.",
+			en = "Keleti station, from 1884, remained Hungary's great gateway.",
+		},
+		eletrico = {
+			pt = "Atrás da Cortina de Ferro, os trens ligavam Budapeste a Moscou e a Viena, com longas paradas na fronteira.",
+			en = "Behind the Iron Curtain, trains linked Budapest to Moscow and Vienna, with long stops at the border.",
+		},
+		alta = {
+			pt = "Os trens Railjet ligam Budapeste a Viena e Munique sem trocar de trem.",
+			en = "Railjet trains link Budapest to Vienna and Munich without changing trains.",
+		},
+	},
 } :: { [string]: { [string]: Texto } }
