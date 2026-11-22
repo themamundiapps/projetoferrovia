@@ -148,29 +148,10 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	zoom:GetPropertyChangedSignal("AbsoluteSize"):Connect(posicionarZoom)
 	posicionarZoom()
 
-	-- ---------------------------------------------------- gavetas (puxadores nas bordas da tela)
-	-- esquerda: a companhia (ou a última aba aberta); direita: as linhas, com o painel do lado direito
+	-- os painéis abrem pelos medalhões da barra de baixo (as gavetas das laterais saíram: repetiam
+	-- Companhia e Linhas). O painel fica à esquerda; "dir" continua existindo para quem abrir por código.
 	self.lado = "esq"
 	self.ultimaAba = "companhia"
-	local gavetaEsq = est:abaLateral(L("Companhia", "Company"), "esq", tela)
-	local gavetaDir = est:abaLateral(L("Linhas", "Lines"), "dir", tela)
-	table.insert(self.instancias, gavetaEsq)
-	table.insert(self.instancias, gavetaDir)
-	self.gavetas = { esq = gavetaEsq, dir = gavetaDir }
-	gavetaEsq.Activated:Connect(function()
-		if self.aba and self.lado == "esq" then
-			self:abrirAba(nil)
-		else
-			self:abrirAba(if self.ultimaAba == "linhas" or self.ultimaAba == "metas" then "companhia" else self.ultimaAba, "esq")
-		end
-	end)
-	gavetaDir.Activated:Connect(function()
-		if self.aba and self.lado == "dir" then
-			self:abrirAba(nil)
-		else
-			self:abrirAba("linhas", "dir")
-		end
-	end)
 	-- a ficha da cidade e a concessão abrem à direita: o painel da direita sai da frente
 	local function vigiar(filho: Instance)
 		if (filho.Name == "Ficha" or filho.Name == "Concessao") and filho:IsA("GuiObject") then
@@ -235,7 +216,7 @@ function Menu.posicionarAbaixoDe(self: Menu, y: number)
 	self._topoY = y
 	-- com a moldura do kit, as caixas ganham uma borda por fora: o vão entre elas cresce junto
 	local b = self.est:bordaKit()
-	-- o painel encosta na gaveta do lado em que foi aberto
+	-- o painel fica no lado em que foi aberto (normalmente à esquerda)
 	local dir = self.lado == "dir"
 	local margem = Estilo.MARGEM_LATERAL + b
 	self.painel.AnchorPoint = Vector2.new(if dir then 1 else 0, 0)

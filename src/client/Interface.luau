@@ -207,10 +207,12 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 	end
 
 	-- companhia: nome inteiro e título do presidente
+	-- (escondido desde 22/11: o nome quase não muda e já aparece na aba Companhia e no placar;
+	-- a barra fica mais curta e cabe melhor no celular)
 	local blocoNome = bloco(esquerda, "Companhia", 1)
+	blocoNome.Visible = false
 	self.lblNome = textoTopo(blocoNome, 1, f.display, 20, CREME)
 	self.lblNome.Name = "NomeCompanhia"
-	separador(esquerda, 2)
 	-- caixa e renda
 	local _, lblDinheiro, lblRenda = item(esquerda, "Caixa", 3, "dinheiro", Emojis.dinheiro, 24, 36)
 	self.lblDinheiro, self.lblRenda = lblDinheiro, lblRenda

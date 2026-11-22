@@ -57,7 +57,10 @@ function Placar.new(tela: ScreenGui, era: any, simbolo: string?): Placar
 	local c, f = est.c, era.fontes
 	local self = setmetatable({}, Placar) :: Placar
 	self.linhas = {}
-	self.aberto = true
+	-- fechado (só o título) quando o jogador está sozinho; abre sozinho com 2 ou mais no servidor,
+	-- até o jogador abrir ou fechar na mão
+	self.aberto = #Players:GetPlayers() >= 2;
+	(self :: any).escolhaManual = false
 	self.escondido = false
 	self.vivo = true
 	self.simbolo = simbolo
@@ -103,7 +106,8 @@ function Placar.new(tela: ScreenGui, era: any, simbolo: string?): Placar
 		ZIndex = 28,
 	}, corpo)
 	self.titulo.Activated:Connect(function()
-		self.aberto = not self.aberto
+		self.aberto = not self.aberto;
+		(self :: any).escolhaManual = true
 		self.lista.Visible = self.aberto
 		self:_titulo()
 	end)
@@ -251,6 +255,10 @@ function Placar._foto(self: Placar, img: ImageLabel, userId: number)
 end
 
 function Placar.atualizar(self: Placar)
+	if not (self :: any).escolhaManual then
+		self.aberto = #Players:GetPlayers() >= 2
+		self.lista.Visible = self.aberto
+	end
 	self:_titulo()
 	local lista = {}
 	for _, j in Players:GetPlayers() do

@@ -48,7 +48,7 @@ function Estilo.compensar(obj: GuiObject, minimo: number, aoMudar: ((number) -> 
 	aplicar()
 end
 
-local MINIMO_TOPO, MINIMO_GAVETA = 0.82, 0.95
+local MINIMO_TOPO, MINIMO_GAVETA = 0.82, 0.95 -- MINIMO_GAVETA: só Estilo.abaLateral (sem uso desde 22/11)
 -- Recorte da câmera / cantos do celular (área segura), em pontos da tela virtual, de cada lado.
 -- A interface vai até a borda física da tela; só o que é clicável ou texto desvia disso.
 Estilo.INSET_ESQ, Estilo.INSET_DIR = 0, 0
@@ -58,8 +58,8 @@ function Estilo.definirEscala(s: number, insetEsq: number?, insetDir: number?)
 	-- a barra de cima e as gavetas ficam maiores (em pontos da tela virtual) quando compensadas:
 	-- quem se posiciona abaixo da barra ou ao lado das gavetas lê estes dois valores
 	Estilo.TOPO_TELA = Estilo.ALTURA_TOPO * math.max(1, MINIMO_TOPO / s)
-	Estilo.MARGEM_LATERAL = Estilo.LARGURA_ABA_LATERAL * math.max(1, MINIMO_GAVETA / s) + 10
-		+ math.max(Estilo.INSET_ESQ, Estilo.INSET_DIR)
+	-- sem as gavetas laterais (saíram em 22/11): os painéis começam perto da borda, fora do recorte do celular
+	Estilo.MARGEM_LATERAL = 14 + math.max(Estilo.INSET_ESQ, Estilo.INSET_DIR)
 	for u, aplicar in compensados do
 		if u.Parent then
 			aplicar()
@@ -855,7 +855,7 @@ end
 Estilo.ALTURA_TOPO = 70 -- barra de cima (dentro dela)
 Estilo.TOPO_TELA = 70 -- altura que a barra de cima ocupa na tela (maior quando compensada; definirEscala)
 Estilo.LARGURA_ABA_LATERAL = 34 -- puxador das gavetas, colado nas bordas
-Estilo.MARGEM_LATERAL = 34 + 10 -- onde começam os painéis encostados nas gavetas (definirEscala)
+Estilo.MARGEM_LATERAL = 14 -- onde começam os painéis nas laterais (definirEscala)
 Estilo.CREME = Color3.fromRGB(240, 226, 196) -- texto sobre a madeira
 Estilo.CREME_FRACO = Color3.fromRGB(205, 184, 150)
 Estilo.VERDE_CLARO = Color3.fromRGB(150, 205, 130)

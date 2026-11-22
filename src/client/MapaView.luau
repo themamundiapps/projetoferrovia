@@ -149,6 +149,8 @@ local ZOOM_ROTULO = { [5] = 0, [4] = 0.8, [3] = 1.6, [2] = 2.6, [1] = 4 }
 local ZOOM_MAX = 8
 -- A partir deste zoom, as regiões de detalhe (alta resolução) aparecem por cima do mapa base.
 local ZOOM_DETALHE = 1.8
+-- A partir deste zoom aparecem os nomes de regiões e rios.
+local ZOOM_ROTULO_DETALHE = 1.6
 
 -- Ordem das camadas (ZIndex).
 local Z = {
@@ -389,7 +391,13 @@ function MapaView._criarRotulosMapa(self: MapaView, dados: any)
 			Rotation = r.angulo or 0,
 			ZIndex = Z.rotuloMapa,
 		}, self.conteudo) :: TextLabel
-		table.insert(self.rotulosMapa, { pos = r.pos, zoomMin = r.zoomMin or 0, zoomMax = r.zoomMax or 99, label = label })
+		-- nomes de regiões e rios só bem de perto (com o país inteiro na tela, eles se misturam com
+		-- as cidades, as cargas e os trens); estados e oceanos seguem o que os dados pedem
+		local zoomMin = r.zoomMin or 0
+		if r.tipo == "regiao" or r.tipo == "rio" then
+			zoomMin = math.max(zoomMin, ZOOM_ROTULO_DETALHE)
+		end
+		table.insert(self.rotulosMapa, { pos = r.pos, zoomMin = zoomMin, zoomMax = r.zoomMax or 99, label = label })
 	end
 end
 
