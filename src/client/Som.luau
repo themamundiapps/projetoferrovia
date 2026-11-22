@@ -137,6 +137,7 @@ function Som.definirMapa(id: string)
 		return
 	end
 	mapaAtual = id
+	fila = {} -- a fila embaralhada era do mapa anterior
 	if tocando then
 		local s = tocando
 		tocando = nil
