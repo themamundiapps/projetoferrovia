@@ -50,6 +50,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.estado = nil :: any
 	self.aba = nil :: string?
 	self.verCreditos = false -- dentro de Ajustes: lista de créditos no lugar das opções
+	self.verConquistas = false -- dentro de Companhia: a galeria de conquistas no lugar do resumo
 	self.ajustes = { nomesEstacoes = true, nomesMapa = true, trens = true, musica = true, efeitos = true }
 	self.aoAgir = Instance.new("BindableEvent") -- (tipo, args)
 	self.aoFocarLinha = Instance.new("BindableEvent") -- (linhaId)
@@ -251,6 +252,7 @@ function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 		-- aba nova começa do topo (o redesenho guarda a rolagem só dentro da mesma aba)
 		self.rolagem.CanvasPosition = Vector2.zero
 		self.verCreditos = false
+		self.verConquistas = false
 	end
 	self.aba = aba
 	if aba then
@@ -1493,6 +1495,10 @@ end
 
 function Menu._abaCompanhia(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	if self.verConquistas and estado then
+		self:_conquistas()
+		return
+	end
 	est:titulo(L(`{Emojis.companhia} Companhia`, `{Emojis.companhia} Company`), r, 1)
 	if not estado then
 		return
@@ -1518,7 +1524,7 @@ function Menu._abaCompanhia(self: Menu)
 		r,
 		5
 	)
-	est:divisor(r, 6)
+	self:_resumoConquistas(6)
 
 	local sat = math.round(st.satisfacao * 100)
 	est:texto("subtitulo", L(`{Emojis.satisfacao} Satisfação: {sat}%`, `{Emojis.satisfacao} Satisfaction: {sat}%`), r, 7)
@@ -1624,20 +1630,247 @@ function Menu._abaCompanhia(self: Menu)
 	end
 	est:texto("corpo", table.concat(linhasRanking, "\n"), r, 37)
 	est:texto("fraco", L("O ranking conta o nível e as linhas completas, que vêm de jogar. Dinheiro não entra.", "The leaderboard counts level and complete lines, which come from playing. Money doesn't count."), r, 38)
+end
 
-	-- medalhas
-	local ganhas = estado.medalhas or {}
-	local nGanhas = 0
-	for _ in ganhas do
-		nGanhas += 1
+-- ---------------------------------------------------------------- conquistas (medalhas)
+
+-- Grupos da galeria, na ordem em que aparecem. Medalha que não está em nenhum grupo vai para "Outras".
+local GRUPOS_CONQUISTAS = {
+	{ nome = { pt = "Primeiros passos", en = "First steps" }, ids = { "primeiro_apito", "linha_inaugurada", "frota_10", "do_papel_ao_trilho" } },
+	{ nome = { pt = "Cargas", en = "Cargo" }, ids = { "cafe_no_porto", "carvao_no_porto", "minerio_no_porto", "graos_no_porto" } },
+	{ nome = { pt = "Operação", en = "Operations" }, ids = { "ninguem_na_plataforma", "passageiros_felizes", "grande_estacao", "malha_integrada" } },
+	{ nome = { pt = "Negócios", en = "Business" }, ids = { "bom_pagador", "palavra_cumprida", "primeiro_milhao" } },
+	{ nome = { pt = "Eras", en = "Eras" }, ids = { "adeus_vapor", "fio_no_trilho", "bala_de_prata" } },
+	{ nome = { pt = "Grandes obras", en = "Great works" }, ids = { "obra_entregue", "sonhador", "pais_nos_trilhos" } },
+}
+
+local OURO = Color3.fromRGB(214, 168, 72)
+
+-- Medalhão redondo com o emoji: colorido quando ganho, apagado com cadeado quando não.
+local function medalhaoConquista(est: any, pai: Instance, emoji: string, ganha: boolean, tamanho: number, ordem: number?): Frame
+	local c = est:paleta(pai)
+	local fr = novo("Frame", {
+		Name = "Medalhao",
+		LayoutOrder = ordem or 0,
+		Size = UDim2.fromOffset(tamanho, tamanho),
+		BackgroundColor3 = if ganha then c.accent else c.rule,
+		BackgroundTransparency = if ganha then 0 else 0.55,
+		ZIndex = 34,
+	}, pai) :: Frame
+	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, fr)
+	novo("UIStroke", { Color = if ganha then OURO else c.rule, Thickness = if ganha then 3 else 1.5 }, fr)
+	novo("TextLabel", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Text = emoji,
+		TextSize = math.floor(tamanho * 0.52),
+		TextTransparency = if ganha then 0 else 0.7,
+		ZIndex = 35,
+	}, fr)
+	if not ganha then
+		novo("TextLabel", {
+			AnchorPoint = Vector2.new(1, 1),
+			Position = UDim2.fromScale(1.08, 1.08),
+			Size = UDim2.fromOffset(math.floor(tamanho * 0.42), math.floor(tamanho * 0.42)),
+			BackgroundTransparency = 1,
+			Text = Emojis.cadeado,
+			TextSize = math.floor(tamanho * 0.32),
+			ZIndex = 36,
+		}, fr)
 	end
-	est:divisor(r, 40)
-	est:texto("subtitulo", L(`{Emojis.medalha} Medalhas: {nGanhas} de {#Metas.MEDALHAS}`, `{Emojis.medalha} Medals: {nGanhas} of {#Metas.MEDALHAS}`), r, 41)
-	for i, m in Metas.MEDALHAS do
-		local tem = ganhas[m.id] ~= nil
-		local emoji = if tem then (Emojis :: any)[m.emoji] or Emojis.medalha else Emojis.cadeado
-		local l = est:texto(if tem then "corpo" else "fraco", `{emoji} <b>{m.nome}</b> · {m.descricao}`, r, 41 + i)
-		l.Name = "Medalha_" .. m.id
+	return fr
+end
+
+-- Contagem das medalhas deste mapa: ganhas, total, XP ganho e XP total.
+local function contarConquistas(estado: any, dados: any): (number, number, number, number)
+	local ganhas, total, xp, xpTotal = 0, 0, 0, 0
+	for _, m in Metas.medalhasDoMapa(dados) do
+		total += 1
+		xpTotal += m.xp or 0
+		if (estado.medalhas or {})[m.id] then
+			ganhas += 1
+			xp += m.xp or 0
+		end
+	end
+	return ganhas, total, xp, xpTotal
+end
+
+-- Cartão de resumo na aba Companhia: contagem, barra, as últimas ganhas e o botão da galeria.
+function Menu._resumoConquistas(self: Menu, ordem: number)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	local ganhas, total = contarConquistas(estado, dados)
+	local cartao, txt = novoCartao(est, r, "ResumoConquistas", ordem, true)
+	txt("subtitulo", L(`{Emojis.medalha} Conquistas · {ganhas} de {total}`, `{Emojis.medalha} Achievements · {ganhas} of {total}`), 1)
+	local cheio = est:barra(cartao, 2)
+	cheio.Size = UDim2.fromScale(if total > 0 then ganhas / total else 0, 1)
+	-- fileira com as últimas medalhas ganhas (as mais recentes primeiro)
+	local recentes = {}
+	for _, m in Metas.medalhasDoMapa(dados) do
+		local quando = (estado.medalhas or {})[m.id]
+		if quando then
+			table.insert(recentes, { m = m, quando = tonumber(quando) or 0 })
+		end
+	end
+	table.sort(recentes, function(a, b)
+		return a.quando > b.quando
+	end)
+	if #recentes > 0 then
+		local fileira = novo("Frame", {
+			Name = "Recentes",
+			LayoutOrder = 3,
+			Size = UDim2.new(1, 0, 0, 48),
+			BackgroundTransparency = 1,
+			ZIndex = 33,
+		}, cartao)
+		est:lista(fileira, 8, true)
+		for i = 1, math.min(5, #recentes) do
+			medalhaoConquista(est, fileira, (Emojis :: any)[recentes[i].m.emoji] or Emojis.medalha, true, 44, i)
+		end
+	else
+		txt("fraco", L("Nenhuma ainda. A primeira vem com o primeiro trecho construído.", "None yet. The first one comes with your first section."), 3)
+	end
+	local b = est:botao("secundario", L(`{Emojis.medalha} Ver todas as conquistas`, `{Emojis.medalha} See all achievements`), cartao, 4)
+	b.Name = "VerConquistas"
+	b.ZIndex = 33
+	b.Activated:Connect(function()
+		self.verConquistas = true
+		self.rolagem.CanvasPosition = Vector2.zero
+		self:_redesenhar()
+	end)
+end
+
+-- Galeria de conquistas: grade de medalhões por grupo, com progresso nas que contam algo.
+function Menu._conquistas(self: Menu)
+	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
+	est:titulo(L(`{Emojis.medalha} Conquistas`, `{Emojis.medalha} Achievements`), r, 1)
+	local bVolta = est:botao("secundario", L("Voltar à companhia", "Back to company"), r, 2)
+	bVolta.Activated:Connect(function()
+		self.verConquistas = false
+		self.rolagem.CanvasPosition = Vector2.zero
+		self:_redesenhar()
+	end)
+
+	-- cabeçalho: contagem grande, barra e XP
+	local ganhas, total, xp, xpTotal = contarConquistas(estado, dados)
+	local cab, txt = novoCartao(est, r, "Cabecalho", 3, true)
+	local topo = novo("Frame", {
+		Name = "Topo",
+		LayoutOrder = 1,
+		Size = UDim2.new(1, 0, 0, 64),
+		BackgroundTransparency = 1,
+		ZIndex = 33,
+	}, cab)
+	est:lista(topo, 12, true)
+	medalhaoConquista(est, topo, Emojis.medalha, ganhas > 0, 60, 1)
+	local col = novo("Frame", {
+		LayoutOrder = 2,
+		Size = UDim2.new(1, -72, 1, 0),
+		BackgroundTransparency = 1,
+		ZIndex = 33,
+	}, topo)
+	est:lista(col, 2)
+	local lNum = est:texto("titulo", `{ganhas} / {total}`, col, 1)
+	lNum.ZIndex = 34
+	local lSub = est:texto("fraco", L(`{xp} de {xpTotal} XP ganhos com conquistas`, `{xp} of {xpTotal} XP earned from achievements`), col, 2)
+	lSub.ZIndex = 34
+	local cheio = est:barra(cab, 2)
+	cheio.Size = UDim2.fromScale(if total > 0 then ganhas / total else 0, 1)
+	txt("fraco", L("Cada mapa tem as suas conquistas. Elas dão XP, e o XP sobe o nível da companhia.", "Each map has its own achievements. They give XP, and XP raises your company level."), 3)
+
+	-- grupos
+	local doMapa = {}
+	for _, m in Metas.medalhasDoMapa(dados) do
+		doMapa[m.id] = m
+	end
+	local usadas = {}
+	local grupos = {}
+	for _, g in GRUPOS_CONQUISTAS do
+		local lista = {}
+		for _, id in g.ids do
+			if doMapa[id] then
+				table.insert(lista, doMapa[id])
+				usadas[id] = true
+			end
+		end
+		if #lista > 0 then
+			table.insert(grupos, { nome = Idioma.t(g.nome), lista = lista })
+		end
+	end
+	local outras = {}
+	for _, m in Metas.medalhasDoMapa(dados) do
+		if not usadas[m.id] then
+			table.insert(outras, m)
+		end
+	end
+	if #outras > 0 then
+		table.insert(grupos, { nome = L("Outras", "Other"), lista = outras })
+	end
+
+	local ordem = 10
+	for _, g in grupos do
+		local nG = 0
+		for _, m in g.lista do
+			if (estado.medalhas or {})[m.id] then
+				nG += 1
+			end
+		end
+		ordem += 1
+		est:texto("rotulo", Idioma.maiusculas(`{g.nome} · {nG}/{#g.lista}`), r, ordem)
+		ordem += 1
+		local grade = novo("Frame", {
+			Name = "Grade",
+			LayoutOrder = ordem,
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			ZIndex = 32,
+		}, r)
+		novo("UIGridLayout", {
+			CellSize = UDim2.new(0.5, -5, 0, 190),
+			CellPadding = UDim2.fromOffset(10, 10),
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}, grade)
+		for i, m in g.lista do
+			local quando = (estado.medalhas or {})[m.id]
+			local ganha = quando ~= nil
+			local tile = est:cartao({
+				Name = "Medalha_" .. m.id,
+				LayoutOrder = i,
+				ZIndex = 32,
+			}, grade, ganha)
+			local lista = est:lista(tile, 4)
+			if lista then
+				(lista :: any).HorizontalAlignment = Enum.HorizontalAlignment.Center
+			end
+			medalhaoConquista(est, tile, (Emojis :: any)[m.emoji] or Emojis.medalha, ganha, 50, 1)
+			local lNome = est:texto("corpo", `<b>{m.nome}</b>`, tile, 2)
+			lNome.TextXAlignment = Enum.TextXAlignment.Center
+			lNome.ZIndex = 33
+			local lDesc = est:texto("fraco", m.descricao, tile, 3)
+			lDesc.TextXAlignment = Enum.TextXAlignment.Center
+			lDesc.TextSize = 12
+			lDesc.ZIndex = 33
+			local atual, alvo = Metas.progressoMedalha(m, estado, dados)
+			if not ganha and atual and alvo and alvo > 0 then
+				local barra = est:barra(tile, 4)
+				barra.Size = UDim2.fromScale(math.clamp(atual / alvo, 0, 1), 1)
+				local fmt = if alvo >= 1e4 then Economia.formatar(math.min(atual, alvo), dados.simbolo) .. " / " .. Economia.formatar(alvo, dados.simbolo)
+					else `{math.min(math.floor(atual), alvo)} / {alvo}`
+				local lProg = est:texto("rotulo", fmt, tile, 5)
+				lProg.TextXAlignment = Enum.TextXAlignment.Center
+				lProg.ZIndex = 33
+			else
+				local rodape = if ganha
+					then L(`{Emojis.confirmar} Ganha em {os.date("%d/%m", tonumber(quando) or 0)} · +{m.xp} XP`, `{Emojis.confirmar} Earned {os.date("%m/%d", tonumber(quando) or 0)} · +{m.xp} XP`)
+					else `+{m.xp} XP`
+				local lRod = est:texto("rotulo", rodape, tile, 5)
+				lRod.TextXAlignment = Enum.TextXAlignment.Center
+				lRod.ZIndex = 33
+				if ganha then
+					lRod.TextColor3 = est:paleta(tile).positive
+				end
+			end
+		end
 	end
 end
 
