@@ -416,20 +416,6 @@ local function montar(eraId: string, mapaNovo: boolean?)
 			mapa:focar(minimo, maximo, 80)
 		elseif chave == "menuInicial" then
 			abrirMenuInicial()
-		elseif chave == "idioma" then
-			-- troca o idioma e remonta a interface inteira; o servidor passa a responder no idioma novo
-			Idioma.definir(if Idioma.atual == "pt" then "en" else "pt")
-			Economia.traduzir(Idioma.atual)
-			Theme.traduzir(Idioma.atual)
-			Metas.traduzir(Idioma.atual)
-			traduzirNomes(Idioma.atual)
-			task.spawn(function()
-				remoteAcao:InvokeServer("idioma", { idioma = Idioma.atual })
-			end)
-			task.defer(function()
-				montar(eraAtual or "vapor")
-				menu:abrirAba("ajustes")
-			end)
 		elseif chave == "musica" or chave == "efeitos" then
 			ajustesSalvos[chave] = valor
 			Som.definir(chave, valor)
@@ -707,6 +693,25 @@ end
 
 montar("vapor")
 Som.observarCliques(telaUI)
+
+-- O idioma segue o do Roblox: quando o jogador troca no menu do Roblox, tudo é traduzido e remontado
+-- e o servidor passa a responder no idioma novo.
+Idioma.aoMudarNoRoblox(function(novo: string)
+	Idioma.definir(novo)
+	Economia.traduzir(novo)
+	Theme.traduzir(novo)
+	Metas.traduzir(novo)
+	traduzirNomes(novo)
+	task.spawn(function()
+		remoteAcao:InvokeServer("idioma", { idioma = novo })
+	end)
+	task.defer(function()
+		montar(eraAtual or "vapor")
+		if inicio.aberto and ultimoEstado then
+			inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, dadosAtual)
+		end
+	end)
+end)
 remoteEstado.OnClientEvent:Connect(aplicarEstado)
 task.spawn(function()
 	aplicarEstado(remotePedirEstado:InvokeServer())

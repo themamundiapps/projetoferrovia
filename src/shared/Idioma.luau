@@ -1,8 +1,9 @@
 --!strict
 -- Idioma: textos em português e inglês.
--- No cliente o idioma sai do aparelho do jogador (LocaleId): português para "pt-*", inglês para o resto.
--- O jogador troca em Ajustes (Idioma.definir). No servidor fica "pt"; as mensagens que o servidor manda
--- para um jogador usam o idioma da sessão dele (Jogo.luau).
+-- No cliente o idioma é o que o jogador escolheu no menu do Roblox (Configurações › Idioma):
+-- português para "pt-*", inglês para o resto. Quando ele troca lá, o cliente remonta a interface
+-- (Idioma.aoMudarNoRoblox). No servidor fica "pt"; as mensagens que o servidor manda para um jogador
+-- usam o idioma da sessão dele (Jogo.luau).
 -- Três jeitos de traduzir:
 --   Idioma.L("texto", "text")    -- par no próprio lugar (o jeito mais usado na interface)
 --   Idioma.t({ pt = …, en = … })  -- par que vem dos dados
@@ -13,11 +14,16 @@ local RunService = game:GetService("RunService")
 
 local Idioma = {}
 
--- "pt" ou "en"
+local LocalizationService = game:GetService("LocalizationService")
+
+-- "pt" ou "en", pelo idioma do Roblox do jogador
 local function detectar(): string
 	if RunService:IsClient() then
 		local jogador = Players.LocalPlayer
 		local local_ = if jogador then string.lower(jogador.LocaleId or "") else ""
+		if local_ == "" then
+			local_ = string.lower(LocalizationService.RobloxLocaleId or "")
+		end
 		if local_ ~= "" and string.sub(local_, 1, 2) ~= "pt" then
 			return "en"
 		end
@@ -26,9 +32,24 @@ local function detectar(): string
 end
 Idioma.atual = detectar()
 
--- Muda o idioma (botão em Ajustes); quem desenha a interface remonta depois.
+-- Muda o idioma; quem desenha a interface remonta depois.
 function Idioma.definir(idioma: string)
 	Idioma.atual = if idioma == "en" then "en" else "pt"
+end
+
+-- Chama `funcao(idioma)` quando o jogador troca o idioma no menu do Roblox (só no cliente).
+function Idioma.aoMudarNoRoblox(funcao: (string) -> ())
+	local function conferir()
+		local novo = detectar()
+		if novo ~= Idioma.atual then
+			funcao(novo)
+		end
+	end
+	local jogador = Players.LocalPlayer
+	if jogador then
+		jogador:GetPropertyChangedSignal("LocaleId"):Connect(conferir)
+	end
+	LocalizationService:GetPropertyChangedSignal("RobloxLocaleId"):Connect(conferir)
 end
 
 -- Par de textos no próprio lugar: Idioma.L("Fechar", "Close").
