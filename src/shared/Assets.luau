@@ -414,6 +414,8 @@ Assets.MusicasMapa = {
 		"rbxassetid://9045765647", -- Sinfonia nº 5, Beethoven (APM, piano)
 		"rbxassetid://1848058483", -- Prelúdio op. 28 nº 20, Chopin (APM, piano)
 		"rbxassetid://1847114467", -- Prelúdio op. 28 nº 4, Chopin (APM, piano)
+		"rbxassetid://1842164726", -- Sonho de Amor nº 3 (Liebestraum), Liszt (APM, piano)
+		"rbxassetid://1843563752", -- Träumerei (Cenas Infantis nº 7), Schumann (APM, piano)
 	},
 	-- Menu inicial: trilha de viagem de trem, calma (não é de nenhum país)
 	menu = {
