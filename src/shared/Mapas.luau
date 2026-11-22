@@ -257,4 +257,168 @@ Mapas.brasil.detalhes = {
 	} },
 }
 
+-- Regiões de detalhe do mapa (ver o comentário do Brasil acima).
+Mapas.eua.detalhes = {
+	{ id = "0_0", x0 = 0, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://138100329571355", arquivo = "mapas/eua_detalhe/eua_detalhe_0_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://125710704448782", arquivo = "mapas/eua_detalhe/eua_detalhe_0_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://83632331023334", arquivo = "mapas/eua_detalhe/eua_detalhe_0_0_rios.png" },
+	} },
+	{ id = "1_0", x0 = 256, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://103427952045496", arquivo = "mapas/eua_detalhe/eua_detalhe_1_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://91335218307530", arquivo = "mapas/eua_detalhe/eua_detalhe_1_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://73726780408382", arquivo = "mapas/eua_detalhe/eua_detalhe_1_0_rios.png" },
+	} },
+	{ id = "2_0", x0 = 512, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://116478372051145", arquivo = "mapas/eua_detalhe/eua_detalhe_2_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://81743054792994", arquivo = "mapas/eua_detalhe/eua_detalhe_2_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://103419291672742", arquivo = "mapas/eua_detalhe/eua_detalhe_2_0_rios.png" },
+	} },
+	{ id = "3_0", x0 = 768, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://72247609165188", arquivo = "mapas/eua_detalhe/eua_detalhe_3_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71920848735496", arquivo = "mapas/eua_detalhe/eua_detalhe_3_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76690058620199", arquivo = "mapas/eua_detalhe/eua_detalhe_3_0_rios.png" },
+	} },
+	{ id = "4_0", x0 = 1024, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://93645375067916", arquivo = "mapas/eua_detalhe/eua_detalhe_4_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101231712738582", arquivo = "mapas/eua_detalhe/eua_detalhe_4_0_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://102285603659358", arquivo = "mapas/eua_detalhe/eua_detalhe_4_0_rios.png" },
+	} },
+	{ id = "0_1", x0 = 0, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://125714146836507", arquivo = "mapas/eua_detalhe/eua_detalhe_0_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://124225291137075", arquivo = "mapas/eua_detalhe/eua_detalhe_0_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://104442387008123", arquivo = "mapas/eua_detalhe/eua_detalhe_0_1_rios.png" },
+	} },
+	{ id = "1_1", x0 = 256, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_1_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://90248008922400", arquivo = "mapas/eua_detalhe/eua_detalhe_1_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://78537622143408", arquivo = "mapas/eua_detalhe/eua_detalhe_1_1_rios.png" },
+	} },
+	{ id = "2_1", x0 = 512, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://82879554810551", arquivo = "mapas/eua_detalhe/eua_detalhe_2_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://132161513018821", arquivo = "mapas/eua_detalhe/eua_detalhe_2_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://107407631624508", arquivo = "mapas/eua_detalhe/eua_detalhe_2_1_rios.png" },
+	} },
+	{ id = "3_1", x0 = 768, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://74836533271746", arquivo = "mapas/eua_detalhe/eua_detalhe_3_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://114007189454576", arquivo = "mapas/eua_detalhe/eua_detalhe_3_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://72736369791014", arquivo = "mapas/eua_detalhe/eua_detalhe_3_1_rios.png" },
+	} },
+	{ id = "4_1", x0 = 1024, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://123222516642249", arquivo = "mapas/eua_detalhe/eua_detalhe_4_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://100240668168535", arquivo = "mapas/eua_detalhe/eua_detalhe_4_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://119831607273978", arquivo = "mapas/eua_detalhe/eua_detalhe_4_1_rios.png" },
+	} },
+	{ id = "5_1", x0 = 1280, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://116252076963294", arquivo = "mapas/eua_detalhe/eua_detalhe_5_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://100173226119346", arquivo = "mapas/eua_detalhe/eua_detalhe_5_1_linhas.png" },
+	} },
+	{ id = "6_1", x0 = 1536, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://103217363362203", arquivo = "mapas/eua_detalhe/eua_detalhe_6_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://77480939464853", arquivo = "mapas/eua_detalhe/eua_detalhe_6_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://140514977499250", arquivo = "mapas/eua_detalhe/eua_detalhe_6_1_rios.png" },
+	} },
+	{ id = "7_1", x0 = 1792, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://94603021263292", arquivo = "mapas/eua_detalhe/eua_detalhe_7_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://127912028378534", arquivo = "mapas/eua_detalhe/eua_detalhe_7_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://77827666197146", arquivo = "mapas/eua_detalhe/eua_detalhe_7_1_rios.png" },
+	} },
+	{ id = "0_2", x0 = 0, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://99971501313005", arquivo = "mapas/eua_detalhe/eua_detalhe_0_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://84258442364237", arquivo = "mapas/eua_detalhe/eua_detalhe_0_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://111421984413693", arquivo = "mapas/eua_detalhe/eua_detalhe_0_2_rios.png" },
+	} },
+	{ id = "1_2", x0 = 256, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_1_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://128712705705437", arquivo = "mapas/eua_detalhe/eua_detalhe_1_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://93411723443682", arquivo = "mapas/eua_detalhe/eua_detalhe_1_2_rios.png" },
+	} },
+	{ id = "2_2", x0 = 512, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_2_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://108754704878179", arquivo = "mapas/eua_detalhe/eua_detalhe_2_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://75711690112826", arquivo = "mapas/eua_detalhe/eua_detalhe_2_2_rios.png" },
+	} },
+	{ id = "3_2", x0 = 768, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_3_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://99419421449692", arquivo = "mapas/eua_detalhe/eua_detalhe_3_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76409895856074", arquivo = "mapas/eua_detalhe/eua_detalhe_3_2_rios.png" },
+	} },
+	{ id = "4_2", x0 = 1024, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_4_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://78295151081166", arquivo = "mapas/eua_detalhe/eua_detalhe_4_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://134718874364874", arquivo = "mapas/eua_detalhe/eua_detalhe_4_2_rios.png" },
+	} },
+	{ id = "5_2", x0 = 1280, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://126747171477853", arquivo = "mapas/eua_detalhe/eua_detalhe_5_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://97635335618576", arquivo = "mapas/eua_detalhe/eua_detalhe_5_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://92059282803788", arquivo = "mapas/eua_detalhe/eua_detalhe_5_2_rios.png" },
+	} },
+	{ id = "6_2", x0 = 1536, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118476335534566", arquivo = "mapas/eua_detalhe/eua_detalhe_6_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://139267075381368", arquivo = "mapas/eua_detalhe/eua_detalhe_6_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101667951148656", arquivo = "mapas/eua_detalhe/eua_detalhe_6_2_rios.png" },
+	} },
+	{ id = "7_2", x0 = 1792, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://136767008801402", arquivo = "mapas/eua_detalhe/eua_detalhe_7_2_terra.png" },
+	} },
+	{ id = "0_3", x0 = 0, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://130037793964714", arquivo = "mapas/eua_detalhe/eua_detalhe_0_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://128786895697619", arquivo = "mapas/eua_detalhe/eua_detalhe_0_3_linhas.png" },
+	} },
+	{ id = "1_3", x0 = 256, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://134932885223577", arquivo = "mapas/eua_detalhe/eua_detalhe_1_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://132718575810695", arquivo = "mapas/eua_detalhe/eua_detalhe_1_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://104031912563804", arquivo = "mapas/eua_detalhe/eua_detalhe_1_3_rios.png" },
+	} },
+	{ id = "2_3", x0 = 512, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71683392289673", arquivo = "mapas/eua_detalhe/eua_detalhe_2_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://80055941326818", arquivo = "mapas/eua_detalhe/eua_detalhe_2_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://84357579866964", arquivo = "mapas/eua_detalhe/eua_detalhe_2_3_rios.png" },
+	} },
+	{ id = "3_3", x0 = 768, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://78182715404134", arquivo = "mapas/eua_detalhe/eua_detalhe_3_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://107882701312413", arquivo = "mapas/eua_detalhe/eua_detalhe_3_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://88125310957016", arquivo = "mapas/eua_detalhe/eua_detalhe_3_3_rios.png" },
+	} },
+	{ id = "4_3", x0 = 1024, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://134652797794198", arquivo = "mapas/eua_detalhe/eua_detalhe_4_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71277393632253", arquivo = "mapas/eua_detalhe/eua_detalhe_4_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://96332840438042", arquivo = "mapas/eua_detalhe/eua_detalhe_4_3_rios.png" },
+	} },
+	{ id = "5_3", x0 = 1280, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://77199919491970", arquivo = "mapas/eua_detalhe/eua_detalhe_5_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://117332838601296", arquivo = "mapas/eua_detalhe/eua_detalhe_5_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://92767044666032", arquivo = "mapas/eua_detalhe/eua_detalhe_5_3_rios.png" },
+	} },
+	{ id = "6_3", x0 = 1536, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://85333920117470", arquivo = "mapas/eua_detalhe/eua_detalhe_6_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://122426371665842", arquivo = "mapas/eua_detalhe/eua_detalhe_6_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://117208967356983", arquivo = "mapas/eua_detalhe/eua_detalhe_6_3_rios.png" },
+	} },
+	{ id = "2_4", x0 = 512, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://119855638349871", arquivo = "mapas/eua_detalhe/eua_detalhe_2_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://117240534633048", arquivo = "mapas/eua_detalhe/eua_detalhe_2_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://82825021595414", arquivo = "mapas/eua_detalhe/eua_detalhe_2_4_rios.png" },
+	} },
+	{ id = "3_4", x0 = 768, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://135327428237940", arquivo = "mapas/eua_detalhe/eua_detalhe_3_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://125415029142481", arquivo = "mapas/eua_detalhe/eua_detalhe_3_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://105932366066905", arquivo = "mapas/eua_detalhe/eua_detalhe_3_4_rios.png" },
+	} },
+	{ id = "4_4", x0 = 1024, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://91322521432286", arquivo = "mapas/eua_detalhe/eua_detalhe_4_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71171372593125", arquivo = "mapas/eua_detalhe/eua_detalhe_4_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://85752347493323", arquivo = "mapas/eua_detalhe/eua_detalhe_4_4_rios.png" },
+	} },
+	{ id = "5_4", x0 = 1280, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://132929875291410", arquivo = "mapas/eua_detalhe/eua_detalhe_5_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://89785785937604", arquivo = "mapas/eua_detalhe/eua_detalhe_5_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://78394250396803", arquivo = "mapas/eua_detalhe/eua_detalhe_5_4_rios.png" },
+	} },
+	{ id = "6_4", x0 = 1536, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://140607227684648", arquivo = "mapas/eua_detalhe/eua_detalhe_6_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76417801199394", arquivo = "mapas/eua_detalhe/eua_detalhe_6_4_linhas.png" },
+	} },
+}
+
 return Mapas
