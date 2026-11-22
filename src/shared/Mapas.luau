@@ -427,6 +427,10 @@ Mapas.eua.detalhes = {
 
 -- Regiões de detalhe do mapa (ver o comentário do Brasil acima).
 Mapas.europa.detalhes = {
+	{ id = "3_0", x0 = 768, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76972675459551", arquivo = "mapas/europa_detalhe/europa_detalhe_3_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://84875569081391", arquivo = "mapas/europa_detalhe/europa_detalhe_3_0_linhas.png" },
+	} },
 	{ id = "4_0", x0 = 1024, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
 		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://72034718575695", arquivo = "mapas/europa_detalhe/europa_detalhe_4_0_terra.png" },
 		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://111563360893652", arquivo = "mapas/europa_detalhe/europa_detalhe_4_0_linhas.png" },
@@ -538,6 +542,11 @@ Mapas.europa.detalhes = {
 		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://136767008801402", arquivo = "mapas/europa_detalhe/europa_detalhe_7_4_terra.png" },
 		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://117545077253511", arquivo = "mapas/europa_detalhe/europa_detalhe_7_4_linhas.png" },
 	} },
+	{ id = "1_5", x0 = 256, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://73997449902622", arquivo = "mapas/europa_detalhe/europa_detalhe_1_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://127695318557836", arquivo = "mapas/europa_detalhe/europa_detalhe_1_5_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://136642505031938", arquivo = "mapas/europa_detalhe/europa_detalhe_1_5_rios.png" },
+	} },
 	{ id = "4_5", x0 = 1024, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
 		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118913963200126", arquivo = "mapas/europa_detalhe/europa_detalhe_4_5_terra.png" },
 		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://130095683898293", arquivo = "mapas/europa_detalhe/europa_detalhe_4_5_linhas.png" },
@@ -545,6 +554,10 @@ Mapas.europa.detalhes = {
 	{ id = "5_5", x0 = 1280, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
 		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://134072683884742", arquivo = "mapas/europa_detalhe/europa_detalhe_5_5_terra.png" },
 		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://97614325496751", arquivo = "mapas/europa_detalhe/europa_detalhe_5_5_linhas.png" },
+	} },
+	{ id = "6_5", x0 = 1536, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118415644447648", arquivo = "mapas/europa_detalhe/europa_detalhe_6_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://139685740053685", arquivo = "mapas/europa_detalhe/europa_detalhe_6_5_linhas.png" },
 	} },
 }
 
