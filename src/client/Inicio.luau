@@ -27,6 +27,7 @@ export type Inicio = typeof(setmetatable(
 	{} :: {
 		gui: ScreenGui,
 		raiz: CanvasGroup,
+		escalado: Frame,
 		escala: UIScale,
 		conteudo: Frame,
 		aoJogar: BindableEvent,
@@ -69,10 +70,19 @@ function Inicio.new(playerGui: Instance): Inicio
 		TextSize = 20,
 	}, raiz)
 	carregando.Name = "Carregando"
-	local escala = novo("UIScale", { Name = "Escala" }, raiz) :: UIScale
+	-- O conteúdo do menu fica num quadro "Escalado" com UIScale. A raiz é um CanvasGroup (para o fade):
+	-- se a escala ficasse nela, o CanvasGroup desenhava numa textura menor e esticava, e o menu
+	-- saía pixelizado. Assim a raiz desenha na resolução da tela e só o quadro de dentro escala.
+	local escalado = novo("Frame", {
+		Name = "Escalado",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+	}, raiz) :: Frame
+	local escala = novo("UIScale", { Name = "Escala" }, escalado) :: UIScale
 	local self = setmetatable({
 		gui = gui,
 		raiz = raiz,
+		escalado = escalado,
 		escala = escala,
 		conteudo = nil :: any,
 		aoJogar = Instance.new("BindableEvent"),
@@ -80,8 +90,8 @@ function Inicio.new(playerGui: Instance): Inicio
 		conexoes = {},
 		_medir = function() end,
 	}, Inicio)
-	-- O UIScale fica na raiz, que encolhe/estica a partir do canto de cima à esquerda; por isso a raiz
-	-- tem tamanho 1/escala: depois de escalada, ela cobre a tela exata e o centro fica no centro.
+	-- O quadro escalado encolhe/estica a partir do canto de cima à esquerda; por isso ele tem tamanho
+	-- 1/escala: depois de escalado, cobre a tela exata e o centro fica no centro.
 	local function medir()
 		local t = gui.AbsoluteSize
 		if t.X > 0 and t.Y > 0 then
@@ -90,7 +100,7 @@ function Inicio.new(playerGui: Instance): Inicio
 			local alturaColuna = if coluna then coluna.AbsoluteSize.Y / math.max(escala.Scale, 0.01) else 560
 			escala.Scale = math.clamp(math.min(t.X / 1000, t.Y * 0.92 / math.max(alturaColuna, 400)), 0.55, 1.1)
 			local k = 1 / math.max(escala.Scale, 0.01)
-			raiz.Size = UDim2.fromScale(k, k)
+			escalado.Size = UDim2.fromScale(k, k)
 		end
 	end
 	self._medir = medir
@@ -116,7 +126,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		Name = "Conteudo",
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
-	}, self.raiz) :: Frame
+	}, (self :: any).escalado) :: Frame
 	self.conteudo = conteudo
 
 	-- faixa à esquerda na cor do painel da era, sumindo para a direita: o mapa aparece à direita
