@@ -1738,7 +1738,6 @@ local GRUPOS_CONQUISTAS = {
 	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo" } },
 }
 
-local OURO = Color3.fromRGB(214, 168, 72)
 
 -- Medalhão redondo com o emoji: colorido quando ganho, apagado com cadeado quando não.
 local function medalhaoConquista(est: any, pai: Instance, emoji: string, ganha: boolean, tamanho: number, ordem: number?): Frame
@@ -1747,12 +1746,21 @@ local function medalhaoConquista(est: any, pai: Instance, emoji: string, ganha: 
 		Name = "Medalhao",
 		LayoutOrder = ordem or 0,
 		Size = UDim2.fromOffset(tamanho, tamanho),
-		BackgroundColor3 = if ganha then c.accent else c.rule,
+		BackgroundColor3 = if ganha then Color3.new(1, 1, 1) else c.rule,
 		BackgroundTransparency = if ganha then 0 else 0.55,
 		ZIndex = 34,
 	}, pai) :: Frame
 	novo("UICorner", { CornerRadius = UDim.new(1, 0) }, fr)
-	novo("UIStroke", { Color = if ganha then OURO else c.rule, Thickness = if ganha then 3 else 1.5 }, fr)
+	if ganha then
+		-- medalha de ouro: dourado claro em cima, mais escuro embaixo, com aro de ouro velho
+		novo("UIGradient", {
+			Rotation = 90,
+			Color = ColorSequence.new(Color3.fromRGB(250, 232, 170), Color3.fromRGB(205, 158, 64)),
+		}, fr)
+		novo("UIStroke", { Color = Color3.fromRGB(140, 100, 32), Thickness = 2 }, fr)
+	else
+		novo("UIStroke", { Color = c.rule, Thickness = 1.5 }, fr)
+	end
 	novo("TextLabel", {
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
