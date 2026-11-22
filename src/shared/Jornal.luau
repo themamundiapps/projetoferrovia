@@ -26,8 +26,15 @@ Jornal.NOMES_EUA = {
 	alta = { pt = "Trilhos Online", en = "Rails Online" },
 }
 
+Jornal.NOMES_EUROPA = {
+	vapor = { pt = "Gazeta Ferroviária Continental", en = "The Continental Railway Gazette" },
+	diesel = { pt = "Correio dos Trilhos", en = "The Rail Courier" },
+	eletrico = { pt = "Diário Europeu da Linha", en = "The European Line Daily" },
+	alta = { pt = "Euro Trilhos", en = "Euro Rails" },
+}
+
 function Jornal.nome(eraId: string, mapaId: string?): { pt: string, en: string }
-	local nomes = if mapaId == "eua" then Jornal.NOMES_EUA else Jornal.NOMES
+	local nomes = if mapaId == "eua" then Jornal.NOMES_EUA elseif mapaId == "europa" then Jornal.NOMES_EUROPA else Jornal.NOMES
 	return (nomes :: any)[eraId] or nomes.vapor
 end
 

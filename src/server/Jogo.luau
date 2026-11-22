@@ -21,13 +21,14 @@ local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Loja = require(Shared:WaitForChild("Loja"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local DadosEUA = require(Shared:WaitForChild("Dados"):WaitForChild("EUA"))
+local DadosEuropa = require(Shared:WaitForChild("Dados"):WaitForChild("Europa"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
 type EstadoMapa = Economia.EstadoMapa
 
 -- Cada mapa é uma companhia separada no mesmo save (dinheiro, trechos, era, XP...). Só o mapa aberto
 -- rende; ao trocar, o mapa que fica não acumula o tempo em que o jogador estava no outro.
-local MAPAS: { [string]: any } = { brasil = DadosBrasil, eua = DadosEUA }
+local MAPAS: { [string]: any } = { brasil = DadosBrasil, eua = DadosEUA, europa = DadosEuropa }
 local MAPA_PADRAO = "brasil"
 local VERSAO_SAVE = 1
 local AUTOSAVE_SEGUNDOS = 60

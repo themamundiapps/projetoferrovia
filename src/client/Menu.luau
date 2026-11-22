@@ -1043,6 +1043,8 @@ end
 
 local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = L("grátis", "free") }
 local PRECO_JORNAL_EUA = { vapor = "5 cents", diesel = "10 cents", eletrico = "25 cents", alta = L("grátis", "free") }
+local PRECO_JORNAL_EUROPA = { vapor = "1 penny", diesel = "2 pence", eletrico = "50 centimes", alta = L("grátis", "free") }
+local CIDADE_JORNAL = { brasil = "Rio de Janeiro", eua = "New York", europa = L("Londres", "London") }
 local MESES_JORNAL_EN = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }
 local MESES_JORNAL = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
 local PAPEL = Color3.fromRGB(238, 228, 204) -- papel de jornal
@@ -1167,9 +1169,9 @@ function Menu._abaJornal(self: Menu)
 			ZIndex = 33,
 		}, linhaData)
 	end
-	linha(if (self.dados.id or "brasil") == "eua" then "New York" else "Rio de Janeiro", Enum.TextXAlignment.Left)
+	linha(CIDADE_JORNAL[self.dados.id or "brasil"] or "Rio de Janeiro", Enum.TextXAlignment.Left)
 	linha(data, Enum.TextXAlignment.Center)
-	linha(`Nº {#edicoes + 1} · {(if self.dados.id == "eua" then PRECO_JORNAL_EUA else PRECO_JORNAL)[eraId] or ""}`, Enum.TextXAlignment.Right)
+	linha(`Nº {#edicoes + 1} · {(if self.dados.id == "eua" then PRECO_JORNAL_EUA elseif self.dados.id == "europa" then PRECO_JORNAL_EUROPA else PRECO_JORNAL)[eraId] or ""}`, Enum.TextXAlignment.Right)
 	fio(folha, 4, 1)
 	if not estado then
 		return
@@ -1577,7 +1579,7 @@ local GRUPOS_CONQUISTAS = {
 	{ nome = { pt = "Negócios", en = "Business" }, ids = { "palavra_cumprida", "primeiro_milhao" } },
 	{ nome = { pt = "Eras", en = "Eras" }, ids = { "adeus_vapor", "fio_no_trilho", "bala_de_prata" } },
 	{ nome = { pt = "Grandes obras", en = "Great works" }, ids = { "obra_entregue", "sonhador" } },
-	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo" } },
+	{ nome = { pt = "Mapa completo", en = "Map complete" }, ids = { "pais_nos_trilhos", "eua_completo", "europa_completo" } },
 }
 
 

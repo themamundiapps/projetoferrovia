@@ -1,0 +1,2522 @@
+{
+  "_nota": "Fonte do mapa da Europa, gerada por montar_europa.py (edite lá, não aqui). Depois rode `node tools/dados/gerar.mjs`.",
+  "anos": {
+    "vapor": [
+      1825,
+      1935
+    ],
+    "diesel": [
+      1935,
+      1960
+    ],
+    "eletrico": [
+      1960,
+      1990
+    ],
+    "alta": [
+      1990,
+      2040
+    ]
+  },
+  "terrenos": {
+    "planicie": {
+      "nome": "Planície",
+      "nomeEn": "Plains",
+      "custo": 1.0
+    },
+    "costa": {
+      "nome": "Planície costeira",
+      "nomeEn": "Coastal plain",
+      "custo": 1.1
+    },
+    "vale": {
+      "nome": "Vale",
+      "nomeEn": "Valley",
+      "custo": 1.2
+    },
+    "colinas": {
+      "nome": "Colinas",
+      "nomeEn": "Hills",
+      "custo": 1.4
+    },
+    "montanhas": {
+      "nome": "Montanhas",
+      "nomeEn": "Mountains",
+      "custo": 2.0
+    },
+    "alpes": {
+      "nome": "Alpes (túneis e viadutos)",
+      "nomeEn": "Alps (tunnels and viaducts)",
+      "custo": 2.6
+    },
+    "tunel_base": {
+      "nome": "Túnel de base sob os Alpes",
+      "nomeEn": "Base tunnel under the Alps",
+      "custo": 3.2
+    },
+    "mar": {
+      "nome": "Travessia do mar (túnel ou ponte)",
+      "nomeEn": "Sea crossing (tunnel or bridge)",
+      "custo": 3.5
+    }
+  },
+  "estacoes": [
+    {
+      "id": "london",
+      "nome": "Londres",
+      "lon": -0.13,
+      "lat": 51.51,
+      "porte": 5,
+      "uf": "GB",
+      "historia": {
+        "pt": "A maior cidade do mundo no século XIX. Cada companhia ferroviária construiu a sua própria estação terminal.",
+        "en": "The largest city in the world in the 19th century. Every railway company built its own terminus."
+      },
+      "nomeEn": "London",
+      "porto": true
+    },
+    {
+      "id": "reading",
+      "nome": "Reading",
+      "lon": -0.97,
+      "lat": 51.45,
+      "porte": 2,
+      "uf": "GB",
+      "historia": {
+        "pt": "Cidade do vale do Tâmisa, primeira grande parada da Great Western a caminho de Bristol.",
+        "en": "A Thames valley town, the first big stop on the Great Western on the way to Bristol."
+      },
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "bristol",
+      "nome": "Bristol",
+      "lon": -2.59,
+      "lat": 51.45,
+      "porte": 3,
+      "uf": "GB",
+      "historia": {
+        "pt": "Porto do oeste da Inglaterra, ligado a Londres pela Great Western de Brunel em 1841.",
+        "en": "A port in the west of England, linked to London by Brunel's Great Western in 1841."
+      },
+      "porto": true
+    },
+    {
+      "id": "birmingham",
+      "nome": "Birmingham",
+      "lon": -1.9,
+      "lat": 52.48,
+      "porte": 4,
+      "uf": "GB",
+      "historia": {
+        "pt": "A \"oficina do mundo\": fundições e fábricas de ferro ao redor de uma rede de canais.",
+        "en": "The \"workshop of the world\": foundries and ironworks around a web of canals."
+      },
+      "produz": "aco"
+    },
+    {
+      "id": "crewe",
+      "nome": "Crewe",
+      "lon": -2.44,
+      "lat": 53.1,
+      "porte": 1,
+      "uf": "GB",
+      "historia": {
+        "pt": "Uma vila que a ferrovia criou: oficinas de locomotivas e o grande entroncamento do noroeste.",
+        "en": "A town the railway created: locomotive works and the great junction of the north-west."
+      },
+      "paisagem": "eur_industria"
+    },
+    {
+      "id": "manchester",
+      "nome": "Manchester",
+      "lon": -2.24,
+      "lat": 53.48,
+      "porte": 4,
+      "uf": "GB",
+      "historia": {
+        "pt": "A capital do algodão, cheia de chaminés. A primeira estação de passageiros do mundo abriu aqui em 1830.",
+        "en": "Cottonopolis, full of chimneys. The world's first passenger station opened here in 1830."
+      }
+    },
+    {
+      "id": "liverpool",
+      "nome": "Liverpool",
+      "lon": -2.98,
+      "lat": 53.41,
+      "porte": 4,
+      "uf": "GB",
+      "historia": {
+        "pt": "O porto do algodão que vinha da América, que precisava chegar rápido às fábricas de Manchester.",
+        "en": "The port for American cotton, which had to reach the mills of Manchester quickly."
+      },
+      "porto": true
+    },
+    {
+      "id": "darlington",
+      "nome": "Darlington",
+      "lon": -1.55,
+      "lat": 54.52,
+      "porte": 1,
+      "uf": "GB",
+      "historia": {
+        "pt": "Cidade das minas de carvão de Durham, de onde saiu o primeiro trem a vapor público, em 1825.",
+        "en": "A town of the Durham coal mines, where the first public steam train set out in 1825."
+      },
+      "produz": "carvao",
+      "paisagem": "eur_industria"
+    },
+    {
+      "id": "stockton",
+      "nome": "Stockton-on-Tees",
+      "lon": -1.32,
+      "lat": 54.57,
+      "porte": 1,
+      "uf": "GB",
+      "historia": {
+        "pt": "Porto do rio Tees, ponta final da Stockton and Darlington: o carvão seguia daqui em barcos.",
+        "en": "A port on the River Tees, the end of the Stockton and Darlington: coal went on from here by boat."
+      },
+      "porto": true,
+      "paisagem": "eur_costa"
+    },
+    {
+      "id": "york",
+      "nome": "York",
+      "lon": -1.08,
+      "lat": 53.96,
+      "porte": 3,
+      "uf": "GB",
+      "historia": {
+        "pt": "Cidade medieval que virou o grande entroncamento do norte, terra do \"rei das ferrovias\" George Hudson.",
+        "en": "A medieval city that became the great junction of the north, home of \"Railway King\" George Hudson."
+      }
+    },
+    {
+      "id": "newcastle",
+      "nome": "Newcastle",
+      "lon": -1.61,
+      "lat": 54.97,
+      "porte": 3,
+      "uf": "GB",
+      "historia": {
+        "pt": "Terra de George Stephenson e do carvão do Tyne, que abastecia Londres por mar.",
+        "en": "Home of George Stephenson and Tyne coal, which supplied London by sea."
+      },
+      "produz": "carvao",
+      "porto": true
+    },
+    {
+      "id": "edinburgh",
+      "nome": "Edimburgo",
+      "lon": -3.19,
+      "lat": 55.95,
+      "porte": 4,
+      "uf": "GB",
+      "historia": {
+        "pt": "Capital da Escócia; o Flying Scotsman a liga a Londres desde 1862.",
+        "en": "Scotland's capital; the Flying Scotsman has linked it to London since 1862."
+      },
+      "nomeEn": "Edinburgh",
+      "porto": true
+    },
+    {
+      "id": "paris",
+      "nome": "Paris",
+      "lon": 2.35,
+      "lat": 48.86,
+      "porte": 5,
+      "uf": "FR",
+      "historia": {
+        "pt": "Centro de uma rede em estrela: seis grandes estações, cada uma voltada para uma região da França.",
+        "en": "Hub of a star-shaped network: six great stations, each facing a region of France."
+      }
+    },
+    {
+      "id": "rouen",
+      "nome": "Ruão",
+      "lon": 1.1,
+      "lat": 49.44,
+      "porte": 2,
+      "uf": "FR",
+      "historia": {
+        "pt": "Cidade do rio Sena, no caminho entre Paris e o mar; a linha foi construída por operários ingleses.",
+        "en": "A city on the Seine, between Paris and the sea; the line was built by English navvies."
+      },
+      "nomeEn": "Rouen",
+      "produz": "graos",
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "le_havre",
+      "nome": "Le Havre",
+      "lon": 0.11,
+      "lat": 49.49,
+      "porte": 2,
+      "uf": "FR",
+      "historia": {
+        "pt": "O porto atlântico de Paris, de onde saíam os navios para Nova York.",
+        "en": "Paris's Atlantic port, where ships left for New York."
+      },
+      "porto": true,
+      "paisagem": "eur_costa"
+    },
+    {
+      "id": "lille",
+      "nome": "Lille",
+      "lon": 3.06,
+      "lat": 50.63,
+      "porte": 3,
+      "uf": "FR",
+      "historia": {
+        "pt": "Cidade têxtil do norte, cercada de campos de beterraba e de minas de carvão.",
+        "en": "A textile city in the north, surrounded by sugar-beet fields and coal mines."
+      },
+      "produz": "acucar"
+    },
+    {
+      "id": "dijon",
+      "nome": "Dijon",
+      "lon": 5.04,
+      "lat": 47.32,
+      "porte": 2,
+      "uf": "FR",
+      "historia": {
+        "pt": "Capital da Borgonha, dos vinhedos e da mostarda, no meio do caminho entre Paris e Lyon.",
+        "en": "Capital of Burgundy, of vineyards and mustard, halfway between Paris and Lyon."
+      },
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "lyon",
+      "nome": "Lyon",
+      "lon": 4.84,
+      "lat": 45.76,
+      "porte": 4,
+      "uf": "FR",
+      "historia": {
+        "pt": "Cidade da seda, onde o Saône encontra o Ródano.",
+        "en": "The silk city, where the Saône meets the Rhône."
+      }
+    },
+    {
+      "id": "marseille",
+      "nome": "Marselha",
+      "lon": 5.37,
+      "lat": 43.3,
+      "porte": 4,
+      "uf": "FR",
+      "historia": {
+        "pt": "O grande porto francês do Mediterrâneo, porta para a Argélia e o Oriente.",
+        "en": "France's great Mediterranean port, gateway to Algeria and the East."
+      },
+      "nomeEn": "Marseille",
+      "porto": true
+    },
+    {
+      "id": "chambery",
+      "nome": "Chambéry",
+      "lon": 5.92,
+      "lat": 45.57,
+      "porte": 1,
+      "uf": "FR",
+      "historia": {
+        "pt": "Antiga capital da Saboia, ao pé dos Alpes, no caminho do túnel do Fréjus.",
+        "en": "The old capital of Savoy, at the foot of the Alps, on the way to the Fréjus tunnel."
+      },
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "bruxelles",
+      "nome": "Bruxelas",
+      "lon": 4.35,
+      "lat": 50.85,
+      "porte": 4,
+      "uf": "BE",
+      "historia": {
+        "pt": "A Bélgica abriu a primeira ferrovia pública do continente em 1835, saindo de Bruxelas.",
+        "en": "Belgium opened the continent's first public railway in 1835, out of Brussels."
+      },
+      "nomeEn": "Brussels"
+    },
+    {
+      "id": "antwerpen",
+      "nome": "Antuérpia",
+      "lon": 4.4,
+      "lat": 51.22,
+      "porte": 3,
+      "uf": "BE",
+      "historia": {
+        "pt": "O grande porto da Bélgica, no rio Escalda.",
+        "en": "Belgium's great port, on the Scheldt."
+      },
+      "nomeEn": "Antwerp",
+      "porto": true
+    },
+    {
+      "id": "amsterdam",
+      "nome": "Amsterdã",
+      "lon": 4.9,
+      "lat": 52.37,
+      "porte": 4,
+      "uf": "NL",
+      "historia": {
+        "pt": "A primeira ferrovia holandesa, de 1839, ligou Amsterdã a Haarlem.",
+        "en": "The first Dutch railway, in 1839, linked Amsterdam to Haarlem."
+      },
+      "nomeEn": "Amsterdam",
+      "porto": true
+    },
+    {
+      "id": "rotterdam",
+      "nome": "Roterdã",
+      "lon": 4.48,
+      "lat": 51.92,
+      "porte": 3,
+      "uf": "NL",
+      "historia": {
+        "pt": "Porto na foz do Reno, que viria a ser o maior da Europa.",
+        "en": "A port at the mouth of the Rhine that would become Europe's largest."
+      },
+      "nomeEn": "Rotterdam",
+      "porto": true
+    },
+    {
+      "id": "koln",
+      "nome": "Colônia",
+      "lon": 6.96,
+      "lat": 50.94,
+      "porte": 4,
+      "uf": "DE",
+      "historia": {
+        "pt": "Cidade da catedral, à beira do Reno; a Köln-Mindener a ligou ao norte da Alemanha.",
+        "en": "The cathedral city on the Rhine; the Köln-Mindener linked it to northern Germany."
+      },
+      "nomeEn": "Cologne"
+    },
+    {
+      "id": "essen",
+      "nome": "Essen",
+      "lon": 7.01,
+      "lat": 51.46,
+      "porte": 3,
+      "uf": "DE",
+      "historia": {
+        "pt": "Coração do Vale do Ruhr: carvão e as siderúrgicas da Krupp.",
+        "en": "Heart of the Ruhr Valley: coal and the Krupp steelworks."
+      },
+      "produz": "carvao"
+    },
+    {
+      "id": "hannover",
+      "nome": "Hanôver",
+      "lon": 9.73,
+      "lat": 52.37,
+      "porte": 3,
+      "uf": "DE",
+      "historia": {
+        "pt": "Capital de um reino e grande cruzamento das ferrovias do norte alemão.",
+        "en": "Capital of a kingdom and a great crossroads of northern German railways."
+      },
+      "nomeEn": "Hanover"
+    },
+    {
+      "id": "berlin",
+      "nome": "Berlim",
+      "lon": 13.4,
+      "lat": 52.52,
+      "porte": 5,
+      "uf": "DE",
+      "historia": {
+        "pt": "Capital da Prússia e, depois, do Império Alemão, com estações para cada direção.",
+        "en": "Capital of Prussia and later of the German Empire, with stations for every direction."
+      },
+      "nomeEn": "Berlin"
+    },
+    {
+      "id": "hamburg",
+      "nome": "Hamburgo",
+      "lon": 9.99,
+      "lat": 53.55,
+      "porte": 4,
+      "uf": "DE",
+      "historia": {
+        "pt": "O porto alemão para o mundo, no rio Elba.",
+        "en": "Germany's port to the world, on the Elbe."
+      },
+      "nomeEn": "Hamburg",
+      "porto": true
+    },
+    {
+      "id": "leipzig",
+      "nome": "Leipzig",
+      "lon": 12.37,
+      "lat": 51.34,
+      "porte": 3,
+      "uf": "DE",
+      "historia": {
+        "pt": "Cidade das feiras e dos livros; a Leipzig–Dresden foi a primeira ferrovia de longa distância da Alemanha.",
+        "en": "A city of trade fairs and books; the Leipzig–Dresden was Germany's first long-distance railway."
+      }
+    },
+    {
+      "id": "dresden",
+      "nome": "Dresden",
+      "lon": 13.74,
+      "lat": 51.05,
+      "porte": 3,
+      "uf": "DE",
+      "historia": {
+        "pt": "A \"Florença do Elba\", capital da Saxônia.",
+        "en": "The \"Florence on the Elbe\", capital of Saxony."
+      }
+    },
+    {
+      "id": "munchen",
+      "nome": "Munique",
+      "lon": 11.58,
+      "lat": 48.14,
+      "porte": 4,
+      "uf": "DE",
+      "historia": {
+        "pt": "Capital da Baviera, porta da ferrovia que cruza os Alpes pelo Brenner.",
+        "en": "Capital of Bavaria, gateway to the railway across the Alps through the Brenner."
+      },
+      "nomeEn": "Munich"
+    },
+    {
+      "id": "kobenhavn",
+      "nome": "Copenhague",
+      "lon": 12.57,
+      "lat": 55.68,
+      "porte": 4,
+      "uf": "DK",
+      "historia": {
+        "pt": "Capital da Dinamarca, entre o Mar do Norte e o Báltico.",
+        "en": "Denmark's capital, between the North Sea and the Baltic."
+      },
+      "nomeEn": "Copenhagen",
+      "porto": true
+    },
+    {
+      "id": "zurich",
+      "nome": "Zurique",
+      "lon": 8.54,
+      "lat": 47.37,
+      "porte": 3,
+      "uf": "CH",
+      "historia": {
+        "pt": "Cidade dos bancos e do lago, ponto de partida para o túnel do Gotardo.",
+        "en": "A city of banks and the lake, starting point for the Gotthard tunnel."
+      },
+      "nomeEn": "Zurich"
+    },
+    {
+      "id": "luzern",
+      "nome": "Lucerna",
+      "lon": 8.31,
+      "lat": 47.05,
+      "porte": 2,
+      "uf": "CH",
+      "historia": {
+        "pt": "Cidade do lago e dos prados alpinos, ao pé da subida do Gotardo.",
+        "en": "A lakeside town of alpine meadows, at the foot of the Gotthard climb."
+      },
+      "nomeEn": "Lucerne",
+      "produz": "gado",
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "lausanne",
+      "nome": "Lausanne",
+      "lon": 6.63,
+      "lat": 46.52,
+      "porte": 2,
+      "uf": "CH",
+      "historia": {
+        "pt": "No lago Léman, onde começa a linha para o túnel do Simplon.",
+        "en": "On Lake Geneva, where the line to the Simplon tunnel begins."
+      },
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "innsbruck",
+      "nome": "Innsbruck",
+      "lon": 11.4,
+      "lat": 47.27,
+      "porte": 2,
+      "uf": "AT",
+      "historia": {
+        "pt": "Capital do Tirol, cercada de montanhas, no caminho do Passo do Brenner.",
+        "en": "Capital of the Tyrol, surrounded by mountains, on the way to the Brenner Pass."
+      },
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "wien",
+      "nome": "Viena",
+      "lon": 16.37,
+      "lat": 48.21,
+      "porte": 4,
+      "uf": "AT",
+      "historia": {
+        "pt": "Capital do Império Austro-Húngaro; daqui saíam as linhas para o Adriático e para o Oriente.",
+        "en": "Capital of the Austro-Hungarian Empire; lines to the Adriatic and the East started here."
+      },
+      "nomeEn": "Vienna"
+    },
+    {
+      "id": "graz",
+      "nome": "Graz",
+      "lon": 15.44,
+      "lat": 47.07,
+      "porte": 2,
+      "uf": "AT",
+      "historia": {
+        "pt": "Cidade da Estíria, logo depois da subida do Semmering.",
+        "en": "A Styrian city, just past the Semmering climb."
+      },
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "ljubljana",
+      "nome": "Liubliana",
+      "lon": 14.51,
+      "lat": 46.06,
+      "porte": 2,
+      "uf": "SI",
+      "historia": {
+        "pt": "Cidade pequena na Südbahn, entre Viena e o mar.",
+        "en": "A small city on the Südbahn, between Vienna and the sea."
+      },
+      "nomeEn": "Ljubljana",
+      "paisagem": "eur_alpes"
+    },
+    {
+      "id": "trieste",
+      "nome": "Trieste",
+      "lon": 13.78,
+      "lat": 45.65,
+      "porte": 3,
+      "uf": "IT",
+      "historia": {
+        "pt": "O porto do Império Austríaco no Adriático, ponta final da Südbahn em 1857.",
+        "en": "The Austrian Empire's Adriatic port, end of the Südbahn in 1857."
+      },
+      "porto": true
+    },
+    {
+      "id": "brno",
+      "nome": "Brno",
+      "lon": 16.61,
+      "lat": 49.2,
+      "porte": 2,
+      "uf": "CZ",
+      "historia": {
+        "pt": "Cidade têxtil da Morávia, primeira grande parada da Kaiser Ferdinands-Nordbahn.",
+        "en": "A Moravian textile city, the first big stop on the Kaiser Ferdinands-Nordbahn."
+      },
+      "paisagem": "eur_industria"
+    },
+    {
+      "id": "krakow",
+      "nome": "Cracóvia",
+      "lon": 19.94,
+      "lat": 50.06,
+      "porte": 3,
+      "uf": "PL",
+      "historia": {
+        "pt": "Antiga capital polonesa, perto das minas de carvão da Silésia.",
+        "en": "The old Polish capital, near the coal mines of Silesia."
+      },
+      "nomeEn": "Kraków",
+      "produz": "carvao"
+    },
+    {
+      "id": "poznan",
+      "nome": "Poznań",
+      "lon": 16.93,
+      "lat": 52.41,
+      "porte": 2,
+      "uf": "PL",
+      "historia": {
+        "pt": "Cidade das planícies de trigo, no caminho de Berlim a Varsóvia.",
+        "en": "A city of wheat plains, on the way from Berlin to Warsaw."
+      },
+      "produz": "graos",
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "warszawa",
+      "nome": "Varsóvia",
+      "lon": 21.01,
+      "lat": 52.23,
+      "porte": 4,
+      "uf": "PL",
+      "historia": {
+        "pt": "Capital polonesa, à beira do rio Vístula.",
+        "en": "The Polish capital, on the Vistula."
+      },
+      "nomeEn": "Warsaw"
+    },
+    {
+      "id": "budapest",
+      "nome": "Budapeste",
+      "lon": 19.04,
+      "lat": 47.5,
+      "porte": 4,
+      "uf": "HU",
+      "historia": {
+        "pt": "As cidades de Buda e Peste, unidas em 1873; o trigo da planície húngara passava por aqui.",
+        "en": "The towns of Buda and Pest, united in 1873; wheat from the Hungarian plain passed through here."
+      },
+      "nomeEn": "Budapest",
+      "produz": "graos"
+    },
+    {
+      "id": "beograd",
+      "nome": "Belgrado",
+      "lon": 20.46,
+      "lat": 44.79,
+      "porte": 3,
+      "uf": "RS",
+      "historia": {
+        "pt": "Capital da Sérvia, onde o Sava encontra o Danúbio; o Expresso do Oriente passava aqui.",
+        "en": "Serbia's capital, where the Sava meets the Danube; the Orient Express came through here."
+      },
+      "nomeEn": "Belgrade"
+    },
+    {
+      "id": "sofia",
+      "nome": "Sófia",
+      "lon": 23.32,
+      "lat": 42.7,
+      "porte": 3,
+      "uf": "BG",
+      "historia": {
+        "pt": "Capital da Bulgária desde 1879, no caminho de Viena a Constantinopla.",
+        "en": "Bulgaria's capital since 1879, on the way from Vienna to Constantinople."
+      },
+      "nomeEn": "Sofia"
+    },
+    {
+      "id": "istanbul",
+      "nome": "Istambul",
+      "lon": 28.98,
+      "lat": 41.01,
+      "porte": 5,
+      "uf": "TR",
+      "historia": {
+        "pt": "Constantinopla, a ponte entre a Europa e a Ásia, ponta final do Expresso do Oriente.",
+        "en": "Constantinople, the bridge between Europe and Asia, end of the Orient Express."
+      },
+      "nomeEn": "Istanbul",
+      "porto": true
+    },
+    {
+      "id": "torino",
+      "nome": "Turim",
+      "lon": 7.69,
+      "lat": 45.07,
+      "porte": 4,
+      "uf": "IT",
+      "historia": {
+        "pt": "Capital do Piemonte e primeira capital da Itália unificada.",
+        "en": "Capital of Piedmont and first capital of unified Italy."
+      },
+      "nomeEn": "Turin"
+    },
+    {
+      "id": "milano",
+      "nome": "Milão",
+      "lon": 9.19,
+      "lat": 45.46,
+      "porte": 4,
+      "uf": "IT",
+      "historia": {
+        "pt": "A capital industrial italiana, onde chegam os túneis do Gotardo e do Simplon.",
+        "en": "Italy's industrial capital, where the Gotthard and Simplon tunnels arrive."
+      },
+      "nomeEn": "Milan"
+    },
+    {
+      "id": "verona",
+      "nome": "Verona",
+      "lon": 10.99,
+      "lat": 45.44,
+      "porte": 2,
+      "uf": "IT",
+      "historia": {
+        "pt": "Cidade de Romeu e Julieta, onde a linha do Brenner desce na planície do Pó.",
+        "en": "The city of Romeo and Juliet, where the Brenner line comes down into the Po plain."
+      },
+      "paisagem": "eur_mediterraneo"
+    },
+    {
+      "id": "venezia",
+      "nome": "Veneza",
+      "lon": 12.32,
+      "lat": 45.44,
+      "porte": 3,
+      "uf": "IT",
+      "historia": {
+        "pt": "A cidade sobre a água, ligada ao continente por uma ponte ferroviária em 1846.",
+        "en": "The city on the water, linked to the mainland by a railway bridge in 1846."
+      },
+      "nomeEn": "Venice",
+      "porto": true
+    },
+    {
+      "id": "roma",
+      "nome": "Roma",
+      "lon": 12.5,
+      "lat": 41.9,
+      "porte": 4,
+      "uf": "IT",
+      "historia": {
+        "pt": "A capital da Itália desde 1871; a estação Termini fica ao lado das termas antigas.",
+        "en": "Italy's capital since 1871; Termini station stands next to the ancient baths."
+      },
+      "nomeEn": "Rome"
+    },
+    {
+      "id": "napoli",
+      "nome": "Nápoles",
+      "lon": 14.27,
+      "lat": 40.85,
+      "porte": 4,
+      "uf": "IT",
+      "historia": {
+        "pt": "A primeira ferrovia da Itália, de 1839, saiu de Nápoles para Portici, ao pé do Vesúvio.",
+        "en": "Italy's first railway, in 1839, ran from Naples to Portici, at the foot of Vesuvius."
+      },
+      "nomeEn": "Naples",
+      "porto": true
+    },
+    {
+      "id": "reggio",
+      "nome": "Reggio Calabria",
+      "lon": 15.65,
+      "lat": 38.11,
+      "porte": 2,
+      "uf": "IT",
+      "historia": {
+        "pt": "A ponta da bota italiana, de frente para a Sicília.",
+        "en": "The toe of the Italian boot, facing Sicily."
+      },
+      "porto": true,
+      "paisagem": "eur_mediterraneo"
+    },
+    {
+      "id": "messina",
+      "nome": "Messina",
+      "lon": 15.55,
+      "lat": 38.19,
+      "porte": 2,
+      "uf": "IT",
+      "historia": {
+        "pt": "Do outro lado do estreito: os trens atravessam até hoje em balsas.",
+        "en": "Across the strait: trains still cross on ferries today."
+      },
+      "nomeEn": "Strait of Messina Bridge",
+      "porto": true,
+      "paisagem": "eur_mediterraneo"
+    },
+    {
+      "id": "palermo",
+      "nome": "Palermo",
+      "lon": 13.36,
+      "lat": 38.12,
+      "porte": 3,
+      "uf": "IT",
+      "historia": {
+        "pt": "Capital da Sicília, entre o mar e as montanhas.",
+        "en": "Sicily's capital, between the sea and the mountains."
+      },
+      "porto": true
+    },
+    {
+      "id": "madrid",
+      "nome": "Madri",
+      "lon": -3.7,
+      "lat": 40.42,
+      "porte": 4,
+      "uf": "ES",
+      "historia": {
+        "pt": "A capital no centro da meseta: todas as ferrovias espanholas partem daqui, em bitola larga.",
+        "en": "The capital in the middle of the plateau: every Spanish railway starts here, on broad gauge."
+      },
+      "nomeEn": "Madrid"
+    },
+    {
+      "id": "zaragoza",
+      "nome": "Saragoça",
+      "lon": -0.88,
+      "lat": 41.65,
+      "porte": 3,
+      "uf": "ES",
+      "historia": {
+        "pt": "Cidade do rio Ebro, no meio do caminho entre Madri e Barcelona.",
+        "en": "A city on the Ebro, halfway between Madrid and Barcelona."
+      },
+      "nomeEn": "Zaragoza"
+    },
+    {
+      "id": "barcelona",
+      "nome": "Barcelona",
+      "lon": 2.17,
+      "lat": 41.39,
+      "porte": 4,
+      "uf": "ES",
+      "historia": {
+        "pt": "A primeira ferrovia da Espanha continental, de 1848, ligou Barcelona a Mataró.",
+        "en": "Mainland Spain's first railway, in 1848, linked Barcelona to Mataró."
+      },
+      "porto": true
+    },
+    {
+      "id": "valladolid",
+      "nome": "Valladolid",
+      "lon": -4.72,
+      "lat": 41.65,
+      "porte": 2,
+      "uf": "ES",
+      "historia": {
+        "pt": "No coração dos trigais de Castela.",
+        "en": "In the heart of the wheat fields of Castile."
+      },
+      "produz": "graos",
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "burgos",
+      "nome": "Burgos",
+      "lon": -3.7,
+      "lat": 42.34,
+      "porte": 1,
+      "uf": "ES",
+      "historia": {
+        "pt": "Cidade da catedral gótica, no caminho de Madri para o norte.",
+        "en": "A city of a Gothic cathedral, on the way from Madrid to the north."
+      },
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "bilbao",
+      "nome": "Bilbau",
+      "lon": -2.93,
+      "lat": 43.26,
+      "porte": 3,
+      "uf": "ES",
+      "historia": {
+        "pt": "O minério de ferro basco saía daqui de navio para as siderúrgicas inglesas.",
+        "en": "Basque iron ore left from here by ship for English steelworks."
+      },
+      "nomeEn": "Bilbao",
+      "produz": "minerio",
+      "porto": true
+    },
+    {
+      "id": "lisboa",
+      "nome": "Lisboa",
+      "lon": -9.14,
+      "lat": 38.72,
+      "porte": 4,
+      "uf": "PT",
+      "historia": {
+        "pt": "Capital de Portugal, no estuário do Tejo; a primeira linha abriu em 1856.",
+        "en": "Portugal's capital, on the Tagus estuary; the first line opened in 1856."
+      },
+      "nomeEn": "Lisbon",
+      "porto": true
+    },
+    {
+      "id": "coimbra",
+      "nome": "Coimbra",
+      "lon": -8.43,
+      "lat": 40.21,
+      "porte": 2,
+      "uf": "PT",
+      "historia": {
+        "pt": "Cidade universitária no caminho entre Lisboa e o Porto.",
+        "en": "A university city on the way between Lisbon and Porto."
+      },
+      "paisagem": "eur_campo"
+    },
+    {
+      "id": "porto",
+      "nome": "Porto",
+      "lon": -8.61,
+      "lat": 41.15,
+      "porte": 3,
+      "uf": "PT",
+      "historia": {
+        "pt": "Cidade do vinho do Porto; a ponte de Eiffel sobre o Douro trouxe o trem até aqui.",
+        "en": "The city of port wine; Eiffel's bridge over the Douro brought the train here."
+      },
+      "porto": true
+    },
+    {
+      "id": "stockholm",
+      "nome": "Estocolmo",
+      "lon": 18.07,
+      "lat": 59.33,
+      "porte": 4,
+      "uf": "SE",
+      "historia": {
+        "pt": "Capital da Suécia, construída sobre ilhas; a madeira das florestas do norte chegava por aqui.",
+        "en": "Sweden's capital, built on islands; timber from the northern forests came through here."
+      },
+      "nomeEn": "Stockholm",
+      "produz": "madeira",
+      "porto": true
+    },
+    {
+      "id": "goteborg",
+      "nome": "Gotemburgo",
+      "lon": 11.97,
+      "lat": 57.71,
+      "porte": 3,
+      "uf": "SE",
+      "historia": {
+        "pt": "O porto sueco voltado para o Mar do Norte.",
+        "en": "Sweden's port facing the North Sea."
+      },
+      "nomeEn": "Gothenburg",
+      "porto": true
+    },
+    {
+      "id": "kaunas",
+      "nome": "Kaunas",
+      "lon": 23.9,
+      "lat": 54.9,
+      "porte": 2,
+      "uf": "LT",
+      "historia": {
+        "pt": "Antiga capital da Lituânia, no caminho da Rail Baltica.",
+        "en": "Lithuania's old capital, on the Rail Baltica route."
+      },
+      "paisagem": "eur_norte"
+    },
+    {
+      "id": "riga",
+      "nome": "Riga",
+      "lon": 24.11,
+      "lat": 56.95,
+      "porte": 3,
+      "uf": "LV",
+      "historia": {
+        "pt": "Capital da Letônia e porto do Báltico.",
+        "en": "Latvia's capital and a Baltic port."
+      },
+      "porto": true
+    },
+    {
+      "id": "tallinn",
+      "nome": "Tallinn",
+      "lon": 24.75,
+      "lat": 59.44,
+      "porte": 2,
+      "uf": "EE",
+      "historia": {
+        "pt": "Capital da Estônia, com a cidade velha murada de frente para o mar.",
+        "en": "Estonia's capital, with its walled old town facing the sea."
+      },
+      "porto": true,
+      "paisagem": "eur_norte"
+    }
+  ],
+  "linhas": [
+    {
+      "id": "stockton_darlington",
+      "nome": "Stockton and Darlington",
+      "ano": 1825,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "darlington",
+          "para": "stockton",
+          "ano": 1825,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 0,
+      "nota": {
+        "pt": "Em 27 de setembro de 1825, a Locomotion nº 1 de George Stephenson puxou o primeiro trem a vapor público do mundo.",
+        "en": "On 27 September 1825, George Stephenson's Locomotion No. 1 pulled the world's first public steam train."
+      }
+    },
+    {
+      "id": "liverpool_manchester",
+      "nome": "Liverpool and Manchester",
+      "ano": 1830,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "liverpool",
+          "para": "manchester",
+          "ano": 1830,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 0,
+      "nota": {
+        "pt": "A primeira ferrovia interurbana do mundo, só com trens a vapor e horário fixo. A Rocket venceu o concurso de locomotivas de Rainhill.",
+        "en": "The world's first intercity railway, with only steam trains and a timetable. The Rocket won the Rainhill locomotive trials."
+      }
+    },
+    {
+      "id": "london_birmingham",
+      "nome": "London and Birmingham",
+      "ano": 1838,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "london",
+          "para": "birmingham",
+          "ano": 1838,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "A primeira grande linha saindo de Londres, construída por Robert Stephenson, com o arco de Euston na entrada.",
+        "en": "The first great main line out of London, built by Robert Stephenson, with the Euston Arch at its gate."
+      }
+    },
+    {
+      "id": "grand_junction",
+      "nome": "Grand Junction",
+      "ano": 1837,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "birmingham",
+          "para": "crewe",
+          "ano": 1837,
+          "terreno": "planicie"
+        },
+        {
+          "de": "crewe",
+          "para": "manchester",
+          "ano": 1842,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "Ligou Birmingham ao noroeste e fez de Crewe, um vilarejo, um dos maiores entroncamentos ferroviários do mundo.",
+        "en": "It linked Birmingham to the north-west and turned the village of Crewe into one of the world's great railway junctions."
+      }
+    },
+    {
+      "id": "belgica",
+      "nome": "Ferrovias do Estado Belga",
+      "ano": 1836,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "bruxelles",
+          "para": "antwerpen",
+          "ano": 1836,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "A Bélgica, recém-independente, foi o primeiro país a planejar uma rede nacional, com Mechelen no centro.",
+        "en": "Newly independent Belgium was the first country to plan a national network, with Mechelen at its centre."
+      },
+      "nomeEn": "Belgian State Railways"
+    },
+    {
+      "id": "leipzig_dresden",
+      "nome": "Leipzig–Dresden",
+      "ano": 1839,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "leipzig",
+          "para": "dresden",
+          "ano": 1839,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "A primeira ferrovia de longa distância da Alemanha, com o primeiro túnel ferroviário do país.",
+        "en": "Germany's first long-distance railway, with the country's first railway tunnel."
+      }
+    },
+    {
+      "id": "great_western",
+      "nome": "Great Western",
+      "ano": 1841,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "london",
+          "para": "reading",
+          "ano": 1840,
+          "terreno": "vale"
+        },
+        {
+          "de": "reading",
+          "para": "bristol",
+          "ano": 1841,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "Isambard Kingdom Brunel a construiu em bitola larga, com o túnel de Box e trens que chegavam a 100 km/h.",
+        "en": "Isambard Kingdom Brunel built it on broad gauge, with the Box Tunnel and trains that reached 100 km/h."
+      }
+    },
+    {
+      "id": "paris_rouen",
+      "nome": "Paris–Rouen–Le Havre",
+      "ano": 1843,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "paris",
+          "para": "rouen",
+          "ano": 1843,
+          "terreno": "vale"
+        },
+        {
+          "de": "rouen",
+          "para": "le_havre",
+          "ano": 1847,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "Construída com dinheiro e operários ingleses, levou Paris até o mar pelo vale do Sena.",
+        "en": "Built with English money and navvies, it took Paris to the sea along the Seine valley."
+      }
+    },
+    {
+      "id": "nordbahn",
+      "nome": "Kaiser Ferdinands-Nordbahn",
+      "ano": 1839,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "wien",
+          "para": "brno",
+          "ano": 1839,
+          "terreno": "planicie"
+        },
+        {
+          "de": "brno",
+          "para": "krakow",
+          "ano": 1856,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "A primeira ferrovia a vapor da Áustria, financiada pelos Rothschild, levava o carvão e o sal da Galícia para Viena.",
+        "en": "Austria's first steam railway, funded by the Rothschilds, carried coal and salt from Galicia to Vienna."
+      }
+    },
+    {
+      "id": "hijs",
+      "nome": "Hollandsche IJzeren Spoorweg",
+      "ano": 1839,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "amsterdam",
+          "para": "rotterdam",
+          "ano": 1847,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "A primeira ferrovia holandesa começou com a locomotiva De Arend, entre Amsterdã e Haarlem, em 1839.",
+        "en": "The first Dutch railway began with the De Arend locomotive, between Amsterdam and Haarlem, in 1839."
+      }
+    },
+    {
+      "id": "nord",
+      "nome": "Chemin de fer du Nord",
+      "ano": 1846,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "paris",
+          "para": "lille",
+          "ano": 1846,
+          "terreno": "planicie"
+        },
+        {
+          "de": "lille",
+          "para": "bruxelles",
+          "ano": 1846,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "A companhia dos Rothschild ligou Paris ao norte industrial e à Bélgica.",
+        "en": "The Rothschilds' company linked Paris to the industrial north and to Belgium."
+      }
+    },
+    {
+      "id": "plm",
+      "nome": "Paris–Lyon–Méditerranée",
+      "ano": 1857,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "paris",
+          "para": "dijon",
+          "ano": 1851,
+          "terreno": "colinas"
+        },
+        {
+          "de": "dijon",
+          "para": "lyon",
+          "ano": 1854,
+          "terreno": "vale"
+        },
+        {
+          "de": "lyon",
+          "para": "marseille",
+          "ano": 1856,
+          "terreno": "vale"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "A \"linha imperial\", que levava Paris ao Mediterrâneo pelo vale do Ródano.",
+        "en": "The \"imperial line\", which took Paris to the Mediterranean down the Rhône valley."
+      }
+    },
+    {
+      "id": "berlin_hamburg",
+      "nome": "Berlim–Hamburgo",
+      "ano": 1846,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "berlin",
+          "para": "hamburg",
+          "ano": 1846,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "Ligou a capital prussiana ao maior porto alemão pela planície do norte.",
+        "en": "It linked the Prussian capital to Germany's largest port across the northern plain."
+      },
+      "nomeEn": "Berlin–Hamburg"
+    },
+    {
+      "id": "koln_minden",
+      "nome": "Köln-Mindener",
+      "ano": 1847,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "koln",
+          "para": "essen",
+          "ano": 1847,
+          "terreno": "planicie"
+        },
+        {
+          "de": "essen",
+          "para": "hannover",
+          "ano": 1847,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "Atravessou o Vale do Ruhr e transformou as minas de carvão no coração industrial da Alemanha.",
+        "en": "It crossed the Ruhr Valley and turned the coal mines into Germany's industrial heart."
+      }
+    },
+    {
+      "id": "east_coast",
+      "nome": "East Coast Main Line",
+      "ano": 1850,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "london",
+          "para": "york",
+          "ano": 1850,
+          "terreno": "planicie"
+        },
+        {
+          "de": "york",
+          "para": "newcastle",
+          "ano": 1850,
+          "terreno": "planicie"
+        },
+        {
+          "de": "newcastle",
+          "para": "edinburgh",
+          "ano": 1850,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "A linha do Flying Scotsman, entre Londres e Edimburgo; a Mallard bateu aqui o recorde mundial do vapor, 203 km/h.",
+        "en": "The Flying Scotsman's line between London and Edinburgh; Mallard set the world steam record here, 203 km/h."
+      }
+    },
+    {
+      "id": "sudbahn",
+      "nome": "Südbahn (Semmering)",
+      "ano": 1857,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "wien",
+          "para": "graz",
+          "ano": 1854,
+          "terreno": "alpes"
+        },
+        {
+          "de": "graz",
+          "para": "ljubljana",
+          "ano": 1849,
+          "terreno": "colinas"
+        },
+        {
+          "de": "ljubljana",
+          "para": "trieste",
+          "ano": 1857,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "A ferrovia do Semmering, de 1854, foi a primeira a cruzar uma cordilheira dos Alpes. Hoje é Patrimônio da Humanidade.",
+        "en": "The Semmering railway, from 1854, was the first to cross an Alpine range. It is now a World Heritage Site."
+      }
+    },
+    {
+      "id": "madrid_barcelona",
+      "nome": "Madri–Saragoça–Barcelona",
+      "ano": 1863,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "barcelona",
+          "para": "zaragoza",
+          "ano": 1861,
+          "terreno": "colinas"
+        },
+        {
+          "de": "zaragoza",
+          "para": "madrid",
+          "ano": 1863,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "Ligou a capital ao porto e à indústria da Catalunha, em bitola larga ibérica.",
+        "en": "It linked the capital to the port and industry of Catalonia, on broad Iberian gauge."
+      },
+      "nomeEn": "Madrid–Zaragoza–Barcelona"
+    },
+    {
+      "id": "lisboa_porto",
+      "nome": "Linha do Norte",
+      "ano": 1864,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "lisboa",
+          "para": "coimbra",
+          "ano": 1864,
+          "terreno": "costa"
+        },
+        {
+          "de": "coimbra",
+          "para": "porto",
+          "ano": 1864,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "A espinha dorsal de Portugal; a ponte Maria Pia, de Eiffel, levou os trens até o Porto em 1877.",
+        "en": "Portugal's backbone; Eiffel's Maria Pia bridge carried the trains into Porto in 1877."
+      },
+      "nomeEn": "Northern Line (Portugal)"
+    },
+    {
+      "id": "norte_espana",
+      "nome": "Caminhos de Ferro do Norte",
+      "ano": 1864,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "madrid",
+          "para": "valladolid",
+          "ano": 1860,
+          "terreno": "colinas"
+        },
+        {
+          "de": "valladolid",
+          "para": "burgos",
+          "ano": 1860,
+          "terreno": "planicie"
+        },
+        {
+          "de": "burgos",
+          "para": "bilbao",
+          "ano": 1863,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "Subia a meseta castelhana e descia até o País Basco, de onde saía o minério de ferro.",
+        "en": "It climbed the Castilian plateau and came down to the Basque Country, where iron ore was shipped."
+      },
+      "nomeEn": "Northern Railway of Spain"
+    },
+    {
+      "id": "lombardo_veneta",
+      "nome": "Turim–Milão–Veneza",
+      "ano": 1857,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "torino",
+          "para": "milano",
+          "ano": 1859,
+          "terreno": "planicie"
+        },
+        {
+          "de": "milano",
+          "para": "venezia",
+          "ano": 1857,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "A ferrovia da planície do Pó; a ponte da laguna, de 1846, levou o trem até Veneza.",
+        "en": "The Po plain railway; the lagoon bridge of 1846 brought the train into Venice."
+      },
+      "nomeEn": "Turin–Milan–Venice"
+    },
+    {
+      "id": "roma_napoli",
+      "nome": "Roma–Nápoles",
+      "ano": 1863,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "roma",
+          "para": "napoli",
+          "ano": 1863,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "Ligou a cidade dos papas ao maior porto do sul da Itália, logo depois da unificação.",
+        "en": "It linked the city of the popes to southern Italy's largest port, right after unification."
+      },
+      "nomeEn": "Rome–Naples"
+    },
+    {
+      "id": "frejus",
+      "nome": "Túnel do Fréjus (Mont Cenis)",
+      "ano": 1871,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "lyon",
+          "para": "chambery",
+          "ano": 1857,
+          "terreno": "vale"
+        },
+        {
+          "de": "chambery",
+          "para": "torino",
+          "ano": 1871,
+          "terreno": "alpes"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "O primeiro grande túnel sob os Alpes, com 13 km, cavado com perfuratrizes de ar comprimido.",
+        "en": "The first great tunnel under the Alps, 13 km long, dug with compressed-air drills."
+      },
+      "nomeEn": "Fréjus Tunnel (Mont Cenis)"
+    },
+    {
+      "id": "brenner",
+      "nome": "Ferrovia do Brenner",
+      "ano": 1867,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "munchen",
+          "para": "innsbruck",
+          "ano": 1858,
+          "terreno": "vale"
+        },
+        {
+          "de": "innsbruck",
+          "para": "verona",
+          "ano": 1867,
+          "terreno": "alpes"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "A primeira ferrovia a cruzar os Alpes por cima, pelo Passo do Brenner, sem túnel de cume.",
+        "en": "The first railway over the Alps, through the Brenner Pass, without a summit tunnel."
+      },
+      "nomeEn": "Brenner Railway"
+    },
+    {
+      "id": "gotthard",
+      "nome": "Ferrovia do Gotardo",
+      "ano": 1882,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "zurich",
+          "para": "luzern",
+          "ano": 1864,
+          "terreno": "colinas"
+        },
+        {
+          "de": "luzern",
+          "para": "milano",
+          "ano": 1882,
+          "terreno": "alpes"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "O túnel do Gotardo, de 15 km, custou a vida de quase 200 operários; as voltas em espiral de Wassen viraram cartão-postal.",
+        "en": "The 15 km Gotthard tunnel cost nearly 200 workers their lives; the spiral loops at Wassen became a postcard."
+      },
+      "nomeEn": "Gotthard Railway"
+    },
+    {
+      "id": "orient",
+      "nome": "Rota do Expresso do Oriente",
+      "ano": 1888,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "wien",
+          "para": "budapest",
+          "ano": 1846,
+          "terreno": "planicie"
+        },
+        {
+          "de": "budapest",
+          "para": "beograd",
+          "ano": 1884,
+          "terreno": "planicie"
+        },
+        {
+          "de": "beograd",
+          "para": "sofia",
+          "ano": 1888,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "sofia",
+          "para": "istanbul",
+          "ano": 1888,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Em 1889 o Expresso do Oriente passou a ir de Paris a Constantinopla só de trem, com vagões-leito de luxo.",
+        "en": "In 1889 the Orient Express began running from Paris to Constantinople entirely by train, with luxury sleeping cars."
+      },
+      "nomeEn": "Orient Express Route"
+    },
+    {
+      "id": "suecia",
+      "nome": "Västra stambanan",
+      "ano": 1862,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "stockholm",
+          "para": "goteborg",
+          "ano": 1862,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "A linha principal do oeste da Suécia, construída pelo Estado para ligar a capital ao Mar do Norte.",
+        "en": "Sweden's western main line, built by the state to link the capital to the North Sea."
+      }
+    },
+    {
+      "id": "varsovia",
+      "nome": "Berlim–Varsóvia",
+      "ano": 1870,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "berlin",
+          "para": "poznan",
+          "ano": 1870,
+          "terreno": "planicie"
+        },
+        {
+          "de": "poznan",
+          "para": "warszawa",
+          "ano": 1870,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "A ligação entre Berlim e Varsóvia pela planície do norte, depois parte do Expresso Nord.",
+        "en": "The link between Berlin and Warsaw across the northern plain, later part of the Nord Express."
+      },
+      "nomeEn": "Berlin–Warsaw"
+    },
+    {
+      "id": "simplon",
+      "nome": "Túnel do Simplon",
+      "ano": 1906,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "lausanne",
+          "para": "milano",
+          "ano": 1906,
+          "terreno": "alpes"
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "Em 1906, com 19,8 km, o Simplon virou o túnel ferroviário mais longo do mundo e encurtou o Paris–Milão.",
+        "en": "In 1906, at 19.8 km, the Simplon became the world's longest railway tunnel and shortened Paris–Milan."
+      },
+      "nomeEn": "Simplon Tunnel"
+    },
+    {
+      "id": "hs2",
+      "nome": "HS2",
+      "ano": 2033,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "london",
+          "para": "birmingham",
+          "ano": 2033,
+          "terreno": "colinas"
+        },
+        {
+          "de": "birmingham",
+          "para": "manchester",
+          "ano": 2040,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "A nova linha de alta velocidade britânica: Londres–Birmingham em obras, e o trecho até Manchester cortado em 2023.",
+        "en": "Britain's new high-speed line: London–Birmingham under construction, with the stretch to Manchester cancelled in 2023."
+      },
+      "projeto": "hs2"
+    },
+    {
+      "id": "rail_baltica",
+      "nome": "Rail Baltica",
+      "ano": 2030,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "warszawa",
+          "para": "kaunas",
+          "ano": 2030,
+          "terreno": "planicie"
+        },
+        {
+          "de": "kaunas",
+          "para": "riga",
+          "ano": 2030,
+          "terreno": "planicie"
+        },
+        {
+          "de": "riga",
+          "para": "tallinn",
+          "ano": 2030,
+          "terreno": "costa",
+          "via": [
+            [
+              24.7,
+              57.6
+            ],
+            [
+              24.75,
+              58.45
+            ]
+          ]
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Uma ferrovia em bitola europeia para ligar os países bálticos a Varsóvia e ao resto do continente.",
+        "en": "A European-gauge railway linking the Baltic states to Warsaw and the rest of the continent."
+      },
+      "projeto": "rail_baltica"
+    },
+    {
+      "id": "fehmarn",
+      "nome": "Túnel do Fehmarnbelt",
+      "ano": 2031,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "hamburg",
+          "para": "kobenhavn",
+          "ano": 2031,
+          "terreno": "mar"
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "Um túnel submerso de 18 km sob o Báltico, entre a Alemanha e a Dinamarca, em obras desde 2020.",
+        "en": "An 18 km immersed tunnel under the Baltic, between Germany and Denmark, under construction since 2020."
+      },
+      "nomeEn": "Fehmarnbelt Tunnel",
+      "projeto": "fehmarn"
+    },
+    {
+      "id": "lyon_turin",
+      "nome": "Túnel Lyon–Turim",
+      "ano": 2033,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "lyon",
+          "para": "torino",
+          "ano": 2033,
+          "terreno": "tunel_base"
+        }
+      ],
+      "degrau": 8,
+      "nota": {
+        "pt": "Um túnel de base de 57 km sob os Alpes, para trens de carga e de alta velocidade entre a França e a Itália.",
+        "en": "A 57 km base tunnel under the Alps for freight and high-speed trains between France and Italy."
+      },
+      "nomeEn": "Lyon–Turin Tunnel",
+      "projeto": "lyon_turin"
+    },
+    {
+      "id": "messina",
+      "nome": "Ponte do Estreito de Messina",
+      "ano": 2040,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "napoli",
+          "para": "reggio",
+          "ano": 2040,
+          "terreno": "colinas",
+          "via": [
+            [
+              15.0,
+              40.7
+            ],
+            [
+              15.6,
+              40.35
+            ],
+            [
+              16.1,
+              39.7
+            ],
+            [
+              16.25,
+              39.2
+            ],
+            [
+              16.45,
+              38.85
+            ],
+            [
+              16.1,
+              38.35
+            ]
+          ]
+        },
+        {
+          "de": "reggio",
+          "para": "messina",
+          "ano": 2040,
+          "terreno": "mar"
+        },
+        {
+          "de": "messina",
+          "para": "palermo",
+          "ano": 2040,
+          "terreno": "costa",
+          "via": [
+            [
+              15.3,
+              38.1
+            ],
+            [
+              14.75,
+              38.04
+            ],
+            [
+              14.0,
+              37.93
+            ],
+            [
+              13.6,
+              37.93
+            ]
+          ]
+        }
+      ],
+      "degrau": 8,
+      "nota": {
+        "pt": "E se a Sicília tivesse, enfim, a ponte suspensa mais longa do mundo? O projeto vai e volta há mais de 50 anos.",
+        "en": "What if Sicily finally got the world's longest suspension bridge? The plan has come and gone for over 50 years."
+      },
+      "nomeEn": "Strait of Messina Bridge",
+      "projeto": "messina"
+    }
+  ],
+  "rotulos": [
+    {
+      "tipo": "estado",
+      "texto": "REINO UNIDO",
+      "textoEn": "UNITED KINGDOM",
+      "lon": -1.8,
+      "lat": 52.9,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "IRLANDA",
+      "textoEn": "IRELAND",
+      "lon": -8.0,
+      "lat": 53.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "FRANÇA",
+      "textoEn": "FRANCE",
+      "lon": 2.4,
+      "lat": 46.8,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ESPANHA",
+      "textoEn": "SPAIN",
+      "lon": -3.6,
+      "lat": 39.6,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PORTUGAL",
+      "textoEn": "PORTUGAL",
+      "lon": -8.0,
+      "lat": 39.6,
+      "zoomMax": 4,
+      "angulo": -80
+    },
+    {
+      "tipo": "estado",
+      "texto": "ALEMANHA",
+      "textoEn": "GERMANY",
+      "lon": 10.2,
+      "lat": 51.0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ITÁLIA",
+      "textoEn": "ITALY",
+      "lon": 13.2,
+      "lat": 42.8,
+      "zoomMax": 4,
+      "angulo": 50
+    },
+    {
+      "tipo": "estado",
+      "texto": "SUÍÇA",
+      "textoEn": "SWITZERLAND",
+      "lon": 8.1,
+      "lat": 46.75,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ÁUSTRIA",
+      "textoEn": "AUSTRIA",
+      "lon": 14.6,
+      "lat": 47.6,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "BÉLGICA",
+      "textoEn": "BELGIUM",
+      "lon": 4.6,
+      "lat": 50.55,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PAÍSES BAIXOS",
+      "textoEn": "NETHERLANDS",
+      "lon": 5.6,
+      "lat": 52.3,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "DINAMARCA",
+      "textoEn": "DENMARK",
+      "lon": 9.2,
+      "lat": 56.1,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "POLÔNIA",
+      "textoEn": "POLAND",
+      "lon": 19.3,
+      "lat": 52.0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "TCHÉQUIA",
+      "textoEn": "CZECHIA",
+      "lon": 15.3,
+      "lat": 49.8,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "HUNGRIA",
+      "textoEn": "HUNGARY",
+      "lon": 19.4,
+      "lat": 47.1,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "SÉRVIA",
+      "textoEn": "SERBIA",
+      "lon": 20.8,
+      "lat": 43.9,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "BULGÁRIA",
+      "textoEn": "BULGARIA",
+      "lon": 25.2,
+      "lat": 42.7,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ROMÊNIA",
+      "textoEn": "ROMANIA",
+      "lon": 24.9,
+      "lat": 45.9,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "GRÉCIA",
+      "textoEn": "GREECE",
+      "lon": 22.0,
+      "lat": 39.5,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "TURQUIA",
+      "textoEn": "TURKEY",
+      "lon": 27.5,
+      "lat": 39.5,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "SUÉCIA",
+      "textoEn": "SWEDEN",
+      "lon": 15.0,
+      "lat": 58.6,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "NORUEGA",
+      "textoEn": "NORWAY",
+      "lon": 9.0,
+      "lat": 60.4,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "FINLÂNDIA",
+      "textoEn": "FINLAND",
+      "lon": 25.0,
+      "lat": 61.0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ESTÔNIA",
+      "textoEn": "ESTONIA",
+      "lon": 25.8,
+      "lat": 58.7,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "LETÔNIA",
+      "textoEn": "LATVIA",
+      "lon": 25.6,
+      "lat": 56.85,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "LITUÂNIA",
+      "textoEn": "LITHUANIA",
+      "lon": 23.9,
+      "lat": 55.4,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "UCRÂNIA",
+      "textoEn": "UKRAINE",
+      "lon": 28.5,
+      "lat": 49.3,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "BIELORRÚSSIA",
+      "textoEn": "BELARUS",
+      "lon": 27.8,
+      "lat": 53.5,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ESLOVÁQUIA",
+      "textoEn": "SLOVAKIA",
+      "lon": 19.6,
+      "lat": 48.75,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "CROÁCIA",
+      "textoEn": "CROATIA",
+      "lon": 16.4,
+      "lat": 45.6,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO ATLÂNTICO",
+      "textoEn": "ATLANTIC OCEAN",
+      "lon": -8.5,
+      "lat": 46.0,
+      "angulo": -70
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR DO NORTE",
+      "textoEn": "NORTH SEA",
+      "lon": 3.5,
+      "lat": 55.8
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR BÁLTICO",
+      "textoEn": "BALTIC SEA",
+      "lon": 19.0,
+      "lat": 56.8,
+      "angulo": -60
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR MEDITERRÂNEO",
+      "textoEn": "MEDITERRANEAN SEA",
+      "lon": 5.5,
+      "lat": 39.0
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR ADRIÁTICO",
+      "textoEn": "ADRIATIC SEA",
+      "lon": 15.6,
+      "lat": 43.0,
+      "zoomMin": 0.9,
+      "angulo": 40
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR NEGRO",
+      "textoEn": "BLACK SEA",
+      "lon": 31.0,
+      "lat": 43.3
+    },
+    {
+      "tipo": "oceano",
+      "texto": "MAR TIRRENO",
+      "textoEn": "TYRRHENIAN SEA",
+      "lon": 12.0,
+      "lat": 39.6,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Alpes",
+      "textoEn": "Alps",
+      "lon": 10.2,
+      "lat": 46.55,
+      "angulo": -10
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Pireneus",
+      "textoEn": "Pyrenees",
+      "lon": 0.5,
+      "lat": 42.65,
+      "angulo": -10
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Cárpatos",
+      "textoEn": "Carpathians",
+      "lon": 23.5,
+      "lat": 47.9,
+      "angulo": -35
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Vale do Ruhr",
+      "textoEn": "Ruhr Valley",
+      "lon": 7.3,
+      "lat": 51.65
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Meseta",
+      "textoEn": "Meseta",
+      "lon": -3.3,
+      "lat": 40.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Planície Húngara",
+      "textoEn": "Hungarian Plain",
+      "lon": 20.6,
+      "lat": 46.6
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Reno",
+      "textoEn": "Rhine",
+      "lon": 7.6,
+      "lat": 49.9,
+      "angulo": -70
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Danúbio",
+      "textoEn": "Danube",
+      "lon": 17.6,
+      "lat": 47.95,
+      "angulo": -15
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Sena",
+      "textoEn": "Seine",
+      "lon": 3.2,
+      "lat": 48.4,
+      "angulo": -20
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Ródano",
+      "textoEn": "Rhône",
+      "lon": 4.6,
+      "lat": 44.6,
+      "angulo": -80
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Elba",
+      "textoEn": "Elbe",
+      "lon": 11.6,
+      "lat": 52.8,
+      "angulo": -40
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Pó",
+      "textoEn": "Po",
+      "lon": 10.5,
+      "lat": 45.1
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Tejo",
+      "textoEn": "Tagus",
+      "lon": -6.0,
+      "lat": 39.75,
+      "angulo": -10
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Vístula",
+      "textoEn": "Vistula",
+      "lon": 19.5,
+      "lat": 51.2,
+      "angulo": -70
+    }
+  ],
+  "projetos": [
+    {
+      "id": "hs2",
+      "nome": "HS2",
+      "emoji": "pesquisa",
+      "custo": 2500000,
+      "minutos": 80,
+      "requer": {
+        "era": "diesel"
+      },
+      "texto": {
+        "pt": "Estudar a nova linha de alta velocidade de Londres a Birmingham e Manchester.",
+        "en": "Study the new high-speed line from London to Birmingham and Manchester."
+      }
+    },
+    {
+      "id": "rail_baltica",
+      "nome": "Rail Baltica",
+      "emoji": "pesquisa",
+      "custo": 8000000,
+      "minutos": 240,
+      "requer": {
+        "era": "eletrico"
+      },
+      "texto": {
+        "pt": "Estudar a ferrovia em bitola europeia de Varsóvia a Tallinn.",
+        "en": "Study the European-gauge railway from Warsaw to Tallinn."
+      }
+    },
+    {
+      "id": "fehmarn",
+      "nome": "Túnel do Fehmarnbelt",
+      "emoji": "pesquisa",
+      "custo": 12000000,
+      "minutos": 240,
+      "requer": {
+        "era": "eletrico",
+        "projeto": "rail_baltica"
+      },
+      "texto": {
+        "pt": "Estudar o túnel sob o Báltico entre Hamburgo e Copenhague.",
+        "en": "Study the tunnel under the Baltic between Hamburg and Copenhagen."
+      },
+      "nomeEn": "Fehmarnbelt Tunnel"
+    },
+    {
+      "id": "lyon_turin",
+      "nome": "Túnel Lyon–Turim",
+      "emoji": "pesquisa",
+      "custo": 30000000,
+      "minutos": 180,
+      "requer": {
+        "era": "alta"
+      },
+      "texto": {
+        "pt": "Estudar o túnel de base de 57 km sob os Alpes.",
+        "en": "Study the 57 km base tunnel under the Alps."
+      },
+      "nomeEn": "Lyon–Turin Tunnel"
+    },
+    {
+      "id": "messina",
+      "nome": "Ponte do Estreito de Messina",
+      "emoji": "pesquisa",
+      "custo": 40000000,
+      "minutos": 180,
+      "ficticio": true,
+      "requer": {
+        "era": "alta",
+        "projeto": "lyon_turin"
+      },
+      "texto": {
+        "pt": "E se a Sicília ganhasse uma ponte até o continente?",
+        "en": "What if Sicily got a bridge to the mainland?"
+      },
+      "nomeEn": "Strait of Messina Bridge"
+    }
+  ],
+  "foco": [
+    "stockton_darlington",
+    "liverpool_manchester",
+    "london_birmingham",
+    "grand_junction"
+  ],
+  "metasEra": {
+    "diesel": 15,
+    "eletrico": 29,
+    "alta": 31
+  },
+  "estados": {
+    "GB": [
+      "Reino Unido",
+      "o"
+    ],
+    "FR": [
+      "França",
+      "o"
+    ],
+    "BE": [
+      "Bélgica",
+      "o"
+    ],
+    "NL": [
+      "Países Baixos",
+      "o"
+    ],
+    "DE": [
+      "Alemanha",
+      "c"
+    ],
+    "DK": [
+      "Dinamarca",
+      "c"
+    ],
+    "CH": [
+      "Suíça",
+      "c"
+    ],
+    "AT": [
+      "Áustria",
+      "c"
+    ],
+    "CZ": [
+      "Tchéquia",
+      "c"
+    ],
+    "PL": [
+      "Polônia",
+      "c"
+    ],
+    "SI": [
+      "Eslovênia",
+      "c"
+    ],
+    "IT": [
+      "Itália",
+      "s"
+    ],
+    "ES": [
+      "Espanha",
+      "s"
+    ],
+    "PT": [
+      "Portugal",
+      "s"
+    ],
+    "HU": [
+      "Hungria",
+      "l"
+    ],
+    "RS": [
+      "Sérvia",
+      "l"
+    ],
+    "BG": [
+      "Bulgária",
+      "l"
+    ],
+    "TR": [
+      "Turquia",
+      "l"
+    ],
+    "SE": [
+      "Suécia",
+      "n"
+    ],
+    "LT": [
+      "Lituânia",
+      "n"
+    ],
+    "LV": [
+      "Letônia",
+      "n"
+    ],
+    "EE": [
+      "Estônia",
+      "n"
+    ]
+  },
+  "regioes": {
+    "o": {
+      "pt": "Europa Ocidental",
+      "en": "Western Europe"
+    },
+    "c": {
+      "pt": "Europa Central",
+      "en": "Central Europe"
+    },
+    "s": {
+      "pt": "Sul da Europa",
+      "en": "Southern Europe"
+    },
+    "l": {
+      "pt": "Bálcãs",
+      "en": "Balkans"
+    },
+    "n": {
+      "pt": "Norte e Báltico",
+      "en": "North and Baltic"
+    }
+  }
+}

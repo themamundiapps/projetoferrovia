@@ -1,5 +1,5 @@
 --!strict
--- Menu inicial: boas-vindas, escolha do mapa (Brasil e EUA; Europa em breve), novidades e ranking global.
+-- Menu inicial: boas-vindas, escolha do mapa (Brasil, EUA e Europa), novidades e ranking global.
 -- Fica por cima de tudo; o mapa da companhia passa devagar no fundo (o init.client cuida do passeio).
 -- Uso: Inicio.new(playerGui) mostra "Carregando…"; :montar(estado, era, dados) monta o menu;
 -- aoJogar dispara com o id do mapa escolhido; :fechar() some com fade; :destruir().
@@ -14,6 +14,7 @@ local Idioma = require(Shared:WaitForChild("Idioma"))
 local Novidades = require(Shared:WaitForChild("Novidades"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local DadosEUA = require(Shared:WaitForChild("Dados"):WaitForChild("EUA"))
+local DadosEuropa = require(Shared:WaitForChild("Dados"):WaitForChild("Europa"))
 local Emojis = require(Shared:WaitForChild("Emojis"))
 local Estilo = require(script.Parent:WaitForChild("Estilo"))
 
@@ -195,7 +196,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		BackgroundTransparency = 1,
 	}, coluna)
 	est:lista(fileira, 10, true)
-	local nLinhasBrasil, nLinhasEUA = #DadosBrasil.linhas, #DadosEUA.linhas
+	local nLinhasBrasil, nLinhasEUA, nLinhasEuropa = #DadosBrasil.linhas, #DadosEUA.linhas, #DadosEuropa.linhas
 	local mapas = {
 		{
 			id = "brasil",
@@ -209,7 +210,12 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			info = L(`{nLinhasEUA} linhas · 1830 até hoje`, `{nLinhasEUA} lines · 1830 to today`),
 			pronto = true,
 		},
-		{ id = "europa", nome = L("Europa", "Europe"), info = L("Em breve", "Coming soon"), pronto = false },
+		{
+			id = "europa",
+			nome = L("Europa", "Europe"),
+			info = L(`{nLinhasEuropa} linhas · 1825 até hoje`, `{nLinhasEuropa} lines · 1825 to today`),
+			pronto = true,
+		},
 	}
 	for i, m in mapas do
 		local cartao = est:cartao({

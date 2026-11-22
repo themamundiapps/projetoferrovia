@@ -19,6 +19,7 @@ local Emojis = require(Shared:WaitForChild("Emojis"))
 local DADOS: { [string]: any } = {
 	brasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil")),
 	eua = require(Shared:WaitForChild("Dados"):WaitForChild("EUA")),
+	europa = require(Shared:WaitForChild("Dados"):WaitForChild("Europa")),
 }
 local dadosAtual: any = DADOS.brasil
 local MapaView = require(script:WaitForChild("MapaView"))
@@ -535,6 +536,7 @@ local passeio: RBXScriptConnection? = nil
 local ROTEIROS: { [string]: { string } } = {
 	brasil = { "recife", "salvador", "brasilia", "rio", "sao_paulo", "curitiba", "porto_alegre" },
 	eua = { "seattle", "san_francisco", "los_angeles", "denver", "chicago", "new_york", "washington", "atlanta", "new_orleans", "houston" },
+	europa = { "lisboa", "madrid", "barcelona", "marseille", "milano", "roma", "wien", "berlin", "amsterdam", "london", "paris" },
 }
 local SEGUNDOS_POR_TRECHO = 16
 

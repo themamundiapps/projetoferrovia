@@ -19,6 +19,7 @@ const SINUOSIDADE = 1.25;      // trilho real é mais longo que a linha reta
 const MAPAS = {
   brasil: { arquivo: "brasil.json", modulo: "Brasil", moeda: "BRL", simbolo: "R$" },
   eua: { arquivo: "eua.json", modulo: "EUA", moeda: "USD", simbolo: "US$" },
+  europa: { arquivo: "europa.json", modulo: "Europa", moeda: "EUR", simbolo: "€" },
 };
 
 function projecao(def) {

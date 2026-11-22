@@ -442,7 +442,7 @@ Metas.MEDALHAS = {
 		end,
 	},
 	{
-		id = "carvao_no_porto", nome = "Carvão para as usinas", emoji = "carga_carvao", xp = 30, mapa = "eua",
+		id = "carvao_no_porto", nome = "Carvão para as usinas", emoji = "carga_carvao", xp = 30, mapa = { eua = true, europa = true },
 		descricao = "Ligue uma mina de carvão a um porto.",
 		teste = function(_estado: EstadoMapa, _dados: any, ctx: Contexto): boolean
 			return (ctx.cargaDia.carvao or 0) > 0
@@ -623,6 +623,16 @@ Metas.MEDALHAS = {
 			return Economia.linhasCompletas(estado, dados) == #dados.linhas
 		end,
 	},
+	{
+		id = "europa_completo", nome = "A Europa nos trilhos", emoji = "mapa_mundo", xp = 300, mapa = "europa",
+		descricao = "Complete o mapa da Europa: todas as linhas.",
+		progresso = function(estado: EstadoMapa, dados: any): (number, number)
+			return Economia.linhasCompletas(estado, dados), #dados.linhas
+		end,
+		teste = function(estado: EstadoMapa, dados: any, _ctx: Contexto): boolean
+			return Economia.linhasCompletas(estado, dados) == #dados.linhas
+		end,
+	},
 }
 
 -- Nomes em inglês das dificuldades e medalhas; Metas.traduzir troca (o cliente chama ao entrar e ao
@@ -649,6 +659,7 @@ local EN_MEDALHAS = {
 	primeiro_milhao = { "First million", "Have 1 million in cash." },
 	pais_nos_trilhos = { "Brazil on rails", "Complete the Brazil map: every line." },
 	eua_completo = { "Coast to coast", "Complete the USA map: every line." },
+	europa_completo = { "Europe on rails", "Complete the Europe map: every line." },
 	carvao_no_porto = { "Coal for the mills", "Link a coal mine to a port." },
 }
 
@@ -675,7 +686,8 @@ end
 function Metas.medalhasDoMapa(dados: any): { any }
 	local lista = {}
 	for _, m in Metas.MEDALHAS do
-		if m.mapa == nil or m.mapa == (dados.id or "brasil") then
+		local id = dados.id or "brasil"
+		if m.mapa == nil or m.mapa == id or (type(m.mapa) == "table" and m.mapa[id]) then
 			table.insert(lista, m)
 		end
 	end

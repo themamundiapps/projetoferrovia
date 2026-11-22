@@ -394,6 +394,23 @@ Assets.MusicasMapa = {
 		"rbxassetid://132521872324308", -- Beach Tropical Coffee Bossa Nova (DistroKid)
 		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
 	},
+	-- Europa: valsas e música de câmara (Viena, Paris, o "Grand Tour" de trem)
+	europa = {
+		"rbxassetid://1835403738", -- De Salzbourg à Vienne (APM)
+		"rbxassetid://1842282196", -- Classical Waltz, Brahms para harpa (APM)
+		"rbxassetid://1835403737", -- La Vie de Château (APM)
+		"rbxassetid://1835403788", -- Valse des Montagnes (APM)
+		"rbxassetid://1835403934", -- Carnet de Voyage (APM)
+		"rbxassetid://1835403929", -- Jean le Chevalier (APM)
+		"rbxassetid://1835403840", -- Gaieté et Fantaisie (APM)
+		"rbxassetid://1835403789", -- La Danse du Roi (APM)
+		"rbxassetid://9042220392", -- Chaconne des Tendres (APM)
+		"rbxassetid://9043644061", -- Quarteto de cordas nº 62, Haydn (APM)
+		"rbxassetid://9043650018", -- Quarteto de cordas, Debussy, IV (APM)
+		"rbxassetid://86967539363022", -- Classical Evening Waltz (DistroKid)
+		"rbxassetid://95662868157170", -- Classical Mountain Waltz (DistroKid)
+		"rbxassetid://1848052268", -- As Quatro Estações, Inverno, Largo (APM)
+	},
 	-- Menu inicial: trilha de viagem de trem, calma (não é de nenhum país)
 	menu = {
 		"rbxassetid://71758690602083", -- Vintage Train Journey (DistroKid)
