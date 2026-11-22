@@ -75,18 +75,18 @@ Mapas.europa = {
 	largura = 2048, altura = 1536,
 	projecao = { tipo = "geoAzimuthalEqualArea", rotacao = { -10, -52, 0 }, escala = 3026.7083, translacao = { 1024, 607.3794 } },
 	tiles = {
-		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_terra_0_0.png" },
-		{ camada = "terra", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_terra_0_1.png" },
-		{ camada = "terra", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_terra_1_0.png" },
-		{ camada = "terra", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_terra_1_1.png" },
-		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_0_0.png" },
-		{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_0_1.png" },
-		{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_1_0.png" },
-		{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_1_1.png" },
-		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_0_0.png" },
-		{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_0_1.png" },
-		{ camada = "rios", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_1_0.png" },
-		{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_1_1.png" },
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://86057190829387", arquivo = "mapas/europa/europa_terra_0_0.png" },
+		{ camada = "terra", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://109478426417365", arquivo = "mapas/europa/europa_terra_0_1.png" },
+		{ camada = "terra", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://74415780550096", arquivo = "mapas/europa/europa_terra_1_0.png" },
+		{ camada = "terra", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://97516748013183", arquivo = "mapas/europa/europa_terra_1_1.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101624481508432", arquivo = "mapas/europa/europa_linhas_0_0.png" },
+		{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://138949568929881", arquivo = "mapas/europa/europa_linhas_0_1.png" },
+		{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://71559822659490", arquivo = "mapas/europa/europa_linhas_1_0.png" },
+		{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://127175935643712", arquivo = "mapas/europa/europa_linhas_1_1.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://128484225367731", arquivo = "mapas/europa/europa_rios_0_0.png" },
+		{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://134846851451854", arquivo = "mapas/europa/europa_rios_0_1.png" },
+		{ camada = "rios", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://92163540702838", arquivo = "mapas/europa/europa_rios_1_0.png" },
+		{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://121735767308938", arquivo = "mapas/europa/europa_rios_1_1.png" },
 	},
 	cidades = {
 		["London"] = Vector2.new(692, 610),
@@ -422,6 +422,129 @@ Mapas.eua.detalhes = {
 	{ id = "6_4", x0 = 1536, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
 		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://140607227684648", arquivo = "mapas/eua_detalhe/eua_detalhe_6_4_terra.png" },
 		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76417801199394", arquivo = "mapas/eua_detalhe/eua_detalhe_6_4_linhas.png" },
+	} },
+}
+
+-- Regiões de detalhe do mapa (ver o comentário do Brasil acima).
+Mapas.europa.detalhes = {
+	{ id = "4_0", x0 = 1024, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://72034718575695", arquivo = "mapas/europa_detalhe/europa_detalhe_4_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://111563360893652", arquivo = "mapas/europa_detalhe/europa_detalhe_4_0_linhas.png" },
+	} },
+	{ id = "5_0", x0 = 1280, y0 = 0, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71578799914108", arquivo = "mapas/europa_detalhe/europa_detalhe_5_0_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://74255912769151", arquivo = "mapas/europa_detalhe/europa_detalhe_5_0_linhas.png" },
+	} },
+	{ id = "2_1", x0 = 512, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118141892281093", arquivo = "mapas/europa_detalhe/europa_detalhe_2_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://94197507100454", arquivo = "mapas/europa_detalhe/europa_detalhe_2_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://75120521797604", arquivo = "mapas/europa_detalhe/europa_detalhe_2_1_rios.png" },
+	} },
+	{ id = "3_1", x0 = 768, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://87144768335753", arquivo = "mapas/europa_detalhe/europa_detalhe_3_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://80230733346033", arquivo = "mapas/europa_detalhe/europa_detalhe_3_1_linhas.png" },
+	} },
+	{ id = "4_1", x0 = 1024, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://85323262345652", arquivo = "mapas/europa_detalhe/europa_detalhe_4_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://76720399396803", arquivo = "mapas/europa_detalhe/europa_detalhe_4_1_linhas.png" },
+	} },
+	{ id = "5_1", x0 = 1280, y0 = 256, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://77048412934225", arquivo = "mapas/europa_detalhe/europa_detalhe_5_1_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://93528399816379", arquivo = "mapas/europa_detalhe/europa_detalhe_5_1_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://75792743589902", arquivo = "mapas/europa_detalhe/europa_detalhe_5_1_rios.png" },
+	} },
+	{ id = "2_2", x0 = 512, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://97112926486543", arquivo = "mapas/europa_detalhe/europa_detalhe_2_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://94574946056503", arquivo = "mapas/europa_detalhe/europa_detalhe_2_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://136253697832752", arquivo = "mapas/europa_detalhe/europa_detalhe_2_2_rios.png" },
+	} },
+	{ id = "3_2", x0 = 768, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101613841743741", arquivo = "mapas/europa_detalhe/europa_detalhe_3_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://106555531060533", arquivo = "mapas/europa_detalhe/europa_detalhe_3_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://114373217619929", arquivo = "mapas/europa_detalhe/europa_detalhe_3_2_rios.png" },
+	} },
+	{ id = "4_2", x0 = 1024, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://88000028478177", arquivo = "mapas/europa_detalhe/europa_detalhe_4_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://113032995495570", arquivo = "mapas/europa_detalhe/europa_detalhe_4_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://122080346351791", arquivo = "mapas/europa_detalhe/europa_detalhe_4_2_rios.png" },
+	} },
+	{ id = "5_2", x0 = 1280, y0 = 512, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101148144010027", arquivo = "mapas/europa_detalhe/europa_detalhe_5_2_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://95137785483212", arquivo = "mapas/europa_detalhe/europa_detalhe_5_2_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://131696835850553", arquivo = "mapas/europa_detalhe/europa_detalhe_5_2_rios.png" },
+	} },
+	{ id = "1_3", x0 = 256, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://127141279995925", arquivo = "mapas/europa_detalhe/europa_detalhe_1_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://122717305505215", arquivo = "mapas/europa_detalhe/europa_detalhe_1_3_linhas.png" },
+	} },
+	{ id = "2_3", x0 = 512, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://121016320369976", arquivo = "mapas/europa_detalhe/europa_detalhe_2_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://135277391128708", arquivo = "mapas/europa_detalhe/europa_detalhe_2_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://82292398156352", arquivo = "mapas/europa_detalhe/europa_detalhe_2_3_rios.png" },
+	} },
+	{ id = "3_3", x0 = 768, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://83940358927265", arquivo = "mapas/europa_detalhe/europa_detalhe_3_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://79697725116419", arquivo = "mapas/europa_detalhe/europa_detalhe_3_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://123124239119755", arquivo = "mapas/europa_detalhe/europa_detalhe_3_3_rios.png" },
+	} },
+	{ id = "4_3", x0 = 1024, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://133146456273264", arquivo = "mapas/europa_detalhe/europa_detalhe_4_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://127579100945387", arquivo = "mapas/europa_detalhe/europa_detalhe_4_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://84953180090531", arquivo = "mapas/europa_detalhe/europa_detalhe_4_3_rios.png" },
+	} },
+	{ id = "5_3", x0 = 1280, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101033368373139", arquivo = "mapas/europa_detalhe/europa_detalhe_5_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://128638935548375", arquivo = "mapas/europa_detalhe/europa_detalhe_5_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://101108866275895", arquivo = "mapas/europa_detalhe/europa_detalhe_5_3_rios.png" },
+	} },
+	{ id = "6_3", x0 = 1536, y0 = 768, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71143727471893", arquivo = "mapas/europa_detalhe/europa_detalhe_6_3_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://106923467647372", arquivo = "mapas/europa_detalhe/europa_detalhe_6_3_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118836817614007", arquivo = "mapas/europa_detalhe/europa_detalhe_6_3_rios.png" },
+	} },
+	{ id = "0_4", x0 = 0, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://128157746281039", arquivo = "mapas/europa_detalhe/europa_detalhe_0_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://137185308419060", arquivo = "mapas/europa_detalhe/europa_detalhe_0_4_linhas.png" },
+	} },
+	{ id = "1_4", x0 = 256, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://88972300564545", arquivo = "mapas/europa_detalhe/europa_detalhe_1_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://120784475278014", arquivo = "mapas/europa_detalhe/europa_detalhe_1_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://98675932555179", arquivo = "mapas/europa_detalhe/europa_detalhe_1_4_rios.png" },
+	} },
+	{ id = "2_4", x0 = 512, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://131335160637572", arquivo = "mapas/europa_detalhe/europa_detalhe_2_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://129630673494370", arquivo = "mapas/europa_detalhe/europa_detalhe_2_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://74273717306444", arquivo = "mapas/europa_detalhe/europa_detalhe_2_4_rios.png" },
+	} },
+	{ id = "3_4", x0 = 768, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://113711056503135", arquivo = "mapas/europa_detalhe/europa_detalhe_3_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://81574095926898", arquivo = "mapas/europa_detalhe/europa_detalhe_3_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://79617243626172", arquivo = "mapas/europa_detalhe/europa_detalhe_3_4_rios.png" },
+	} },
+	{ id = "4_4", x0 = 1024, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://109058697184773", arquivo = "mapas/europa_detalhe/europa_detalhe_4_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://75559101370903", arquivo = "mapas/europa_detalhe/europa_detalhe_4_4_linhas.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://90590389131780", arquivo = "mapas/europa_detalhe/europa_detalhe_4_4_rios.png" },
+	} },
+	{ id = "5_4", x0 = 1280, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://87327808833559", arquivo = "mapas/europa_detalhe/europa_detalhe_5_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://80512530649196", arquivo = "mapas/europa_detalhe/europa_detalhe_5_4_linhas.png" },
+	} },
+	{ id = "6_4", x0 = 1536, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://105877882554660", arquivo = "mapas/europa_detalhe/europa_detalhe_6_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://71258317155848", arquivo = "mapas/europa_detalhe/europa_detalhe_6_4_linhas.png" },
+	} },
+	{ id = "7_4", x0 = 1792, y0 = 1024, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://136767008801402", arquivo = "mapas/europa_detalhe/europa_detalhe_7_4_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://117545077253511", arquivo = "mapas/europa_detalhe/europa_detalhe_7_4_linhas.png" },
+	} },
+	{ id = "4_5", x0 = 1024, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://118913963200126", arquivo = "mapas/europa_detalhe/europa_detalhe_4_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://130095683898293", arquivo = "mapas/europa_detalhe/europa_detalhe_4_5_linhas.png" },
+	} },
+	{ id = "5_5", x0 = 1280, y0 = 1280, largura = 256, altura = 256, escala = 4, tiles = {
+		{ camada = "terra", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://134072683884742", arquivo = "mapas/europa_detalhe/europa_detalhe_5_5_terra.png" },
+		{ camada = "linhas", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://97614325496751", arquivo = "mapas/europa_detalhe/europa_detalhe_5_5_linhas.png" },
 	} },
 }
 
