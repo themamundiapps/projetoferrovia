@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2a4a"/>
+      <stop offset="0.55" stop-color="#3b3f6b"/>
+      <stop offset="0.85" stop-color="#e0864a"/>
+      <stop offset="1" stop-color="#f2b25c"/>
+    </linearGradient>
+    <linearGradient id="chao" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f5d43"/>
+      <stop offset="1" stop-color="#1e3d2c"/>
+    </linearGradient>
+    <linearGradient id="caldeira" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7a1f1f"/>
+      <stop offset="0.5" stop-color="#c8372d"/>
+      <stop offset="1" stop-color="#7a1f1f"/>
+    </linearGradient>
+    <radialGradient id="farol" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff6cf"/>
+      <stop offset="1" stop-color="#ffd25e"/>
+    </radialGradient>
+    <radialGradient id="luz" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff2b0" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#fff2b0" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="borda"><rect width="512" height="512" rx="0"/></clipPath>
+  </defs>
+  <g clip-path="url(#borda)">
+    <rect width="512" height="512" fill="url(#ceu)"/>
+    <!-- sol -->
+    <circle cx="256" cy="300" r="70" fill="#ffd27a" opacity="0.9"/>
+    <!-- montanhas -->
+    <path d="M0 300 L70 230 L130 280 L200 210 L270 290 L340 220 L410 285 L470 240 L512 270 L512 340 L0 340 Z" fill="#2a3557" opacity="0.85"/>
+    <!-- chão -->
+    <path d="M0 320 Q256 300 512 320 L512 512 L0 512 Z" fill="url(#chao)"/>
+    <!-- trilho em perspectiva vindo até a frente -->
+    <path d="M232 318 L280 318 L420 512 L92 512 Z" fill="#6b5a46"/>
+    <g stroke="#3d2f22" stroke-width="7" stroke-linecap="round">
+      <line x1="225" y1="332" x2="287" y2="332"/>
+      <line x1="214" y1="352" x2="298" y2="352"/>
+      <line x1="199" y1="378" x2="313" y2="378"/>
+      <line x1="180" y1="410" x2="332" y2="410"/>
+      <line x1="156" y1="450" x2="356" y2="450"/>
+      <line x1="126" y1="500" x2="386" y2="500"/>
+    </g>
+    <g stroke="#cfd6de" stroke-width="6" fill="none">
+      <path d="M244 318 L150 512"/>
+      <path d="M268 318 L362 512"/>
+    </g>
+    <!-- fumaça -->
+    <g fill="#eef0f4">
+      <circle cx="258" cy="96" r="30" opacity="0.95"/>
+      <circle cx="300" cy="70" r="36" opacity="0.85"/>
+      <circle cx="352" cy="58" r="40" opacity="0.7"/>
+      <circle cx="410" cy="52" r="42" opacity="0.5"/>
+      <circle cx="232" cy="124" r="22"/>
+    </g>
+    <!-- locomotiva de frente -->
+    <g>
+      <!-- cabine atrás -->
+      <rect x="168" y="168" width="176" height="96" rx="10" fill="#5a1717"/>
+      <rect x="160" y="158" width="192" height="18" rx="6" fill="#2b2b33"/>
+      <rect x="184" y="186" width="40" height="36" rx="4" fill="#ffd25e" opacity="0.9"/>
+      <rect x="288" y="186" width="40" height="36" rx="4" fill="#ffd25e" opacity="0.9"/>
+      <!-- chaminé -->
+      <path d="M238 112 L274 112 L268 168 L244 168 Z" fill="#26262e"/>
+      <rect x="230" y="104" width="52" height="14" rx="5" fill="#33333d"/>
+      <!-- caldeira (frente redonda) -->
+      <circle cx="256" cy="262" r="92" fill="url(#caldeira)"/>
+      <circle cx="256" cy="262" r="78" fill="#2b2b33"/>
+      <circle cx="256" cy="262" r="70" fill="#3a3a45"/>
+      <g stroke="#b9a06a" stroke-width="5" fill="none">
+        <circle cx="256" cy="262" r="70"/>
+      </g>
+      <!-- rebites -->
+      <g fill="#d8c08a">
+        <circle cx="256" cy="198" r="5"/><circle cx="256" cy="326" r="5"/>
+        <circle cx="192" cy="262" r="5"/><circle cx="320" cy="262" r="5"/>
+        <circle cx="211" cy="217" r="5"/><circle cx="301" cy="217" r="5"/>
+        <circle cx="211" cy="307" r="5"/><circle cx="301" cy="307" r="5"/>
+      </g>
+      <!-- farol -->
+      <circle cx="256" cy="262" r="64" fill="url(#luz)"/>
+      <circle cx="256" cy="250" r="30" fill="#26262e"/>
+      <circle cx="256" cy="250" r="23" fill="url(#farol)"/>
+      <!-- limpa-trilhos -->
+      <path d="M176 330 L336 330 L372 384 L140 384 Z" fill="#c8372d"/>
+      <g stroke="#7a1f1f" stroke-width="6">
+        <line x1="190" y1="336" x2="166" y2="380"/>
+        <line x1="222" y1="336" x2="212" y2="380"/>
+        <line x1="256" y1="336" x2="256" y2="380"/>
+        <line x1="290" y1="336" x2="300" y2="380"/>
+        <line x1="322" y1="336" x2="346" y2="380"/>
+      </g>
+      <rect x="150" y="320" width="212" height="14" rx="4" fill="#2b2b33"/>
+    </g>
+    <!-- faixa do título -->
+    <rect x="0" y="392" width="512" height="120" fill="#141c30" opacity="0.92"/>
+    <rect x="0" y="392" width="512" height="5" fill="#f2b25c"/>
+    <text x="256" y="452" text-anchor="middle" font-family="Archivo Black" font-size="58" fill="#f6e7c8" letter-spacing="2">FERROVIA</text>
+    <text x="256" y="500" text-anchor="middle" font-family="Archivo Black" font-size="40" fill="#f2b25c" letter-spacing="10">TYCOON</text>
+  </g>
+</svg>
