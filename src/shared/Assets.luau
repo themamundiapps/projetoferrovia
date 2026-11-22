@@ -394,6 +394,19 @@ Assets.MusicasMapa = {
 		"rbxassetid://132521872324308", -- Beach Tropical Coffee Bossa Nova (DistroKid)
 		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
 	},
+	-- Menu inicial: trilha de viagem de trem, calma (não é de nenhum país)
+	menu = {
+		"rbxassetid://71758690602083", -- Vintage Train Journey (DistroKid)
+		"rbxassetid://101712510941745", -- Alpine Station (DistroKid)
+		"rbxassetid://1844804693", -- Night Train Journey (APM)
+		"rbxassetid://106628706778250", -- Starlight Train Journey (DistroKid)
+		"rbxassetid://138279773671408", -- Mahogany Sleeper (DistroKid)
+		"rbxassetid://83205983205107", -- Platform Zero (DistroKid)
+		"rbxassetid://83682632338335", -- Brass Tea Trolley (DistroKid)
+		"rbxassetid://116754068259639", -- Last Car Home (DistroKid)
+		"rbxassetid://9042189669", -- Inspirational Moment (APM)
+		"rbxassetid://94872458305406", -- Building Empires, legato (APM)
+	},
 	-- EUA: jazz (swing e dixieland dos anos 1920–30, mais o jazz de clube, mais calmo)
 	eua = {
 		"rbxassetid://104748407843789", -- 1930s Jazz Vibes (DistroKid)

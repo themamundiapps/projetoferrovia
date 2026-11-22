@@ -72,8 +72,13 @@ end
 
 -- Playlist que toca agora: a do mapa (a mesma em todas as eras) ou, sem ela, a da era.
 local mapaAtual = "brasil"
+local noMenu = true -- o jogo abre no menu inicial, que tem a trilha dele
 local function listaAtual(): { string }?
-	return (Assets :: any).MusicasMapa[mapaAtual] or (eraAtual and Assets.Musicas[eraAtual])
+	local musicas = (Assets :: any).MusicasMapa
+	if noMenu and musicas.menu then
+		return musicas.menu
+	end
+	return musicas[mapaAtual] or (eraAtual and Assets.Musicas[eraAtual])
 end
 
 local function proxima()
@@ -145,6 +150,17 @@ function Som.definirMapa(id: string)
 		s:Stop()
 		s:Destroy()
 	end
+end
+
+-- Menu inicial aberto (trilha do menu) ou fechado (trilha do mapa). Troca a música na hora.
+function Som.definirMenu(aberto: boolean)
+	if aberto == noMenu then
+		return
+	end
+	noMenu = aberto
+	fila = {}
+	pararMusica()
+	proxima()
 end
 
 function Som.musica(eraId: string)

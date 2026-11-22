@@ -601,6 +601,7 @@ inicio.aoJogar.Event:Connect(function(mapaId: string)
 		end
 	end
 	inicio:fechar()
+	Som.definirMenu(false)
 	pararPasseio()
 	telaUI.Enabled = true
 	if mapa then
@@ -614,6 +615,7 @@ abrirMenuInicial = function()
 		inicio:montar(ultimoEstado, Theme.PorId[ultimoEstado.era] or Theme.PorId.vapor, dadosAtual)
 	end
 	inicio:abrir()
+	Som.definirMenu(true)
 	telaUI.Enabled = false
 	iniciarPasseio()
 end
