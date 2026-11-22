@@ -1,8 +1,9 @@
 --!strict
 -- História das cidades importantes em cada era (aparece na ficha da cidade).
--- Diesel = 1930–1965, Elétrica = 1965–2000, Alta Velocidade = 2000 em diante.
+-- Brasil: Diesel = 1930–1965, Elétrica = 1965–2000, Alta Velocidade = 2000 em diante (EUA no fim do arquivo).
 -- A ficha usa o texto da era atual; se a cidade não tiver, volta para a era anterior e, no fim,
--- para a `historia` de Brasil.luau (a da Era do Vapor). Escrito à mão (Brasil.luau é gerado).
+-- para a `historia` dos dados do mapa (a da Era do Vapor). Escrito à mão (os dados são gerados).
+-- Os ids das cidades não se repetem entre os mapas, então todas ficam na mesma tabela.
 
 type Texto = { pt: string, en: string }
 
@@ -327,6 +328,316 @@ return {
 		alta = {
 			pt = "A capital do sol e das dunas de Genipabu, com trens urbanos ligando a cidade à região metropolitana.",
 			en = "The capital of sunshine and the Genipabu dunes, with commuter trains linking the city to its metropolitan area.",
+		},
+	},
+	-- ================================================================ EUA
+	-- Diesel = 1935–1970, Elétrica = 1970–2000, Alta Velocidade = 2000 em diante (anos do mapa dos EUA).
+	boston = {
+		diesel = {
+			pt = "A South Station chegou a ser a estação mais movimentada do mundo. Os trens de subúrbio levavam os trabalhadores das cidades em volta até o porto e as fábricas.",
+			en = "South Station was once the busiest railway station in the world. Commuter trains carried workers from the surrounding towns to the port and the factories.",
+		},
+		eletrico = {
+			pt = "Universidades e hospitais tomaram o lugar das fábricas. O governo estadual assumiu os trens de subúrbio para salvá-los da falência.",
+			en = "Universities and hospitals took the place of the factories. The state took over the commuter trains to save them from bankruptcy.",
+		},
+		alta = {
+			pt = "Ponta norte do corredor do Acela, o trem mais rápido do país, que liga Boston a Nova York e Washington.",
+			en = "Northern end of the Acela corridor, the country's fastest train, linking Boston to New York and Washington.",
+		},
+	},
+	new_york = {
+		diesel = {
+			pt = "A Grand Central e a Penn Station recebiam trens de luxo como o 20th Century Limited, que embarcava os passageiros num tapete vermelho rumo a Chicago.",
+			en = "Grand Central and Penn Station received luxury trains like the 20th Century Limited, which boarded passengers on a red carpet bound for Chicago.",
+		},
+		eletrico = {
+			pt = "A velha Penn Station foi demolida em 1963, e o protesto que veio depois salvou a Grand Central. O metrô e os trens de subúrbio carregavam milhões por dia.",
+			en = "The old Penn Station was torn down in 1963, and the outcry that followed saved Grand Central. The subway and commuter trains carried millions a day.",
+		},
+		alta = {
+			pt = "A estação Moynihan abriu em 2021 no antigo correio, em frente à Penn Station. Os túneis sob o rio Hudson são o grande gargalo do corredor do Nordeste.",
+			en = "Moynihan Train Hall opened in 2021 in the old post office, across from Penn Station. The tunnels under the Hudson River are the Northeast Corridor's great bottleneck.",
+		},
+	},
+	philadelphia = {
+		diesel = {
+			pt = "A Pennsylvania Railroad eletrificou a linha até Nova York e Washington, e a 30th Street Station, de 1933, virou o coração da maior ferrovia do país.",
+			en = "The Pennsylvania Railroad electrified its line to New York and Washington, and 30th Street Station, opened in 1933, became the heart of the country's largest railroad.",
+		},
+		eletrico = {
+			pt = "Em 1970 a Penn Central, criada pela fusão da Pennsylvania com a New York Central, faliu: a maior falência da história do país até então.",
+			en = "In 1970 Penn Central, born of the merger of the Pennsylvania and the New York Central, went bankrupt: the largest bankruptcy in the country's history up to then.",
+		},
+		alta = {
+			pt = "A 30th Street Station é uma das estações mais movimentadas da Amtrak, no meio do caminho entre Nova York e Washington.",
+			en = "30th Street Station is one of Amtrak's busiest, halfway between New York and Washington.",
+		},
+	},
+	pittsburgh = {
+		diesel = {
+			pt = "As usinas de aço trabalhavam dia e noite durante a guerra. O céu ficava tão escuro de fumaça que os postes acendiam ao meio-dia.",
+			en = "The steel mills ran day and night during the war. The sky grew so dark with smoke that streetlights came on at noon.",
+		},
+		eletrico = {
+			pt = "As usinas fecharam nos anos 1980 e a cidade perdeu metade dos empregos. Os trilhos que levavam aço passaram a levar outras cargas.",
+			en = "The mills closed in the 1980s and the city lost half its jobs. The tracks that carried steel began carrying other freight.",
+		},
+		alta = {
+			pt = "Reinventada com universidades, hospitais e robótica, mas ainda cortada por trens de carga ao longo dos rios.",
+			en = "Reinvented with universities, hospitals and robotics, but still crossed by freight trains along its rivers.",
+		},
+	},
+	baltimore = {
+		diesel = {
+			pt = "A B&O, a ferrovia mais antiga do país, ainda tinha sede aqui. Seu trem Capitol Limited ia até Chicago.",
+			en = "The B&O, the country's oldest railroad, was still headquartered here. Its Capitol Limited train ran to Chicago.",
+		},
+		eletrico = {
+			pt = "A B&O sumiu nas fusões e virou parte da Chessie System. A velha oficina de Mount Clare virou o Museu Ferroviário da B&O.",
+			en = "The B&O disappeared into mergers and became part of the Chessie System. The old Mount Clare shops became the B&O Railroad Museum.",
+		},
+		alta = {
+			pt = "O porto recebe navios de contêineres e de carros, e há um projeto de trem de levitação magnética até Washington.",
+			en = "The port handles container and car ships, and there is a plan for a magnetic levitation train to Washington.",
+		},
+	},
+	washington = {
+		diesel = {
+			pt = "A Union Station recebia trens cheios de soldados e funcionários do governo durante a guerra.",
+			en = "Union Station received trains full of soldiers and government workers during the war.",
+		},
+		eletrico = {
+			pt = "Em 1971 a Amtrak nasceu aqui para cuidar dos trens de passageiros do país inteiro. O metrô abriu em 1976.",
+			en = "In 1971 Amtrak was born here to run passenger trains for the whole country. The Metro opened in 1976.",
+		},
+		alta = {
+			pt = "Ponta sul do corredor do Acela. A Union Station, restaurada, é ao mesmo tempo estação e shopping.",
+			en = "Southern end of the Acela corridor. The restored Union Station is both a station and a shopping mall.",
+		},
+	},
+	atlanta = {
+		diesel = {
+			pt = "Seguia sendo o grande entroncamento ferroviário do Sul, com trens como o Crescent ligando Nova York a Nova Orleans.",
+			en = "It remained the great rail junction of the South, with trains like the Crescent linking New York to New Orleans.",
+		},
+		eletrico = {
+			pt = "Cidade-sede do movimento pelos direitos civis. O metrô MARTA abriu em 1979 e o aeroporto virou o mais movimentado do mundo.",
+			en = "Home city of the civil rights movement. The MARTA subway opened in 1979 and the airport became the busiest in the world.",
+		},
+		alta = {
+			pt = "Os pátios de carga da Norfolk Southern e da CSX fazem dela um dos maiores centros logísticos do país.",
+			en = "Norfolk Southern and CSX freight yards make it one of the country's biggest logistics hubs.",
+		},
+	},
+	miami = {
+		diesel = {
+			pt = "Os trens de luxo do norte traziam turistas fugindo do inverno. O furacão de 1935 destruiu a ferrovia até Key West, que virou estrada.",
+			en = "Luxury trains from the North brought tourists escaping the winter. The 1935 hurricane destroyed the railroad to Key West, which became a highway.",
+		},
+		eletrico = {
+			pt = "A chegada de refugiados cubanos transformou a cidade. O metrô elevado, o Metrorail, abriu em 1984.",
+			en = "The arrival of Cuban refugees transformed the city. The elevated Metrorail opened in 1984.",
+		},
+		alta = {
+			pt = "Em 2018 a Brightline voltou a ligar Miami ao norte da Flórida com trens rápidos e privados, e em 2023 chegou a Orlando.",
+			en = "In 2018 Brightline again linked Miami to northern Florida with fast private trains, reaching Orlando in 2023.",
+		},
+	},
+	new_orleans = {
+		diesel = {
+			pt = "Trens como o City of New Orleans e o Panama Limited ligavam a cidade do jazz a Chicago pelo vale do Mississippi.",
+			en = "Trains like the City of New Orleans and the Panama Limited linked the jazz city to Chicago through the Mississippi valley.",
+		},
+		eletrico = {
+			pt = "O porto ficou entre os maiores do mundo em grãos e petróleo, que chegavam de trem e de barcaça.",
+			en = "The port became one of the world's largest for grain and oil, which arrived by train and by barge.",
+		},
+		alta = {
+			pt = "Reconstruída depois do furacão Katrina, em 2005. Seis grandes ferrovias de carga ainda se encontram aqui.",
+			en = "Rebuilt after Hurricane Katrina in 2005. Six major freight railroads still meet here.",
+		},
+	},
+	cincinnati = {
+		diesel = {
+			pt = "A Union Terminal, de 1933, em estilo art déco, recebia mais de cem trens por dia durante a guerra.",
+			en = "The 1933 Art Deco Union Terminal handled more than a hundred trains a day during the war.",
+		},
+		eletrico = {
+			pt = "Os trens de passageiros minguaram e a Union Terminal quase foi demolida; virou um centro de museus em 1990.",
+			en = "Passenger trains dwindled and Union Terminal was nearly demolished; it became a museum center in 1990.",
+		},
+		alta = {
+			pt = "A Union Terminal restaurada voltou a receber o trem Cardinal, entre Chicago e Nova York.",
+			en = "The restored Union Terminal again welcomes the Cardinal train, between Chicago and New York.",
+		},
+	},
+	detroit = {
+		diesel = {
+			pt = "A capital do automóvel virou o \"arsenal da democracia\": as fábricas de carro fizeram tanques e aviões na guerra.",
+			en = "The Motor City became the \"arsenal of democracy\": car plants built tanks and planes during the war.",
+		},
+		eletrico = {
+			pt = "A Michigan Central Station, gigante, perdeu os trens e fechou em 1988. A cidade encolheu com a crise da indústria.",
+			en = "The giant Michigan Central Station lost its trains and closed in 1988. The city shrank with the industrial crisis.",
+		},
+		alta = {
+			pt = "A Ford comprou e restaurou a Michigan Central Station, reaberta em 2024 como centro de tecnologia.",
+			en = "Ford bought and restored Michigan Central Station, reopened in 2024 as a technology hub.",
+		},
+	},
+	chicago = {
+		diesel = {
+			pt = "A capital ferroviária do país: os passageiros que cruzavam o continente trocavam de trem e de estação aqui.",
+			en = "The nation's railroad capital: passengers crossing the continent changed trains, and stations, here.",
+		},
+		eletrico = {
+			pt = "Os currais da Union Stock Yards fecharam em 1971. A Union Station virou a base da Amtrak no Meio-Oeste.",
+			en = "The Union Stock Yards closed in 1971. Union Station became Amtrak's Midwest base.",
+		},
+		alta = {
+			pt = "Um quarto dos trens de carga do país ainda passa por Chicago, e a Amtrak sai daqui para todas as direções.",
+			en = "A quarter of the country's freight trains still pass through Chicago, and Amtrak heads out from here in every direction.",
+		},
+	},
+	minneapolis = {
+		diesel = {
+			pt = "Os moinhos de farinha e os trens Empire Builder e North Coast Limited, rumo ao Pacífico, partiam daqui.",
+			en = "The flour mills, and the Empire Builder and North Coast Limited trains bound for the Pacific, set out from here.",
+		},
+		eletrico = {
+			pt = "Em 1970 a Great Northern e a Northern Pacific se uniram na Burlington Northern, com sede em St. Paul.",
+			en = "In 1970 the Great Northern and the Northern Pacific merged into the Burlington Northern, headquartered in St. Paul.",
+		},
+		alta = {
+			pt = "Os bondes modernos voltaram em 2004, e os trens de grãos ainda saem das planícies rumo aos portos.",
+			en = "Modern light rail returned in 2004, and grain trains still leave the plains for the ports.",
+		},
+	},
+	st_louis = {
+		diesel = {
+			pt = "A Union Station chegou a ser a maior estação do mundo em número de trilhos, com trens para o Oeste e o Sul.",
+			en = "Union Station was once the world's largest station by number of tracks, with trains to the West and the South.",
+		},
+		eletrico = {
+			pt = "O Gateway Arch, de 1965, virou o símbolo da \"porta do Oeste\". A Union Station perdeu os trens em 1978 e virou hotel.",
+			en = "The 1965 Gateway Arch became the symbol of the \"Gateway to the West\". Union Station lost its trains in 1978 and became a hotel.",
+		},
+		alta = {
+			pt = "Trens mais rápidos ligam St. Louis a Chicago a até 180 km/h, e os pátios de carga seguem cheios.",
+			en = "Faster trains link St. Louis to Chicago at up to 110 mph, and the freight yards are still busy.",
+		},
+	},
+	kansas_city = {
+		diesel = {
+			pt = "A Union Station, uma das maiores do país, recebia trens das ferrovias que cruzavam as planícies.",
+			en = "Union Station, one of the country's largest, received trains from the railroads crossing the plains.",
+		},
+		eletrico = {
+			pt = "Os currais fecharam e a Union Station quase virou ruína, até a cidade decidir salvá-la.",
+			en = "The stockyards closed and Union Station nearly fell into ruin, until the city decided to save it.",
+		},
+		alta = {
+			pt = "Segundo maior centro ferroviário de carga do país, com uma Union Station restaurada e um bonde novo.",
+			en = "The country's second-largest freight rail hub, with a restored Union Station and a new streetcar.",
+		},
+	},
+	houston = {
+		diesel = {
+			pt = "O petróleo transformou a cidade. O canal de navios fez do porto um dos mais movimentados do país.",
+			en = "Oil transformed the city. The ship channel made the port one of the busiest in the country.",
+		},
+		eletrico = {
+			pt = "Centro da indústria petroquímica e da NASA. A cidade cresceu com o carro e quase sem trens de passageiros.",
+			en = "Center of the petrochemical industry and of NASA. The city grew around the car, with almost no passenger trains.",
+		},
+		alta = {
+			pt = "O trem-bala Texas Central, até Dallas, foi planejado com tecnologia japonesa, mas parou na Justiça e na falta de verba.",
+			en = "The Texas Central bullet train to Dallas was planned with Japanese technology, but stalled in the courts and for lack of funds.",
+		},
+	},
+	dallas = {
+		diesel = {
+			pt = "Cresceu com o algodão, o petróleo e o cruzamento de ferrovias que a criou.",
+			en = "It grew with cotton, oil and the railroad crossing that created it.",
+		},
+		eletrico = {
+			pt = "O aeroporto de Dallas–Fort Worth, de 1974, virou um dos maiores do mundo. Os trens de passageiros quase sumiram.",
+			en = "Dallas–Fort Worth airport, opened in 1974, became one of the world's largest. Passenger trains nearly disappeared.",
+		},
+		alta = {
+			pt = "Tem a maior rede de bondes modernos do país e espera o trem-bala até Houston.",
+			en = "It has the country's largest light rail network and awaits the bullet train to Houston.",
+		},
+	},
+	denver = {
+		diesel = {
+			pt = "O California Zephyr, de 1949, saía daqui e cruzava as Rochosas com vagões de teto de vidro.",
+			en = "The California Zephyr, launched in 1949, left from here and crossed the Rockies with glass-domed cars.",
+		},
+		eletrico = {
+			pt = "O boom do petróleo e do esqui fez a cidade crescer; a Union Station seguiu recebendo o Zephyr da Amtrak.",
+			en = "The oil and ski booms made the city grow; Union Station kept receiving Amtrak's Zephyr.",
+		},
+		alta = {
+			pt = "A Union Station reformada, de 2014, virou o centro de uma rede nova de trens até o aeroporto e os subúrbios.",
+			en = "The renovated Union Station, reopened in 2014, became the hub of a new rail network to the airport and suburbs.",
+		},
+	},
+	portland = {
+		diesel = {
+			pt = "Porto da madeira e dos grãos do Noroeste, com estaleiros que fizeram centenas de navios na guerra.",
+			en = "Port for the Northwest's timber and grain, with shipyards that built hundreds of ships during the war.",
+		},
+		eletrico = {
+			pt = "Trocou uma rodovia à beira do rio por um parque e, em 1986, abriu uma das primeiras redes de bonde moderno do país.",
+			en = "It swapped a riverside highway for a park and, in 1986, opened one of the country's first modern light rail networks.",
+		},
+		alta = {
+			pt = "Referência em transporte público; o trem Cascades a liga a Seattle e Vancouver.",
+			en = "A model for public transit; the Cascades train links it to Seattle and Vancouver.",
+		},
+	},
+	seattle = {
+		diesel = {
+			pt = "A Boeing fez dela a cidade dos aviões. As ferrovias levavam a madeira e os grãos até o porto.",
+			en = "Boeing made it the city of airplanes. The railroads carried timber and grain to the port.",
+		},
+		eletrico = {
+			pt = "O porto virou um dos maiores de contêineres do país, com trens que seguem direto para o Meio-Oeste.",
+			en = "The port became one of the country's largest for containers, with trains heading straight to the Midwest.",
+		},
+		alta = {
+			pt = "Cidade da tecnologia, ligada a Portland pelo trem Cascades e cortada por uma rede de bondes modernos que só cresce.",
+			en = "A tech city, linked to Portland by the Cascades train and crossed by an ever-growing light rail network.",
+		},
+	},
+	san_francisco = {
+		diesel = {
+			pt = "A ponte Bay Bridge, de 1936, levou trens até Oakland. Os passageiros do leste ainda chegavam de balsa.",
+			en = "The 1936 Bay Bridge carried trains to Oakland. Passengers from the East still arrived by ferry.",
+		},
+		eletrico = {
+			pt = "O metrô BART, de 1972, passou por um túnel sob a baía. Os bondinhos de cabo viraram símbolo da cidade.",
+			en = "The BART subway, opened in 1972, ran through a tunnel under the bay. The cable cars became the city's symbol.",
+		},
+		alta = {
+			pt = "Ponta norte do trem de alta velocidade da Califórnia, ainda em obras no Vale Central. Os trens Caltrain viraram elétricos em 2024.",
+			en = "Northern end of California's high-speed rail, still under construction in the Central Valley. Caltrain went electric in 2024.",
+		},
+	},
+	los_angeles = {
+		diesel = {
+			pt = "A Union Station, de 1939, foi a última grande estação construída no país. Hollywood chegava e partia de trem.",
+			en = "Union Station, opened in 1939, was the last great station built in the country. Hollywood arrived and left by train.",
+		},
+		eletrico = {
+			pt = "A cidade das rodovias. O porto de Los Angeles e Long Beach virou o maior do país, e o corredor Alameda levou os contêineres aos trens.",
+			en = "The city of freeways. The Los Angeles–Long Beach port became the country's largest, and the Alameda Corridor took containers to the trains.",
+		},
+		alta = {
+			pt = "O metrô cresce a cada ano, os Jogos Olímpicos de 2028 estão chegando e o trem de alta velocidade deve um dia ligá-la a São Francisco.",
+			en = "The subway grows every year, the 2028 Olympics are coming and high-speed rail should one day link it to San Francisco.",
 		},
 	},
 } :: { [string]: { [string]: Texto } }

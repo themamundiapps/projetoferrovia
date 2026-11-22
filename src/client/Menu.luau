@@ -56,6 +56,7 @@ function Menu.new(tela: ScreenGui, era: any, dados: any): Menu
 	self.aoAjuste = Instance.new("BindableEvent") -- (chave, valor)
 	self.aoZoom = Instance.new("BindableEvent") -- (fator)
 	self.aoConcluirProjeto = Instance.new("BindableEvent") -- (projeto) quando um estudo termina
+	self.aoAbrirDireita = Instance.new("BindableEvent") -- painel aberto à direita: a ficha e a concessão saem da frente
 	self.instancias = {} :: { Instance }
 	self.vivos = {} :: { () -> () } -- atualizações a cada segundo que não recriam o painel (cronômetros, botões)
 	self._concluidos = {} :: { [string]: boolean }
@@ -255,6 +256,9 @@ function Menu.abrirAba(self: Menu, aba: string?, lado: string?)
 	if aba then
 		self.ultimaAba = aba
 		self.lado = lado or "esq"
+		if self.lado == "dir" then
+			self.aoAbrirDireita:Fire()
+		end
 		if self._topoY then
 			self:posicionarAbaixoDe(self._topoY)
 		end
@@ -615,7 +619,7 @@ function Menu._abaProjetos(self: Menu)
 	est:titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), r, 1)
 	est:texto(
 		"fraco",
-		L("Ferrovias que o Brasil planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways Brazil planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."),
+		L("Ferrovias que o país planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways the country planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."),
 		r,
 		2
 	)
@@ -936,8 +940,7 @@ end
 -- Foto da notícia: a cidade do alvo (ou uma da rede ligada a ele); sem cidade, a maior da rede.
 local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	local function imagem(id: string): string?
-		local e = dados.estacoes[id]
-		return Assets.imagemCidade(id, estado.era) or (e and (Assets.Paisagens :: any)[e.paisagem or ""])
+		return Assets.imagemFicha(id, estado.era, dados.estacoes[id])
 	end
 	local candidatas: { string } = {}
 	if ev.tipo == "cidade" and ev.alvo and dados.estacoes[ev.alvo] then
@@ -963,7 +966,7 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 	-- a maior cidade com imagem própria primeiro
 	table.sort(candidatas, function(a, b)
 		local pa, pb = dados.estacoes[a].porte, dados.estacoes[b].porte
-		local ia, ib = (Assets.Cidades :: any)[a] ~= nil, (Assets.Cidades :: any)[b] ~= nil
+		local ia, ib = imagem(a) ~= nil, imagem(b) ~= nil
 		if ia ~= ib then
 			return ia
 		end
@@ -975,10 +978,21 @@ local function fotoEvento(ev: any, estado: any, dados: any): (string?, string?)
 			return img, dados.estacoes[id].nome
 		end
 	end
-	return Assets.imagemCidade("rio", estado.era), dados.estacoes.rio and dados.estacoes.rio.nome
+	-- sem foto desta época para nenhuma cidade da notícia: a maior cidade do mapa que tenha uma
+	local melhor: string? = nil
+	for id, e in dados.estacoes do
+		if imagem(id) and (not melhor or e.porte > dados.estacoes[melhor].porte) then
+			melhor = id
+		end
+	end
+	if melhor then
+		return imagem(melhor), dados.estacoes[melhor].nome
+	end
+	return nil, nil -- nos EUA ainda não há imagens das cidades
 end
 
 local PRECO_JORNAL = { vapor = "100 réis", diesel = "1 cruzeiro", eletrico = "Cr$ 2", alta = L("grátis", "free") }
+local PRECO_JORNAL_EUA = { vapor = "5 cents", diesel = "10 cents", eletrico = "25 cents", alta = L("grátis", "free") }
 local MESES_JORNAL_EN = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }
 local MESES_JORNAL = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro" }
 local PAPEL = Color3.fromRGB(238, 228, 204) -- papel de jornal
@@ -990,7 +1004,7 @@ local TINTA_FRACA = Color3.fromRGB(96, 82, 64)
 function Menu._abaJornal(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
 	local eraId = if estado then estado.era else "vapor"
-	local nomeJornal = Idioma.t(Jornal.NOMES[eraId] or Jornal.NOMES.vapor)
+	local nomeJornal = Idioma.t(Jornal.nome(eraId, self.dados.id))
 	local f = est.f
 	local gotica = Font.new("rbxasset://fonts/families/GrenzeGotisch.json", Enum.FontWeight.Bold)
 	local italico = Font.new(f.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic)
@@ -1105,7 +1119,7 @@ function Menu._abaJornal(self: Menu)
 	end
 	linha("Rio de Janeiro", Enum.TextXAlignment.Left)
 	linha(data, Enum.TextXAlignment.Center)
-	linha(`Nº {#edicoes + 1} · {PRECO_JORNAL[eraId] or ""}`, Enum.TextXAlignment.Right)
+	linha(`Nº {#edicoes + 1} · {(if self.dados.id == "eua" then PRECO_JORNAL_EUA else PRECO_JORNAL)[eraId] or ""}`, Enum.TextXAlignment.Right)
 	fio(folha, 4, 1)
 	if not estado then
 		return
@@ -1759,10 +1773,7 @@ function Menu._abaAjustes(self: Menu)
 	bEnq.Activated:Connect(function()
 		self.aoAjuste:Fire("reenquadrar", true)
 	end)
-	local bIdioma = est:botao("secundario", L("🌐 Idioma: Português (mudar para English)", "🌐 Language: English (switch to Português)"), r, 9)
-	bIdioma.Activated:Connect(function()
-		self.aoAjuste:Fire("idioma", true)
-	end)
+	est:texto("fraco", L("🌐 O idioma do jogo segue o do Roblox: troque no menu do Roblox › Configurações › Idioma.", "🌐 The game follows your Roblox language: change it in the Roblox menu › Settings › Language."), r, 9)
 	local bInicio = est:botao("secundario", L(`{Emojis.mapa_mundo} Menu inicial`, `{Emojis.mapa_mundo} Main menu`), r, 12)
 	bInicio.Activated:Connect(function()
 		self:abrirAba(nil)

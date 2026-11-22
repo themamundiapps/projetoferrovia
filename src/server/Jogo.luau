@@ -21,11 +21,14 @@ local Tarifas = require(Shared:WaitForChild("Tarifas"))
 local Decisoes = require(Shared:WaitForChild("Decisoes"))
 local Loja = require(Shared:WaitForChild("Loja"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
+local DadosEUA = require(Shared:WaitForChild("Dados"):WaitForChild("EUA"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
 
 type EstadoMapa = Economia.EstadoMapa
 
-local MAPAS: { [string]: any } = { brasil = DadosBrasil }
+-- Cada mapa é uma companhia separada no mesmo save (dinheiro, trechos, era, XP...). Só o mapa aberto
+-- rende; ao trocar, o mapa que fica não acumula o tempo em que o jogador estava no outro.
+local MAPAS: { [string]: any } = { brasil = DadosBrasil, eua = DadosEUA }
 local MAPA_PADRAO = "brasil"
 local VERSAO_SAVE = 1
 local AUTOSAVE_SEGUNDOS = 60
@@ -487,7 +490,7 @@ local function salvar(s: Sessao): boolean
 			s.loja.recibos[id] = nil
 		end
 	end
-	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja })
+	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja, mapaAtual = s.mapaAtual })
 end
 
 -- ---------------------------------------------------------------- loja (ver Loja.luau)
@@ -1160,6 +1163,30 @@ function Acoes.renomear(s: Sessao, args: any): (boolean, string?)
 end
 
 -- O jogador trocou o idioma em Ajustes: as próximas mensagens saem no idioma novo.
+-- Troca o mapa aberto (cada mapa é uma companhia própria, com o seu progresso).
+function Acoes.mapa(s: Sessao, args: any): (boolean, string?)
+	local id = type(args) == "table" and args.mapa
+	if type(id) ~= "string" or not MAPAS[id] then
+		return false, L("Mapa desconhecido.", "Unknown map.")
+	end
+	if id == s.mapaAtual then
+		return true, nil
+	end
+	-- o mapa que fica para trás para de render agora; o novo começa a contar daqui
+	local antigo = s.mapas[s.mapaAtual]
+	if antigo then
+		antigo.ultimoTick = os.time()
+	end
+	s.mapaAtual = id
+	local e = s.mapas[id]
+	e.ultimoTick = os.time()
+	s.proximaNoticia = 0
+	s.proximaDecisao = 0
+	atualizarPlacar(s, nil)
+	task.spawn(salvar, s)
+	return true, nil
+end
+
 -- Liga ou desliga o Gerente Automático (só para quem tem o passe).
 function Acoes.gerente(s: Sessao, args: any): (boolean, string?)
 	if not s.loja.passes.gerente then
@@ -1268,6 +1295,9 @@ local function aoEntrar(jogador: Player)
 	end
 	s.podeSalvar = ok and Persistencia.disponivel()
 	s.loja = sanearLoja(if type(salvo) == "table" then salvo.loja else nil)
+	if type(salvo) == "table" and type(salvo.mapaAtual) == "string" and MAPAS[salvo.mapaAtual] then
+		s.mapaAtual = salvo.mapaAtual
+	end
 	consultarPasses(s)
 
 	for id, dados in MAPAS do
@@ -1487,12 +1517,13 @@ end
 local topRanking: { any } = {}
 local rankingEm = 0
 
+-- A pontuação do jogador é a da sua melhor companhia (o mapa onde ele foi mais longe).
 local function pontosRanking(s: Sessao): number
-	local e = s.mapas[MAPA_PADRAO]
-	if not e then
-		return 0
+	local melhor = 0
+	for id, e in s.mapas do
+		melhor = math.max(melhor, (Economia.nivel(e)) * 1000 + Economia.linhasCompletas(e, MAPAS[id]))
 	end
-	return (Economia.nivel(e)) * 1000 + Economia.linhasCompletas(e, MAPAS[MAPA_PADRAO])
+	return melhor
 end
 
 local function atualizarRanking()

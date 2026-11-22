@@ -58,6 +58,7 @@ export type Opcao = { pt: string, en: string, ef: { Efeito } }
 -- cidade/carga/regiao fixas (a decisão só aparece se aquilo estiver na rede). %s no texto = nome do alvo.
 export type Definicao = {
 	id: string,
+	mapa: string?, -- "eua"...; sem mapa = Brasil (as decisões contam a história do país)
 	era: string,
 	emoji: string,
 	alvo: any,
@@ -627,6 +628,300 @@ local CATALOGO: { Definicao } = {
 			{ pt = "Vender pacotes para agências", en = "Sell packages to agencies", ef = { D(3) } },
 		},
 	},
+	-- ================================================================ EUA (mapa = "eua"), 8 por era
+	-- ---------------------------------------------------------------- Vapor (1830–1935)
+	{
+		id = "eua_terras", mapa = "eua", era = "vapor", emoji = "linhas", alvo = nil,
+		titulo = { pt = "O Congresso oferece terras", en = "Congress offers land" },
+		texto = { pt = "Para cada quilômetro de trilho, o governo dá terras dos dois lados da linha. Em troca, a companhia leva o correio e as tropas por um preço baixo.", en = "For every mile of track, the government grants land on both sides of the line. In return, the company carries the mail and the troops at a low price." },
+		opcoes = {
+			{ pt = "Aceitar as terras", en = "Accept the land", ef = { D(5), M("geral", 0.9, 15) } },
+			{ pt = "Construir sem ajuda", en = "Build without help", ef = { XP(50) } },
+		},
+	},
+	{
+		id = "eua_prego_ouro", mapa = "eua", era = "vapor", emoji = "medalha", alvo = "linha",
+		titulo = { pt = "O último prego da linha %s", en = "The last spike on the %s line" },
+		texto = { pt = "As duas frentes de obra se encontraram. Os jornais querem uma cerimônia com prego de ouro e telégrafo para o país inteiro.", en = "The two work gangs have met. The papers want a ceremony with a golden spike, telegraphed to the whole country." },
+		opcoes = {
+			{ pt = "Fazer a festa do prego de ouro", en = "Hold the golden spike ceremony", ef = { D(-1), M("linha", 1.3, 10), XP(50) } },
+			{ pt = "Abrir a linha sem festa", en = "Open the line without fuss", ef = { XP(10) } },
+		},
+	},
+	{
+		id = "eua_assaltantes", mapa = "eua", era = "vapor", emoji = "alerta", alvo = "linha",
+		titulo = { pt = "Assaltantes de trem na linha %s", en = "Train robbers on the %s line" },
+		texto = { pt = "Uma quadrilha parou um trem e levou o cofre do vagão expresso. Os passageiros estão com medo de viajar.", en = "A gang stopped a train and took the express car's safe. Passengers are afraid to travel." },
+		opcoes = {
+			{ pt = "Contratar detetives particulares", en = "Hire private detectives", ef = { D(-2), XP(30) } },
+			{ pt = "Blindar o vagão expresso", en = "Armor the express car", ef = { D(-1), M("linha", 1.1, 10) } },
+			{ pt = "Torcer para não se repetir", en = "Hope it won't happen again", ef = { SORTE(0.5, {}, { M("linha", 0.7, 10) }) } },
+		},
+	},
+	{
+		id = "eua_hora_padrao", mapa = "eua", era = "vapor", emoji = "relogio", alvo = nil,
+		titulo = { pt = "Que horas são, afinal?", en = "What time is it, anyway?" },
+		texto = { pt = "Cada cidade acerta o relógio pelo sol e os horários viram uma confusão. As ferrovias propõem dividir o país em fusos horários.", en = "Every town sets its clock by the sun and timetables are a mess. The railroads propose dividing the country into time zones." },
+		opcoes = {
+			{ pt = "Adotar a hora padrão", en = "Adopt standard time", ef = { D(-1), M("manutencao", 0.8, 20), XP(40) } },
+			{ pt = "Manter a hora de cada cidade", en = "Keep each town's own time", ef = { M("geral", 0.95, 10) } },
+		},
+	},
+	{
+		id = "eua_freio_ar", mapa = "eua", era = "vapor", emoji = "construir", alvo = nil,
+		titulo = { pt = "O freio a ar de Westinghouse", en = "Westinghouse's air brake" },
+		texto = { pt = "Um jovem inventor mostra um freio que o maquinista aciona em todos os vagões de uma vez. Os guarda-freios não precisariam mais correr pelo teto.", en = "A young inventor shows a brake the engineer applies on every car at once. Brakemen would no longer have to run along the roofs." },
+		opcoes = {
+			{ pt = "Instalar em toda a frota", en = "Fit the whole fleet", ef = { D(-3), M("manutencao", 0.75, 20), XP(40) } },
+			{ pt = "Continuar com o freio manual", en = "Stay with hand brakes", ef = {} },
+		},
+	},
+	{
+		id = "eua_pullman", mapa = "eua", era = "vapor", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "Vagões-dormitório de luxo", en = "Luxury sleeping cars" },
+		texto = { pt = "George Pullman oferece seus vagões-dormitório, com camas, tapetes e serviço de bordo. Ele fica com uma parte da passagem.", en = "George Pullman offers his sleeping cars, with beds, carpets and onboard service. He keeps a share of the fare." },
+		opcoes = {
+			{ pt = "Alugar os vagões Pullman", en = "Lease the Pullman cars", ef = { D(-2), M("geral", 1.2, 15) } },
+			{ pt = "Ficar com os vagões simples", en = "Keep the plain cars", ef = {} },
+		},
+	},
+	{
+		id = "eua_neve_serra", mapa = "eua", era = "vapor", emoji = "terreno_montanha", alvo = { regiao = "o" },
+		titulo = { pt = "Neve nas montanhas do %s", en = "Snow in the mountains of the %s" },
+		texto = { pt = "No inverno, a neve enterra os trilhos nos passos de montanha. Os engenheiros sugerem cobrir a linha com galpões de madeira.", en = "In winter, snow buries the tracks in the mountain passes. The engineers suggest covering the line with timber snow sheds." },
+		opcoes = {
+			{ pt = "Construir os galpões de neve", en = "Build the snow sheds", ef = { D(-2), M("manutencao", 0.8, 15) } },
+			{ pt = "Esperar o degelo", en = "Wait for the thaw", ef = { M("regiao", 0.75, 8) } },
+		},
+	},
+	{
+		id = "eua_carvao", mapa = "eua", era = "vapor", emoji = "carga_carvao", alvo = { carga = "carvao" },
+		titulo = { pt = "A mineradora quer um contrato longo", en = "The coal company wants a long contract" },
+		texto = { pt = "Uma mineradora promete mandar todo o carvão pela sua ferrovia por anos. Mas quer pagar menos pelo frete.", en = "A mining company promises to ship all its coal on your railroad for years. But it wants to pay less freight." },
+		opcoes = {
+			{ pt = "Assinar o contrato", en = "Sign the contract", ef = { D(3), M("carga", 0.85, 15) } },
+			{ pt = "Manter o preço do frete", en = "Keep the freight rate", ef = { XP(30) } },
+		},
+	},
+	-- ---------------------------------------------------------------- Diesel (1935–1970)
+	{
+		id = "eua_zephyr", mapa = "eua", era = "diesel", emoji = "velocidade", alvo = "linha",
+		titulo = { pt = "Um trem aerodinâmico de aço inoxidável", en = "A stainless steel streamliner" },
+		texto = { pt = "Uma fábrica oferece um trem a diesel, prateado e aerodinâmico, para a linha %s. Os jornais adoram.", en = "A builder offers a silver, streamlined diesel train for the %s line. The newspapers love it." },
+		opcoes = {
+			{ pt = "Comprar o trem aerodinâmico", en = "Buy the streamliner", ef = { D(-3), TREM(1), M("linha", 1.25, 15) } },
+			{ pt = "Esperar o preço cair", en = "Wait for the price to drop", ef = {} },
+		},
+	},
+	{
+		id = "eua_tropas", mapa = "eua", era = "diesel", emoji = "trens", alvo = nil,
+		titulo = { pt = "O exército precisa de trens", en = "The army needs trains" },
+		texto = { pt = "O país entrou na guerra e milhões de soldados precisam cruzar o continente. O governo pede prioridade nos trilhos.", en = "The country is at war and millions of soldiers must cross the continent. The government asks for priority on the rails." },
+		opcoes = {
+			{ pt = "Dar prioridade às tropas", en = "Give the troops priority", ef = { M("geral", 0.85, 10), XP(80) } },
+			{ pt = "Cobrar o preço normal", en = "Charge the normal rate", ef = { D(2) } },
+		},
+	},
+	{
+		id = "eua_dieselizar", mapa = "eua", era = "diesel", emoji = "era_diesel", alvo = nil,
+		titulo = { pt = "Aposentar as locomotivas a vapor?", en = "Retire the steam locomotives?" },
+		texto = { pt = "As locomotivas a diesel quase não param para manutenção. Mas trocar a frota inteira custa caro.", en = "Diesel locomotives hardly ever stop for maintenance. But replacing the whole fleet is expensive." },
+		opcoes = {
+			{ pt = "Trocar tudo pelo diesel", en = "Go all diesel", ef = { D(-3), M("manutencao", 0.7, 20) } },
+			{ pt = "Trocar aos poucos", en = "Switch gradually", ef = { D(-1), M("manutencao", 0.9, 15) } },
+		},
+	},
+	{
+		id = "eua_rodovias", mapa = "eua", era = "diesel", emoji = "alerta", alvo = nil,
+		titulo = { pt = "As rodovias interestaduais chegam", en = "The interstate highways arrive" },
+		texto = { pt = "O governo começa uma rede de rodovias pelo país inteiro. Os caminhões vão disputar a carga dos trens.", en = "The government starts a highway network across the whole country. Trucks will compete for the trains' freight." },
+		opcoes = {
+			{ pt = "Levar os caminhões em vagões-plataforma", en = "Carry the trailers on flatcars", ef = { D(-2), M("geral", 1.15, 15) } },
+			{ pt = "Cortar os trens menos usados", en = "Cut the least-used trains", ef = { M("manutencao", 0.8, 15), M("geral", 0.9, 15) } },
+		},
+	},
+	{
+		id = "eua_avioes", mapa = "eua", era = "diesel", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "Os aviões levam os passageiros", en = "Airliners take the passengers" },
+		texto = { pt = "Voar de costa a costa ficou rápido e barato. Os trens de longa distância andam meio vazios.", en = "Flying coast to coast has become fast and cheap. Long-distance trains run half empty." },
+		opcoes = {
+			{ pt = "Vagões panorâmicos com cúpula de vidro", en = "Glass-domed observation cars", ef = { D(-2), M("geral", 1.15, 12) } },
+			{ pt = "Baixar o preço das passagens", en = "Lower the fares", ef = { M("geral", 1.05, 12) } },
+		},
+	},
+	{
+		id = "eua_poeira", mapa = "eua", era = "diesel", emoji = "carga_graos", alvo = { regiao = "mw" },
+		titulo = { pt = "Seca e poeira no %s", en = "Drought and dust in the %s" },
+		texto = { pt = "As tempestades de poeira arruinaram as fazendas. Famílias inteiras precisam de comida e de transporte.", en = "Dust storms have ruined the farms. Whole families need food and transport." },
+		opcoes = {
+			{ pt = "Levar ajuda de graça", en = "Carry relief for free", ef = { D(-1), XP(60) } },
+			{ pt = "Cobrar o frete normal", en = "Charge the normal freight", ef = { D(1), M("regiao", 0.9, 10) } },
+		},
+	},
+	{
+		id = "eua_tapete_vermelho", mapa = "eua", era = "diesel", emoji = "prestigio", alvo = { cidade = "new_york" },
+		titulo = { pt = "Tapete vermelho em %s", en = "Red carpet in %s" },
+		texto = { pt = "O trem expresso de luxo entre Nova York e Chicago vira moda. Celebridades querem embarcar sobre um tapete vermelho.", en = "The luxury express between New York and Chicago is all the rage. Celebrities want to board on a red carpet." },
+		opcoes = {
+			{ pt = "Estender o tapete vermelho", en = "Roll out the red carpet", ef = { D(-2), M("cidade", 1.3, 12) } },
+			{ pt = "Serviço normal", en = "Regular service", ef = {} },
+		},
+	},
+	{
+		id = "eua_oleodutos", mapa = "eua", era = "diesel", emoji = "carga_petroleo", alvo = { carga = "petroleo" },
+		titulo = { pt = "As petroleiras constroem oleodutos", en = "The oil companies build pipelines" },
+		texto = { pt = "Os oleodutos podem levar o petróleo sem trem nenhum. As petroleiras ficam se você baixar o frete.", en = "Pipelines can move oil with no trains at all. The oil companies will stay if you lower the freight rate." },
+		opcoes = {
+			{ pt = "Baixar o frete", en = "Lower the freight rate", ef = { M("carga", 0.85, 15) } },
+			{ pt = "Manter o preço e arriscar", en = "Keep the price and take the risk", ef = { SORTE(0.5, {}, { M("carga", 0.6, 15) }) } },
+		},
+	},
+	-- ---------------------------------------------------------------- Elétrica (1970–2000)
+	{
+		id = "eua_amtrak", mapa = "eua", era = "eletrico", emoji = "passageiros", alvo = nil,
+		titulo = { pt = "O governo cria a Amtrak", en = "The government creates Amtrak" },
+		texto = { pt = "Uma empresa federal se oferece para assumir os trens de passageiros, que dão prejuízo. A companhia ficaria só com a carga.", en = "A federal company offers to take over the money-losing passenger trains. The company would keep only the freight." },
+		opcoes = {
+			{ pt = "Passar os passageiros à Amtrak", en = "Hand the passengers to Amtrak", ef = { D(3), M("geral", 0.85, 20) } },
+			{ pt = "Continuar com os passageiros", en = "Keep the passengers", ef = { XP(40) } },
+		},
+	},
+	{
+		id = "eua_falencia_vizinha", mapa = "eua", era = "eletrico", emoji = "banco", alvo = { regiao = "ne" },
+		titulo = { pt = "Ferrovias falidas no %s", en = "Bankrupt railroads in the %s" },
+		texto = { pt = "As velhas ferrovias do %s quebraram. O governo procura alguém para assumir as linhas, com ajuda federal.", en = "The old railroads of the %s have gone bust. The government is looking for someone to take over the lines, with federal aid." },
+		opcoes = {
+			{ pt = "Assumir as linhas com ajuda", en = "Take over the lines with aid", ef = { D(4), M("manutencao", 1.15, 15) } },
+			{ pt = "Ficar de fora", en = "Stay out", ef = {} },
+		},
+	},
+	{
+		id = "eua_desregulamentar", mapa = "eua", era = "eletrico", emoji = "dinheiro", alvo = nil,
+		titulo = { pt = "Liberdade para definir o frete", en = "Freedom to set freight rates" },
+		texto = { pt = "Uma lei nova deixa as ferrovias cobrarem o que quiserem pelo frete. Os clientes reclamam, mas as contas melhoram.", en = "A new law lets railroads charge whatever they want for freight. Customers complain, but the books improve." },
+		opcoes = {
+			{ pt = "Subir o frete das linhas cheias", en = "Raise rates on the busy lines", ef = { M("geral", 1.2, 20) } },
+			{ pt = "Manter os preços de antes", en = "Keep the old prices", ef = { XP(30) } },
+		},
+	},
+	{
+		id = "eua_conteineres", mapa = "eua", era = "eletrico", emoji = "cargas", alvo = { cidade = "los_angeles" },
+		titulo = { pt = "Contêineres empilhados em %s", en = "Stacked containers in %s" },
+		texto = { pt = "Os navios da Ásia trazem contêineres que podem ir em dois andares nos vagões. O porto quer trens para levá-los ao interior.", en = "Ships from Asia bring containers that can ride two high on railcars. The port wants trains to take them inland." },
+		opcoes = {
+			{ pt = "Investir em vagões de dois andares", en = "Invest in double-stack cars", ef = { D(-3), M("cidade", 1.3, 15) } },
+			{ pt = "Deixar para os caminhões", en = "Leave it to the trucks", ef = {} },
+		},
+	},
+	{
+		id = "eua_eletrificar", mapa = "eua", era = "eletrico", emoji = "era_eletrico", alvo = { cidade = "washington" },
+		titulo = { pt = "Trens elétricos até %s", en = "Electric trains to %s" },
+		texto = { pt = "Com cabos aéreos, trens elétricos rápidos poderiam ligar as grandes cidades do litoral leste.", en = "With overhead wires, fast electric trains could link the big cities of the East Coast." },
+		opcoes = {
+			{ pt = "Eletrificar o corredor", en = "Electrify the corridor", ef = { D(-3), M("cidade", 1.25, 15), XP(40) } },
+			{ pt = "Continuar no diesel", en = "Stay with diesel", ef = {} },
+		},
+	},
+	{
+		id = "eua_carvao_oeste", mapa = "eua", era = "eletrico", emoji = "carga_carvao", alvo = { carga = "carvao" },
+		titulo = { pt = "Trens de carvão de um quilômetro", en = "Mile-long coal trains" },
+		texto = { pt = "As usinas elétricas pedem carvão sem parar. Trens enormes, com mais de cem vagões, podem levar tudo de uma vez.", en = "Power plants want coal nonstop. Huge trains, over a hundred cars long, can haul it all at once." },
+		opcoes = {
+			{ pt = "Montar os trens gigantes", en = "Run the giant trains", ef = { D(-2), M("carga", 1.3, 15) } },
+			{ pt = "Seguir com trens normais", en = "Stick with regular trains", ef = {} },
+		},
+	},
+	{
+		id = "eua_fusao", mapa = "eua", era = "eletrico", emoji = "companhia", alvo = nil,
+		titulo = { pt = "Uma proposta de fusão", en = "A merger offer" },
+		texto = { pt = "Uma ferrovia rival quer comprar uma parte da companhia. Dinheiro na mão, mas você teria de dividir as decisões.", en = "A rival railroad wants to buy a stake in the company. Cash in hand, but you would have to share the decisions." },
+		opcoes = {
+			{ pt = "Vender uma parte", en = "Sell a stake", ef = { D(5), M("geral", 0.9, 15) } },
+			{ pt = "Continuar independente", en = "Stay independent", ef = { XP(40) } },
+		},
+	},
+	{
+		id = "eua_choque_petroleo", mapa = "eua", era = "eletrico", emoji = "carga_petroleo", alvo = nil,
+		titulo = { pt = "Filas nos postos de gasolina", en = "Lines at the gas stations" },
+		texto = { pt = "A gasolina sumiu dos postos e as pessoas deixam o carro em casa. É a hora de mostrar que o trem gasta menos.", en = "Gasoline has vanished from the pumps and people leave their cars at home. Time to show that trains use less fuel." },
+		opcoes = {
+			{ pt = "Fazer propaganda do trem", en = "Advertise the train", ef = { D(-1), M("geral", 1.2, 12) } },
+			{ pt = "Aproveitar sem gastar", en = "Ride the wave for free", ef = { M("geral", 1.08, 12) } },
+		},
+	},
+	-- ---------------------------------------------------------------- Alta Velocidade (2000–)
+	{
+		id = "eua_acela", mapa = "eua", era = "alta", emoji = "velocidade", alvo = "linha",
+		titulo = { pt = "Trens inclináveis para a linha %s", en = "Tilting trains for the %s line" },
+		texto = { pt = "Trens que se inclinam nas curvas podem correr mais na linha %s sem refazer os trilhos.", en = "Trains that lean into the curves can run faster on the %s line without rebuilding the track." },
+		opcoes = {
+			{ pt = "Comprar os trens inclináveis", en = "Buy the tilting trains", ef = { D(-3), TREM(1), M("linha", 1.25, 15) } },
+			{ pt = "Esperar uma linha nova", en = "Wait for a new line", ef = {} },
+		},
+	},
+	{
+		id = "eua_ptc", mapa = "eua", era = "alta", emoji = "alerta", alvo = nil,
+		titulo = { pt = "Controle automático dos trens", en = "Automatic train control" },
+		texto = { pt = "Uma lei exige um sistema que freia o trem sozinho se o maquinista errar. É caro, mas evita acidentes.", en = "A law requires a system that brakes the train on its own if the engineer makes a mistake. It's expensive, but it prevents accidents." },
+		opcoes = {
+			{ pt = "Instalar já", en = "Install it now", ef = { D(-3), M("manutencao", 0.8, 20), XP(40) } },
+			{ pt = "Pedir mais prazo", en = "Ask for more time", ef = { SORTE(0.5, {}, { M("geral", 0.8, 10) }) } },
+		},
+	},
+	{
+		id = "eua_verba_federal", mapa = "eua", era = "alta", emoji = "gabinete", alvo = nil,
+		titulo = { pt = "Verba federal para ferrovias", en = "Federal rail funding" },
+		texto = { pt = "Washington abriu um programa bilionário para trens. Dá para pedir dinheiro para os estudos ou para as obras.", en = "Washington has opened a multibillion-dollar rail program. You can apply for money for studies or for construction." },
+		opcoes = {
+			{ pt = "Pedir verba para os estudos", en = "Apply for study funding", ef = { ESTUDO(10), XP(40) } },
+			{ pt = "Pedir verba para as obras", en = "Apply for construction funding", ef = { D(3) } },
+		},
+	},
+	{
+		id = "eua_baterias", mapa = "eua", era = "alta", emoji = "era_eletrico", alvo = nil,
+		titulo = { pt = "Locomotivas a bateria", en = "Battery locomotives" },
+		texto = { pt = "Uma fábrica testa locomotivas que andam com baterias nas linhas sem eletrificação. Menos combustível e menos fumaça.", en = "A builder is testing locomotives that run on batteries on non-electrified lines. Less fuel and less smoke." },
+		opcoes = {
+			{ pt = "Testar na frota", en = "Trial them in the fleet", ef = { D(-2), M("manutencao", 0.85, 20), XP(50) } },
+			{ pt = "Esperar a tecnologia amadurecer", en = "Wait for the technology to mature", ef = {} },
+		},
+	},
+	{
+		id = "eua_parques", mapa = "eua", era = "alta", emoji = "passageiros", alvo = { regiao = "o" },
+		titulo = { pt = "Trens para os parques do %s", en = "Trains to the parks of the %s" },
+		texto = { pt = "Os parques nacionais estão lotados de carros. Os guardas-parque pedem trens panorâmicos até as entradas.", en = "The national parks are jammed with cars. The rangers ask for scenic trains to the park gates." },
+		opcoes = {
+			{ pt = "Criar os trens panorâmicos", en = "Run the scenic trains", ef = { D(-1), M("regiao", 1.25, 12) } },
+			{ pt = "Não é com a companhia", en = "Not the company's business", ef = {} },
+		},
+	},
+	{
+		id = "eua_furacao", mapa = "eua", era = "alta", emoji = "alerta", alvo = { regiao = "s" },
+		titulo = { pt = "Furacão se aproxima do %s", en = "Hurricane approaching the %s" },
+		texto = { pt = "A tempestade vai chegar em dois dias. Dá para reforçar as pontes agora ou consertar o que quebrar depois.", en = "The storm will hit in two days. You can reinforce the bridges now or fix whatever breaks afterward." },
+		opcoes = {
+			{ pt = "Reforçar as pontes", en = "Reinforce the bridges", ef = { D(-2), XP(20) } },
+			{ pt = "Consertar depois", en = "Repair afterward", ef = { SORTE(0.4, {}, { M("regiao", 0.6, 10) }) } },
+		},
+	},
+	{
+		id = "eua_tecnologia", mapa = "eua", era = "alta", emoji = "companhia", alvo = { cidade = "san_francisco" },
+		titulo = { pt = "Empresas de tecnologia em %s", en = "Tech companies in %s" },
+		texto = { pt = "As empresas de tecnologia querem trens para os funcionários e oferecem pagar uma parte, se tiverem o nome nos vagões.", en = "The tech companies want trains for their staff and offer to pay part of it, if their name goes on the cars." },
+		opcoes = {
+			{ pt = "Aceitar o patrocínio", en = "Accept the sponsorship", ef = { D(3), M("cidade", 1.1, 15) } },
+			{ pt = "Manter a marca da companhia", en = "Keep the company's own brand", ef = { XP(30) } },
+		},
+	},
+	{
+		id = "eua_comercio_online", mapa = "eua", era = "alta", emoji = "cargas", alvo = nil,
+		titulo = { pt = "As compras pela internet explodem", en = "Online shopping explodes" },
+		texto = { pt = "Os centros de distribuição querem contêineres chegando todo dia, no horário certo.", en = "Distribution centers want containers arriving every day, right on time." },
+		opcoes = {
+			{ pt = "Criar trens expressos de carga", en = "Run express freight trains", ef = { D(-2), M("geral", 1.2, 15) } },
+			{ pt = "Seguir os horários de sempre", en = "Keep the usual timetable", ef = {} },
+		},
+	},
 }
 Decisoes.CATALOGO = CATALOGO
 
@@ -872,7 +1167,8 @@ function Decisoes.sortear(estado: EstadoMapa, dados: any, vistas: { [string]: bo
 	local function candidatas(ignorarVistas: boolean): { { def: Definicao, tipo: string, alvo: string? } }
 		local lista = {}
 		for _, def in CATALOGO do
-			if def.era == estado.era and (ignorarVistas or not vistas[def.id]) then
+			-- as decisões sem `mapa` são do Brasil (a história é a do país)
+			if def.era == estado.era and (def.mapa or "brasil") == (dados.id or "brasil") and (ignorarVistas or not vistas[def.id]) then
 				local tipo, alvo = Decisoes.resolverAlvo(def, estado, dados, rng)
 				if tipo then
 					table.insert(lista, { def = def, tipo = tipo, alvo = alvo })

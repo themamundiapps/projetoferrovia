@@ -130,6 +130,23 @@ local function pararMusica()
 end
 
 -- Troca a playlist para a era (não faz nada se já é a mesma).
+-- Troca o mapa da trilha (o Brasil toca bossa nova em todas as eras; sem trilha própria, a da era).
+-- A música atual para e a próxima chamada a Som.musica começa a playlist nova.
+function Som.definirMapa(id: string)
+	if id == mapaAtual then
+		return
+	end
+	mapaAtual = id
+	fila = {} -- a fila embaralhada era do mapa anterior
+	if tocando then
+		local s = tocando
+		tocando = nil
+		geracao += 1
+		s:Stop()
+		s:Destroy()
+	end
+end
+
 function Som.musica(eraId: string)
 	if eraId == eraAtual and tocando then
 		return

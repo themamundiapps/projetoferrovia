@@ -147,6 +147,24 @@ for _, era in Theme.Eras or {} do
 	local e = era :: any
 	e.nomes = { pt = e.nome, en = NOMES_EN[e.id] or e.nome }
 	e.anosPorIdioma = { pt = if e.id == "alta" then "2000 – hoje" else e.anos, en = ANOS_EN[e.id] or e.anos }
+	e.anosBrasil = e.anosPorIdioma
+end
+
+-- Anos das eras do mapa aberto (cada país tem os seus; ver `anos` nos dados gerados). Sem `anos`,
+-- volta aos do Brasil. Chamar antes de Theme.traduzir.
+function Theme.definirAnos(dados: any)
+	for _, era in Theme.Eras or {} do
+		local e = era :: any
+		local anos = dados and dados.anos and dados.anos[e.id]
+		if anos then
+			local inicio = tostring(anos[1])
+			e.anosPorIdioma = if e.id == "alta"
+				then { pt = `{inicio} – hoje`, en = `{inicio} – today` }
+				else { pt = `{inicio} – {anos[2]}`, en = `{inicio} – {anos[2]}` }
+		else
+			e.anosPorIdioma = e.anosBrasil
+		end
+	end
 end
 
 function Theme.traduzir(idioma: string)

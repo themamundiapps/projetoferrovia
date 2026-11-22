@@ -65,8 +65,8 @@ Assets.Cidades = {
 } :: { [string]: string } -- id da cidade -> imagem
 
 -- A mesma cidade em outras épocas (fotos do Wikimedia Commons, baixadas por tools/assetgen/baixar_commons.py
--- para arte/cidades_jogo/<id>_<era>.jpg): a ficha e o jornal mostram a da era
--- atual; sem ela, a da era anterior mais perto; sem nenhuma, a de Assets.Cidades (a do Vapor).
+-- para arte/cidades_jogo/<id>_<era>.jpg): a ficha e o jornal só mostram a da era atual
+-- (Assets.imagemExata); sem ela, a ficha diz "foto desta época em breve".
 -- Créditos e licenças em arte/cidades/CREDITOS.md.
 Assets.CidadesPorEra = {
 	-- REGRA: nada de foto com texto, legenda, marca-d'água, site ou marca comercial legível (a moderação
@@ -124,6 +124,36 @@ function Assets.imagemCidade(id: string, eraId: string?): string?
 		end
 	end
 	return Assets.Cidades[id]
+end
+-- Só a imagem desta cidade nesta era (sem voltar para outra época nem usar paisagem genérica).
+-- Sem ela, a ficha mostra "foto em breve" e o jornal sai sem foto.
+function Assets.imagemExata(id: string, eraId: string?): string?
+	local img: string?
+	if (eraId or "vapor") == "vapor" then
+		img = Assets.Cidades[id]
+	else
+		local daEra = Assets.CidadesPorEra[eraId :: string]
+		img = daEra and daEra[id]
+	end
+	if img and img ~= "rbxassetid://0" then
+		return img
+	end
+	return nil
+end
+-- Imagem da ficha: a desta cidade nesta era; cidade pequena (porte até 3) sem foto própria usa a
+-- paisagem genérica da região. Cidade grande sem foto da era: nil ("foto desta época em breve").
+function Assets.imagemFicha(id: string, eraId: string?, estacao: any): string?
+	local img = Assets.imagemExata(id, eraId)
+	if img then
+		return img
+	end
+	if estacao and (estacao.porte or 0) <= 3 then
+		local p = (Assets.Paisagens :: any)[estacao.paisagem or ""]
+		if p and p ~= "rbxassetid://0" then
+			return p
+		end
+	end
+	return nil
 end
 -- Kit de UI (imagens fatiadas em 9, arte/ui/<kit>/). slice = SliceCenter na imagem de 512 px;
 -- escala = SliceScale (tamanho dos cantos na tela); borda = quanto a moldura sai para fora da caixa (px).
@@ -363,6 +393,25 @@ Assets.MusicasMapa = {
 		"rbxassetid://88397474917981", -- Soft Bossa Horizon (DistroKid)
 		"rbxassetid://132521872324308", -- Beach Tropical Coffee Bossa Nova (DistroKid)
 		"rbxassetid://104346473858174", -- Rio After Midnight (DistroKid)
+	},
+	-- EUA: jazz (swing e dixieland dos anos 1920–30, mais o jazz de clube, mais calmo)
+	eua = {
+		"rbxassetid://104748407843789", -- 1930s Jazz Vibes (DistroKid)
+		"rbxassetid://101004452669583", -- Retro Jazz Swing (DistroKid)
+		"rbxassetid://100514571439295", -- 1920s Jazz Classics (DistroKid)
+		"rbxassetid://94784059565847", -- Classic Retro Jazz Flow (DistroKid)
+		"rbxassetid://97006702987518", -- 1930s Hot Swing (DistroKid)
+		"rbxassetid://132010103819517", -- Classic Swing & Smoke (DistroKid)
+		"rbxassetid://139380518285040", -- Steamboat Swing (DistroKid)
+		"rbxassetid://105410597171906", -- Stepping Out (APM)
+		"rbxassetid://115420825080811", -- Swingin' the Delta (DistroKid)
+		"rbxassetid://127096078553556", -- Riverboat Rhythms (DistroKid)
+		"rbxassetid://113662786769403", -- Bourbon Street Vibes (DistroKid)
+		"rbxassetid://128896004555699", -- Evening Dixie (DistroKid)
+		"rbxassetid://81617335589427", -- Blue Room Reverie (DistroKid)
+		"rbxassetid://109558786368038", -- The Saxophone Stayed Late (DistroKid)
+		"rbxassetid://131816993948681", -- Cool Jazz in Leather Chairs (DistroKid)
+		"rbxassetid://106655535358127", -- Silhouettes in the City (DistroKid)
 	},
 } :: { [string]: { string } }
 

@@ -225,7 +225,7 @@ end
 
 function Placar._titulo(self: Placar)
 	local n = #Players:GetPlayers()
-	local seta = if self.aberto then "▾" else "▸"
+	local seta = if self.aberto then "-" else "+" -- ▾ e ▸ não existem na fonte da Alta Velocidade
 	self.titulo.Text = `{Emojis.nivel or "🏆"} {Idioma.maiusculas(L("Neste servidor", "On this server"))} ({n})  {seta}`
 end
 

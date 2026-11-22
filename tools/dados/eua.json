@@ -1,0 +1,3396 @@
+{
+  "_nota": "Fonte do mapa dos EUA, gerada por montar_eua.py (edite lá, não aqui). Depois rode `node tools/dados/gerar.mjs`.",
+  "anos": {
+    "vapor": [
+      1830,
+      1935
+    ],
+    "diesel": [
+      1935,
+      1970
+    ],
+    "eletrico": [
+      1970,
+      2000
+    ],
+    "alta": [
+      2000,
+      2040
+    ]
+  },
+  "terrenos": {
+    "planicie": {
+      "nome": "Planície",
+      "nomeEn": "Plains",
+      "custo": 1.0
+    },
+    "costa": {
+      "nome": "Planície costeira",
+      "nomeEn": "Coastal plain",
+      "custo": 1.1
+    },
+    "vale": {
+      "nome": "Vale",
+      "nomeEn": "Valley",
+      "custo": 1.2
+    },
+    "colinas": {
+      "nome": "Colinas",
+      "nomeEn": "Hills",
+      "custo": 1.4
+    },
+    "apalaches": {
+      "nome": "Apalaches",
+      "nomeEn": "Appalachians",
+      "custo": 1.7
+    },
+    "deserto": {
+      "nome": "Deserto",
+      "nomeEn": "Desert",
+      "custo": 1.4
+    },
+    "pantano": {
+      "nome": "Pântano",
+      "nomeEn": "Swamp",
+      "custo": 1.5
+    },
+    "montanhas": {
+      "nome": "Montanhas",
+      "nomeEn": "Mountains",
+      "custo": 2.4
+    },
+    "ilhas": {
+      "nome": "Ilhas e pontes sobre o mar",
+      "nomeEn": "Islands and sea bridges",
+      "custo": 3.0
+    }
+  },
+  "estacoes": [
+    {
+      "id": "boston",
+      "nome": "Boston",
+      "lon": -71.06,
+      "lat": 42.36,
+      "porte": 4,
+      "uf": "MA",
+      "historia": {
+        "pt": "Porto da Nova Inglaterra. A Boston and Worcester, de 1835, foi uma das primeiras ferrovias do país.",
+        "en": "New England's port. The Boston and Worcester, opened in 1835, was one of the country's first railroads."
+      },
+      "porto": true
+    },
+    {
+      "id": "worcester",
+      "nome": "Worcester",
+      "lon": -71.8,
+      "lat": 42.26,
+      "porte": 2,
+      "uf": "MA",
+      "historia": {
+        "pt": "Cidade industrial do interior de Massachusetts, primeira parada da ferrovia que saía de Boston.",
+        "en": "An industrial town in inland Massachusetts, first stop of the railroad out of Boston."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "springfield_ma",
+      "nome": "Springfield",
+      "lon": -72.59,
+      "lat": 42.1,
+      "porte": 2,
+      "uf": "MA",
+      "historia": {
+        "pt": "Às margens do rio Connecticut; o arsenal federal fazia daqui uma cidade de armas e máquinas.",
+        "en": "On the Connecticut River; the federal armory made it a town of guns and machines."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "albany",
+      "nome": "Albany",
+      "lon": -73.76,
+      "lat": 42.65,
+      "porte": 3,
+      "uf": "NY",
+      "historia": {
+        "pt": "Capital do estado de Nova York, onde o rio Hudson encontra o caminho para o oeste.",
+        "en": "Capital of New York State, where the Hudson River meets the road west."
+      }
+    },
+    {
+      "id": "new_york",
+      "nome": "Nova York",
+      "lon": -74.0,
+      "lat": 40.71,
+      "porte": 5,
+      "uf": "NY",
+      "historia": {
+        "pt": "O maior porto do país. Ferrovias de todas as direções disputavam um lugar à beira do Hudson.",
+        "en": "The country's largest port. Railroads from every direction fought for a spot on the Hudson."
+      },
+      "nomeEn": "New York",
+      "porto": true
+    },
+    {
+      "id": "binghamton",
+      "nome": "Binghamton",
+      "lon": -75.92,
+      "lat": 42.1,
+      "porte": 1,
+      "uf": "NY",
+      "historia": {
+        "pt": "Vale do rio Susquehanna, no caminho da Erie Railroad rumo ao Lago Erie.",
+        "en": "In the Susquehanna valley, on the Erie Railroad's way to Lake Erie."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "syracuse",
+      "nome": "Syracuse",
+      "lon": -76.15,
+      "lat": 43.05,
+      "porte": 2,
+      "uf": "NY",
+      "historia": {
+        "pt": "Cresceu com o Canal Erie e o sal; depois, com os trens da New York Central.",
+        "en": "It grew with the Erie Canal and salt, then with the New York Central's trains."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "rochester",
+      "nome": "Rochester",
+      "lon": -77.61,
+      "lat": 43.16,
+      "porte": 2,
+      "uf": "NY",
+      "historia": {
+        "pt": "A \"cidade da farinha\": moinhos movidos pelas quedas do rio Genesee.",
+        "en": "The \"Flour City\": mills driven by the falls of the Genesee River."
+      },
+      "produz": "graos",
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "buffalo",
+      "nome": "Buffalo",
+      "lon": -78.88,
+      "lat": 42.89,
+      "porte": 3,
+      "uf": "NY",
+      "historia": {
+        "pt": "Porto do Lago Erie onde o trigo do Meio-Oeste passava dos navios para os trens.",
+        "en": "A Lake Erie port where Midwestern wheat moved from ships to trains."
+      },
+      "porto": true
+    },
+    {
+      "id": "philadelphia",
+      "nome": "Filadélfia",
+      "lon": -75.17,
+      "lat": 39.95,
+      "porte": 4,
+      "uf": "PA",
+      "historia": {
+        "pt": "Sede da Pennsylvania Railroad, por décadas a maior empresa do mundo.",
+        "en": "Home of the Pennsylvania Railroad, for decades the largest company in the world."
+      },
+      "nomeEn": "Philadelphia",
+      "porto": true
+    },
+    {
+      "id": "harrisburg",
+      "nome": "Harrisburg",
+      "lon": -76.88,
+      "lat": 40.27,
+      "porte": 2,
+      "uf": "PA",
+      "historia": {
+        "pt": "Capital da Pensilvânia, à beira do rio Susquehanna.",
+        "en": "Pennsylvania's capital, on the Susquehanna River."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "altoona",
+      "nome": "Altoona",
+      "lon": -78.4,
+      "lat": 40.52,
+      "porte": 1,
+      "uf": "PA",
+      "historia": {
+        "pt": "Nasceu em 1849 como oficina da Pennsylvania Railroad, ao pé da Curva da Ferradura.",
+        "en": "Founded in 1849 as the Pennsylvania Railroad's shops, at the foot of the Horseshoe Curve."
+      },
+      "produz": "carvao",
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "pittsburgh",
+      "nome": "Pittsburgh",
+      "lon": -80.0,
+      "lat": 40.44,
+      "porte": 4,
+      "uf": "PA",
+      "historia": {
+        "pt": "A capital do aço, onde três rios se encontram.",
+        "en": "The steel capital, where three rivers meet."
+      },
+      "produz": "aco"
+    },
+    {
+      "id": "baltimore",
+      "nome": "Baltimore",
+      "lon": -76.61,
+      "lat": 39.29,
+      "porte": 4,
+      "uf": "MD",
+      "historia": {
+        "pt": "Daqui partiu em 1830 a Baltimore and Ohio, a primeira ferrovia comercial do país.",
+        "en": "The Baltimore and Ohio, the country's first commercial railroad, set out from here in 1830."
+      },
+      "porto": true
+    },
+    {
+      "id": "harpers_ferry",
+      "nome": "Harpers Ferry",
+      "lon": -77.74,
+      "lat": 39.32,
+      "porte": 1,
+      "uf": "WV",
+      "historia": {
+        "pt": "Onde o Shenandoah encontra o Potomac; a B&O chegou em 1834.",
+        "en": "Where the Shenandoah meets the Potomac; the B&O arrived in 1834."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "cumberland",
+      "nome": "Cumberland",
+      "lon": -78.76,
+      "lat": 39.65,
+      "porte": 1,
+      "uf": "MD",
+      "historia": {
+        "pt": "Porta das montanhas e do carvão de Maryland; ponto final da B&O por anos.",
+        "en": "Gateway to the mountains and Maryland coal; the B&O's railhead for years."
+      },
+      "produz": "carvao",
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "wheeling",
+      "nome": "Wheeling",
+      "lon": -80.72,
+      "lat": 40.06,
+      "porte": 2,
+      "uf": "WV",
+      "historia": {
+        "pt": "No rio Ohio: em 1853 a B&O finalmente chegou aqui, cruzando os Apalaches.",
+        "en": "On the Ohio River: in 1853 the B&O finally reached it, crossing the Appalachians."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "washington",
+      "nome": "Washington",
+      "lon": -77.04,
+      "lat": 38.91,
+      "porte": 4,
+      "uf": "DC",
+      "historia": {
+        "pt": "A capital do país; a Union Station, de 1907, juntou todas as ferrovias num só lugar.",
+        "en": "The nation's capital; Union Station, from 1907, brought every railroad under one roof."
+      }
+    },
+    {
+      "id": "richmond",
+      "nome": "Richmond",
+      "lon": -77.44,
+      "lat": 37.54,
+      "porte": 3,
+      "uf": "VA",
+      "historia": {
+        "pt": "Capital da Virgínia, nó de ferrovias do Sul.",
+        "en": "Virginia's capital and a Southern rail hub."
+      }
+    },
+    {
+      "id": "norfolk",
+      "nome": "Norfolk",
+      "lon": -76.29,
+      "lat": 36.85,
+      "porte": 3,
+      "uf": "VA",
+      "historia": {
+        "pt": "Porto da baía de Chesapeake, por onde o carvão dos Apalaches seguia para o mundo.",
+        "en": "A Chesapeake Bay port, from which Appalachian coal sailed to the world."
+      },
+      "porto": true
+    },
+    {
+      "id": "lynchburg",
+      "nome": "Lynchburg",
+      "lon": -79.14,
+      "lat": 37.41,
+      "porte": 2,
+      "uf": "VA",
+      "historia": {
+        "pt": "Cidade do tabaco às margens do rio James.",
+        "en": "A tobacco town on the James River."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "roanoke",
+      "nome": "Roanoke",
+      "lon": -79.94,
+      "lat": 37.27,
+      "porte": 2,
+      "uf": "VA",
+      "historia": {
+        "pt": "Era um vilarejo até 1882, quando a Norfolk and Western fez dele sua sede.",
+        "en": "A village until 1882, when the Norfolk and Western made it its headquarters."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "bluefield",
+      "nome": "Bluefield",
+      "lon": -81.22,
+      "lat": 37.27,
+      "porte": 1,
+      "uf": "WV",
+      "historia": {
+        "pt": "Porta do campo de carvão Pocahontas, o mais rico do país.",
+        "en": "Gateway to the Pocahontas coalfield, the richest in the country."
+      },
+      "produz": "carvao",
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "charleston_wv",
+      "nome": "Charleston (Virgínia Ocidental)",
+      "lon": -81.63,
+      "lat": 38.35,
+      "porte": 2,
+      "uf": "WV",
+      "historia": {
+        "pt": "Capital da Virgínia Ocidental, no vale do carvão do rio Kanawha.",
+        "en": "Capital of West Virginia, in the coal valley of the Kanawha River."
+      },
+      "nomeEn": "Charleston (West Virginia)",
+      "produz": "carvao",
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "huntington",
+      "nome": "Huntington",
+      "lon": -82.44,
+      "lat": 38.42,
+      "porte": 2,
+      "uf": "WV",
+      "historia": {
+        "pt": "Fundada em 1871 por Collis Huntington como ponta da Chesapeake and Ohio no rio Ohio.",
+        "en": "Founded in 1871 by Collis Huntington as the Chesapeake and Ohio's terminus on the Ohio River."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "charlotte",
+      "nome": "Charlotte",
+      "lon": -80.84,
+      "lat": 35.23,
+      "porte": 3,
+      "uf": "NC",
+      "historia": {
+        "pt": "Cidade do algodão e, depois, dos bancos, na Carolina do Norte.",
+        "en": "A cotton town, and later a banking city, in North Carolina."
+      }
+    },
+    {
+      "id": "wilmington",
+      "nome": "Wilmington",
+      "lon": -77.94,
+      "lat": 34.23,
+      "porte": 2,
+      "uf": "NC",
+      "historia": {
+        "pt": "Porto da Carolina do Norte; a Wilmington and Weldon, de 1840, foi a ferrovia mais longa do mundo na época.",
+        "en": "North Carolina's port; the Wilmington and Weldon, of 1840, was the world's longest railroad at the time."
+      },
+      "porto": true,
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "charleston_sc",
+      "nome": "Charleston",
+      "lon": -79.93,
+      "lat": 32.78,
+      "porte": 3,
+      "uf": "SC",
+      "historia": {
+        "pt": "Em 1833 a ferrovia daqui até Hamburg era a mais longa do mundo, e a primeira com trens a vapor regulares no país.",
+        "en": "In 1833 its line to Hamburg was the world's longest, and the first in the country with regular steam trains."
+      },
+      "porto": true
+    },
+    {
+      "id": "augusta",
+      "nome": "Augusta",
+      "lon": -81.97,
+      "lat": 33.47,
+      "porte": 2,
+      "uf": "GA",
+      "historia": {
+        "pt": "No rio Savannah, ponto final da South Carolina Canal and Rail Road.",
+        "en": "On the Savannah River, terminus of the South Carolina Canal and Rail Road."
+      },
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "atlanta",
+      "nome": "Atlanta",
+      "lon": -84.39,
+      "lat": 33.75,
+      "porte": 4,
+      "uf": "GA",
+      "historia": {
+        "pt": "Nasceu em 1837 como \"Terminus\", o ponto final de uma ferrovia.",
+        "en": "Born in 1837 as \"Terminus\", the end of a railroad line."
+      }
+    },
+    {
+      "id": "chattanooga",
+      "nome": "Chattanooga",
+      "lon": -85.31,
+      "lat": 35.05,
+      "porte": 2,
+      "uf": "TN",
+      "historia": {
+        "pt": "Entroncamento no rio Tennessee, entre as montanhas.",
+        "en": "A junction on the Tennessee River, among the mountains."
+      },
+      "paisagem": "eua_apalaches"
+    },
+    {
+      "id": "macon",
+      "nome": "Macon",
+      "lon": -83.63,
+      "lat": 32.84,
+      "porte": 2,
+      "uf": "GA",
+      "historia": {
+        "pt": "No coração do algodão da Geórgia, ligada a Savannah desde 1843.",
+        "en": "In the heart of Georgia's cotton, linked to Savannah since 1843."
+      },
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "savannah",
+      "nome": "Savannah",
+      "lon": -81.1,
+      "lat": 32.08,
+      "porte": 3,
+      "uf": "GA",
+      "historia": {
+        "pt": "Porto do algodão da Geórgia.",
+        "en": "Georgia's cotton port."
+      },
+      "porto": true
+    },
+    {
+      "id": "jacksonville",
+      "nome": "Jacksonville",
+      "lon": -81.66,
+      "lat": 30.33,
+      "porte": 3,
+      "uf": "FL",
+      "historia": {
+        "pt": "Porta da Flórida: daqui Henry Flagler levou os trilhos rumo ao sul.",
+        "en": "Gateway to Florida: from here Henry Flagler pushed the rails south."
+      },
+      "porto": true
+    },
+    {
+      "id": "st_augustine",
+      "nome": "St. Augustine",
+      "lon": -81.31,
+      "lat": 29.89,
+      "porte": 1,
+      "uf": "FL",
+      "historia": {
+        "pt": "A cidade mais antiga do país, fundada pelos espanhóis em 1565.",
+        "en": "The oldest city in the country, founded by the Spanish in 1565."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "daytona",
+      "nome": "Daytona",
+      "lon": -81.02,
+      "lat": 29.21,
+      "porte": 1,
+      "uf": "FL",
+      "historia": {
+        "pt": "Praia de areia dura onde, mais tarde, se correu de carro.",
+        "en": "A hard-sand beach where cars would later race."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "west_palm",
+      "nome": "West Palm Beach",
+      "lon": -80.05,
+      "lat": 26.71,
+      "porte": 2,
+      "uf": "FL",
+      "historia": {
+        "pt": "Criada por Flagler para os trabalhadores dos seus hotéis de luxo.",
+        "en": "Created by Flagler for the workers of his luxury hotels."
+      },
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "miami",
+      "nome": "Miami",
+      "lon": -80.19,
+      "lat": 25.76,
+      "porte": 4,
+      "uf": "FL",
+      "historia": {
+        "pt": "Era um posto à beira da baía até o trem de Flagler chegar, em 1896.",
+        "en": "A trading post on the bay until Flagler's train arrived in 1896."
+      },
+      "produz": "acucar",
+      "porto": true
+    },
+    {
+      "id": "key_west",
+      "nome": "Key West",
+      "lon": -81.78,
+      "lat": 24.56,
+      "porte": 1,
+      "uf": "FL",
+      "historia": {
+        "pt": "Em 1912 a Overseas Railroad chegou aqui sobre o mar, de ilha em ilha.",
+        "en": "In 1912 the Overseas Railroad reached it across the sea, island by island."
+      },
+      "porto": true,
+      "paisagem": "eua_costa"
+    },
+    {
+      "id": "louisville",
+      "nome": "Louisville",
+      "lon": -85.76,
+      "lat": 38.25,
+      "porte": 3,
+      "uf": "KY",
+      "historia": {
+        "pt": "Porto fluvial no rio Ohio e sede da Louisville and Nashville.",
+        "en": "A river port on the Ohio and home of the Louisville and Nashville."
+      },
+      "porto": true
+    },
+    {
+      "id": "nashville",
+      "nome": "Nashville",
+      "lon": -86.78,
+      "lat": 36.16,
+      "porte": 3,
+      "uf": "TN",
+      "historia": {
+        "pt": "Capital do Tennessee, à beira do rio Cumberland.",
+        "en": "Tennessee's capital, on the Cumberland River."
+      }
+    },
+    {
+      "id": "birmingham",
+      "nome": "Birmingham",
+      "lon": -86.8,
+      "lat": 33.52,
+      "porte": 3,
+      "uf": "AL",
+      "historia": {
+        "pt": "Fundada em 1871 onde as ferrovias cruzavam ferro, carvão e calcário: virou a cidade do aço do Sul.",
+        "en": "Founded in 1871 where railroads crossed iron, coal and limestone: it became the South's steel city."
+      },
+      "produz": "aco"
+    },
+    {
+      "id": "montgomery",
+      "nome": "Montgomery",
+      "lon": -86.3,
+      "lat": 32.38,
+      "porte": 2,
+      "uf": "AL",
+      "historia": {
+        "pt": "Capital do Alabama, no rio Alabama.",
+        "en": "Alabama's capital, on the Alabama River."
+      },
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "mobile",
+      "nome": "Mobile",
+      "lon": -88.04,
+      "lat": 30.69,
+      "porte": 2,
+      "uf": "AL",
+      "historia": {
+        "pt": "Porto do Alabama no Golfo do México.",
+        "en": "Alabama's port on the Gulf of Mexico."
+      },
+      "porto": true,
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "memphis",
+      "nome": "Memphis",
+      "lon": -90.05,
+      "lat": 35.15,
+      "porte": 3,
+      "uf": "TN",
+      "historia": {
+        "pt": "Porto do algodão no rio Mississippi.",
+        "en": "The cotton port on the Mississippi River."
+      },
+      "porto": true
+    },
+    {
+      "id": "jackson_ms",
+      "nome": "Jackson",
+      "lon": -90.18,
+      "lat": 32.3,
+      "porte": 2,
+      "uf": "MS",
+      "historia": {
+        "pt": "Capital do Mississippi, no caminho da Illinois Central para Nova Orleans.",
+        "en": "Mississippi's capital, on the Illinois Central's way to New Orleans."
+      },
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "new_orleans",
+      "nome": "Nova Orleans",
+      "lon": -90.07,
+      "lat": 29.95,
+      "porte": 4,
+      "uf": "LA",
+      "historia": {
+        "pt": "O porto do Mississippi: algodão, açúcar e jazz.",
+        "en": "The Mississippi's port: cotton, sugar and jazz."
+      },
+      "nomeEn": "New Orleans",
+      "produz": "acucar",
+      "porto": true
+    },
+    {
+      "id": "shreveport",
+      "nome": "Shreveport",
+      "lon": -93.75,
+      "lat": 32.53,
+      "porte": 2,
+      "uf": "LA",
+      "historia": {
+        "pt": "No rio Red, ponto de partida da Texas and Pacific.",
+        "en": "On the Red River, starting point of the Texas and Pacific."
+      },
+      "produz": "petroleo",
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "cincinnati",
+      "nome": "Cincinnati",
+      "lon": -84.51,
+      "lat": 39.1,
+      "porte": 4,
+      "uf": "OH",
+      "historia": {
+        "pt": "\"Rainha do Oeste\", porto do rio Ohio e capital dos frigoríficos de porco.",
+        "en": "\"Queen of the West\", an Ohio River port and the capital of pork packing."
+      },
+      "porto": true
+    },
+    {
+      "id": "indianapolis",
+      "nome": "Indianápolis",
+      "lon": -86.16,
+      "lat": 39.77,
+      "porte": 3,
+      "uf": "IN",
+      "historia": {
+        "pt": "A \"Encruzilhada da América\": muitas ferrovias se cruzavam aqui.",
+        "en": "The \"Crossroads of America\": many railroads crossed here."
+      },
+      "nomeEn": "Indianapolis"
+    },
+    {
+      "id": "detroit",
+      "nome": "Detroit",
+      "lon": -83.05,
+      "lat": 42.33,
+      "porte": 4,
+      "uf": "MI",
+      "historia": {
+        "pt": "Porto dos Grandes Lagos e, depois, a capital mundial do automóvel.",
+        "en": "A Great Lakes port and, later, the world's motor capital."
+      },
+      "porto": true
+    },
+    {
+      "id": "kalamazoo",
+      "nome": "Kalamazoo",
+      "lon": -85.59,
+      "lat": 42.29,
+      "porte": 1,
+      "uf": "MI",
+      "historia": {
+        "pt": "Cidade agrícola no caminho da Michigan Central até Chicago.",
+        "en": "A farm town on the Michigan Central's way to Chicago."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "chicago",
+      "nome": "Chicago",
+      "lon": -87.63,
+      "lat": 41.88,
+      "porte": 5,
+      "uf": "IL",
+      "historia": {
+        "pt": "O maior entroncamento ferroviário do mundo, com os currais da Union Stock Yards.",
+        "en": "The world's greatest railroad hub, home of the Union Stock Yards."
+      },
+      "produz": "gado",
+      "porto": true
+    },
+    {
+      "id": "galesburg",
+      "nome": "Galesburg",
+      "lon": -90.37,
+      "lat": 40.95,
+      "porte": 1,
+      "uf": "IL",
+      "historia": {
+        "pt": "Cidade de pradaria no caminho da Burlington.",
+        "en": "A prairie town on the Burlington's line."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "burlington",
+      "nome": "Burlington",
+      "lon": -91.11,
+      "lat": 40.81,
+      "porte": 1,
+      "uf": "IA",
+      "historia": {
+        "pt": "Onde a Chicago, Burlington and Quincy cruzava o Mississippi.",
+        "en": "Where the Chicago, Burlington and Quincy crossed the Mississippi."
+      },
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "centralia",
+      "nome": "Centralia",
+      "lon": -89.13,
+      "lat": 38.53,
+      "porte": 1,
+      "uf": "IL",
+      "historia": {
+        "pt": "Fundada em 1853 pela Illinois Central, no meio das minas de carvão.",
+        "en": "Founded in 1853 by the Illinois Central, among the coal mines."
+      },
+      "produz": "carvao",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "cairo",
+      "nome": "Cairo",
+      "lon": -89.18,
+      "lat": 37.01,
+      "porte": 1,
+      "uf": "IL",
+      "historia": {
+        "pt": "Onde o rio Ohio deságua no Mississippi.",
+        "en": "Where the Ohio River flows into the Mississippi."
+      },
+      "porto": true,
+      "paisagem": "eua_sul"
+    },
+    {
+      "id": "milwaukee",
+      "nome": "Milwaukee",
+      "lon": -87.91,
+      "lat": 43.04,
+      "porte": 3,
+      "uf": "WI",
+      "historia": {
+        "pt": "Porto do Lago Michigan, terra de cervejarias e da Milwaukee Road.",
+        "en": "A Lake Michigan port, land of breweries and of the Milwaukee Road."
+      },
+      "porto": true
+    },
+    {
+      "id": "minneapolis",
+      "nome": "Minneapolis",
+      "lon": -93.27,
+      "lat": 44.98,
+      "porte": 4,
+      "uf": "MN",
+      "historia": {
+        "pt": "Os moinhos das quedas de St. Anthony faziam a farinha do país.",
+        "en": "The mills at St. Anthony Falls ground the nation's flour."
+      },
+      "produz": "graos"
+    },
+    {
+      "id": "st_louis",
+      "nome": "St. Louis",
+      "lon": -90.2,
+      "lat": 38.63,
+      "porte": 4,
+      "uf": "MO",
+      "historia": {
+        "pt": "Porta do Oeste, no encontro do Mississippi com o Missouri.",
+        "en": "Gateway to the West, where the Mississippi meets the Missouri."
+      },
+      "porto": true
+    },
+    {
+      "id": "jefferson_city",
+      "nome": "Jefferson City",
+      "lon": -92.17,
+      "lat": 38.58,
+      "porte": 1,
+      "uf": "MO",
+      "historia": {
+        "pt": "Capital do Missouri, à beira do rio Missouri.",
+        "en": "Missouri's capital, on the Missouri River."
+      },
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "kansas_city",
+      "nome": "Kansas City",
+      "lon": -94.58,
+      "lat": 39.1,
+      "porte": 4,
+      "uf": "MO",
+      "historia": {
+        "pt": "Currais e trilhos: o gado do Texas chegava aqui para seguir ao leste.",
+        "en": "Stockyards and rails: Texas cattle arrived here to head east."
+      },
+      "produz": "gado"
+    },
+    {
+      "id": "topeka",
+      "nome": "Topeka",
+      "lon": -95.68,
+      "lat": 39.05,
+      "porte": 2,
+      "uf": "KS",
+      "historia": {
+        "pt": "Capital do Kansas e sede da Atchison, Topeka and Santa Fe.",
+        "en": "Kansas's capital and home of the Atchison, Topeka and Santa Fe."
+      },
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "dodge_city",
+      "nome": "Dodge City",
+      "lon": -100.02,
+      "lat": 37.75,
+      "porte": 1,
+      "uf": "KS",
+      "historia": {
+        "pt": "A \"rainha das cidades de gado\" do Velho Oeste.",
+        "en": "The \"Queen of the Cowtowns\" of the Old West."
+      },
+      "produz": "gado",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "omaha",
+      "nome": "Omaha",
+      "lon": -95.93,
+      "lat": 41.26,
+      "porte": 3,
+      "uf": "NE",
+      "historia": {
+        "pt": "Ponto de partida da Union Pacific em 1865.",
+        "en": "Starting point of the Union Pacific in 1865."
+      },
+      "produz": "gado"
+    },
+    {
+      "id": "north_platte",
+      "nome": "North Platte",
+      "lon": -100.77,
+      "lat": 41.12,
+      "porte": 1,
+      "uf": "NE",
+      "historia": {
+        "pt": "Nasceu em 1866 como acampamento da Union Pacific.",
+        "en": "Born in 1866 as a Union Pacific camp."
+      },
+      "produz": "gado",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "fargo",
+      "nome": "Fargo",
+      "lon": -96.79,
+      "lat": 46.88,
+      "porte": 2,
+      "uf": "ND",
+      "historia": {
+        "pt": "Batizada em homenagem a um diretor da Northern Pacific, no vale do trigo do rio Red.",
+        "en": "Named after a Northern Pacific director, in the wheat valley of the Red River."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "grand_forks",
+      "nome": "Grand Forks",
+      "lon": -97.03,
+      "lat": 47.93,
+      "porte": 1,
+      "uf": "ND",
+      "historia": {
+        "pt": "Cidade do trigo na Great Northern.",
+        "en": "A wheat town on the Great Northern."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "bismarck",
+      "nome": "Bismarck",
+      "lon": -100.78,
+      "lat": 46.81,
+      "porte": 1,
+      "uf": "ND",
+      "historia": {
+        "pt": "Batizada com o nome do chanceler alemão para atrair investidores da Northern Pacific.",
+        "en": "Named after the German chancellor to attract investors to the Northern Pacific."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "minot",
+      "nome": "Minot",
+      "lon": -101.3,
+      "lat": 48.23,
+      "porte": 1,
+      "uf": "ND",
+      "historia": {
+        "pt": "Surgiu tão rápido com a Great Northern que ganhou o apelido de \"Cidade Mágica\".",
+        "en": "It sprang up so fast with the Great Northern that it was nicknamed the \"Magic City\"."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "cheyenne",
+      "nome": "Cheyenne",
+      "lon": -104.82,
+      "lat": 41.14,
+      "porte": 2,
+      "uf": "WY",
+      "historia": {
+        "pt": "Fundada pela Union Pacific em 1867, aos pés das Montanhas Rochosas.",
+        "en": "Founded by the Union Pacific in 1867, at the foot of the Rocky Mountains."
+      },
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "denver",
+      "nome": "Denver",
+      "lon": -104.99,
+      "lat": 39.74,
+      "porte": 4,
+      "uf": "CO",
+      "historia": {
+        "pt": "Cidade do ouro e da prata que quase ficou sem trem até ligar-se à Union Pacific em 1870.",
+        "en": "A gold and silver town that nearly missed the railroad until it linked to the Union Pacific in 1870."
+      },
+      "produz": "minerio"
+    },
+    {
+      "id": "colorado_springs",
+      "nome": "Colorado Springs",
+      "lon": -104.82,
+      "lat": 38.83,
+      "porte": 2,
+      "uf": "CO",
+      "historia": {
+        "pt": "Fundada em 1871 pelo dono da Denver and Rio Grande, aos pés do Pikes Peak.",
+        "en": "Founded in 1871 by the Denver and Rio Grande's owner, at the foot of Pikes Peak."
+      },
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "pueblo",
+      "nome": "Pueblo",
+      "lon": -104.61,
+      "lat": 38.25,
+      "porte": 2,
+      "uf": "CO",
+      "historia": {
+        "pt": "A \"Pittsburgh do Oeste\", com a grande usina de aço do Colorado.",
+        "en": "The \"Pittsburgh of the West\", with Colorado's great steel mill."
+      },
+      "produz": "aco",
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "la_junta",
+      "nome": "La Junta",
+      "lon": -103.54,
+      "lat": 37.98,
+      "porte": 1,
+      "uf": "CO",
+      "historia": {
+        "pt": "Na antiga Trilha de Santa Fe, antes da subida do passo Raton.",
+        "en": "On the old Santa Fe Trail, before the climb up Raton Pass."
+      },
+      "produz": "gado",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "grand_junction",
+      "nome": "Grand Junction",
+      "lon": -108.55,
+      "lat": 39.06,
+      "porte": 1,
+      "uf": "CO",
+      "historia": {
+        "pt": "Onde os rios Colorado e Gunnison se encontram, no oeste das Rochosas.",
+        "en": "Where the Colorado and Gunnison rivers meet, west of the Rockies."
+      },
+      "paisagem": "eua_deserto"
+    },
+    {
+      "id": "salt_lake",
+      "nome": "Salt Lake City",
+      "lon": -111.89,
+      "lat": 40.76,
+      "porte": 3,
+      "uf": "UT",
+      "historia": {
+        "pt": "Cidade mórmon junto ao Grande Lago Salgado; o cobre de Bingham saía pelos trilhos.",
+        "en": "A Mormon city by the Great Salt Lake; copper from Bingham left by rail."
+      },
+      "produz": "minerio"
+    },
+    {
+      "id": "ogden",
+      "nome": "Ogden",
+      "lon": -111.97,
+      "lat": 41.22,
+      "porte": 2,
+      "uf": "UT",
+      "historia": {
+        "pt": "A \"cidade-junção\": aqui se encontravam a Union Pacific e a Central Pacific.",
+        "en": "\"Junction City\": where the Union Pacific met the Central Pacific."
+      },
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "pocatello",
+      "nome": "Pocatello",
+      "lon": -112.45,
+      "lat": 42.86,
+      "porte": 1,
+      "uf": "ID",
+      "historia": {
+        "pt": "Entroncamento da Oregon Short Line no sul de Idaho.",
+        "en": "A junction of the Oregon Short Line in southern Idaho."
+      },
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "boise",
+      "nome": "Boise",
+      "lon": -116.2,
+      "lat": 43.62,
+      "porte": 2,
+      "uf": "ID",
+      "historia": {
+        "pt": "Capital de Idaho, na antiga Trilha do Oregon.",
+        "en": "Idaho's capital, on the old Oregon Trail."
+      },
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "portland",
+      "nome": "Portland",
+      "lon": -122.68,
+      "lat": 45.52,
+      "porte": 4,
+      "uf": "OR",
+      "historia": {
+        "pt": "Porto da madeira no rio Columbia.",
+        "en": "The timber port on the Columbia River."
+      },
+      "produz": "madeira",
+      "porto": true
+    },
+    {
+      "id": "eugene",
+      "nome": "Eugene",
+      "lon": -123.09,
+      "lat": 44.05,
+      "porte": 2,
+      "uf": "OR",
+      "historia": {
+        "pt": "Cidade das serrarias no vale do Willamette.",
+        "en": "A sawmill town in the Willamette Valley."
+      },
+      "produz": "madeira",
+      "paisagem": "eua_pacifico"
+    },
+    {
+      "id": "redding",
+      "nome": "Redding",
+      "lon": -122.39,
+      "lat": 40.59,
+      "porte": 1,
+      "uf": "CA",
+      "historia": {
+        "pt": "No norte da Califórnia, onde a Rota Shasta sobe as montanhas.",
+        "en": "In northern California, where the Shasta Route climbs into the mountains."
+      },
+      "produz": "madeira",
+      "paisagem": "eua_pacifico"
+    },
+    {
+      "id": "reno",
+      "nome": "Reno",
+      "lon": -119.81,
+      "lat": 39.53,
+      "porte": 2,
+      "uf": "NV",
+      "historia": {
+        "pt": "Nasceu em 1868 com a Central Pacific, perto das minas de prata de Comstock.",
+        "en": "Born in 1868 with the Central Pacific, near the Comstock silver mines."
+      },
+      "produz": "minerio",
+      "paisagem": "eua_deserto"
+    },
+    {
+      "id": "sacramento",
+      "nome": "Sacramento",
+      "lon": -121.49,
+      "lat": 38.58,
+      "porte": 3,
+      "uf": "CA",
+      "historia": {
+        "pt": "Daqui partiu a Central Pacific em 1863, rumo à Serra Nevada.",
+        "en": "The Central Pacific set out from here in 1863, toward the Sierra Nevada."
+      }
+    },
+    {
+      "id": "san_francisco",
+      "nome": "São Francisco",
+      "lon": -122.42,
+      "lat": 37.77,
+      "porte": 5,
+      "uf": "CA",
+      "historia": {
+        "pt": "A cidade da corrida do ouro; os trens do leste chegavam a Oakland e seguiam de balsa.",
+        "en": "The gold rush city; trains from the east reached Oakland and crossed by ferry."
+      },
+      "nomeEn": "San Francisco",
+      "porto": true
+    },
+    {
+      "id": "fresno",
+      "nome": "Fresno",
+      "lon": -119.79,
+      "lat": 36.74,
+      "porte": 3,
+      "uf": "CA",
+      "historia": {
+        "pt": "Fundada pela Central Pacific em 1872, no meio do vale agrícola da Califórnia.",
+        "en": "Founded by the Central Pacific in 1872, in the middle of California's farm valley."
+      },
+      "produz": "graos"
+    },
+    {
+      "id": "bakersfield",
+      "nome": "Bakersfield",
+      "lon": -119.02,
+      "lat": 35.37,
+      "porte": 2,
+      "uf": "CA",
+      "historia": {
+        "pt": "Cidade do petróleo no sul do Vale Central.",
+        "en": "An oil town at the south end of the Central Valley."
+      },
+      "produz": "petroleo",
+      "paisagem": "eua_deserto"
+    },
+    {
+      "id": "los_angeles",
+      "nome": "Los Angeles",
+      "lon": -118.24,
+      "lat": 34.05,
+      "porte": 5,
+      "uf": "CA",
+      "historia": {
+        "pt": "Era uma cidade pequena até os trens da Santa Fe e da Southern Pacific trazerem uma multidão.",
+        "en": "A small town until the Santa Fe and Southern Pacific trains brought the crowds."
+      },
+      "porto": true
+    },
+    {
+      "id": "barstow",
+      "nome": "Barstow",
+      "lon": -117.02,
+      "lat": 34.9,
+      "porte": 1,
+      "uf": "CA",
+      "historia": {
+        "pt": "Entroncamento da Santa Fe no deserto de Mojave.",
+        "en": "A Santa Fe junction in the Mojave Desert."
+      },
+      "paisagem": "eua_deserto"
+    },
+    {
+      "id": "las_vegas",
+      "nome": "Las Vegas",
+      "lon": -115.14,
+      "lat": 36.17,
+      "porte": 3,
+      "uf": "NV",
+      "historia": {
+        "pt": "Nasceu em 1905 como parada de água de uma ferrovia no deserto.",
+        "en": "Born in 1905 as a railroad water stop in the desert."
+      }
+    },
+    {
+      "id": "flagstaff",
+      "nome": "Flagstaff",
+      "lon": -111.65,
+      "lat": 35.2,
+      "porte": 1,
+      "uf": "AZ",
+      "historia": {
+        "pt": "Serrarias nos pinheiros do Arizona, a caminho do Grand Canyon.",
+        "en": "Sawmills in Arizona's pines, on the way to the Grand Canyon."
+      },
+      "produz": "madeira",
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "albuquerque",
+      "nome": "Albuquerque",
+      "lon": -106.65,
+      "lat": 35.08,
+      "porte": 3,
+      "uf": "NM",
+      "historia": {
+        "pt": "A Santa Fe chegou em 1880 e criou uma cidade nova ao lado da antiga.",
+        "en": "The Santa Fe arrived in 1880 and built a new town next to the old one."
+      }
+    },
+    {
+      "id": "el_paso",
+      "nome": "El Paso",
+      "lon": -106.44,
+      "lat": 31.76,
+      "porte": 3,
+      "uf": "TX",
+      "historia": {
+        "pt": "Na fronteira com o México, onde quatro ferrovias se encontraram em 1881.",
+        "en": "On the Mexican border, where four railroads met in 1881."
+      }
+    },
+    {
+      "id": "tucson",
+      "nome": "Tucson",
+      "lon": -110.97,
+      "lat": 32.22,
+      "porte": 2,
+      "uf": "AZ",
+      "historia": {
+        "pt": "Cidade do deserto de Sonora; o cobre do Arizona saía pela Southern Pacific.",
+        "en": "A Sonoran Desert town; Arizona copper left on the Southern Pacific."
+      },
+      "produz": "minerio",
+      "paisagem": "eua_deserto"
+    },
+    {
+      "id": "san_antonio",
+      "nome": "San Antonio",
+      "lon": -98.49,
+      "lat": 29.42,
+      "porte": 3,
+      "uf": "TX",
+      "historia": {
+        "pt": "Cidade do Álamo e das grandes boiadas do Texas.",
+        "en": "City of the Alamo and of the great Texas cattle drives."
+      },
+      "produz": "gado"
+    },
+    {
+      "id": "houston",
+      "nome": "Houston",
+      "lon": -95.37,
+      "lat": 29.76,
+      "porte": 4,
+      "uf": "TX",
+      "historia": {
+        "pt": "Porto do petróleo do Texas.",
+        "en": "The port of Texas oil."
+      },
+      "produz": "petroleo",
+      "porto": true
+    },
+    {
+      "id": "dallas",
+      "nome": "Dallas",
+      "lon": -96.8,
+      "lat": 32.78,
+      "porte": 4,
+      "uf": "TX",
+      "historia": {
+        "pt": "Cresceu quando duas ferrovias se cruzaram aqui, em 1873.",
+        "en": "It boomed when two railroads crossed here in 1873."
+      }
+    },
+    {
+      "id": "fort_worth",
+      "nome": "Fort Worth",
+      "lon": -97.33,
+      "lat": 32.76,
+      "porte": 3,
+      "uf": "TX",
+      "historia": {
+        "pt": "\"Onde começa o Oeste\": currais e caubóis.",
+        "en": "\"Where the West begins\": stockyards and cowboys."
+      },
+      "produz": "gado"
+    },
+    {
+      "id": "abilene",
+      "nome": "Abilene",
+      "lon": -99.73,
+      "lat": 32.45,
+      "porte": 1,
+      "uf": "TX",
+      "historia": {
+        "pt": "Fundada em 1881 pela Texas and Pacific como ponto de embarque de gado.",
+        "en": "Founded in 1881 by the Texas and Pacific as a cattle shipping point."
+      },
+      "produz": "gado",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "billings",
+      "nome": "Billings",
+      "lon": -108.5,
+      "lat": 45.78,
+      "porte": 2,
+      "uf": "MT",
+      "historia": {
+        "pt": "Criada em 1882 pela Northern Pacific e batizada com o nome do seu presidente.",
+        "en": "Created in 1882 by the Northern Pacific and named after its president."
+      },
+      "produz": "gado",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "helena",
+      "nome": "Helena",
+      "lon": -112.04,
+      "lat": 46.59,
+      "porte": 1,
+      "uf": "MT",
+      "historia": {
+        "pt": "Capital de Montana, nascida de uma corrida do ouro.",
+        "en": "Montana's capital, born of a gold rush."
+      },
+      "produz": "minerio",
+      "paisagem": "eua_montanha"
+    },
+    {
+      "id": "havre",
+      "nome": "Havre",
+      "lon": -109.68,
+      "lat": 48.55,
+      "porte": 1,
+      "uf": "MT",
+      "historia": {
+        "pt": "Parada da Great Northern nas planícies do norte de Montana.",
+        "en": "A Great Northern stop on the plains of northern Montana."
+      },
+      "produz": "graos",
+      "paisagem": "eua_planicie"
+    },
+    {
+      "id": "spokane",
+      "nome": "Spokane",
+      "lon": -117.43,
+      "lat": 47.66,
+      "porte": 3,
+      "uf": "WA",
+      "historia": {
+        "pt": "Centro do trigo do Palouse, onde a Northern Pacific e a Great Northern se cruzavam.",
+        "en": "Center of the Palouse wheat, where the Northern Pacific and the Great Northern crossed."
+      },
+      "produz": "graos"
+    },
+    {
+      "id": "seattle",
+      "nome": "Seattle",
+      "lon": -122.33,
+      "lat": 47.61,
+      "porte": 4,
+      "uf": "WA",
+      "historia": {
+        "pt": "Porto do Pacífico Norte e da madeira; ponto final da Great Northern.",
+        "en": "The Pacific Northwest's timber port and the Great Northern's terminus."
+      },
+      "produz": "madeira",
+      "porto": true
+    }
+  ],
+  "linhas": [
+    {
+      "id": "b_o",
+      "nome": "Baltimore and Ohio",
+      "ano": 1830,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "baltimore",
+          "para": "harpers_ferry",
+          "ano": 1834,
+          "terreno": "vale"
+        },
+        {
+          "de": "harpers_ferry",
+          "para": "cumberland",
+          "ano": 1842,
+          "terreno": "apalaches"
+        },
+        {
+          "de": "cumberland",
+          "para": "wheeling",
+          "ano": 1853,
+          "terreno": "apalaches"
+        }
+      ],
+      "degrau": 0,
+      "nota": {
+        "pt": "A primeira ferrovia comercial do país: Baltimore queria um caminho para o oeste e começou a cavar em 1828.",
+        "en": "The country's first commercial railroad: Baltimore wanted a road west and broke ground in 1828."
+      }
+    },
+    {
+      "id": "sc_rr",
+      "nome": "South Carolina Canal and Rail Road",
+      "ano": 1833,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "charleston_sc",
+          "para": "augusta",
+          "ano": 1833,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 0,
+      "nota": {
+        "pt": "Em 1833 era a ferrovia mais longa do mundo. A locomotiva Best Friend of Charleston puxou o primeiro trem a vapor regular do país.",
+        "en": "In 1833 it was the longest railroad in the world. The Best Friend of Charleston locomotive pulled the country's first regular steam train."
+      }
+    },
+    {
+      "id": "boston_albany",
+      "nome": "Boston and Albany",
+      "ano": 1841,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "boston",
+          "para": "worcester",
+          "ano": 1835,
+          "terreno": "costa"
+        },
+        {
+          "de": "worcester",
+          "para": "springfield_ma",
+          "ano": 1839,
+          "terreno": "colinas"
+        },
+        {
+          "de": "springfield_ma",
+          "para": "albany",
+          "ano": 1841,
+          "terreno": "apalaches"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "A Western Railroad cruzou as montanhas Berkshire em 1841 para levar a carga do Canal Erie até Boston.",
+        "en": "The Western Railroad crossed the Berkshire Mountains in 1841 to bring Erie Canal freight to Boston."
+      }
+    },
+    {
+      "id": "erie",
+      "nome": "Erie Railroad",
+      "ano": 1851,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "new_york",
+          "para": "binghamton",
+          "ano": 1848,
+          "terreno": "apalaches"
+        },
+        {
+          "de": "binghamton",
+          "para": "buffalo",
+          "ano": 1851,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 1,
+      "nota": {
+        "pt": "Quando terminou, em 1851, era a ferrovia mais longa do mundo, ligando o Hudson ao Lago Erie.",
+        "en": "When finished in 1851 it was the world's longest railroad, linking the Hudson to Lake Erie."
+      }
+    },
+    {
+      "id": "pennsylvania",
+      "nome": "Pennsylvania Railroad",
+      "ano": 1854,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "philadelphia",
+          "para": "harrisburg",
+          "ano": 1838,
+          "terreno": "colinas"
+        },
+        {
+          "de": "harrisburg",
+          "para": "altoona",
+          "ano": 1850,
+          "terreno": "vale"
+        },
+        {
+          "de": "altoona",
+          "para": "pittsburgh",
+          "ano": 1854,
+          "terreno": "apalaches"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "A Curva da Ferradura, aberta em 1854, deixou os trens subirem os Apalaches sem planos inclinados.",
+        "en": "The Horseshoe Curve, opened in 1854, let trains climb the Appalachians without inclined planes."
+      }
+    },
+    {
+      "id": "ny_central",
+      "nome": "New York Central",
+      "ano": 1853,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "new_york",
+          "para": "albany",
+          "ano": 1851,
+          "terreno": "vale"
+        },
+        {
+          "de": "albany",
+          "para": "syracuse",
+          "ano": 1853,
+          "terreno": "vale"
+        },
+        {
+          "de": "syracuse",
+          "para": "rochester",
+          "ano": 1853,
+          "terreno": "planicie"
+        },
+        {
+          "de": "rochester",
+          "para": "buffalo",
+          "ano": 1853,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "A \"rota de nível d'água\": seguia o Hudson e o vale do Mohawk sem subir montanhas.",
+        "en": "The \"Water Level Route\": it followed the Hudson and the Mohawk Valley without climbing mountains."
+      }
+    },
+    {
+      "id": "michigan_central",
+      "nome": "Michigan Central",
+      "ano": 1852,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "detroit",
+          "para": "kalamazoo",
+          "ano": 1846,
+          "terreno": "planicie"
+        },
+        {
+          "de": "kalamazoo",
+          "para": "chicago",
+          "ano": 1852,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 2,
+      "nota": {
+        "pt": "Chegou a Chicago em 1852, uma das primeiras ligações do leste com a cidade.",
+        "en": "It reached Chicago in 1852, one of the first links between the East and the city."
+      }
+    },
+    {
+      "id": "georgia",
+      "nome": "Western and Atlantic",
+      "ano": 1851,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "chattanooga",
+          "para": "atlanta",
+          "ano": 1850,
+          "terreno": "apalaches"
+        },
+        {
+          "de": "atlanta",
+          "para": "macon",
+          "ano": 1846,
+          "terreno": "colinas"
+        },
+        {
+          "de": "macon",
+          "para": "savannah",
+          "ano": 1843,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "Atlanta nasceu como ponta desta ferrovia do estado da Geórgia, em 1837.",
+        "en": "Atlanta was born as the end of this Georgia state railroad, in 1837."
+      }
+    },
+    {
+      "id": "illinois_central",
+      "nome": "Illinois Central",
+      "ano": 1856,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "chicago",
+          "para": "centralia",
+          "ano": 1856,
+          "terreno": "planicie"
+        },
+        {
+          "de": "centralia",
+          "para": "cairo",
+          "ano": 1856,
+          "terreno": "planicie"
+        },
+        {
+          "de": "cairo",
+          "para": "memphis",
+          "ano": 1873,
+          "terreno": "vale"
+        },
+        {
+          "de": "memphis",
+          "para": "jackson_ms",
+          "ano": 1882,
+          "terreno": "planicie"
+        },
+        {
+          "de": "jackson_ms",
+          "para": "new_orleans",
+          "ano": 1882,
+          "terreno": "pantano"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "Primeira ferrovia com terras doadas pelo governo, em 1850. Abraham Lincoln foi advogado da companhia.",
+        "en": "The first railroad built on federal land grants, in 1850. Abraham Lincoln was one of its lawyers."
+      }
+    },
+    {
+      "id": "cbq",
+      "nome": "Chicago, Burlington and Quincy",
+      "ano": 1864,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "chicago",
+          "para": "galesburg",
+          "ano": 1854,
+          "terreno": "planicie"
+        },
+        {
+          "de": "galesburg",
+          "para": "burlington",
+          "ano": 1855,
+          "terreno": "planicie"
+        },
+        {
+          "de": "burlington",
+          "para": "omaha",
+          "ano": 1869,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "A Burlington levava os grãos das pradarias para Chicago e chegou a Omaha a tempo da Union Pacific.",
+        "en": "The Burlington carried prairie grain to Chicago and reached Omaha in time for the Union Pacific."
+      }
+    },
+    {
+      "id": "pacific_mo",
+      "nome": "Pacific Railroad (Missouri)",
+      "ano": 1865,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "st_louis",
+          "para": "jefferson_city",
+          "ano": 1855,
+          "terreno": "vale"
+        },
+        {
+          "de": "jefferson_city",
+          "para": "kansas_city",
+          "ano": 1865,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 3,
+      "nota": {
+        "pt": "Na viagem inaugural, em 1855, a ponte do rio Gasconade desabou. A linha só chegou a Kansas City depois da Guerra Civil.",
+        "en": "On the opening run in 1855, the Gasconade River bridge collapsed. The line only reached Kansas City after the Civil War."
+      },
+      "nomeEn": "Pacific Railroad (Missouri)"
+    },
+    {
+      "id": "transcontinental",
+      "nome": "Primeira Transcontinental",
+      "ano": 1869,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "omaha",
+          "para": "north_platte",
+          "ano": 1866,
+          "terreno": "planicie"
+        },
+        {
+          "de": "north_platte",
+          "para": "cheyenne",
+          "ano": 1867,
+          "terreno": "planicie"
+        },
+        {
+          "de": "cheyenne",
+          "para": "ogden",
+          "ano": 1869,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "ogden",
+          "para": "reno",
+          "ano": 1869,
+          "terreno": "deserto"
+        },
+        {
+          "de": "reno",
+          "para": "sacramento",
+          "ano": 1868,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "sacramento",
+          "para": "san_francisco",
+          "ano": 1869,
+          "terreno": "vale",
+          "via": [
+            [
+              -121.29,
+              37.95
+            ],
+            [
+              -121.9,
+              37.55
+            ],
+            [
+              -122.05,
+              37.42
+            ],
+            [
+              -122.3,
+              37.55
+            ]
+          ]
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "Union Pacific e Central Pacific se encontraram em Promontory, Utah, em 10 de maio de 1869, com um prego de ouro.",
+        "en": "The Union Pacific and the Central Pacific met at Promontory, Utah, on May 10, 1869, with a golden spike."
+      },
+      "nomeEn": "First Transcontinental"
+    },
+    {
+      "id": "l_n",
+      "nome": "Louisville and Nashville",
+      "ano": 1859,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "louisville",
+          "para": "nashville",
+          "ano": 1859,
+          "terreno": "colinas"
+        },
+        {
+          "de": "nashville",
+          "para": "birmingham",
+          "ano": 1872,
+          "terreno": "apalaches"
+        },
+        {
+          "de": "birmingham",
+          "para": "montgomery",
+          "ano": 1872,
+          "terreno": "colinas"
+        },
+        {
+          "de": "montgomery",
+          "para": "mobile",
+          "ano": 1872,
+          "terreno": "pantano"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "Uma das poucas ferrovias do Sul que saíram mais fortes da Guerra Civil; ajudou a criar Birmingham.",
+        "en": "One of the few Southern railroads to come out of the Civil War stronger; it helped create Birmingham."
+      }
+    },
+    {
+      "id": "ches_ohio",
+      "nome": "Chesapeake and Ohio",
+      "ano": 1873,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "richmond",
+          "para": "charleston_wv",
+          "ano": 1873,
+          "terreno": "apalaches"
+        },
+        {
+          "de": "charleston_wv",
+          "para": "huntington",
+          "ano": 1873,
+          "terreno": "vale"
+        },
+        {
+          "de": "huntington",
+          "para": "cincinnati",
+          "ano": 1888,
+          "terreno": "vale"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "Collis Huntington, da Central Pacific, levou a C&O até o rio Ohio para escoar o carvão da Virgínia Ocidental.",
+        "en": "Collis Huntington, of the Central Pacific, pushed the C&O to the Ohio River to haul West Virginia coal."
+      }
+    },
+    {
+      "id": "atlantic_coast",
+      "nome": "Atlantic Coast Line",
+      "ano": 1860,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "richmond",
+          "para": "wilmington",
+          "ano": 1840,
+          "terreno": "costa"
+        },
+        {
+          "de": "wilmington",
+          "para": "charleston_sc",
+          "ano": 1856,
+          "terreno": "costa",
+          "via": [
+            [
+              -78.6,
+              34.3
+            ],
+            [
+              -79.2,
+              33.9
+            ],
+            [
+              -79.6,
+              33.3
+            ]
+          ]
+        },
+        {
+          "de": "charleston_sc",
+          "para": "savannah",
+          "ano": 1860,
+          "terreno": "pantano"
+        },
+        {
+          "de": "savannah",
+          "para": "jacksonville",
+          "ano": 1893,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "Várias pequenas ferrovias do litoral viraram uma só, levando turistas e algodão de Richmond à Flórida.",
+        "en": "Several small coastal railroads became one, carrying tourists and cotton from Richmond to Florida."
+      }
+    },
+    {
+      "id": "milwaukee_road",
+      "nome": "Milwaukee Road",
+      "ano": 1867,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "chicago",
+          "para": "milwaukee",
+          "ano": 1855,
+          "terreno": "planicie"
+        },
+        {
+          "de": "milwaukee",
+          "para": "minneapolis",
+          "ano": 1867,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 4,
+      "nota": {
+        "pt": "A Chicago, Milwaukee and St. Paul ligou os moinhos de Minneapolis aos portos dos Grandes Lagos.",
+        "en": "The Chicago, Milwaukee and St. Paul linked the Minneapolis mills to the Great Lakes ports."
+      }
+    },
+    {
+      "id": "santa_fe",
+      "nome": "Atchison, Topeka and Santa Fe",
+      "ano": 1887,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "kansas_city",
+          "para": "topeka",
+          "ano": 1869,
+          "terreno": "planicie"
+        },
+        {
+          "de": "topeka",
+          "para": "dodge_city",
+          "ano": 1872,
+          "terreno": "planicie"
+        },
+        {
+          "de": "dodge_city",
+          "para": "la_junta",
+          "ano": 1875,
+          "terreno": "planicie"
+        },
+        {
+          "de": "la_junta",
+          "para": "albuquerque",
+          "ano": 1880,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "albuquerque",
+          "para": "flagstaff",
+          "ano": 1882,
+          "terreno": "deserto"
+        },
+        {
+          "de": "flagstaff",
+          "para": "barstow",
+          "ano": 1883,
+          "terreno": "deserto"
+        },
+        {
+          "de": "barstow",
+          "para": "los_angeles",
+          "ano": 1887,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "Seguiu a velha Trilha de Santa Fe e chegou a Los Angeles em 1887, provocando uma guerra de passagens com a Southern Pacific.",
+        "en": "It followed the old Santa Fe Trail and reached Los Angeles in 1887, sparking a fare war with the Southern Pacific."
+      }
+    },
+    {
+      "id": "sunset",
+      "nome": "Southern Pacific (Rota Sunset)",
+      "ano": 1883,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "los_angeles",
+          "para": "tucson",
+          "ano": 1880,
+          "terreno": "deserto"
+        },
+        {
+          "de": "tucson",
+          "para": "el_paso",
+          "ano": 1881,
+          "terreno": "deserto"
+        },
+        {
+          "de": "el_paso",
+          "para": "san_antonio",
+          "ano": 1883,
+          "terreno": "deserto"
+        },
+        {
+          "de": "san_antonio",
+          "para": "houston",
+          "ano": 1877,
+          "terreno": "planicie"
+        },
+        {
+          "de": "houston",
+          "para": "new_orleans",
+          "ano": 1880,
+          "terreno": "pantano"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "A segunda transcontinental, pelo sul, terminada em 1883 entre Los Angeles e Nova Orleans.",
+        "en": "The second transcontinental, along the south, finished in 1883 between Los Angeles and New Orleans."
+      },
+      "nomeEn": "Southern Pacific (Sunset Route)"
+    },
+    {
+      "id": "northern_pacific",
+      "nome": "Northern Pacific",
+      "ano": 1883,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "minneapolis",
+          "para": "fargo",
+          "ano": 1872,
+          "terreno": "planicie"
+        },
+        {
+          "de": "fargo",
+          "para": "bismarck",
+          "ano": 1873,
+          "terreno": "planicie"
+        },
+        {
+          "de": "bismarck",
+          "para": "billings",
+          "ano": 1882,
+          "terreno": "planicie"
+        },
+        {
+          "de": "billings",
+          "para": "helena",
+          "ano": 1883,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "helena",
+          "para": "spokane",
+          "ano": 1883,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "spokane",
+          "para": "seattle",
+          "ano": 1887,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "A falência de 1873 parou a obra em Bismarck. Ela só ficou pronta em 1883, com um prego de ouro em Montana.",
+        "en": "Its 1873 bankruptcy halted work at Bismarck. It was only finished in 1883, with a golden spike in Montana."
+      }
+    },
+    {
+      "id": "texas_pacific",
+      "nome": "Texas and Pacific",
+      "ano": 1881,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "shreveport",
+          "para": "dallas",
+          "ano": 1873,
+          "terreno": "colinas"
+        },
+        {
+          "de": "dallas",
+          "para": "fort_worth",
+          "ano": 1876,
+          "terreno": "planicie"
+        },
+        {
+          "de": "fort_worth",
+          "para": "abilene",
+          "ano": 1881,
+          "terreno": "planicie"
+        },
+        {
+          "de": "abilene",
+          "para": "el_paso",
+          "ano": 1881,
+          "terreno": "deserto"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "Era para chegar a San Diego, mas parou no oeste do Texas e se juntou à Southern Pacific em 1881.",
+        "en": "It was meant to reach San Diego, but stopped in West Texas and joined the Southern Pacific in 1881."
+      }
+    },
+    {
+      "id": "denver_pacific",
+      "nome": "Denver Pacific",
+      "ano": 1870,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "cheyenne",
+          "para": "denver",
+          "ano": 1870,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 5,
+      "nota": {
+        "pt": "A Union Pacific passou longe de Denver; a cidade construiu ela mesma o ramal até Cheyenne para não morrer.",
+        "en": "The Union Pacific bypassed Denver; the city built its own branch to Cheyenne so as not to wither away."
+      }
+    },
+    {
+      "id": "denver_rg",
+      "nome": "Denver and Rio Grande",
+      "ano": 1883,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "denver",
+          "para": "colorado_springs",
+          "ano": 1871,
+          "terreno": "planicie"
+        },
+        {
+          "de": "colorado_springs",
+          "para": "pueblo",
+          "ano": 1872,
+          "terreno": "planicie"
+        },
+        {
+          "de": "pueblo",
+          "para": "grand_junction",
+          "ano": 1882,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "grand_junction",
+          "para": "salt_lake",
+          "ano": 1883,
+          "terreno": "deserto"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Ferrovia de bitola estreita que atravessou as Rochosas pelo Royal Gorge depois de uma guerra armada com a Santa Fe.",
+        "en": "A narrow-gauge railroad that crossed the Rockies through the Royal Gorge after an armed war with the Santa Fe."
+      }
+    },
+    {
+      "id": "oregon_short_line",
+      "nome": "Oregon Short Line",
+      "ano": 1884,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "ogden",
+          "para": "pocatello",
+          "ano": 1878,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "pocatello",
+          "para": "boise",
+          "ano": 1884,
+          "terreno": "deserto"
+        },
+        {
+          "de": "boise",
+          "para": "portland",
+          "ano": 1884,
+          "terreno": "vale"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "A Union Pacific ganhou seu caminho até o Pacífico Norte seguindo a velha Trilha do Oregon.",
+        "en": "The Union Pacific got its own way to the Pacific Northwest following the old Oregon Trail."
+      }
+    },
+    {
+      "id": "shasta",
+      "nome": "Southern Pacific (Rota Shasta)",
+      "ano": 1887,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "portland",
+          "para": "eugene",
+          "ano": 1871,
+          "terreno": "vale"
+        },
+        {
+          "de": "eugene",
+          "para": "redding",
+          "ano": 1887,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "redding",
+          "para": "sacramento",
+          "ano": 1872,
+          "terreno": "vale"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Ligou a Califórnia ao Oregon em 1887, subindo as montanhas Siskiyou.",
+        "en": "It linked California to Oregon in 1887, climbing the Siskiyou Mountains."
+      },
+      "nomeEn": "Southern Pacific (Shasta Route)"
+    },
+    {
+      "id": "norfolk_western",
+      "nome": "Norfolk and Western",
+      "ano": 1883,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "norfolk",
+          "para": "lynchburg",
+          "ano": 1858,
+          "terreno": "costa"
+        },
+        {
+          "de": "lynchburg",
+          "para": "roanoke",
+          "ano": 1882,
+          "terreno": "colinas"
+        },
+        {
+          "de": "roanoke",
+          "para": "bluefield",
+          "ano": 1883,
+          "terreno": "apalaches"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Carvão do campo Pocahontas até o porto de Norfolk: por décadas, uma das ferrovias mais lucrativas do país.",
+        "en": "Pocahontas coal to the port of Norfolk: for decades, one of the most profitable railroads in the country."
+      }
+    },
+    {
+      "id": "southern_ry",
+      "nome": "Southern Railway",
+      "ano": 1894,
+      "cor": 6,
+      "trechos": [
+        {
+          "de": "washington",
+          "para": "lynchburg",
+          "ano": 1860,
+          "terreno": "colinas"
+        },
+        {
+          "de": "lynchburg",
+          "para": "charlotte",
+          "ano": 1874,
+          "terreno": "colinas"
+        },
+        {
+          "de": "charlotte",
+          "para": "atlanta",
+          "ano": 1873,
+          "terreno": "colinas"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Formada em 1894 juntando ferrovias falidas do Sul; seu trem Crescent ia de Nova York a Nova Orleans.",
+        "en": "Formed in 1894 from bankrupt Southern lines; its Crescent train ran from New York to New Orleans."
+      }
+    },
+    {
+      "id": "great_northern",
+      "nome": "Great Northern",
+      "ano": 1893,
+      "cor": 1,
+      "trechos": [
+        {
+          "de": "minneapolis",
+          "para": "grand_forks",
+          "ano": 1880,
+          "terreno": "planicie"
+        },
+        {
+          "de": "grand_forks",
+          "para": "minot",
+          "ano": 1886,
+          "terreno": "planicie"
+        },
+        {
+          "de": "minot",
+          "para": "havre",
+          "ano": 1887,
+          "terreno": "planicie"
+        },
+        {
+          "de": "havre",
+          "para": "spokane",
+          "ano": 1892,
+          "terreno": "montanhas"
+        },
+        {
+          "de": "spokane",
+          "para": "seattle",
+          "ano": 1893,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "James J. Hill a construiu sem terras do governo e sem falir: a única transcontinental privada de verdade.",
+        "en": "James J. Hill built it without government land grants and without going bankrupt: the only truly private transcontinental."
+      }
+    },
+    {
+      "id": "fec",
+      "nome": "Florida East Coast",
+      "ano": 1912,
+      "cor": 3,
+      "trechos": [
+        {
+          "de": "jacksonville",
+          "para": "st_augustine",
+          "ano": 1883,
+          "terreno": "costa"
+        },
+        {
+          "de": "st_augustine",
+          "para": "daytona",
+          "ano": 1886,
+          "terreno": "costa"
+        },
+        {
+          "de": "daytona",
+          "para": "west_palm",
+          "ano": 1894,
+          "terreno": "costa"
+        },
+        {
+          "de": "west_palm",
+          "para": "miami",
+          "ano": 1896,
+          "terreno": "costa"
+        },
+        {
+          "de": "miami",
+          "para": "key_west",
+          "ano": 1912,
+          "terreno": "ilhas",
+          "via": [
+            [
+              -80.45,
+              25.28
+            ],
+            [
+              -80.6,
+              25.0
+            ],
+            [
+              -80.95,
+              24.78
+            ],
+            [
+              -81.35,
+              24.66
+            ]
+          ]
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "Henry Flagler levou os trilhos até Key West em 1912, sobre pontes de ilha em ilha. Um furacão destruiu a linha em 1935.",
+        "en": "Henry Flagler carried the rails to Key West in 1912, on bridges from island to island. A hurricane destroyed the line in 1935."
+      }
+    },
+    {
+      "id": "texas_central",
+      "nome": "Texas Central",
+      "ano": 2030,
+      "cor": 5,
+      "trechos": [
+        {
+          "de": "dallas",
+          "para": "houston",
+          "ano": 2030,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 6,
+      "nota": {
+        "pt": "Trem-bala planejado entre Dallas e Houston, em 90 minutos, com tecnologia do Shinkansen japonês.",
+        "en": "A planned bullet train between Dallas and Houston in 90 minutes, using Japanese Shinkansen technology."
+      },
+      "projeto": "texas_central"
+    },
+    {
+      "id": "chsr",
+      "nome": "Alta Velocidade da Califórnia",
+      "ano": 2033,
+      "cor": 7,
+      "trechos": [
+        {
+          "de": "san_francisco",
+          "para": "fresno",
+          "ano": 2033,
+          "terreno": "vale",
+          "via": [
+            [
+              -122.38,
+              37.62
+            ],
+            [
+              -122.15,
+              37.45
+            ],
+            [
+              -121.89,
+              37.33
+            ],
+            [
+              -121.6,
+              37.0
+            ],
+            [
+              -120.9,
+              36.95
+            ]
+          ]
+        },
+        {
+          "de": "fresno",
+          "para": "bakersfield",
+          "ano": 2030,
+          "terreno": "vale"
+        },
+        {
+          "de": "bakersfield",
+          "para": "los_angeles",
+          "ano": 2033,
+          "terreno": "montanhas"
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "Aprovada pelos eleitores em 2008, a linha São Francisco–Los Angeles começou pelo Vale Central e segue em obras.",
+        "en": "Approved by voters in 2008, the San Francisco–Los Angeles line started in the Central Valley and is still under construction."
+      },
+      "nomeEn": "California High-Speed Rail",
+      "projeto": "chsr"
+    },
+    {
+      "id": "brightline_west",
+      "nome": "Brightline West",
+      "ano": 2028,
+      "cor": 2,
+      "trechos": [
+        {
+          "de": "las_vegas",
+          "para": "los_angeles",
+          "ano": 2028,
+          "terreno": "deserto",
+          "via": [
+            [
+              -115.9,
+              35.6
+            ],
+            [
+              -116.9,
+              34.95
+            ],
+            [
+              -117.4,
+              34.3
+            ]
+          ]
+        }
+      ],
+      "degrau": 7,
+      "nota": {
+        "pt": "Trem rápido de Las Vegas ao sul da Califórnia pelo canteiro da rodovia I-15, em obras desde 2024.",
+        "en": "A fast train from Las Vegas to Southern California along the I-15 median, under construction since 2024."
+      },
+      "projeto": "brightline_west"
+    },
+    {
+      "id": "ne_maglev",
+      "nome": "Maglev do Nordeste",
+      "ano": 2040,
+      "cor": 8,
+      "trechos": [
+        {
+          "de": "washington",
+          "para": "baltimore",
+          "ano": 2040,
+          "terreno": "costa"
+        },
+        {
+          "de": "baltimore",
+          "para": "philadelphia",
+          "ano": 2040,
+          "terreno": "costa"
+        },
+        {
+          "de": "philadelphia",
+          "para": "new_york",
+          "ano": 2040,
+          "terreno": "costa"
+        }
+      ],
+      "degrau": 8,
+      "nota": {
+        "pt": "Trem de levitação magnética planejado de Washington a Baltimore; a extensão até Nova York é o sonho seguinte.",
+        "en": "A magnetic levitation train planned from Washington to Baltimore; the extension to New York is the next dream."
+      },
+      "nomeEn": "Northeast Maglev",
+      "projeto": "ne_maglev"
+    },
+    {
+      "id": "midwest_hsr",
+      "nome": "Trem-bala do Meio-Oeste",
+      "ano": 2045,
+      "cor": 4,
+      "trechos": [
+        {
+          "de": "chicago",
+          "para": "indianapolis",
+          "ano": 2045,
+          "terreno": "planicie"
+        },
+        {
+          "de": "indianapolis",
+          "para": "cincinnati",
+          "ano": 2045,
+          "terreno": "planicie"
+        }
+      ],
+      "degrau": 8,
+      "nota": {
+        "pt": "E se Chicago fosse o centro de uma rede de trens-bala, como Paris na França?",
+        "en": "What if Chicago were the hub of a bullet-train network, like Paris in France?"
+      },
+      "nomeEn": "Midwest Bullet Train",
+      "projeto": "midwest_hsr"
+    }
+  ],
+  "rotulos": [
+    {
+      "tipo": "estado",
+      "texto": "CALIFÓRNIA",
+      "textoEn": "CALIFORNIA",
+      "lon": -119.6,
+      "lat": 37.2,
+      "zoomMin": 0,
+      "zoomMax": 4,
+      "angulo": -28
+    },
+    {
+      "tipo": "estado",
+      "texto": "OREGON",
+      "textoEn": "OREGON",
+      "lon": -120.5,
+      "lat": 44.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "WASHINGTON",
+      "textoEn": "WASHINGTON",
+      "lon": -120.5,
+      "lat": 47.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "NEVADA",
+      "textoEn": "NEVADA",
+      "lon": -116.8,
+      "lat": 39.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "IDAHO",
+      "textoEn": "IDAHO",
+      "lon": -114.6,
+      "lat": 44.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MONTANA",
+      "textoEn": "MONTANA",
+      "lon": -109.6,
+      "lat": 47.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "WYOMING",
+      "textoEn": "WYOMING",
+      "lon": -107.5,
+      "lat": 43.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "UTAH",
+      "textoEn": "UTAH",
+      "lon": -111.7,
+      "lat": 39.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ARIZONA",
+      "textoEn": "ARIZONA",
+      "lon": -111.7,
+      "lat": 34.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "COLORADO",
+      "textoEn": "COLORADO",
+      "lon": -105.6,
+      "lat": 39.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "NOVO MÉXICO",
+      "textoEn": "NEW MEXICO",
+      "lon": -106.1,
+      "lat": 34.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "TEXAS",
+      "textoEn": "TEXAS",
+      "lon": -99.3,
+      "lat": 31.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "DAKOTA DO NORTE",
+      "textoEn": "NORTH DAKOTA",
+      "lon": -100.5,
+      "lat": 47.5,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "DAKOTA DO SUL",
+      "textoEn": "SOUTH DAKOTA",
+      "lon": -100.2,
+      "lat": 44.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "NEBRASKA",
+      "textoEn": "NEBRASKA",
+      "lon": -99.8,
+      "lat": 41.5,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "KANSAS",
+      "textoEn": "KANSAS",
+      "lon": -98.4,
+      "lat": 38.5,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "OKLAHOMA",
+      "textoEn": "OKLAHOMA",
+      "lon": -97.5,
+      "lat": 35.6,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MINNESOTA",
+      "textoEn": "MINNESOTA",
+      "lon": -94.3,
+      "lat": 46.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "IOWA",
+      "textoEn": "IOWA",
+      "lon": -93.5,
+      "lat": 42.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MISSOURI",
+      "textoEn": "MISSOURI",
+      "lon": -92.5,
+      "lat": 38.4,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ARKANSAS",
+      "textoEn": "ARKANSAS",
+      "lon": -92.4,
+      "lat": 34.8,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "LUISIANA",
+      "textoEn": "LOUISIANA",
+      "lon": -92.2,
+      "lat": 31.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "WISCONSIN",
+      "textoEn": "WISCONSIN",
+      "lon": -89.8,
+      "lat": 44.6,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ILLINOIS",
+      "textoEn": "ILLINOIS",
+      "lon": -89.2,
+      "lat": 40.0,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MISSISSIPPI",
+      "textoEn": "MISSISSIPPI",
+      "lon": -89.7,
+      "lat": 32.7,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "MICHIGAN",
+      "textoEn": "MICHIGAN",
+      "lon": -84.7,
+      "lat": 43.6,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "INDIANA",
+      "textoEn": "INDIANA",
+      "lon": -86.3,
+      "lat": 39.9,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "OHIO",
+      "textoEn": "OHIO",
+      "lon": -82.8,
+      "lat": 40.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "KENTUCKY",
+      "textoEn": "KENTUCKY",
+      "lon": -85.3,
+      "lat": 37.5,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "TENNESSEE",
+      "textoEn": "TENNESSEE",
+      "lon": -86.3,
+      "lat": 35.8,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "ALABAMA",
+      "textoEn": "ALABAMA",
+      "lon": -86.8,
+      "lat": 32.8,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "GEÓRGIA",
+      "textoEn": "GEORGIA",
+      "lon": -83.5,
+      "lat": 32.6,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "FLÓRIDA",
+      "textoEn": "FLORIDA",
+      "lon": -81.6,
+      "lat": 28.3,
+      "zoomMin": 0,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "CAROLINA DO SUL",
+      "textoEn": "SOUTH CAROLINA",
+      "lon": -80.9,
+      "lat": 33.9,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "CAROLINA DO NORTE",
+      "textoEn": "NORTH CAROLINA",
+      "lon": -79.4,
+      "lat": 35.6,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "VIRGÍNIA",
+      "textoEn": "VIRGINIA",
+      "lon": -78.7,
+      "lat": 37.6,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "PENSILVÂNIA",
+      "textoEn": "PENNSYLVANIA",
+      "lon": -77.6,
+      "lat": 40.9,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "estado",
+      "texto": "NOVA YORK",
+      "textoEn": "NEW YORK",
+      "lon": -75.5,
+      "lat": 43.0,
+      "zoomMin": 1.2,
+      "zoomMax": 4
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO PACÍFICO",
+      "textoEn": "PACIFIC OCEAN",
+      "lon": -126.5,
+      "lat": 38.0,
+      "zoomMin": 0,
+      "zoomMax": 1.2,
+      "angulo": -75
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO PACÍFICO",
+      "textoEn": "PACIFIC OCEAN",
+      "lon": -124.5,
+      "lat": 35.0,
+      "zoomMin": 1.2
+    },
+    {
+      "tipo": "oceano",
+      "texto": "OCEANO ATLÂNTICO",
+      "textoEn": "ATLANTIC OCEAN",
+      "lon": -71.5,
+      "lat": 34.0,
+      "zoomMin": 0,
+      "angulo": -50
+    },
+    {
+      "tipo": "oceano",
+      "texto": "GOLFO DO MÉXICO",
+      "textoEn": "GULF OF MEXICO",
+      "lon": -89.5,
+      "lat": 26.6,
+      "zoomMin": 0
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Grandes Planícies",
+      "textoEn": "Great Plains",
+      "lon": -101.5,
+      "lat": 40.2,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Montanhas Rochosas",
+      "textoEn": "Rocky Mountains",
+      "lon": -107.2,
+      "lat": 41.0,
+      "zoomMin": 0.9,
+      "angulo": -35
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Apalaches",
+      "textoEn": "Appalachians",
+      "lon": -80.3,
+      "lat": 38.0,
+      "zoomMin": 0.9,
+      "angulo": -40
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Deserto de Mojave",
+      "textoEn": "Mojave Desert",
+      "lon": -116.2,
+      "lat": 35.0,
+      "zoomMin": 1.2
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Serra Nevada",
+      "textoEn": "Sierra Nevada",
+      "lon": -119.4,
+      "lat": 38.0,
+      "zoomMin": 1.2,
+      "angulo": -55
+    },
+    {
+      "tipo": "regiao",
+      "texto": "Grandes Lagos",
+      "textoEn": "Great Lakes",
+      "lon": -84.0,
+      "lat": 45.6,
+      "zoomMin": 0.9
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Mississippi",
+      "textoEn": "Mississippi River",
+      "lon": -91.2,
+      "lat": 33.8,
+      "zoomMin": 0.6,
+      "angulo": -80
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Missouri",
+      "textoEn": "Missouri River",
+      "lon": -97.5,
+      "lat": 42.9,
+      "zoomMin": 0.9,
+      "angulo": -30
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Ohio",
+      "textoEn": "Ohio River",
+      "lon": -86.6,
+      "lat": 37.9,
+      "zoomMin": 0.9,
+      "angulo": -15
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Colorado",
+      "textoEn": "Colorado River",
+      "lon": -113.9,
+      "lat": 35.9,
+      "zoomMin": 0.9,
+      "angulo": -60
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Columbia",
+      "textoEn": "Columbia River",
+      "lon": -120.3,
+      "lat": 45.9,
+      "zoomMin": 0.9,
+      "angulo": -10
+    },
+    {
+      "tipo": "rio",
+      "texto": "Rio Grande",
+      "textoEn": "Rio Grande",
+      "lon": -103.6,
+      "lat": 29.6,
+      "zoomMin": 0.9,
+      "angulo": 35
+    }
+  ],
+  "projetos": [
+    {
+      "id": "texas_central",
+      "nome": "Texas Central",
+      "emoji": "velocidade",
+      "custo": 2500000,
+      "minutos": 15,
+      "requer": {
+        "era": "eletrico"
+      },
+      "descricao": {
+        "pt": "Trem-bala entre Dallas e Houston, planejado nos anos 2010 com a tecnologia do Shinkansen. Esbarrou em fazendeiros e na Justiça.",
+        "en": "A bullet train between Dallas and Houston, planned in the 2010s with Shinkansen technology. It ran into landowners and the courts."
+      }
+    },
+    {
+      "id": "chsr",
+      "nome": "Alta Velocidade da Califórnia",
+      "emoji": "velocidade",
+      "custo": 8000000,
+      "minutos": 25,
+      "requer": {
+        "era": "eletrico",
+        "linhasCompletas": 14
+      },
+      "descricao": {
+        "pt": "São Francisco a Los Angeles em menos de 3 horas. As obras começaram em 2015 e seguem no Vale Central.",
+        "en": "San Francisco to Los Angeles in under 3 hours. Construction began in 2015 and continues in the Central Valley."
+      },
+      "nomeEn": "California High-Speed Rail"
+    },
+    {
+      "id": "brightline_west",
+      "nome": "Brightline West",
+      "emoji": "velocidade",
+      "custo": 12000000,
+      "minutos": 30,
+      "requer": {
+        "era": "alta",
+        "projeto": "chsr"
+      },
+      "descricao": {
+        "pt": "Trem rápido privado de Las Vegas até o sul da Califórnia, pelo meio da rodovia I-15.",
+        "en": "A private fast train from Las Vegas to Southern California, along the middle of the I-15 highway."
+      }
+    },
+    {
+      "id": "ne_maglev",
+      "nome": "Maglev do Nordeste",
+      "emoji": "velocidade",
+      "custo": 30000000,
+      "minutos": 35,
+      "requer": {
+        "era": "alta",
+        "linhasCompletas": 20
+      },
+      "descricao": {
+        "pt": "Trem de levitação magnética de Washington a Nova York em uma hora. Hoje só existe no papel.",
+        "en": "A magnetic levitation train from Washington to New York in one hour. Today it only exists on paper."
+      },
+      "nomeEn": "Northeast Maglev"
+    },
+    {
+      "id": "midwest_hsr",
+      "nome": "Trem-bala do Meio-Oeste",
+      "emoji": "velocidade",
+      "custo": 40000000,
+      "minutos": 40,
+      "ficticio": true,
+      "requer": {
+        "era": "alta",
+        "projeto": "ne_maglev"
+      },
+      "descricao": {
+        "pt": "E se? Uma rede de trens-bala saindo de Chicago para as cidades do Meio-Oeste.",
+        "en": "What if? A bullet-train network radiating from Chicago to the Midwestern cities."
+      },
+      "nomeEn": "Midwest Bullet Train"
+    }
+  ],
+  "foco": [
+    "b_o",
+    "sc_rr",
+    "boston_albany",
+    "erie"
+  ],
+  "estados": {
+    "MA": [
+      "Massachusetts",
+      "ne"
+    ],
+    "NY": [
+      "Nova York",
+      "ne"
+    ],
+    "PA": [
+      "Pensilvânia",
+      "ne"
+    ],
+    "MD": [
+      "Maryland",
+      "s"
+    ],
+    "WV": [
+      "Virgínia Ocidental",
+      "s"
+    ],
+    "DC": [
+      "Distrito de Colúmbia",
+      "s"
+    ],
+    "VA": [
+      "Virgínia",
+      "s"
+    ],
+    "NC": [
+      "Carolina do Norte",
+      "s"
+    ],
+    "SC": [
+      "Carolina do Sul",
+      "s"
+    ],
+    "GA": [
+      "Geórgia",
+      "s"
+    ],
+    "FL": [
+      "Flórida",
+      "s"
+    ],
+    "KY": [
+      "Kentucky",
+      "s"
+    ],
+    "TN": [
+      "Tennessee",
+      "s"
+    ],
+    "AL": [
+      "Alabama",
+      "s"
+    ],
+    "MS": [
+      "Mississippi",
+      "s"
+    ],
+    "LA": [
+      "Luisiana",
+      "s"
+    ],
+    "TX": [
+      "Texas",
+      "s"
+    ],
+    "OH": [
+      "Ohio",
+      "mw"
+    ],
+    "IN": [
+      "Indiana",
+      "mw"
+    ],
+    "MI": [
+      "Michigan",
+      "mw"
+    ],
+    "IL": [
+      "Illinois",
+      "mw"
+    ],
+    "IA": [
+      "Iowa",
+      "mw"
+    ],
+    "WI": [
+      "Wisconsin",
+      "mw"
+    ],
+    "MN": [
+      "Minnesota",
+      "mw"
+    ],
+    "MO": [
+      "Missouri",
+      "mw"
+    ],
+    "KS": [
+      "Kansas",
+      "mw"
+    ],
+    "NE": [
+      "Nebraska",
+      "mw"
+    ],
+    "ND": [
+      "Dakota do Norte",
+      "mw"
+    ],
+    "WY": [
+      "Wyoming",
+      "o"
+    ],
+    "CO": [
+      "Colorado",
+      "o"
+    ],
+    "UT": [
+      "Utah",
+      "o"
+    ],
+    "ID": [
+      "Idaho",
+      "o"
+    ],
+    "OR": [
+      "Oregon",
+      "o"
+    ],
+    "WA": [
+      "Washington",
+      "o"
+    ],
+    "MT": [
+      "Montana",
+      "o"
+    ],
+    "NV": [
+      "Nevada",
+      "o"
+    ],
+    "CA": [
+      "Califórnia",
+      "o"
+    ],
+    "AZ": [
+      "Arizona",
+      "o"
+    ],
+    "NM": [
+      "Novo México",
+      "o"
+    ]
+  },
+  "regioes": {
+    "ne": {
+      "pt": "Nordeste",
+      "en": "Northeast"
+    },
+    "s": {
+      "pt": "Sul",
+      "en": "South"
+    },
+    "mw": {
+      "pt": "Meio-Oeste",
+      "en": "Midwest"
+    },
+    "o": {
+      "pt": "Oeste",
+      "en": "West"
+    }
+  }
+}
