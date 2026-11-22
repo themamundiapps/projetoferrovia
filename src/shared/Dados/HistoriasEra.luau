@@ -838,4 +838,144 @@ return {
 			en = "Railjet trains link Budapest to Vienna and Munich without changing trains.",
 		},
 	},
+	glasgow = {
+		diesel = {
+			pt = "Os estaleiros do Clyde trabalhavam dia e noite na guerra; a fábrica de locomotivas de Springburn ainda exportava para o mundo todo.",
+			en = "The Clyde shipyards worked day and night during the war; the Springburn locomotive works still exported all over the world.",
+		},
+		eletrico = {
+			pt = "Os trens elétricos azuis chegaram aos subúrbios em 1960, e a linha da costa oeste foi eletrificada até Londres em 1974.",
+			en = "Blue electric trains reached the suburbs in 1960, and the West Coast line was electrified through to London in 1974.",
+		},
+		alta = {
+			pt = "Trens basculantes fazem Glasgow–Londres em pouco mais de quatro horas e meia.",
+			en = "Tilting trains run Glasgow–London in just over four and a half hours.",
+		},
+	},
+	bordeaux = {
+		diesel = {
+			pt = "Em 1940 o governo francês se refugiou aqui; a estação Saint-Jean recebia trens lotados de quem fugia do norte.",
+			en = "In 1940 the French government took refuge here; Saint-Jean station received trains packed with people fleeing the north.",
+		},
+		eletrico = {
+			pt = "A linha Paris–Bordéus foi eletrificada, e em 1955 uma locomotiva elétrica bateu ali o recorde mundial: 331 km/h.",
+			en = "The Paris–Bordeaux line was electrified, and in 1955 an electric locomotive set the world record there: 331 km/h.",
+		},
+		alta = {
+			pt = "Desde 2017 a nova linha de alta velocidade leva o TGV de Paris a Bordéus em duas horas.",
+			en = "Since 2017 the new high-speed line has taken the TGV from Paris to Bordeaux in two hours.",
+		},
+	},
+	frankfurt = {
+		diesel = {
+			pt = "A grande estação central sobreviveu à guerra quase inteira e virou o principal entroncamento da Alemanha Ocidental.",
+			en = "The great central station survived the war almost intact and became West Germany's main junction.",
+		},
+		eletrico = {
+			pt = "Os trens TEE e, depois, os InterCity de hora em hora fizeram de Frankfurt o centro da rede alemã.",
+			en = "TEE trains and later hourly InterCity trains made Frankfurt the centre of the German network.",
+		},
+		alta = {
+			pt = "A linha de alta velocidade até Colônia, de 2002, tem trens ICE a 300 km/h e uma estação dentro do aeroporto.",
+			en = "The high-speed line to Cologne, from 2002, has ICE trains at 300 km/h and a station inside the airport.",
+		},
+	},
+	praha = {
+		diesel = {
+			pt = "Na estação Wilson, em 1939, trens levaram centenas de crianças para a Inglaterra pouco antes da guerra.",
+			en = "At Wilson station, in 1939, trains took hundreds of children to England shortly before the war.",
+		},
+		eletrico = {
+			pt = "Atrás da Cortina de Ferro, a estação ganhou um saguão novo, e os trens elétricos passaram a ligar Praga a Bratislava.",
+			en = "Behind the Iron Curtain, the station got a new hall, and electric trains began linking Prague to Bratislava.",
+		},
+		alta = {
+			pt = "Os trens Railjet e Pendolino ligam Praga a Viena, Berlim e Ostrava.",
+			en = "Railjet and Pendolino trains link Prague to Vienna, Berlin and Ostrava.",
+		},
+	},
+	firenze = {
+		diesel = {
+			pt = "A estação Santa Maria Novella, de 1935, com linhas retas de pedra, virou um marco da arquitetura moderna italiana.",
+			en = "Santa Maria Novella station, from 1935, with its straight stone lines, became a landmark of modern Italian architecture.",
+		},
+		eletrico = {
+			pt = "A Direttissima, aberta em 1977, ligou Florença a Roma na primeira linha de alta velocidade da Europa.",
+			en = "The Direttissima, opened in 1977, linked Florence to Rome on Europe's first high-speed line.",
+		},
+		alta = {
+			pt = "Um túnel sob os Apeninos, de 2009, deixou Florença a menos de duas horas de Milão.",
+			en = "A tunnel under the Apennines, from 2009, brought Florence to within two hours of Milan.",
+		},
+	},
+	sevilla = {
+		diesel = {
+			pt = "A estação da Praça de Armas, de estilo mourisco, recebia os trens de Madri e do porto de Cádis.",
+			en = "The Moorish-style Plaza de Armas station received trains from Madrid and the port of Cádiz.",
+		},
+		eletrico = {
+			pt = "A linha Madri–Sevilha foi eletrificada, e os trens Talgo encurtaram a viagem pela Andaluzia.",
+			en = "The Madrid–Seville line was electrified, and Talgo trains shortened the journey through Andalusia.",
+		},
+		alta = {
+			pt = "Para a Expo de 1992, abriu a estação Santa Justa e o primeiro AVE da Espanha, ligando Sevilha a Madri em duas horas e meia.",
+			en = "For the 1992 Expo, Santa Justa station opened with Spain's first AVE, linking Seville to Madrid in two and a half hours.",
+		},
+	},
+	valencia = {
+		diesel = {
+			pt = "A Estação do Norte, de 1917, decorada com laranjas e azulejos, seguia como a porta de entrada da cidade.",
+			en = "The North Station, from 1917, decorated with oranges and tiles, remained the city's gateway.",
+		},
+		eletrico = {
+			pt = "Os trens elétricos do corredor do Mediterrâneo passaram a levar as laranjas valencianas para a França.",
+			en = "Electric trains on the Mediterranean corridor began carrying Valencian oranges to France.",
+		},
+		alta = {
+			pt = "Desde 2010 o AVE liga Valência a Madri em menos de duas horas.",
+			en = "Since 2010 the AVE has linked Valencia to Madrid in under two hours.",
+		},
+	},
+	athina = {
+		diesel = {
+			pt = "Depois da guerra, a estação Larissa recebia os trens de Salônica e de toda a Europa pela linha do Vardar.",
+			en = "After the war, Larissa station received trains from Thessaloniki and from all over Europe via the Vardar line.",
+		},
+		eletrico = {
+			pt = "Trens a diesel ainda faziam a linha para o norte; o metrô elétrico até o Pireu seguia lotado todos os dias.",
+			en = "Diesel trains still ran the line to the north; the electric railway to Piraeus was crowded every day.",
+		},
+		alta = {
+			pt = "Para as Olimpíadas de 2004, a cidade ganhou trem até o aeroporto, e a linha para Salônica foi eletrificada.",
+			en = "For the 2004 Olympics the city got a train to the airport, and the line to Thessaloniki was electrified.",
+		},
+	},
+	bucuresti = {
+		diesel = {
+			pt = "A Gara de Nord era o ponto de partida dos trens para o Mar Negro e para os campos de petróleo de Ploiești.",
+			en = "Gara de Nord was the starting point for trains to the Black Sea and the oil fields of Ploiești.",
+		},
+		eletrico = {
+			pt = "As linhas para Brașov e Constança foram eletrificadas; trens de férias levavam milhares de pessoas para o litoral.",
+			en = "The lines to Brașov and Constanța were electrified; holiday trains carried thousands to the coast.",
+		},
+		alta = {
+			pt = "Depois de 1989, as ferrovias foram modernizadas aos poucos, e o trem passou a ligar a estação ao aeroporto.",
+			en = "After 1989 the railways were slowly modernised, and a train began linking the station to the airport.",
+		},
+	},
+	oslo = {
+		diesel = {
+			pt = "Durante a ocupação, a Bergensbanen seguiu funcionando no inverno, com limpa-neves enfrentando o planalto.",
+			en = "During the occupation, the Bergen line kept running through winter, with snowploughs battling the plateau.",
+		},
+		eletrico = {
+			pt = "A Bergensbanen foi eletrificada até 1964, e o túnel sob a cidade, de 1980, juntou as linhas do leste e do oeste.",
+			en = "The Bergen line was electrified by 1964, and the tunnel under the city, from 1980, joined the eastern and western lines.",
+		},
+		alta = {
+			pt = "Um trem expresso a 210 km/h liga desde 1998 a estação central ao novo aeroporto de Gardermoen.",
+			en = "Since 1998 an express train at 210 km/h has linked the central station to the new Gardermoen airport.",
+		},
+	},
 } :: { [string]: { [string]: Texto } }
