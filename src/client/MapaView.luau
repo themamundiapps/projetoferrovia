@@ -1414,26 +1414,78 @@ function MapaView._layout(self: MapaView)
 		end
 	end
 
+	-- estações: primeiro as bolinhas; depois os nomes, das cidades maiores para as menores, cada um à
+	-- direita da bolinha ou, se ali bater em outro nome ou cidade, à esquerda; sem lugar, o nome some
+	local ocupados: { { number } } = {} -- retângulos {x0, y0, x1, y1} já usados na tela
+	local function livre(r: { number }): boolean
+		for _, o in ocupados do
+			if r[1] < o[3] and r[3] > o[1] and r[2] < o[4] and r[4] > o[2] then
+				return false
+			end
+		end
+		return true
+	end
+	local tams: { [Estacao]: number } = {}
 	for _, e in self.estacoes do
 		local p = e.pos * z
 		local tam = self:_tamanhoEstacao(e)
+		tams[e] = tam
 		local mostrarPonto = e.terminal or z >= (ZOOM_PONTO[e.porte] or 0)
 		e.ponto.Visible = mostrarPonto
 		e.ponto.Position = UDim2.fromOffset(p.X, p.Y)
-		e.rotulo.Visible = mostrarPonto and self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
-		local placa = e.placa
-		if placa then
-			-- a placa começa logo depois da bolinha e o nome vai por dentro dela
-			placa.Visible = e.rotulo.Visible
-			placa.Position = UDim2.fromOffset(p.X + tam / 2 + 3, p.Y)
-			placa.Size = UDim2.fromOffset(e.rotulo.TextBounds.X + e.folgaPlaca + PLACA_FOLGA, PLACA_ALTURA)
-			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 3 + e.folgaPlaca, p.Y)
-		else
-			e.rotulo.Position = UDim2.fromOffset(p.X + tam / 2 + 5, p.Y)
+		if mostrarPonto then
+			table.insert(ocupados, { p.X - tam / 2, p.Y - tam / 2, p.X + tam / 2, p.Y + tam / 2 })
 		end
 		if e.selo then
 			e.selo.Position = UDim2.fromOffset(p.X, p.Y - 8)
 			e.selo.Visible = z >= 1.2
+		end
+	end
+	local ordem = (self :: any).ordemRotulos
+	if not ordem then
+		ordem = table.clone(self.estacoes)
+		table.sort(ordem, function(x: Estacao, y: Estacao)
+			if x.porte ~= y.porte then
+				return x.porte > y.porte
+			end
+			return x.id < y.id
+		end)
+		(self :: any).ordemRotulos = ordem
+	end
+	for _, e in ordem do
+		local p = e.pos * z
+		local tam = tams[e]
+		local quer = e.ponto.Visible and self.mostrarNomes and z >= (ZOOM_ROTULO[e.porte] or 0)
+		local placa = e.placa
+		local largura = if placa then e.rotulo.TextBounds.X + e.folgaPlaca + PLACA_FOLGA else e.rotulo.TextBounds.X
+		local altura = if placa then PLACA_ALTURA else math.max(14, e.rotulo.TextBounds.Y)
+		local folga = if placa then 3 else 5
+		local x0: number? = nil
+		if quer then
+			local dir = { p.X + tam / 2 + folga, p.Y - altura / 2, p.X + tam / 2 + folga + largura, p.Y + altura / 2 }
+			local esq = { p.X - tam / 2 - folga - largura, p.Y - altura / 2, p.X - tam / 2 - folga, p.Y + altura / 2 }
+			if livre(dir) then
+				x0 = dir[1]
+				table.insert(ocupados, dir)
+			elseif livre(esq) then
+				x0 = esq[1]
+				table.insert(ocupados, esq)
+			end
+		end
+		local visivel = x0 ~= nil
+		e.rotulo.Visible = visivel
+		if placa then
+			placa.Visible = visivel
+		end
+		if x0 then
+			if placa then
+				-- a placa começa no x0 e o nome vai por dentro dela
+				placa.Position = UDim2.fromOffset(x0, p.Y)
+				placa.Size = UDim2.fromOffset(largura, PLACA_ALTURA)
+				e.rotulo.Position = UDim2.fromOffset(x0 + e.folgaPlaca, p.Y)
+			else
+				e.rotulo.Position = UDim2.fromOffset(x0, p.Y)
+			end
 		end
 	end
 end
