@@ -1616,19 +1616,19 @@
         {
           "de": "albany",
           "para": "syracuse",
-          "ano": 1853,
+          "ano": 1839,
           "terreno": "vale"
         },
         {
           "de": "syracuse",
           "para": "rochester",
-          "ano": 1853,
+          "ano": 1841,
           "terreno": "planicie"
         },
         {
           "de": "rochester",
           "para": "buffalo",
-          "ano": 1853,
+          "ano": 1842,
           "terreno": "planicie"
         }
       ],
@@ -1666,7 +1666,7 @@
     {
       "id": "georgia",
       "nome": "Western and Atlantic",
-      "ano": 1851,
+      "ano": 1850,
       "cor": 7,
       "trechos": [
         {

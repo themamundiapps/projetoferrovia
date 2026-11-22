@@ -78,9 +78,9 @@ LINHAS = [
          "The Horseshoe Curve, opened in 1854, let trains climb the Appalachians without inclined planes.")),
     ("ny_central", "New York Central", 1853, 4, 2, [
         tr("new_york", "albany", 1851, "vale"),
-        tr("albany", "syracuse", 1853, "vale"),
-        tr("syracuse", "rochester", 1853, "planicie"),
-        tr("rochester", "buffalo", 1853, "planicie"),
+        tr("albany", "syracuse", 1839, "vale"),
+        tr("syracuse", "rochester", 1841, "planicie"),
+        tr("rochester", "buffalo", 1842, "planicie"),
     ], T("A \"rota de nível d'água\": seguia o Hudson e o vale do Mohawk sem subir montanhas.",
          "The \"Water Level Route\": it followed the Hudson and the Mohawk Valley without climbing mountains.")),
     ("michigan_central", "Michigan Central", 1852, 8, 2, [
@@ -88,7 +88,7 @@ LINHAS = [
         tr("kalamazoo", "chicago", 1852, "planicie"),
     ], T("Chegou a Chicago em 1852, uma das primeiras ligações do leste com a cidade.",
          "It reached Chicago in 1852, one of the first links between the East and the city.")),
-    ("georgia", "Western and Atlantic", 1851, 7, 3, [
+    ("georgia", "Western and Atlantic", 1850, 7, 3, [
         tr("chattanooga", "atlanta", 1850, "apalaches"),
         tr("atlanta", "macon", 1846, "colinas"),
         tr("macon", "savannah", 1843, "costa"),

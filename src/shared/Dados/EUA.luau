@@ -161,18 +161,18 @@ return {
 			},
 		},
 		{
-			id = "erie", nome = "Erie Railroad", nomeEn = nil, ano = 1851, cor = 5, ordem = 4, degrau = 1, projeto = nil, nota = { pt = "Quando terminou, em 1851, era a ferrovia mais longa do mundo, ligando o Hudson ao Lago Erie.", en = "When finished in 1851 it was the world's longest railroad, linking the Hudson to Lake Erie." },
-			trechos = {
-				{ id = "erie_1", de = "new_york", para = "binghamton", ano = 1848, km = 278, terreno = "apalaches", custo = 6805, degrau = 1 },
-				{ id = "erie_2", de = "binghamton", para = "buffalo", ano = 1851, km = 323, terreno = "colinas", custo = 6512, degrau = 1 },
-			},
-		},
-		{
-			id = "georgia", nome = "Western and Atlantic", nomeEn = nil, ano = 1851, cor = 7, ordem = 5, degrau = 3, projeto = nil, nota = { pt = "Atlanta nasceu como ponta desta ferrovia do estado da Geórgia, em 1837.", en = "Atlanta was born as the end of this Georgia state railroad, in 1837." },
+			id = "georgia", nome = "Western and Atlantic", nomeEn = nil, ano = 1850, cor = 7, ordem = 4, degrau = 3, projeto = nil, nota = { pt = "Atlanta nasceu como ponta desta ferrovia do estado da Geórgia, em 1837.", en = "Atlanta was born as the end of this Georgia state railroad, in 1837." },
 			trechos = {
 				{ id = "georgia_1", de = "chattanooga", para = "atlanta", ano = 1850, km = 209, terreno = "apalaches", custo = 29470, degrau = 3 },
 				{ id = "georgia_2", de = "atlanta", para = "macon", ano = 1846, km = 154, terreno = "colinas", custo = 17883, degrau = 3 },
 				{ id = "georgia_3", de = "macon", para = "savannah", ano = 1843, km = 315, terreno = "costa", custo = 28740, degrau = 3 },
+			},
+		},
+		{
+			id = "erie", nome = "Erie Railroad", nomeEn = nil, ano = 1851, cor = 5, ordem = 5, degrau = 1, projeto = nil, nota = { pt = "Quando terminou, em 1851, era a ferrovia mais longa do mundo, ligando o Hudson ao Lago Erie.", en = "When finished in 1851 it was the world's longest railroad, linking the Hudson to Lake Erie." },
+			trechos = {
+				{ id = "erie_1", de = "new_york", para = "binghamton", ano = 1848, km = 278, terreno = "apalaches", custo = 6805, degrau = 1 },
+				{ id = "erie_2", de = "binghamton", para = "buffalo", ano = 1851, km = 323, terreno = "colinas", custo = 6512, degrau = 1 },
 			},
 		},
 		{
@@ -186,9 +186,9 @@ return {
 			id = "ny_central", nome = "New York Central", nomeEn = nil, ano = 1853, cor = 4, ordem = 7, degrau = 2, projeto = nil, nota = { pt = "A \"rota de nível d'água\": seguia o Hudson e o vale do Mohawk sem subir montanhas.", en = "The \"Water Level Route\": it followed the Hudson and the Mohawk Valley without climbing mountains." },
 			trechos = {
 				{ id = "ny_central_1", de = "new_york", para = "albany", ano = 1851, km = 271, terreno = "vale", custo = 11239, degrau = 2 },
-				{ id = "ny_central_2", de = "albany", para = "syracuse", ano = 1853, km = 250, terreno = "vale", custo = 10368, degrau = 2 },
-				{ id = "ny_central_3", de = "syracuse", para = "rochester", ano = 1853, km = 149, terreno = "planicie", custo = 5149, degrau = 2 },
-				{ id = "ny_central_4", de = "rochester", para = "buffalo", ano = 1853, km = 134, terreno = "planicie", custo = 4631, degrau = 2 },
+				{ id = "ny_central_2", de = "albany", para = "syracuse", ano = 1839, km = 250, terreno = "vale", custo = 10368, degrau = 2 },
+				{ id = "ny_central_3", de = "syracuse", para = "rochester", ano = 1841, km = 149, terreno = "planicie", custo = 5149, degrau = 2 },
+				{ id = "ny_central_4", de = "rochester", para = "buffalo", ano = 1842, km = 134, terreno = "planicie", custo = 4631, degrau = 2 },
 			},
 		},
 		{
