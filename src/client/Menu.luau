@@ -1668,6 +1668,16 @@ function Menu._abaCompanhia(self: Menu)
 	est:divisor(r, 24)
 	est:texto("subtitulo", L(`{Emojis.cargas} Cargas e fretes`, `{Emojis.cargas} Cargo and freight`), r, 25)
 	local temCarga = false
+	-- as cargas ficam num contêiner próprio: são muitas (13 tipos) e não podem invadir a seção seguinte
+	local listaCargas = novo("Frame", {
+		Name = "Cargas",
+		LayoutOrder = 26,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+		BackgroundTransparency = 1,
+		ZIndex = 31,
+	}, r)
+	est:lista(listaCargas, 6)
 	for i, id in Economia.ORDEM_CARGAS do
 		local v = st.cargaValor[id]
 		if v and v.unidadesDia > 0 then
@@ -1677,11 +1687,11 @@ function Menu._abaCompanhia(self: Menu)
 			est:texto("corpo", L(`{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(v.unidadesDia))}</b> {carga.unidade}/dia · `
 				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> por {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/dia`,
 				`{(Emojis :: any)[carga.emoji] or ""} {carga.nome}: <b>{numero(math.round(v.unidadesDia))}</b> {carga.unidade}/day · `
-				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> per {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/day`), r, 25 + i)
+				.. `<b>{Economia.formatar(v.preco, simbolo, true)}</b> per {unidade} · <b>{Economia.formatar(v.reaisDia, simbolo)}</b>/day`), listaCargas, i)
 		end
 	end
 	if not temCarga then
-		est:texto("fraco", L("Nenhuma carga chega a um porto ainda. Ligue uma cidade produtora (café, minério…) a um porto pelos trilhos: o frete entra na renda da linha.", "No cargo reaches a port yet. Link a producing city (coffee, ore…) to a port by rail: the freight adds to the line's income."), r, 26)
+		est:texto("fraco", L("Nenhuma carga chega a um porto ainda. Ligue uma cidade produtora (café, minério…) a um porto pelos trilhos: o frete entra na renda da linha.", "No cargo reaches a port yet. Link a producing city (coffee, ore…) to a port by rail: the freight adds to the line's income."), listaCargas, 1)
 	end
 
 	-- nome da companhia
@@ -1713,33 +1723,6 @@ function Menu._abaCompanhia(self: Menu)
 		self.aoAgir:Fire("renomear", { nome = caixaNome.Text })
 	end)
 	est:texto("fraco", Idioma.T("companhia_dica_nome"), r, 34)
-
-	-- ranking de quem está neste servidor: nível e linhas completas (o mesmo critério do placar do canto)
-	est:divisor(r, 35)
-	est:texto("subtitulo", L(`{Emojis.nivel} Ranking do servidor`, `{Emojis.nivel} Server leaderboard`), r, 36)
-	local lista = {}
-	for _, j in Players:GetPlayers() do
-		table.insert(lista, {
-			nome = j.DisplayName .. (if j:GetAttribute("Pinturas") == true then " ✨" else ""),
-			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
-			linhas = tonumber(j:GetAttribute("Linhas")) or 0,
-			eu = j == Players.LocalPlayer,
-		})
-	end
-	table.sort(lista, function(a, b)
-		if a.nivel ~= b.nivel then
-			return a.nivel > b.nivel
-		end
-		return a.linhas > b.linhas
-	end)
-	local linhasRanking = {}
-	for i = 1, math.min(10, #lista) do
-		local item = lista[i]
-		local nome = if item.eu then `<b>{item.nome}</b>` else item.nome
-		table.insert(linhasRanking, L(`{i}. {nome} · nível {item.nivel} · {item.linhas} linhas completas`, `{i}. {nome} · level {item.nivel} · {item.linhas} complete lines`))
-	end
-	est:texto("corpo", table.concat(linhasRanking, "\n"), r, 37)
-	est:texto("fraco", L("O ranking conta o nível e as linhas completas, que vêm de jogar. Dinheiro não entra.", "The leaderboard counts level and complete lines, which come from playing. Money doesn't count."), r, 38)
 end
 
 -- ---------------------------------------------------------------- conquistas (medalhas)
