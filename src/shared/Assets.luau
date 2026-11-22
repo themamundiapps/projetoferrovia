@@ -179,7 +179,7 @@ Assets.KitUI = {
 		placa_nome = { id = "rbxassetid://75187457767464", slice = Rect.new(45, 22, 648, 124), altura = 146 },
 		icones = {
 			linhas = "rbxassetid://124616010697030", projetos = "rbxassetid://139710033315937", metas = "rbxassetid://94651761536153", jornal = "rbxassetid://89354465281414",
-			banco = "rbxassetid://86039982344484", companhia = "rbxassetid://124510769365600", ajustes = "rbxassetid://109103751111585",
+			banco = "rbxassetid://86039982344484", financas = "rbxassetid://86039982344484", companhia = "rbxassetid://124510769365600", ajustes = "rbxassetid://109103751111585",
 			tarifas = "rbxassetid://88664995413135",
 			-- faixa de recursos da barra de cima
 			trens = "rbxassetid://98916675648299", passageiros = "rbxassetid://133528029339571", satisfacao = "rbxassetid://123709817927502", carga = "rbxassetid://81200504601477",
@@ -236,7 +236,7 @@ Assets.KitUI = {
 		placa_nome = { id = "rbxassetid://80977521036351", slice = Rect.new(70, 40, 618, 85), altura = 125 },
 		icones = {
 			linhas = "rbxassetid://85393785842125", projetos = "rbxassetid://91279992232316", metas = "rbxassetid://73217979775880", jornal = "rbxassetid://107757684115810",
-			banco = "rbxassetid://120934664683423", companhia = "rbxassetid://121237617541090", ajustes = "rbxassetid://83128418319280", tarifas = "rbxassetid://132348330715099",
+			banco = "rbxassetid://120934664683423", financas = "rbxassetid://120934664683423", companhia = "rbxassetid://121237617541090", ajustes = "rbxassetid://83128418319280", tarifas = "rbxassetid://132348330715099",
 			trens = "rbxassetid://78959096146433", passageiros = "rbxassetid://133137813160664", satisfacao = "rbxassetid://80084517003035", carga = "rbxassetid://77203171847456",
 			decisao = "rbxassetid://127861378694056", dinheiro = "rbxassetid://118642541903059",
 		},
@@ -290,7 +290,7 @@ Assets.KitUI = {
 		-- ícones em traço claro (arte/ui/alta/icones/, 256 x 256)
 		icones = {
 			linhas = "rbxassetid://101087471621557", projetos = "rbxassetid://75869290254947", metas = "rbxassetid://91814380112470", jornal = "rbxassetid://91573003851306",
-			banco = "rbxassetid://113317883188764", companhia = "rbxassetid://75018367266315", ajustes = "rbxassetid://124375020468860", tarifas = "rbxassetid://122981018243405",
+			banco = "rbxassetid://113317883188764", financas = "rbxassetid://113317883188764", companhia = "rbxassetid://75018367266315", ajustes = "rbxassetid://124375020468860", tarifas = "rbxassetid://122981018243405",
 			trens = "rbxassetid://75920150833923", passageiros = "rbxassetid://95006154184330", satisfacao = "rbxassetid://120825840140428", carga = "rbxassetid://98847533496613",
 			decisao = "rbxassetid://135175366130531", dinheiro = "rbxassetid://126937211757792",
 		},
