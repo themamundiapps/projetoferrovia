@@ -10,6 +10,7 @@ local Theme = require(Shared:WaitForChild("Theme"))
 local Mapas = require(Shared:WaitForChild("Mapas"))
 local Assets = require(Shared:WaitForChild("Assets"))
 local Economia = require(Shared:WaitForChild("Economia"))
+local Tracado = require(Shared:WaitForChild("Tracado"))
 local Metas = require(Shared:WaitForChild("Metas"))
 local Jornal = require(Shared:WaitForChild("Jornal"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
@@ -190,7 +191,8 @@ local function trensDoMapa(estado: any): { any }
 					table.insert(pontos, dadosAtual.estacoes[t.de].pos)
 					table.insert(ids, t.de)
 				end
-				for _, v in t.via or {} do -- desvios do traçado (ver MapaView._criarLinhas): não são estações
+				-- desvios do traçado, com as dobras arredondadas (os mesmos pontos de MapaView): não são estações
+				for _, v in Tracado.via(dadosAtual.estacoes[t.de].pos, t.via, dadosAtual.estacoes[t.para].pos) do
 					table.insert(pontos, v)
 					table.insert(ids, "")
 				end

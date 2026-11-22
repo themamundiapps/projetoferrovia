@@ -13,6 +13,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Emojis = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Emojis"))
 local Assets = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Assets"))
 local Idioma = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Idioma"))
+local Tracado = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Tracado"))
 
 -- placa (cartucho) atrás do nome das capitais e metrópoles
 local PLACA_ALTURA, PLACA_FOLGA = 26, 15
@@ -441,11 +442,13 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 		for _, trecho in linha.trechos do
 			-- o trecho vai de estação a estação passando pelos pontos de "via" (desvios para não cortar o
 			-- mar); cada pedaço é um segmento com o mesmo id
-			local pontos: { Vector2 } = { dados.estacoes[trecho.de].pos }
-			for _, v in trecho.via or {} do
+			local pde: Vector2 = dados.estacoes[trecho.de].pos
+			local ppara: Vector2 = dados.estacoes[trecho.para].pos
+			local pontos: { Vector2 } = { pde }
+			for _, v in Tracado.via(pde, trecho.via, ppara) do -- desvios com as dobras arredondadas
 				table.insert(pontos, v)
 			end
-			table.insert(pontos, dados.estacoes[trecho.para].pos)
+			table.insert(pontos, ppara)
 			local emenda = #pontos > 2
 			for p = 1, #pontos - 1 do
 				local a: Vector2 = pontos[p]
@@ -483,7 +486,13 @@ function MapaView._criarLinhas(self: MapaView, dados: any)
 				-- dobra para o próximo pedaço do mesmo trecho: uma bolinha da cor da linha (e do contorno)
 				-- arredonda a curva, sem o "dente" que dois retângulos em ângulo deixam
 				local junta: { linha: Frame, casing: Frame }? = nil
+				-- nos arcos as dobras entre pedacinhos são suaves: a bolinha só vai onde a dobra é forte
+				local dobraForte = false
 				if p < #pontos - 1 then
+					local d1, d2 = b - a, pontos[p + 2] - b
+					dobraForte = d1.Magnitude > 1e-3 and d2.Magnitude > 1e-3 and d1.Unit:Dot(d2.Unit) < math.cos(math.rad(20))
+				end
+				if dobraForte then
 					local jc = novo("Frame", {
 						Name = trecho.id .. "_junta_contorno",
 						AnchorPoint = Vector2.new(0.5, 0.5),
