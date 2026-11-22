@@ -181,8 +181,8 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			`{estado.nomeCompanhia or "Your company"} is in the {Idioma.t(era.nomeEn or era.nome)}, level {nivel}.`
 		)
 		else L(
-			"Escolha um mapa e construa o primeiro trecho de ferrovia do país.",
-			"Pick a map and build the country's first stretch of railway."
+			"Escolha um mapa e construa o primeiro trecho de ferrovia.",
+			"Pick a map and build the first stretch of railway."
 		)
 	est:texto("fraco", situacao, coluna, 4)
 

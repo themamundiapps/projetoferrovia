@@ -673,7 +673,7 @@ end
 
 function Menu._abaProjetos(self: Menu)
 	local est, dados, estado, r = self.est, self.dados, self.estado, self.rolagem
-	self:_titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), L("Ferrovias que o país planejou e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways the country planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."))
+	self:_titulo(L(`{Emojis.gabinete} Gabinete de Projetos`, `{Emojis.gabinete} Projects Cabinet`), L("Ferrovias que foram planejadas e nunca terminou e, no fim, planos ousados que ninguém chegou a fazer (os \"E se?\"). Estude um projeto por vez: o estudo leva tempo de verdade (continua com o jogo fechado) e, quando termina, a linha abre no mapa.", "Railways that were planned and never finished and, at the end, bold plans nobody ever tried (the \"What if?\" ones). Study one project at a time: studies take real time (they continue with the game closed) and, when done, the line opens on the map."))
 	if not estado then
 		return
 	end
