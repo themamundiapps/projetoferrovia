@@ -83,6 +83,10 @@ Mapas.europa = {
 		{ camada = "linhas", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_0_1.png" },
 		{ camada = "linhas", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_1_0.png" },
 		{ camada = "linhas", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_linhas_1_1.png" },
+		{ camada = "rios", x = 0, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_0_0.png" },
+		{ camada = "rios", x = 1024, y = 0, w = 1024, h = 1024, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_0_1.png" },
+		{ camada = "rios", x = 0, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_1_0.png" },
+		{ camada = "rios", x = 1024, y = 1024, w = 1024, h = 512, id = "rbxassetid://0", arquivo = "mapas/europa/europa_rios_1_1.png" },
 	},
 	cidades = {
 		["London"] = Vector2.new(692, 610),

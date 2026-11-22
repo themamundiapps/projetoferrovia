@@ -1,0 +1,452 @@
+[
+ {
+  "id": "4_0",
+  "x0": 1024,
+  "y0": 0,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_0_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_0_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "5_0",
+  "x0": 1280,
+  "y0": 0,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_0_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_0_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "2_1",
+  "x0": 512,
+  "y0": 256,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_1_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_1_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_1_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "3_1",
+  "x0": 768,
+  "y0": 256,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_1_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_1_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "4_1",
+  "x0": 1024,
+  "y0": 256,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_1_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_1_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "5_1",
+  "x0": 1280,
+  "y0": 256,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_1_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_1_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_1_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "2_2",
+  "x0": 512,
+  "y0": 512,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_2_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_2_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_2_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "3_2",
+  "x0": 768,
+  "y0": 512,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_2_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_2_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_2_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "4_2",
+  "x0": 1024,
+  "y0": 512,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_2_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_2_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_2_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "5_2",
+  "x0": 1280,
+  "y0": 512,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_2_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_2_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_2_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "1_3",
+  "x0": 256,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_1_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_1_3_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "2_3",
+  "x0": 512,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_3_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_3_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "3_3",
+  "x0": 768,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_3_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_3_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "4_3",
+  "x0": 1024,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_3_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_3_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "5_3",
+  "x0": 1280,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_3_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_3_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "6_3",
+  "x0": 1536,
+  "y0": 768,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_6_3_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_6_3_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_6_3_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "0_4",
+  "x0": 0,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_0_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_0_4_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "1_4",
+  "x0": 256,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_1_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_1_4_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_1_4_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "2_4",
+  "x0": 512,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_4_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_2_4_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "3_4",
+  "x0": 768,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_4_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_3_4_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "4_4",
+  "x0": 1024,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_4_linhas.png"
+   },
+   {
+    "camada": "rios",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_4_rios.png"
+   }
+  ]
+ },
+ {
+  "id": "5_4",
+  "x0": 1280,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_4_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "6_4",
+  "x0": 1536,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_6_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_6_4_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "7_4",
+  "x0": 1792,
+  "y0": 1024,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_7_4_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_7_4_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "4_5",
+  "x0": 1024,
+  "y0": 1280,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_5_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_4_5_linhas.png"
+   }
+  ]
+ },
+ {
+  "id": "5_5",
+  "x0": 1280,
+  "y0": 1280,
+  "tiles": [
+   {
+    "camada": "terra",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_5_terra.png"
+   },
+   {
+    "camada": "linhas",
+    "arquivo": "mapas/europa_detalhe/europa_detalhe_5_5_linhas.png"
+   }
+  ]
+ }
+]

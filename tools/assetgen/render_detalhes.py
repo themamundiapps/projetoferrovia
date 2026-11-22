@@ -11,8 +11,8 @@ import io, json, os, re, sys
 
 C, ESCALA, MARGEM = 256, 4, 40
 # origem da grade de cada mapa (no Brasil, alinhada à antiga caixa do Sudeste)
-ORIGEM = {"brasil": (208, 144), "eua": (0, 0)}
-ARQ_DADOS = {"brasil": "Brasil", "eua": "EUA"}
+ORIGEM = {"brasil": (208, 144), "eua": (0, 0), "europa": (0, 0)}
+ARQ_DADOS = {"brasil": "Brasil", "eua": "EUA", "europa": "Europa"}
 MAPA = "brasil"
 OX, OY = ORIGEM[MAPA]
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")

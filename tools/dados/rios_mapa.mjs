@@ -23,6 +23,13 @@ const CONFIG = {
     caixa: [-126, -66, 24, 50],
     rankMax: 7,
   },
+  europa: {
+    nomes: new Set(["Danube", "Rhine", "Seine", "Oder", "Elbe", "Ebro", "Tajo", "Tejo", "Vistula", "Daugava", "Rhône",
+      "Thames", "Duero", "Garonne", "Loire", "Po", "Severn", "Guadiana", "Tevere", "Sava", "Weser", "Neman",
+      "Inn", "Main", "Guadalquivir", "Trent", "Maas"]),
+    caixa: [-11, 32, 35, 62],
+    rankMax: 8,
+  },
 };
 const cfg = CONFIG[MAPA];
 const out = [];

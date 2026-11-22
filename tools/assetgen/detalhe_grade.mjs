@@ -25,11 +25,28 @@ const RIOS_EUA = new Set(["Mississippi", "Missouri", "Ohio", "Arkansas", "Red", 
   "Rio Grande", "Tennessee", "Hudson", "Susquehanna", "Potomac", "Sacramento", "San Joaquin", "Yellowstone",
   "Cumberland", "Illinois", "Wabash", "Kansas", "Canadian", "Brazos", "Alabama", "Savannah", "Connecticut", "Gila", "Green"]);
 const FOCO = MAPA === "eua" ? "United States of America" : "Brazil";
+// países do mapa da Europa (a mesma lista de maps.mjs)
+const EUROPA = new Set(["Portugal","Spain","France","Belgium","Netherlands","Luxembourg","Germany","Switzerland","Austria","Italy",
+ "United Kingdom","Ireland","Denmark","Norway","Sweden","Finland","Poland","Czechia","Slovakia","Hungary","Slovenia","Croatia",
+ "Bosnia and Herz.","Serbia","Montenegro","Kosovo","Albania","Macedonia","North Macedonia","Greece","Bulgaria","Romania","Moldova",
+ "Lithuania","Latvia","Estonia","Liechtenstein","Andorra","Monaco","San Marino","Vatican","Malta","Cyprus","Iceland"]);
+const RIOS_EUROPA = new Set(["Danube", "Rhine", "Seine", "Oder", "Elbe", "Ebro", "Tajo", "Tejo", "Vistula", "Daugava", "Rhône",
+  "Thames", "Duero", "Garonne", "Loire", "Po", "Severn", "Guadiana", "Tevere", "Sava", "Weser", "Neman",
+  "Inn", "Main", "Guadalquivir", "Trent", "Maas"]);
 
 const paises = topojson.feature(world, world.objects.countries);
-const fronteiras = topojson.mesh(world, world.objects.countries, (a, b) => a !== b && (a.properties.name === FOCO || b.properties.name === FOCO));
+let fronteiras = topojson.mesh(world, world.objects.countries, (a, b) => a !== b && (a.properties.name === FOCO || b.properties.name === FOCO));
 let foco, contorno, divisas, riosMapa;
-if (MAPA === "eua") {
+if (MAPA === "europa") {
+  const ehEu = (f) => EUROPA.has(f.properties.name);
+  foco = { type: "FeatureCollection", features: paises.features.filter(ehEu) };
+  contorno = topojson.merge(world, world.objects.countries.geometries.filter(ehEu));
+  fronteiras = topojson.mesh(world, world.objects.countries, (a, b) => a !== b && (ehEu(a) || ehEu(b)));
+  divisas = { type: "MultiLineString", coordinates: [] };
+  const dentro = ([lon, lat]) => lon > -11 && lon < 32 && lat > 35 && lat < 62;
+  riosMapa = rios.features.filter((f) => RIOS_EUROPA.has(f.properties.name) && f.properties.scalerank <= 8)
+    .filter((f) => (f.geometry.type === "LineString" ? f.geometry.coordinates : f.geometry.coordinates.flat()).some(dentro));
+} else if (MAPA === "eua") {
   // 48 estados (us-atlas), como no mapa base
   const us = JSON.parse(fs.readFileSync(new URL("node_modules/us-atlas/states-10m.json", AQUI)));
   const fora = new Set(["02", "15", "60", "66", "69", "72", "78"]);
@@ -56,7 +73,7 @@ const faixas = [...new Set(celulas.map((c) => c[1]))].sort((a, b) => a - b);
 const out = [];
 for (const cy of faixas) {
   const x0 = ox + C * cx0, y0 = oy + C * cy;
-  const tipos = { geoMercator: d3.geoMercator, geoConicEqualArea: d3.geoConicEqualArea };
+  const tipos = { geoMercator: d3.geoMercator, geoConicEqualArea: d3.geoConicEqualArea, geoAzimuthalEqualArea: d3.geoAzimuthalEqualArea };
   let P = tipos[proj.type ?? "geoMercator"]();
   if (proj.rotate) P = P.rotate(proj.rotate);
   if (proj.parallels) P = P.parallels(proj.parallels);
@@ -64,7 +81,7 @@ for (const cy of faixas) {
   const path = d3.geoPath(P);
   out.push({
     cy, x0, y0, cx0, w: (cx1 - cx0 + 1) * C * escala, h: C * escala,
-    landAll: path(paises), focus: path(foco), outline: path(contorno), borders: path(fronteiras), divisas: path(divisas),
+    landAll: path(paises), focus: path(foco), outline: path(contorno), borders: path(fronteiras), divisas: path(divisas) ?? "",
     rios: riosMapa.map((f) => ({ rank: f.properties.scalerank, d: path(f) })).filter((r) => r.d),
   });
   console.log("faixa", cy, out.at(-1).w + "x" + out.at(-1).h);
