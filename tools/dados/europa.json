@@ -3674,107 +3674,133 @@
   "estados": {
     "GB": [
       "Reino Unido",
-      "o"
+      "o",
+      "United Kingdom"
     ],
     "FR": [
       "França",
-      "o"
+      "o",
+      "France"
     ],
     "BE": [
       "Bélgica",
-      "o"
+      "o",
+      "Belgium"
     ],
     "NL": [
       "Países Baixos",
-      "o"
+      "o",
+      "Netherlands"
     ],
     "DE": [
       "Alemanha",
-      "c"
+      "c",
+      "Germany"
     ],
     "DK": [
       "Dinamarca",
-      "c"
+      "c",
+      "Denmark"
     ],
     "CH": [
       "Suíça",
-      "c"
+      "c",
+      "Switzerland"
     ],
     "AT": [
       "Áustria",
-      "c"
+      "c",
+      "Austria"
     ],
     "CZ": [
       "Tchéquia",
-      "c"
+      "c",
+      "Czechia"
     ],
     "PL": [
       "Polônia",
-      "c"
+      "c",
+      "Poland"
     ],
     "SI": [
       "Eslovênia",
-      "c"
+      "c",
+      "Slovenia"
     ],
     "IT": [
       "Itália",
-      "s"
+      "s",
+      "Italy"
     ],
     "ES": [
       "Espanha",
-      "s"
+      "s",
+      "Spain"
     ],
     "PT": [
       "Portugal",
-      "s"
+      "s",
+      "Portugal"
     ],
     "HU": [
       "Hungria",
-      "l"
+      "l",
+      "Hungary"
     ],
     "RS": [
       "Sérvia",
-      "l"
+      "l",
+      "Serbia"
     ],
     "BG": [
       "Bulgária",
-      "l"
+      "l",
+      "Bulgaria"
     ],
     "TR": [
       "Turquia",
-      "l"
+      "l",
+      "Turkey"
     ],
     "SE": [
       "Suécia",
-      "n"
+      "n",
+      "Sweden"
     ],
     "LT": [
       "Lituânia",
-      "n"
+      "n",
+      "Lithuania"
     ],
     "LV": [
       "Letônia",
-      "n"
+      "n",
+      "Latvia"
     ],
     "EE": [
       "Estônia",
-      "n"
+      "n",
+      "Estonia"
     ],
     "NO": [
       "Noruega",
-      "n"
+      "n",
+      "Norway"
     ],
     "MK": [
       "Macedônia do Norte",
-      "l"
+      "l",
+      "North Macedonia"
     ],
     "GR": [
       "Grécia",
-      "l"
+      "l",
+      "Greece"
     ],
     "RO": [
       "Romênia",
-      "l"
+      "l",
+      "Romania"
     ]
   },
   "regioes": {

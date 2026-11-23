@@ -250,7 +250,7 @@ function Ficha._montar(self: Ficha, id: string, linhas: { any })
 	lTipo.TextSize = 12
 	local lNome = est:texto("titulo", e.nome, cabecalho, 2)
 	lNome.Name = "Nome"
-	est:texto("fraco", `{e.estado} · {Idioma.t(dados.regioes[e.regiao])}`, cabecalho, 3)
+	est:texto("fraco", `{if Idioma.atual == "en" then (e.estadoEn or e.estado) else e.estado} · {Idioma.t(dados.regioes[e.regiao])}`, cabecalho, 3)
 
 	-- imagem (16:9)
 	local moldura = novo("Frame", {

@@ -25,13 +25,13 @@ TERRENOS = {
 
 # países (no lugar dos estados) e regiões
 ESTADOS = {
-    "GB": ["Reino Unido", "o"], "FR": ["França", "o"], "BE": ["Bélgica", "o"], "NL": ["Países Baixos", "o"],
-    "DE": ["Alemanha", "c"], "DK": ["Dinamarca", "c"], "CH": ["Suíça", "c"], "AT": ["Áustria", "c"],
-    "CZ": ["Tchéquia", "c"], "PL": ["Polônia", "c"], "SI": ["Eslovênia", "c"],
-    "IT": ["Itália", "s"], "ES": ["Espanha", "s"], "PT": ["Portugal", "s"],
-    "HU": ["Hungria", "l"], "RS": ["Sérvia", "l"], "BG": ["Bulgária", "l"], "TR": ["Turquia", "l"],
-    "SE": ["Suécia", "n"], "LT": ["Lituânia", "n"], "LV": ["Letônia", "n"], "EE": ["Estônia", "n"],
-    "NO": ["Noruega", "n"], "MK": ["Macedônia do Norte", "l"], "GR": ["Grécia", "l"], "RO": ["Romênia", "l"],
+    "GB": ["Reino Unido", "o", "United Kingdom"], "FR": ["França", "o", "France"], "BE": ["Bélgica", "o", "Belgium"], "NL": ["Países Baixos", "o", "Netherlands"],
+    "DE": ["Alemanha", "c", "Germany"], "DK": ["Dinamarca", "c", "Denmark"], "CH": ["Suíça", "c", "Switzerland"], "AT": ["Áustria", "c", "Austria"],
+    "CZ": ["Tchéquia", "c", "Czechia"], "PL": ["Polônia", "c", "Poland"], "SI": ["Eslovênia", "c", "Slovenia"],
+    "IT": ["Itália", "s", "Italy"], "ES": ["Espanha", "s", "Spain"], "PT": ["Portugal", "s", "Portugal"],
+    "HU": ["Hungria", "l", "Hungary"], "RS": ["Sérvia", "l", "Serbia"], "BG": ["Bulgária", "l", "Bulgaria"], "TR": ["Turquia", "l", "Turkey"],
+    "SE": ["Suécia", "n", "Sweden"], "LT": ["Lituânia", "n", "Lithuania"], "LV": ["Letônia", "n", "Latvia"], "EE": ["Estônia", "n", "Estonia"],
+    "NO": ["Noruega", "n", "Norway"], "MK": ["Macedônia do Norte", "l", "North Macedonia"], "GR": ["Grécia", "l", "Greece"], "RO": ["Romênia", "l", "Romania"],
 }
 REGIOES = {
     "o": T("Europa Ocidental", "Western Europe"), "c": T("Europa Central", "Central Europe"),

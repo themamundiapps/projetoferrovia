@@ -102,7 +102,7 @@ for (const [id, cfg] of Object.entries(MAPAS)) {
   L.push("\testacoes = {");
   for (const e of dados.estacoes) {
     const [x, y] = proj([e.lon, e.lat]);
-    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, nomeEn = ${lua(e.nomeEn)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)}, estado = ${lua(dados.estados[e.uf][0])}, regiao = ${lua(dados.estados[e.uf][1])}, historia = { pt = ${lua(e.historia.pt)}, en = ${lua(e.historia.en)} } },`);
+    L.push(`\t\t${e.id} = { nome = ${lua(e.nome)}, nomeEn = ${lua(e.nomeEn)}, pos = Vector2.new(${x.toFixed(1)}, ${y.toFixed(1)}), lon = ${lua(e.lon)}, lat = ${lua(e.lat)}, porte = ${lua(e.porte)}, produz = ${lua(e.produz)}, porto = ${lua(!!e.porto)}, paisagem = ${lua(e.paisagem)}, estado = ${lua(dados.estados[e.uf][0])}, estadoEn = ${lua(dados.estados[e.uf][2] ?? dados.estados[e.uf][0])}, regiao = ${lua(dados.estados[e.uf][1])}, historia = { pt = ${lua(e.historia.pt)}, en = ${lua(e.historia.en)} } },`);
   }
   L.push("\t},");
   // Enquadramento inicial da câmera: as estações das linhas listadas em "foco".

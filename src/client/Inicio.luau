@@ -156,7 +156,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	est:lista(coluna, 12)
 
 	-- título
-	local titulo = est:texto("titulo", "Ferrovia Tycoon", coluna, 1)
+	local titulo = est:texto("titulo", L("Ferrovia Tycoon", "Railway Tycoon"), coluna, 1)
 	titulo.TextSize = 40
 	titulo.TextColor3 = c.ink
 	local sub = est:texto("corpo", L(
