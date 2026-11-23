@@ -484,6 +484,9 @@ function Interface.new(tela: ScreenGui, era: any, dados: any)
 		end
 	end)
 	self.btnTrem.Activated:Connect(function()
+		if not self.btnTrem.Active then
+			return
+		end
 		local linha = self.trechoAberto and Economia.acharTrecho(self.dados, self.trechoAberto)
 		if linha then
 			self.aoAgir:Fire("trem", { linha = linha.id })
@@ -878,8 +881,15 @@ function Interface._preencher(self: Interface)
 			self.lblTrens.Text = L(`{linhaFrota}\n{Emojis.confirmar} Todos embarcam`, `{linhaFrota}\n{Emojis.confirmar} Everyone boards`)
 			self.lblTrens.TextColor3 = c.positive
 		end
-		self.btnTrem.Visible = faltando > 0
-		if faltando > 0 then
+		-- o botão de compra fica sempre no lugar (apagado com a frota completa): se ele sumisse, o
+		-- "Vender 1 trem" subia para debaixo do cursor e um clique duplo vendia o trem recém-comprado
+		self.btnTrem.Visible = true
+		if faltando <= 0 then
+			self.btnTrem.Text = L(`{Emojis.confirmar} Frota completa`, `{Emojis.confirmar} Fleet complete`)
+			self.btnTrem.Active = false
+			self.btnTrem.AutoButtonColor = false
+			self.btnTrem.BackgroundTransparency = 0.6
+		else
 			local podePagar = estado.dinheiro >= custoTrem
 			self.btnTrem.Text = L(`{Emojis.trens} Comprar trem · {Economia.formatar(custoTrem, simbolo)}`, `{Emojis.trens} Buy train · {Economia.formatar(custoTrem, simbolo)}`)
 			self.btnTrem.Active = podePagar
