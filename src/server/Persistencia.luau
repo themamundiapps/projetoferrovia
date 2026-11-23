@@ -13,7 +13,14 @@ local TENTATIVAS = 3
 local store: DataStore? = nil
 local disponivel = false
 
-do
+-- Modo gravação (só no Studio): com o atributo ModoGravacao = true no ServerStorage, a sessão começa do
+-- zero e nada é carregado nem salvo (nem o ranking). Serve para gravar vídeo e tirar prints sem
+-- mexer no progresso de ninguém. Fora do Studio o atributo é ignorado.
+local modoGravacao = RunService:IsStudio() and game:GetService("ServerStorage"):GetAttribute("ModoGravacao") == true
+
+if modoGravacao then
+	warn("[Ferrovia] MODO GRAVAÇÃO: sessão do zero, nada é carregado nem salvo.")
+else
 	local ok, resultado = pcall(function()
 		return DataStoreService:GetDataStore(NOME_STORE)
 	end)
