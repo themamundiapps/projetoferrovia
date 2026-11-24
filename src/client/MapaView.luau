@@ -261,6 +261,8 @@ function MapaView.new(pai: Instance, mapa: any, dados: any, era: any): MapaView
 		frete = { emojis = {}, coletas = {}, formatar = tostring },
 		ultimoAviso = {},
 	}, MapaView)
+	local selfAny = self :: any
+	selfAny.faixasSeparadas = dados.id == "europa"
 
 	self:_criarTiles(mapa)
 	self:_criarRotulosMapa(dados)
@@ -669,9 +671,11 @@ function MapaView._calcularCorredores(self: MapaView)
 end
 
 -- Distância entre as faixas de um corredor, em pixels de tela.
-local function larguraFaixa(zoom: number): number
-	-- a largura da linha mais uma folga: cada linha fica separada, com um fio do fundo entre elas
-	return math.clamp(2 + zoom * 0.9, 3, 10) + 2.5
+-- separadas = true (Europa): a largura da linha mais uma folga, com um fio do fundo entre as linhas
+-- (os corredores da Inglaterra são muito cheios). Brasil e EUA: as cores ficam coladas.
+local function larguraFaixa(zoom: number, separadas: boolean?): number
+	local largura = math.clamp(2 + zoom * 0.9, 3, 10)
+	return if separadas then largura + 2.5 else largura * 0.6
 end
 
 function MapaView._criarEstacoes(self: MapaView, dados: any)
@@ -1078,7 +1082,7 @@ function MapaView._moverTrens(self: MapaView)
 		return
 	end
 	local z = self.zoom
-	local faixa = larguraFaixa(z)
+	local faixa = larguraFaixa(z, (self :: any).faixasSeparadas)
 	local altura, loco, vagao, folga = medidasTrem(z)
 	local lado = altura * 0.45
 	local tamanhoEmoji = math.clamp(altura * 1.7, 10, 17)
@@ -1437,7 +1441,7 @@ function MapaView._layout(self: MapaView)
 
 	local espessura = espessuraLinha(z)
 	self:_tamanhoTrens()
-	local faixa = larguraFaixa(z)
+	local faixa = larguraFaixa(z, (self :: any).faixasSeparadas)
 	for _, s in self.segmentos do
 		local a = s.a * z + s.mA * (s.faixa * faixa)
 		local b = s.b * z + s.mB * (s.faixa * faixa)
