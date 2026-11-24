@@ -1232,6 +1232,42 @@ function MapaView._avisoMapa(self: MapaView, id: string, texto: string, cor: Col
 	if naTela.X < -40 or naTela.Y < -40 or naTela.X > tela.X + 40 or naTela.Y > tela.Y + 40 then
 		return
 	end
+	-- o aviso sobe de p.Y - 14 até p.Y - 56: procura uma coluna (acima, um pouco à esquerda ou à
+	-- direita) cujo caminho todo não passe por cima de nome de cidade nem de outro aviso; sem lugar, não aparece
+	local eu = self :: any
+	local w = (utf8.len(texto) or #texto) * tamanho * 0.55 + 6
+	local h = tamanho + 4
+	local ocupados = if eu.ocupadosZoom == self.zoom then eu.ocupados or {} else {}
+	eu.avisosAtivos = eu.avisosAtivos or {}
+	local function livre(r: { number }): boolean
+		for _, lista in { ocupados, eu.avisosAtivos } do
+			for _, o in lista do
+				if r[1] < o[3] and r[3] > o[1] and r[2] < o[4] and r[4] > o[2] then
+					return false
+				end
+			end
+		end
+		return true
+	end
+	local cx: number? = nil
+	local rect: { number }? = nil
+	for _, dx in { 0, -w * 0.5, w * 0.5, -w, w } do
+		local r = { p.X + dx - w / 2, p.Y - 56 - h, p.X + dx + w / 2, p.Y - 14 }
+		if livre(r) then
+			cx, rect = p.X + dx, r
+			break
+		end
+	end
+	if not cx or not rect then
+		return
+	end
+	table.insert(eu.avisosAtivos, rect)
+	task.delay(2.1, function()
+		local i = table.find(eu.avisosAtivos, rect)
+		if i then
+			table.remove(eu.avisosAtivos, i)
+		end
+	end)
 	self.ultimoAviso[id] = agora
 	local cores = self.era.cores
 	local lbl = novo("TextLabel", {
@@ -1239,7 +1275,7 @@ function MapaView._avisoMapa(self: MapaView, id: string, texto: string, cor: Col
 		AnchorPoint = Vector2.new(0.5, 1),
 		AutomaticSize = Enum.AutomaticSize.XY,
 		Size = UDim2.fromOffset(0, 0),
-		Position = UDim2.fromOffset(p.X, p.Y - 14),
+		Position = UDim2.fromOffset(cx, p.Y - 14),
 		BackgroundTransparency = 1,
 		Text = texto,
 		FontFace = self.era.fontes.display,
@@ -1249,7 +1285,7 @@ function MapaView._avisoMapa(self: MapaView, id: string, texto: string, cor: Col
 	}, self.conteudo) :: TextLabel
 	local contorno = novo("UIStroke", { Color = cores.panel, Thickness = 2.5 }, lbl) :: UIStroke
 	-- sobe o tempo todo; fica nítido na primeira metade e some na segunda
-	TweenService:Create(lbl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(p.X, p.Y - 56) }):Play()
+	TweenService:Create(lbl, TweenInfo.new(2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Position = UDim2.fromOffset(cx, p.Y - 56) }):Play()
 	local sumir = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In, 0, false, 1)
 	TweenService:Create(lbl, sumir, { TextTransparency = 1 }):Play()
 	TweenService:Create(contorno, sumir, { Transparency = 1 }):Play()
@@ -1507,6 +1543,8 @@ function MapaView._layout(self: MapaView)
 			end
 		end
 	end
+	eu.ocupados = ocupados -- os avisos que sobem das estações desviam destes retângulos
+	eu.ocupadosZoom = z
 end
 
 -- ---------------------------------------------------------------- entrada
