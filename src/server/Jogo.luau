@@ -1176,6 +1176,14 @@ function Acoes.mapa(s: Sessao, args: any): (boolean, string?)
 		antigo.ultimoTick = os.time()
 	end
 	s.mapaAtual = id
+	-- avisos do mapa antigo que ainda não foram mostrados (nível, linha, contrato, jornal) não valem no novo:
+	-- chegavam logo depois da troca, com o título de nível do outro mapa
+	for i = #s.eventos, 1, -1 do
+		local tipo = s.eventos[i].tipo
+		if tipo == "nivel" or tipo == "linha" or tipo == "contrato" or tipo == "jornal" then
+			table.remove(s.eventos, i)
+		end
+	end
 	local e = s.mapas[id]
 	e.ultimoTick = os.time()
 	s.proximaNoticia = 0

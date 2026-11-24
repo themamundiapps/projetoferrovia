@@ -1251,7 +1251,7 @@ function MapaView._avisoMapa(self: MapaView, id: string, texto: string, cor: Col
 	end
 	local cx: number? = nil
 	local rect: { number }? = nil
-	for _, dx in { 0, -w * 0.5, w * 0.5, -w, w } do
+	for _, dx in { 0, -w * 0.45, w * 0.45 } do
 		local r = { p.X + dx - w / 2, p.Y - 56 - h, p.X + dx + w / 2, p.Y - 14 }
 		if livre(r) then
 			cx, rect = p.X + dx, r
@@ -1337,11 +1337,23 @@ function MapaView._atualizarZoomMin(self: MapaView)
 	self.zoomMin = math.min(tela.X / self.largura, tela.Y / self.altura)
 end
 
-local function limitarEixo(pan: number, tamanhoMapa: number, tela: number): number
-	if tamanhoMapa <= tela then
-		return (tela - tamanhoMapa) / 2
+-- folgaIni/folgaFim: faixas da tela cobertas pela interface (barra de cima, barra de baixo). A câmera
+-- pode passar da borda do mapa por essas faixas, senão as cidades da borda ficavam presas debaixo delas.
+local function limitarEixo(pan: number, tamanhoMapa: number, tela: number, folgaIni: number?, folgaFim: number?): number
+	local a, f = folgaIni or 0, folgaFim or 0
+	if tamanhoMapa <= tela - a - f then
+		return a + (tela - a - f - tamanhoMapa) / 2
 	end
-	return math.clamp(pan, tela - tamanhoMapa, 0)
+	return math.clamp(pan, tela - tamanhoMapa - f, a)
+end
+
+-- Altura (em pixels da tela do mapa) das barras de cima e de baixo; reaplica a câmera.
+function MapaView.definirFolgas(self: MapaView, topo: number, base: number)
+	local eu = self :: any
+	eu.folgaTopo, eu.folgaBase = math.max(0, topo), math.max(0, base)
+	if self.zoom > 0 then
+		self:definirCamera(self.zoom, self.pan)
+	end
 end
 
 function MapaView.definirCamera(self: MapaView, zoom: number, pan: Vector2)
@@ -1351,7 +1363,7 @@ function MapaView.definirCamera(self: MapaView, zoom: number, pan: Vector2)
 	self.zoom = zoom
 	self.pan = Vector2.new(
 		limitarEixo(pan.X, self.largura * zoom, tela.X),
-		limitarEixo(pan.Y, self.altura * zoom, tela.Y)
+		limitarEixo(pan.Y, self.altura * zoom, tela.Y, (self :: any).folgaTopo, (self :: any).folgaBase)
 	)
 	self.conteudo.Position = UDim2.fromOffset(math.round(self.pan.X), math.round(self.pan.Y))
 	if mudouZoom then

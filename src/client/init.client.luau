@@ -403,6 +403,12 @@ local function montar(eraId: string, mapaNovo: boolean?)
 		-- posição relativa à tela do jogo (as posições absolutas vêm deslocadas pela barra do Roblox)
 		local origem = (ui.hud.Parent :: any).AbsolutePosition.Y
 		menu:posicionarAbaixoDe(Estilo.px(ui.hud.AbsolutePosition.Y - origem + ui.hud.AbsoluteSize.Y))
+		-- a câmera do mapa pode passar das bordas pela altura das barras (cidades da borda não ficam presas debaixo delas)
+		local raiz = mapa.raiz
+		local barraMenu = menu.barra :: GuiObject?
+		local topo = ui.hud.AbsolutePosition.Y + ui.hud.AbsoluteSize.Y - raiz.AbsolutePosition.Y
+		local base = if barraMenu then raiz.AbsolutePosition.Y + raiz.AbsoluteSize.Y - barraMenu.AbsolutePosition.Y else 0
+		mapa:definirFolgas(topo, base)
 	end
 	table.insert(conexoesTela, ui.hud:GetPropertyChangedSignal("AbsoluteSize"):Connect(reposicionar))
 	task.defer(reposicionar)
