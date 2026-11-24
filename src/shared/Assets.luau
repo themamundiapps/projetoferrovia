@@ -290,7 +290,7 @@ Assets.KitUI = {
 		-- ícones em traço claro (arte/ui/alta/icones/, 256 x 256)
 		icones = {
 			linhas = "rbxassetid://101087471621557", projetos = "rbxassetid://75869290254947", metas = "rbxassetid://91814380112470", jornal = "rbxassetid://91573003851306",
-			banco = "rbxassetid://113317883188764", companhia = "rbxassetid://75018367266315", ajustes = "rbxassetid://124375020468860", tarifas = "rbxassetid://122981018243405", loja = "rbxassetid://113591013113164",
+			banco = "rbxassetid://113317883188764", companhia = "rbxassetid://75018367266315", ajustes = "rbxassetid://124375020468860", tarifas = "rbxassetid://122981018243405", loja = "rbxassetid://93601290380347",
 			trens = "rbxassetid://75920150833923", passageiros = "rbxassetid://95006154184330", satisfacao = "rbxassetid://120825840140428", carga = "rbxassetid://98847533496613",
 			decisao = "rbxassetid://135175366130531", dinheiro = "rbxassetid://126937211757792",
 		},
