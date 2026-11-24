@@ -179,7 +179,7 @@ Assets.KitUI = {
 		placa_nome = { id = "rbxassetid://75187457767464", slice = Rect.new(45, 22, 648, 124), altura = 146 },
 		icones = {
 			linhas = "rbxassetid://124616010697030", projetos = "rbxassetid://139710033315937", metas = "rbxassetid://94651761536153", jornal = "rbxassetid://89354465281414",
-			banco = "rbxassetid://86039982344484", companhia = "rbxassetid://124510769365600", ajustes = "rbxassetid://109103751111585", loja = "rbxassetid://115975532343768",
+			banco = "rbxassetid://86039982344484", companhia = "rbxassetid://124510769365600", ajustes = "rbxassetid://109103751111585", loja = "rbxassetid://72175699330909",
 			tarifas = "rbxassetid://88664995413135",
 			-- faixa de recursos da barra de cima
 			trens = "rbxassetid://98916675648299", passageiros = "rbxassetid://133528029339571", satisfacao = "rbxassetid://123709817927502", carga = "rbxassetid://81200504601477",
