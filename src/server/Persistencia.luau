@@ -7,7 +7,9 @@ local RunService = game:GetService("RunService")
 
 local Persistencia = {}
 
-local NOME_STORE = "Ferrovia_v1"
+-- v2 (25/11/2026): reset geral antes do lançamento. Os saves da v1 ficam no Roblox, mas o jogo
+-- não lê mais nada deles; todo jogador começa uma companhia nova.
+local NOME_STORE = "Ferrovia_v2"
 local TENTATIVAS = 3
 
 local store: DataStore? = nil

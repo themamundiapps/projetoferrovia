@@ -30,7 +30,8 @@ type EstadoMapa = Economia.EstadoMapa
 -- rende; ao trocar, o mapa que fica não acumula o tempo em que o jogador estava no outro.
 local MAPAS: { [string]: any } = { brasil = DadosBrasil, eua = DadosEUA, europa = DadosEuropa }
 local MAPA_PADRAO = "brasil"
-local VERSAO_SAVE = 1
+-- v2 (25/11/2026): reset geral antes do lançamento (o save antigo é da v1).
+local VERSAO_SAVE = 2
 local AUTOSAVE_SEGUNDOS = 60
 
 type Sessao = {
@@ -1504,7 +1505,7 @@ local TOP_RANKING = 10
 local rankingStore: OrderedDataStore? = nil
 do
 	local ok, store = pcall(function()
-		return DataStoreService:GetOrderedDataStore("RankingGlobal_v1")
+		return DataStoreService:GetOrderedDataStore("RankingGlobal_v2")
 	end)
 	if ok then
 		rankingStore = store

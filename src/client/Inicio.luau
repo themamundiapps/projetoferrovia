@@ -34,7 +34,7 @@ export type Inicio = typeof(setmetatable(
 		aoJogar: BindableEvent,
 		aberto: boolean,
 		conexoes: { RBXScriptConnection },
-		_medir: () -> (),
+		_medir: (boolean?) -> (),
 	},
 	Inicio
 ))
@@ -93,19 +93,28 @@ function Inicio.new(playerGui: Instance): Inicio
 	}, Inicio)
 	-- O quadro escalado encolhe/estica a partir do canto de cima à esquerda; por isso ele tem tamanho
 	-- 1/escala: depois de escalado, cobre a tela exata e o centro fica no centro.
-	local function medir()
+	-- `soEncolher` vale para mudanças no conteúdo: mudar a escala faz o texto quebrar de outro jeito,
+	-- o que muda a altura da coluna e dispara outra medição. Só encolher quebra esse laço (flicker).
+	local function medir(soEncolher: boolean?)
 		local t = gui.AbsoluteSize
 		if t.X > 0 and t.Y > 0 then
 			-- cabe na tela: pela largura e pela altura da coluna (em pontos virtuais)
 			local coluna = self.conteudo and self.conteudo:FindFirstChild("Coluna") :: Frame?
 			local alturaColuna = if coluna then coluna.AbsoluteSize.Y / math.max(escala.Scale, 0.01) else 560
-			escala.Scale = math.clamp(math.min(t.X / 1000, t.Y * 0.92 / math.max(alturaColuna, 400)), 0.55, 1.1)
-			local k = 1 / math.max(escala.Scale, 0.01)
-			escalado.Size = UDim2.fromScale(k, k)
+			local novoEsc = math.clamp(math.min(t.X / 1000, t.Y * 0.92 / math.max(alturaColuna, 400)), 0.55, 1.1)
+			if soEncolher then
+				novoEsc = math.min(novoEsc, escala.Scale)
+			end
+			if math.abs(novoEsc - escala.Scale) > 0.005 then
+				escala.Scale = novoEsc
+				escalado.Size = UDim2.fromScale(1 / math.max(novoEsc, 0.01), 1 / math.max(novoEsc, 0.01))
+			end
 		end
 	end
 	self._medir = medir
-	table.insert(self.conexoes, gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(medir))
+	table.insert(self.conexoes, gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		medir()
+	end))
 	medir()
 	return self
 end
@@ -278,6 +287,22 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		local l = est:texto("corpo", `<b>{data} · {Idioma.t(nov.titulo)}</b>  {Idioma.t(nov.texto)}`, caixa, i)
 		l.TextSize = 14
 	end
+	-- versão do jogo: canto inferior direito do menu, sobre o mapa de fundo
+	local versao = novo("TextLabel", {
+		Name = "Versao",
+		AnchorPoint = Vector2.new(1, 1),
+		Position = UDim2.new(1, -18 - Estilo.INSET_DIR, 1, -14),
+		Size = UDim2.fromOffset(90, 20),
+		BackgroundTransparency = 1,
+		Text = "v0.1.0",
+		FontFace = era.fontes.label,
+		TextSize = 12,
+		TextColor3 = Color3.new(1, 1, 1),
+		TextXAlignment = Enum.TextXAlignment.Right,
+		TextYAlignment = Enum.TextYAlignment.Bottom,
+		ZIndex = 31,
+	}, conteudo) :: TextLabel
+
 	-- ranking global (todos os servidores): nível e linhas completas, com a foto de cada jogador.
 	-- O servidor guarda o top 10 num OrderedDataStore e manda pelo Remotes.Ranking.
 	local CORES_PODIO = { Color3.fromRGB(222, 178, 58), Color3.fromRGB(178, 184, 192), Color3.fromRGB(186, 122, 72) }
@@ -418,9 +443,11 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	end)
 
 	-- ajusta a escala para a coluna inteira caber na altura da tela
-	task.defer(self._medir)
-	coluna:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+	task.defer(function()
 		self._medir()
+	end)
+	coluna:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		self._medir(true)
 	end)
 end
 
