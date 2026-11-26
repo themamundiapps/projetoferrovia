@@ -372,8 +372,8 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		novo("UICorner", { CornerRadius = UDim.new(1, 0) }, foto)
 		novo("UIStroke", { Color = cr.ink, Thickness = 1.5, Transparency = 0.3 }, foto)
 		local nomeL = novo("TextLabel", {
-			Position = UDim2.fromOffset(66, 0),
-			Size = UDim2.new(1, -66 - 70, 1, 0),
+			Position = UDim2.fromOffset(66, 2),
+			Size = UDim2.new(1, -66 - 70, 0, 17),
 			BackgroundTransparency = 1,
 			Text = "",
 			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Bold),
@@ -404,7 +404,20 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			TextColor3 = cr.inkMuted,
 			TextXAlignment = Enum.TextXAlignment.Right,
 		}, linha)
-		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, nivel = nivelL, linhas = linhasL }
+		-- embaixo do nome: o título (pelo nível e pela era da melhor companhia) e o prego dourado de Pioneer
+		local tituloL = novo("TextLabel", {
+			Position = UDim2.fromOffset(66, 19),
+			Size = UDim2.new(1, -66 - 70, 0, 14),
+			BackgroundTransparency = 1,
+			Text = "",
+			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Regular, Enum.FontStyle.Italic),
+			TextSize = 12,
+			TextColor3 = cr.inkMuted,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextTruncate = Enum.TextTruncate.AtEnd,
+			RichText = true,
+		}, linha)
+		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, titulo = tituloL, nivel = nivelL, linhas = linhasL }
 	end
 	local remotes = ReplicatedStorage:WaitForChild("Remotes")
 	local function atualizarRanking()
@@ -430,6 +443,10 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 				local eu = item.userId == (jogador and jogador.UserId)
 				l.frame.BackgroundTransparency = if eu then 0.8 else 1
 				l.nome.Text = tostring(item.nome)
+				local titulo = Economia.tituloNivel(tonumber(item.nivel) or 1, item.era, Idioma.atual)
+				l.titulo.Text = if item.pioneiro
+					then `{titulo} · <font color="#3F8F4F"><b>{L("Pioneiro", "Pioneer")}</b></font>`
+					else titulo
 				l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
 				l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)
 				local id = item.userId

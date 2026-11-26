@@ -1589,14 +1589,28 @@ do
 end
 local topRanking: { any } = {}
 local rankingEm = 0
+-- perfil de quem está no ranking (era da melhor companhia e título Pioneer): o OrderedDataStore só guarda
+-- o número, então isso fica num DataStore comum, lido só para o top 10
+local perfilStore: DataStore? = nil
+do
+	local ok, store = pcall(function()
+		return DataStoreService:GetDataStore("RankingPerfil_v1")
+	end)
+	if ok then
+		perfilStore = store
+	end
+end
 
 -- A pontuação do jogador é a da sua melhor companhia (o mapa onde ele foi mais longe).
-local function pontosRanking(s: Sessao): number
-	local melhor = 0
+local function pontosRanking(s: Sessao): (number, string)
+	local melhor, era = 0, "vapor"
 	for id, e in s.mapas do
-		melhor = math.max(melhor, (Economia.nivel(e)) * 1000 + Economia.linhasCompletas(e, MAPAS[id]))
+		local pts = (Economia.nivel(e)) * 1000 + Economia.linhasCompletas(e, MAPAS[id])
+		if pts > melhor then
+			melhor, era = pts, e.era or "vapor"
+		end
 	end
-	return melhor
+	return melhor, era
 end
 
 local function atualizarRanking()
@@ -1605,13 +1619,19 @@ local function atualizarRanking()
 		return
 	end
 	for _, s in sessoes do
-		local pts = pontosRanking(s)
+		local pts, era = pontosRanking(s)
 		if s.carregado and s.podeSalvar and pts ~= s.pontosRanking then
 			local ok = pcall(function()
 				store:SetAsync(tostring(s.jogador.UserId), pts)
 			end)
 			if ok then
 				s.pontosRanking = pts
+				local perfil = perfilStore
+				if perfil then
+					pcall(function()
+						perfil:SetAsync(tostring(s.jogador.UserId), { era = era, pioneiro = s.pioneiro })
+					end)
+				end
 			end
 		end
 	end
@@ -1638,15 +1658,30 @@ local function atualizarRanking()
 			nomes[info.Id] = info.DisplayName
 		end
 	end
+	local perfis: { [number]: any } = {}
+	local perfil = perfilStore
+	if perfil then
+		for _, id in ids do
+			local okP, p = pcall(function()
+				return perfil:GetAsync(tostring(id))
+			end)
+			if okP and type(p) == "table" then
+				perfis[id] = p
+			end
+		end
+	end
 	local lista = {}
 	for _, item in pagina do
 		local id = tonumber(item.key)
 		if id and type(item.value) == "number" then
+			local p = perfis[id] or {}
 			table.insert(lista, {
 				userId = id,
 				nome = nomes[id] or "?",
 				nivel = item.value // 1000,
 				linhas = item.value % 1000,
+				era = if type(p.era) == "string" then p.era else "vapor",
+				pioneiro = p.pioneiro == true,
 			})
 		end
 	end
