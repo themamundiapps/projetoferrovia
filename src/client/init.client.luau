@@ -246,6 +246,22 @@ local function aplicarNaTela(estado: any)
 	ficha:atualizarEstado(estado)
 end
 
+-- Mensagem do sistema no chat (TextChatService novo). Usada para as conquistas: a sua e a dos outros jogadores.
+local TextChatService = game:GetService("TextChatService")
+local COR_CHAT = "#E8B04A"
+local function chatSistema(texto: string)
+	task.spawn(function()
+		local canais = TextChatService:FindFirstChild("TextChannels") or TextChatService:WaitForChild("TextChannels", 10)
+		local sistema = canais and canais:FindFirstChild("RBXSystem")
+		if sistema and sistema:IsA("TextChannel") then
+			pcall(function()
+				local seguro = texto:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+				sistema:DisplaySystemMessage(`<font color="{COR_CHAT}">{seguro}</font>`)
+			end)
+		end
+	end)
+end
+
 -- Novidades que o servidor manda uma vez só (contrato, medalha, nível, linha completa): viram avisos em fila.
 local function avisarEventos(estado: any)
 	local simbolo = dadosAtual.simbolo
@@ -260,6 +276,8 @@ local function avisarEventos(estado: any)
 			if m then
 				Som.efeito("premio")
 				ui:enfileirar(L(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, `{Emojis.medalha} Medal: {m.nome}! +{m.xp} XP`), 4)
+				local eu = Players.LocalPlayer.DisplayName
+				chatSistema(L(`{Emojis.medalha} {eu} ganhou a conquista {m.nome}!`, `{Emojis.medalha} {eu} earned the achievement {m.nome}!`))
 			end
 		elseif ev.tipo == "nivel" then
 			Som.efeito("conquista")
@@ -729,6 +747,7 @@ if remoteConquista then
 		local m = Metas.acharMedalha(medalhaId)
 		if m and ui and type(nome) == "string" then
 			ui:conquistaDeOutro(L(`{Emojis.medalha} <b>{nome}</b> ganhou a conquista <b>{m.nome}</b>`, `{Emojis.medalha} <b>{nome}</b> earned the achievement <b>{m.nome}</b>`))
+			chatSistema(L(`{Emojis.medalha} {nome} ganhou a conquista {m.nome}!`, `{Emojis.medalha} {nome} earned the achievement {m.nome}!`))
 		end
 	end)
 end
