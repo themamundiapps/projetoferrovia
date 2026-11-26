@@ -262,6 +262,22 @@ local function chatSistema(texto: string)
 	end)
 end
 
+-- Etiqueta no chat: [título] antes do nome, pelo nível e pela era do mapa aberto de quem escreveu
+-- (o título sai no idioma de quem lê). Só para mensagens de jogadores; as do sistema ficam como estão.
+TextChatService.OnIncomingMessage = function(mensagem: TextChatMessage)
+	local props = Instance.new("TextChatMessageProperties")
+	local fonte = mensagem.TextSource
+	if fonte then
+		local jogador = Players:GetPlayerByUserId(fonte.UserId)
+		local nivel = jogador and jogador:GetAttribute("Nivel")
+		if jogador and type(nivel) == "number" then
+			local titulo = Economia.tituloNivel(nivel, jogador:GetAttribute("Era") :: string?, Idioma.atual)
+			props.PrefixText = `<font color="{COR_CHAT}">[{titulo}]</font> ` .. mensagem.PrefixText
+		end
+	end
+	return props
+end
+
 -- Novidades que o servidor manda uma vez só (contrato, medalha, nível, linha completa): viram avisos em fila.
 local function avisarEventos(estado: any)
 	local simbolo = dadosAtual.simbolo

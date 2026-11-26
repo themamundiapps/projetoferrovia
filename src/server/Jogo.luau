@@ -398,6 +398,8 @@ local function atualizarPlacar(s: Sessao, renda: number?)
 	jogador:SetAttribute("Nivel", (Economia.nivel(e)))
 	jogador:SetAttribute("Linhas", Economia.linhasCompletas(e, MAPAS[s.mapaAtual]))
 	jogador:SetAttribute("Companhia", e.nomeCompanhia or "")
+	-- era do mapa aberto: com o nível, dá o título do jogador na etiqueta do chat ([Barão] Nome)
+	jogador:SetAttribute("Era", e.era or "vapor")
 	local rendaTxt = pasta:FindFirstChild("Renda/s") :: StringValue?
 	if rendaTxt and renda then
 		local dados = MAPAS[s.mapaAtual]
