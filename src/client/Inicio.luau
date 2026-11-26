@@ -418,7 +418,16 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			TextTruncate = Enum.TextTruncate.AtEnd,
 			RichText = true,
 		}, linha)
-		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, titulo = tituloL, nivel = nivelL, linhas = linhasL }
+		-- prego dourado da badge Pioneer, logo depois do nome (o texto "Pioneer" não cabia na linha do título)
+		local pregoL = novo("ImageLabel", {
+			Name = "Pioneer",
+			Position = UDim2.fromOffset(66, 3),
+			Size = UDim2.fromOffset(15, 15),
+			BackgroundTransparency = 1,
+			Image = "rbxassetid://122315803621053",
+			Visible = false,
+		}, linha)
+		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, titulo = tituloL, prego = pregoL, nivel = nivelL, linhas = linhasL }
 	end
 	local remotes = ReplicatedStorage:WaitForChild("Remotes")
 	local function atualizarRanking()
@@ -445,8 +454,15 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 				l.frame.BackgroundTransparency = if eu then 0.8 else 1
 				l.nome.Text = tostring(item.nome)
 				local titulo = Economia.tituloNivel(tonumber(item.nivel) or 1, item.era, Idioma.atual)
+				-- quem é Pioneer: o nome encolhe um pouco para o prego caber antes do nível
+				l.prego.Visible = item.pioneiro == true
+				l.nome.Size = UDim2.new(1, -66 - 70 - (if item.pioneiro then 19 else 0), 0, 17)
 				if item.pioneiro then
-					titulo ..= ` · <font color="#3F8F4F"><b>{L("Pioneiro", "Pioneer")}</b></font>`
+					task.defer(function()
+						local esc = math.max(Estilo.escalaDe(l.nome), 0.01)
+						local larg = math.min(l.nome.TextBounds.X, l.nome.AbsoluteSize.X) / esc
+						l.prego.Position = UDim2.fromOffset(66 + larg + 4, 3)
+					end)
 				end
 				if Equipe[item.userId] then
 					titulo = `<font color="#B8382B"><b>{L("Dono", "Owner")}</b></font> · ` .. titulo
