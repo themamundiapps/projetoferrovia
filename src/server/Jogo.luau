@@ -1659,6 +1659,7 @@ do
 end
 local topRanking: { any } = {}
 local rankingEm = 0
+local equipeRemovida = false
 -- perfil de quem está no ranking (era da melhor companhia e título Pioneer): o OrderedDataStore só guarda
 -- o número, então isso fica num DataStore comum, lido só para o top 10
 local perfilStore: DataStore? = nil
@@ -1690,7 +1691,8 @@ local function atualizarRanking()
 	end
 	for _, s in sessoes do
 		local pts, era = pontosRanking(s)
-		if s.carregado and s.podeSalvar and pts ~= s.pontosRanking then
+		-- a equipe não entra no ranking global (o save dela inclui os testes do Studio)
+		if s.carregado and s.podeSalvar and pts ~= s.pontosRanking and not Equipe[s.jogador.UserId] then
 			local ok = pcall(function()
 				store:SetAsync(tostring(s.jogador.UserId), pts)
 			end)
@@ -1705,11 +1707,27 @@ local function atualizarRanking()
 			end
 		end
 	end
-	local ok, pagina = pcall(function()
-		return store:GetSortedAsync(false, TOP_RANKING):GetCurrentPage()
+	-- tira a equipe que já estava no ranking (uma vez por servidor)
+	if not equipeRemovida then
+		equipeRemovida = true
+		for id in Equipe do
+			pcall(function()
+				store:RemoveAsync(tostring(id))
+			end)
+		end
+	end
+	local ok, bruta = pcall(function()
+		return store:GetSortedAsync(false, TOP_RANKING + 2):GetCurrentPage()
 	end)
-	if not ok or type(pagina) ~= "table" then
+	if not ok or type(bruta) ~= "table" then
 		return
+	end
+	local pagina = {}
+	for _, item in bruta do
+		local id = tonumber(item.key)
+		if id and not Equipe[id] and #pagina < TOP_RANKING then
+			table.insert(pagina, item)
+		end
 	end
 	local ids = {}
 	for _, item in pagina do
