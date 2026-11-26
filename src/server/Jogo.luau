@@ -24,6 +24,7 @@ local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
 local DadosEUA = require(Shared:WaitForChild("Dados"):WaitForChild("EUA"))
 local DadosEuropa = require(Shared:WaitForChild("Dados"):WaitForChild("Europa"))
 local Persistencia = require(script.Parent:WaitForChild("Persistencia"))
+local Equipe = require(Shared:WaitForChild("Equipe"))
 
 type EstadoMapa = Economia.EstadoMapa
 
@@ -37,6 +38,14 @@ local VERSAO_SAVE = 2
 -- O título vai para o save; a badge do Roblox é entregue se BADGE_PIONEIRO tiver o id (0 = ainda não criada).
 local FIM_PIONEIRO = 1798772400 -- 2027-01-01 00:00 em Brasília (03:00 UTC)
 local BADGE_PIONEIRO = 1856477598324639
+-- badges das eras (dadas ao chegar na era em qualquer mapa; quem já passou recebe ao entrar) e de jogar
+-- no mesmo servidor que alguém da equipe
+local BADGES_ERA: { [string]: number } = {
+	diesel = 2686408514465587,
+	eletrico = 3431636719501213,
+	alta = 1843349409320890,
+}
+local BADGE_DONO = 1939407495041830
 local AUTOSAVE_SEGUNDOS = 60
 
 type Sessao = {
@@ -70,6 +79,68 @@ type SaveLoja = {
 }
 
 local sessoes: { [Player]: Sessao } = {}
+
+-- Entrega uma badge do Roblox uma vez por sessão (o Roblox ignora quem já tem; aqui só evita chamadas repetidas)
+local badgesDadas: { [Player]: { [number]: boolean } } = {}
+local function darBadge(jogador: Player, id: number)
+	if id == 0 or RunService:IsStudio() then
+		return
+	end
+	local dadas = badgesDadas[jogador]
+	if not dadas then
+		dadas = {}
+		badgesDadas[jogador] = dadas
+	end
+	if dadas[id] then
+		return
+	end
+	dadas[id] = true
+	task.spawn(function()
+		local ok = pcall(function()
+			if not BadgeService:UserHasBadgeAsync(jogador.UserId, id) then
+				BadgeService:AwardBadge(jogador.UserId, id)
+			end
+		end)
+		if not ok then
+			dadas[id] = nil -- tenta de novo numa próxima vez
+		end
+	end)
+end
+
+-- Badges das eras: a maior era alcançada em qualquer mapa dá ela e as anteriores
+local function badgesDeEra(s: any)
+	local ordem = {}
+	for i, era in Economia.ERAS do
+		ordem[era.id] = i
+	end
+	local maior = 1
+	for _, e in s.mapas do
+		maior = math.max(maior, ordem[e.era or "vapor"] or 1)
+	end
+	for i, era in Economia.ERAS do
+		local id = BADGES_ERA[era.id]
+		if id and i <= maior then
+			darBadge(s.jogador, id)
+		end
+	end
+end
+
+-- Met the Owner: com alguém da equipe no servidor, todos os outros ganham
+local function badgesDeDono()
+	local temDono = false
+	for _, j in Players:GetPlayers() do
+		if Equipe[j.UserId] then
+			temDono = true
+		end
+	end
+	if temDono then
+		for _, j in Players:GetPlayers() do
+			if not Equipe[j.UserId] then
+				darBadge(j, BADGE_DONO)
+			end
+		end
+	end
+end
 
 -- ---------------------------------------------------------------- remotes
 
@@ -978,6 +1049,7 @@ function Acoes.modernizar(s: Sessao, _args: any): (boolean, string?)
 	e.dinheiro -= proxima.custo
 	e.era = proxima.id
 	ganharXp(s, e, Metas.XP.era)
+	badgesDeEra(s)
 	-- os trens da era nova levam mais gente: os que ficariam vazios são vendidos na hora
 	local vendidos, valor = venderSobras(e, dados)
 	if vendidos > 0 then
@@ -1364,14 +1436,8 @@ local function aoEntrar(jogador: Player)
 	s.loja = sanearLoja(if type(salvo) == "table" then salvo.loja else nil)
 	s.pioneiro = (type(salvo) == "table" and salvo.pioneiro == true) or os.time() < FIM_PIONEIRO
 	jogador:SetAttribute("Pioneiro", s.pioneiro)
-	if s.pioneiro and BADGE_PIONEIRO ~= 0 then
-		task.spawn(function()
-			pcall(function()
-				if not BadgeService:UserHasBadgeAsync(jogador.UserId, BADGE_PIONEIRO) then
-					BadgeService:AwardBadge(jogador.UserId, BADGE_PIONEIRO)
-				end
-			end)
-		end)
+	if s.pioneiro then
+		darBadge(jogador, BADGE_PIONEIRO)
 	end
 	if type(salvo) == "table" and type(salvo.mapaAtual) == "string" and MAPAS[salvo.mapaAtual] then
 		s.mapaAtual = salvo.mapaAtual
@@ -1411,10 +1477,13 @@ local function aoEntrar(jogador: Player)
 		s.carregado = true
 		atualizarPlacar(s, nil)
 		enviarEstado(s)
+		badgesDeEra(s)
+		badgesDeDono()
 	end
 end
 
 local function aoSair(jogador: Player)
+	badgesDadas[jogador] = nil
 	local s = sessoes[jogador]
 	if s then
 		salvar(s)
