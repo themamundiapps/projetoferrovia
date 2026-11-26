@@ -23,7 +23,7 @@ local NOMES_MAPA: { [string]: { pt: string, en: string } } = {
 	eua = { pt = "EUA", en = "USA" },
 	europa = { pt = "Europa", en = "Europe" },
 }
-local LARGURA = 250
+local LARGURA = 310 -- largo o bastante para nome, mapa e companhia (com 250 cortava tudo)
 local ALTURA_LINHA = 38
 local INTERVALO = 2 -- segundos entre atualizações
 -- cor da medalha do 1º, 2º e 3º lugar
