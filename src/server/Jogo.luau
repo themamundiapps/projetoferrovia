@@ -36,7 +36,7 @@ local VERSAO_SAVE = 2
 -- Título "Pioneer": quem entrar no jogo até o fim de 31/12/2026 (horário de Brasília) ganha para sempre.
 -- O título vai para o save; a badge do Roblox é entregue se BADGE_PIONEIRO tiver o id (0 = ainda não criada).
 local FIM_PIONEIRO = 1798772400 -- 2027-01-01 00:00 em Brasília (03:00 UTC)
-local BADGE_PIONEIRO = 0
+local BADGE_PIONEIRO = 1856477598324639
 local AUTOSAVE_SEGUNDOS = 60
 
 type Sessao = {
