@@ -293,7 +293,7 @@ local function avisarEventos(estado: any)
 				Som.efeito("premio")
 				ui:enfileirar(L(`{Emojis.medalha} Medalha: {m.nome}! +{m.xp} XP`, `{Emojis.medalha} Medal: {m.nome}! +{m.xp} XP`), 4)
 				local eu = Players.LocalPlayer.DisplayName
-				chatSistema(L(`{Emojis.medalha} {eu} ganhou a conquista {m.nome}!`, `{Emojis.medalha} {eu} earned the achievement {m.nome}!`))
+				chatSistema(L(`{Emojis.medalha} {eu} ganhou a conquista "{m.nome}"!`, `{Emojis.medalha} {eu} earned the achievement "{m.nome}"!`))
 			end
 		elseif ev.tipo == "nivel" then
 			Som.efeito("conquista")
@@ -763,7 +763,7 @@ if remoteConquista then
 		local m = Metas.acharMedalha(medalhaId)
 		if m and ui and type(nome) == "string" then
 			ui:conquistaDeOutro(L(`{Emojis.medalha} <b>{nome}</b> ganhou a conquista <b>{m.nome}</b>`, `{Emojis.medalha} <b>{nome}</b> earned the achievement <b>{m.nome}</b>`))
-			chatSistema(L(`{Emojis.medalha} {nome} ganhou a conquista {m.nome}!`, `{Emojis.medalha} {nome} earned the achievement {m.nome}!`))
+			chatSistema(L(`{Emojis.medalha} {nome} ganhou a conquista "{m.nome}"!`, `{Emojis.medalha} {nome} earned the achievement "{m.nome}"!`))
 		end
 	end)
 end
