@@ -249,6 +249,7 @@ end
 -- Mensagem do sistema no chat (TextChatService novo). Usada para as conquistas: a sua e a dos outros jogadores.
 local TextChatService = game:GetService("TextChatService")
 local COR_CHAT = "#E8B04A"
+local COR_PIONEIRO = "#5FD17A" -- verde do título Pioneer (primeiros jogadores, até 31/12/2026)
 local function chatSistema(texto: string)
 	task.spawn(function()
 		local canais = TextChatService:FindFirstChild("TextChannels") or TextChatService:WaitForChild("TextChannels", 10)
@@ -272,7 +273,10 @@ TextChatService.OnIncomingMessage = function(mensagem: TextChatMessage)
 		local nivel = jogador and jogador:GetAttribute("Nivel")
 		if jogador and type(nivel) == "number" then
 			local titulo = Economia.tituloNivel(nivel, jogador:GetAttribute("Era") :: string?, Idioma.atual)
-			props.PrefixText = `<font color="{COR_CHAT}">[{titulo}]</font> ` .. mensagem.PrefixText
+			local pioneiro = if jogador:GetAttribute("Pioneiro") == true
+				then `<font color="{COR_PIONEIRO}">[{L("Pioneiro", "Pioneer")}]</font> `
+				else ""
+			props.PrefixText = pioneiro .. `<font color="{COR_CHAT}">[{titulo}]</font> ` .. mensagem.PrefixText
 		end
 	end
 	return props

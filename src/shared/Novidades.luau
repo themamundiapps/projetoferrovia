@@ -10,8 +10,8 @@ local Novidades: { Novidade } = {
 		data = "2026-11-26",
 		titulo = { pt = "Versão 0.1.1: mapas e chat", en = "Version 0.1.1: maps and chat" },
 		texto = {
-			pt = "Escolha o seu primeiro mapa e complete todas as linhas para liberar os outros. No chat, o seu título aparece antes do nome e as conquistas de todos são anunciadas.",
-			en = "Pick your first map and complete every line to unlock the others. In chat, your title now shows before your name and everyone's achievements are announced.",
+			pt = "Quem jogar até 31 de dezembro ganha para sempre o título Pioneiro no chat. Escolha o seu primeiro mapa e complete todas as linhas para liberar os outros; no chat, o seu título aparece antes do nome e as conquistas são anunciadas.",
+			en = "Play before December 31 to earn the Pioneer title in chat, forever. Pick your first map and complete every line to unlock the others; in chat, your title shows before your name and achievements are announced.",
 		},
 	},
 	{

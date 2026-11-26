@@ -2,6 +2,7 @@
 -- Jogo (servidor): sessões dos jogadores, ações de compra, renda por segundo, ganho offline, metas e save.
 -- O servidor é a única autoridade sobre dinheiro; o cliente só pede ações e mostra o estado.
 
+local BadgeService = game:GetService("BadgeService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -32,6 +33,10 @@ local MAPAS: { [string]: any } = { brasil = DadosBrasil, eua = DadosEUA, europa 
 local MAPA_PADRAO = "brasil"
 -- v2 (25/11/2026): reset geral antes do lançamento (o save antigo é da v1).
 local VERSAO_SAVE = 2
+-- Título "Pioneer": quem entrar no jogo até o fim de 31/12/2026 (horário de Brasília) ganha para sempre.
+-- O título vai para o save; a badge do Roblox é entregue se BADGE_PIONEIRO tiver o id (0 = ainda não criada).
+local FIM_PIONEIRO = 1798772400 -- 2027-01-01 00:00 em Brasília (03:00 UTC)
+local BADGE_PIONEIRO = 0
 local AUTOSAVE_SEGUNDOS = 60
 
 type Sessao = {
@@ -51,6 +56,7 @@ type Sessao = {
 	loja: SaveLoja, -- compras (vale para todos os mapas)
 	proximoGerente: number, -- os.clock() da próxima rodada do Gerente Automático
 	pontosRanking: number, -- última pontuação enviada ao ranking global
+	pioneiro: boolean, -- título "Pioneer" (entrou antes de FIM_PIONEIRO)
 }
 
 -- Parte do save com as compras. Os passes ficam guardados só como reserva (se a consulta ao Roblox
@@ -544,7 +550,7 @@ local function salvar(s: Sessao): boolean
 			s.loja.recibos[id] = nil
 		end
 	end
-	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja, mapaAtual = s.mapaAtual })
+	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja, mapaAtual = s.mapaAtual, pioneiro = s.pioneiro })
 end
 
 -- ---------------------------------------------------------------- loja (ver Loja.luau)
@@ -1344,6 +1350,7 @@ local function aoEntrar(jogador: Player)
 		loja = sanearLoja(nil),
 		proximoGerente = 0,
 		pontosRanking = -1,
+		pioneiro = false,
 	}
 	sessoes[jogador] = s
 
@@ -1354,6 +1361,17 @@ local function aoEntrar(jogador: Player)
 	end
 	s.podeSalvar = ok and Persistencia.disponivel()
 	s.loja = sanearLoja(if type(salvo) == "table" then salvo.loja else nil)
+	s.pioneiro = (type(salvo) == "table" and salvo.pioneiro == true) or os.time() < FIM_PIONEIRO
+	jogador:SetAttribute("Pioneiro", s.pioneiro)
+	if s.pioneiro and BADGE_PIONEIRO ~= 0 then
+		task.spawn(function()
+			pcall(function()
+				if not BadgeService:UserHasBadgeAsync(jogador.UserId, BADGE_PIONEIRO) then
+					BadgeService:AwardBadge(jogador.UserId, BADGE_PIONEIRO)
+				end
+			end)
+		end)
+	end
 	if type(salvo) == "table" and type(salvo.mapaAtual) == "string" and MAPAS[salvo.mapaAtual] then
 		s.mapaAtual = salvo.mapaAtual
 	end
