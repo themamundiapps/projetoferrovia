@@ -18,10 +18,13 @@ local disponivel = false
 -- Modo gravação (só no Studio): com o atributo ModoGravacao = true no ServerStorage, a sessão começa do
 -- zero e nada é carregado nem salvo (nem o ranking). Serve para gravar vídeo e tirar prints sem
 -- mexer no progresso de ninguém. Fora do Studio o atributo é ignorado.
-local modoGravacao = RunService:IsStudio() and game:GetService("ServerStorage"):GetAttribute("ModoGravacao") == true
+-- SaveZerado = true faz o mesmo (sessão do zero, nada salvo), mas sem as facilidades do modo gravação:
+-- serve para testar o jogo como um jogador novo (por exemplo, a trava dos mapas).
+local ss = game:GetService("ServerStorage")
+local modoGravacao = RunService:IsStudio() and (ss:GetAttribute("ModoGravacao") == true or ss:GetAttribute("SaveZerado") == true)
 
 if modoGravacao then
-	warn("[Ferrovia] MODO GRAVAÇÃO: sessão do zero, nada é carregado nem salvo.")
+	warn("[Ferrovia] SESSÃO DE TESTE: começa do zero, nada é carregado nem salvo.")
 else
 	local ok, resultado = pcall(function()
 		return DataStoreService:GetDataStore(NOME_STORE)
