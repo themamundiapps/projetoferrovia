@@ -495,7 +495,8 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			if self.aberto then
 				atualizarRanking()
 			end
-			task.wait(30)
+			-- enquanto a lista não chegou (servidor recém-aberto), pergunta de novo em poucos segundos
+			task.wait(if avisoRanking.Visible then 3 else 30)
 		end
 	end)
 

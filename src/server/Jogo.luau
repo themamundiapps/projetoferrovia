@@ -1749,13 +1749,22 @@ local function atualizarRanking()
 	local perfis: { [number]: any } = {}
 	local perfil = perfilStore
 	if perfil then
+		-- lidos em paralelo: um por vez somava vários segundos
+		local faltam = #ids
 		for _, id in ids do
-			local okP, p = pcall(function()
-				return perfil:GetAsync(tostring(id))
+			task.spawn(function()
+				local okP, p = pcall(function()
+					return perfil:GetAsync(tostring(id))
+				end)
+				if okP and type(p) == "table" then
+					perfis[id] = p
+				end
+				faltam -= 1
 			end)
-			if okP and type(p) == "table" then
-				perfis[id] = p
-			end
+		end
+		local limite = os.clock() + 8
+		while faltam > 0 and os.clock() < limite do
+			task.wait(0.05)
 		end
 	end
 	local lista = {}
@@ -1785,7 +1794,9 @@ end
 remoteRanking.Parent = pastaRemotes
 
 task.spawn(function()
-	task.wait(10) -- deixa os jogadores carregarem
+	-- a lista sai logo que o servidor abre (o menu não fica em "Carregando…"); a pontuação de quem
+	-- acabou de entrar vai na rodada seguinte
+	task.wait(1)
 	while true do
 		atualizarRanking()
 		task.wait(INTERVALO_RANKING)
