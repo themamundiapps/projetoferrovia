@@ -311,7 +311,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 		Position = UDim2.new(1, -18 - Estilo.INSET_DIR, 1, -14),
 		Size = UDim2.fromOffset(90, 20),
 		BackgroundTransparency = 1,
-		Text = "v0.1.0",
+		Text = "v0.1.1",
 		FontFace = era.fontes.label,
 		TextSize = 12,
 		TextColor3 = Color3.new(1, 1, 1),

@@ -7,6 +7,14 @@ export type Novidade = { data: string, titulo: Texto, texto: Texto }
 
 local Novidades: { Novidade } = {
 	{
+		data = "2026-11-26",
+		titulo = { pt = "Versão 0.1.1: mapas e chat", en = "Version 0.1.1: maps and chat" },
+		texto = {
+			pt = "Escolha o seu primeiro mapa e complete todas as linhas para liberar os outros. No chat, o seu título aparece antes do nome e as conquistas de todos são anunciadas.",
+			en = "Pick your first map and complete every line to unlock the others. In chat, your title now shows before your name and everyone's achievements are announced.",
+		},
+	},
+	{
 		data = "2026-11-25",
 		titulo = { pt = "O jogo lançou hoje!", en = "The game launched today!" },
 		texto = {
