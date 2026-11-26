@@ -10,6 +10,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Economia = require(Shared:WaitForChild("Economia"))
+local Equipe = require(Shared:WaitForChild("Equipe"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local Novidades = require(Shared:WaitForChild("Novidades"))
 local DadosBrasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil"))
@@ -444,9 +445,13 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 				l.frame.BackgroundTransparency = if eu then 0.8 else 1
 				l.nome.Text = tostring(item.nome)
 				local titulo = Economia.tituloNivel(tonumber(item.nivel) or 1, item.era, Idioma.atual)
-				l.titulo.Text = if item.pioneiro
-					then `{titulo} · <font color="#3F8F4F"><b>{L("Pioneiro", "Pioneer")}</b></font>`
-					else titulo
+				if item.pioneiro then
+					titulo ..= ` · <font color="#3F8F4F"><b>{L("Pioneiro", "Pioneer")}</b></font>`
+				end
+				if Equipe[item.userId] then
+					titulo = `<font color="#B8382B"><b>{L("Dono", "Owner")}</b></font> · ` .. titulo
+				end
+				l.titulo.Text = titulo
 				l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
 				l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)
 				local id = item.userId

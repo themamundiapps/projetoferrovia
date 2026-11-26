@@ -16,6 +16,7 @@ local Jornal = require(Shared:WaitForChild("Jornal"))
 local Idioma = require(Shared:WaitForChild("Idioma"))
 local L = Idioma.L
 local Emojis = require(Shared:WaitForChild("Emojis"))
+local Equipe = require(Shared:WaitForChild("Equipe"))
 -- Mapas jogáveis; dadosAtual é o do mapa aberto (o servidor diz qual no estado: estado.mapa).
 local DADOS: { [string]: any } = {
 	brasil = require(Shared:WaitForChild("Dados"):WaitForChild("Brasil")),
@@ -249,6 +250,7 @@ end
 -- Mensagem do sistema no chat (TextChatService novo). Usada para as conquistas: a sua e a dos outros jogadores.
 local TextChatService = game:GetService("TextChatService")
 local COR_CHAT = "#E8B04A"
+local COR_EQUIPE = "#FF6B5B" -- vermelho da etiqueta [Owner] (Leonardo e Enzo)
 local COR_PIONEIRO = "#5FD17A" -- verde do título Pioneer (primeiros jogadores, até 31/12/2026)
 local function chatSistema(texto: string)
 	task.spawn(function()
@@ -276,7 +278,8 @@ TextChatService.OnIncomingMessage = function(mensagem: TextChatMessage)
 			local pioneiro = if jogador:GetAttribute("Pioneiro") == true
 				then `<font color="{COR_PIONEIRO}">[{L("Pioneiro", "Pioneer")}]</font> `
 				else ""
-			props.PrefixText = pioneiro .. `<font color="{COR_CHAT}">[{titulo}]</font> ` .. mensagem.PrefixText
+			local equipe = if Equipe[jogador.UserId] then `<font color="{COR_EQUIPE}"><b>[{L("Dono", "Owner")}]</b></font> ` else ""
+			props.PrefixText = equipe .. pioneiro .. `<font color="{COR_CHAT}">[{titulo}]</font> ` .. mensagem.PrefixText
 		end
 	end
 	return props
