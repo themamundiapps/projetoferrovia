@@ -226,18 +226,24 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			pronto = true,
 		},
 	}
+	local nomePorId = {}
+	for _, m in mapas do
+		nomePorId[m.id] = m.nome
+	end
 	for i, m in mapas do
+		local prog = ((estado or {}).progressoMapas or {})[m.id]
+		-- trancado até completar o primeiro mapa (o servidor decide; aqui só mostra)
+		local trancado = m.pronto and prog ~= nil and prog.liberado == false
 		local cartao = est:cartao({
 			Name = "Mapa_" .. m.id,
 			LayoutOrder = i,
 			Size = UDim2.new(1 / 3, -7, 1, 0),
-		}, fileira, m.pronto)
+		}, fileira, m.pronto and not trancado)
 		est:lista(cartao, 6)
 		local n = est:texto("subtitulo", m.nome, cartao, 1)
 		n.TextSize = 19
 		local inf = est:texto("fraco", m.info, cartao, 2)
 		inf.TextSize = 13
-		local prog = ((estado or {}).progressoMapas or {})[m.id]
 		if m.pronto and prog and prog.linhas > 0 then
 			local completo = prog.linhas >= prog.total
 			local lProg = est:texto("rotulo", if completo then L(`{Emojis.medalha} Mapa completo`, `{Emojis.medalha} Map complete`)
@@ -247,7 +253,18 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 				lProg.TextColor3 = est:paleta(cartao).positive
 			end
 		end
-		if m.pronto then
+		if trancado then
+			if cartao:IsA("ImageLabel") then
+				(cartao :: ImageLabel).ImageTransparency = 0.45
+			end
+			n.TextTransparency = 0.4
+			inf.TextTransparency = 0.3
+			local falta = nomePorId[prog.falta] or ""
+			local aviso = L(`Complete {falta} para liberar`, `Complete {falta} to unlock`)
+			local cadeado = est:texto("fraco", `{Emojis.cadeado} {aviso}`, cartao, 4)
+			cadeado.TextSize = 13
+			cadeado.TextTransparency = 0.2
+		elseif m.pronto then
 			-- cada mapa é uma companhia separada: "Continuar" só no mapa aberto agora
 			local continuar = temCompanhia and m.id == (dados.id or "brasil")
 			local b = est:botao(if continuar or m.id == (dados.id or "brasil") then "principal" else "discreto", if continuar then L("Continuar", "Continue") else L("Jogar", "Play"), cartao, 4)

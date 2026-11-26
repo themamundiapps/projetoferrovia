@@ -284,6 +284,45 @@ local function sanear(salvo: any): EstadoMapa
 	return e
 end
 
+-- Mapas: o primeiro mapa em que o jogador constrói vira o dele; os outros abrem quando ele completa um
+-- mapa (todas as linhas). Quem já tinha começado mais de um mapa continua com acesso a eles.
+-- No modo gravação do Studio tudo fica aberto (trailers mostram os três mapas).
+local NOMES_MAPA = {
+	brasil = { pt = "Brasil", en = "Brazil" },
+	eua = { pt = "Estados Unidos", en = "United States" },
+	europa = { pt = "Europa", en = "Europe" },
+}
+
+local function mapaIniciado(em: any): boolean
+	return type(em) == "table" and type(em.trechos) == "table" and next(em.trechos) ~= nil
+end
+
+local function mapaCompleto(em: any, id: string): boolean
+	return mapaIniciado(em) and Economia.linhasCompletas(em, MAPAS[id]) >= #MAPAS[id].linhas
+end
+
+-- (liberado, id do mapa que precisa ser completado)
+local function mapaLiberado(s: Sessao, id: string): (boolean, string?)
+	if RunService:IsStudio() and ServerStorage:GetAttribute("ModoGravacao") == true then
+		return true, nil
+	end
+	if mapaIniciado(s.mapas[id]) then
+		return true, nil
+	end
+	local primeiro: string? = nil
+	for outro, em in s.mapas do
+		if MAPAS[outro] and mapaIniciado(em) then
+			if mapaCompleto(em, outro) then
+				return true, nil
+			end
+			if primeiro == nil or outro == s.mapaAtual then
+				primeiro = outro
+			end
+		end
+	end
+	return primeiro == nil, primeiro
+end
+
 local function pacoteEstado(s: Sessao, renda: number?): any
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -291,7 +330,13 @@ local function pacoteEstado(s: Sessao, renda: number?): any
 	local progressoMapas = {}
 	for id, em in s.mapas do
 		if MAPAS[id] then
-			progressoMapas[id] = { linhas = Economia.linhasCompletas(em, MAPAS[id]), total = #MAPAS[id].linhas }
+			local liberado, falta = mapaLiberado(s, id)
+			progressoMapas[id] = {
+				linhas = Economia.linhasCompletas(em, MAPAS[id]),
+				total = #MAPAS[id].linhas,
+				liberado = liberado,
+				falta = falta,
+			}
 		end
 	end
 	return {
@@ -1171,6 +1216,11 @@ function Acoes.mapa(s: Sessao, args: any): (boolean, string?)
 	if id == s.mapaAtual then
 		return true, nil
 	end
+	local liberado, falta = mapaLiberado(s, id)
+	if not liberado and falta then
+		local nome = NOMES_MAPA[falta] or { pt = falta, en = falta }
+		return false, L(`Complete o mapa {nome.pt} para liberar os outros mapas.`, `Complete the {nome.en} map to unlock the other maps.`)
+	end
 	-- o mapa que fica para trás para de render agora; o novo começa a contar daqui
 	local antigo = s.mapas[s.mapaAtual]
 	if antigo then
@@ -1328,6 +1378,12 @@ local function aoEntrar(jogador: Player)
 		end
 		e.ultimoTick = os.time()
 		s.mapas[id] = e
+	end
+	-- save antigo aberto num mapa que agora está trancado (trocou sem construir): volta para o mapa dele
+	local liberado, falta = mapaLiberado(s, s.mapaAtual)
+	if not liberado and falta then
+		s.mapaAtual = falta
+		s.ganhoOffline = 0
 	end
 
 	if sessoes[jogador] == s then
