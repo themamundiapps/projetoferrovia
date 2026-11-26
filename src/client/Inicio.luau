@@ -336,13 +336,15 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 	local avisoRanking = est:texto("fraco", L("Carregando…", "Loading…"), ranking, 1)
 	avisoRanking.TextSize = 13
 	local linhasRanking: { any } = {}
+	-- cores do cartão (papel claro em qualquer era): na Alta, est.c tem tinta clara e o nome sumia
+	local cr = est:paleta(ranking)
 	local fotos: { [number]: string } = {}
 	for i = 1, 10 do
 		local linha = novo("Frame", {
 			Name = "Linha" .. i,
 			LayoutOrder = 10 + i,
 			Size = UDim2.new(1, 0, 0, 36),
-			BackgroundColor3 = c.accent,
+			BackgroundColor3 = cr.accent,
 			BackgroundTransparency = 1,
 			Visible = false,
 		}, ranking)
@@ -351,12 +353,12 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			AnchorPoint = Vector2.new(0, 0.5),
 			Position = UDim2.new(0, 2, 0.5, 0),
 			Size = UDim2.fromOffset(20, 20),
-			BackgroundColor3 = CORES_PODIO[i] or c.panel,
+			BackgroundColor3 = CORES_PODIO[i] or cr.panel,
 			BackgroundTransparency = if CORES_PODIO[i] then 0 else 1,
 			Text = tostring(i),
 			FontFace = era.fontes.display,
 			TextSize = 13,
-			TextColor3 = if CORES_PODIO[i] then Color3.fromRGB(40, 28, 18) else c.inkMuted,
+			TextColor3 = if CORES_PODIO[i] then Color3.fromRGB(40, 28, 18) else cr.inkMuted,
 		}, linha)
 		novo("UICorner", { CornerRadius = UDim.new(1, 0) }, pos)
 		local foto = novo("ImageLabel", {
@@ -364,11 +366,11 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			AnchorPoint = Vector2.new(0, 0.5),
 			Position = UDim2.new(0, 28, 0.5, 0),
 			Size = UDim2.fromOffset(30, 30),
-			BackgroundColor3 = c.rule,
+			BackgroundColor3 = cr.rule,
 			Image = "",
 		}, linha)
 		novo("UICorner", { CornerRadius = UDim.new(1, 0) }, foto)
-		novo("UIStroke", { Color = c.ink, Thickness = 1.5, Transparency = 0.3 }, foto)
+		novo("UIStroke", { Color = cr.ink, Thickness = 1.5, Transparency = 0.3 }, foto)
 		local nomeL = novo("TextLabel", {
 			Position = UDim2.fromOffset(66, 0),
 			Size = UDim2.new(1, -66 - 70, 1, 0),
@@ -376,7 +378,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			Text = "",
 			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Bold),
 			TextSize = 14,
-			TextColor3 = c.ink,
+			TextColor3 = cr.ink,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextTruncate = Enum.TextTruncate.AtEnd,
 		}, linha)
@@ -388,7 +390,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			Text = "",
 			FontFace = Font.new(era.fontes.body.Family, Enum.FontWeight.Bold),
 			TextSize = 14,
-			TextColor3 = c.accent,
+			TextColor3 = cr.accent,
 			TextXAlignment = Enum.TextXAlignment.Right,
 		}, linha)
 		local linhasL = novo("TextLabel", {
@@ -399,7 +401,7 @@ function Inicio.montar(self: Inicio, estado: any, era: any, dados: any)
 			Text = "",
 			FontFace = era.fontes.body,
 			TextSize = 12,
-			TextColor3 = c.inkMuted,
+			TextColor3 = cr.inkMuted,
 			TextXAlignment = Enum.TextXAlignment.Right,
 		}, linha)
 		linhasRanking[i] = { frame = linha, foto = foto, nome = nomeL, nivel = nivelL, linhas = linhasL }
