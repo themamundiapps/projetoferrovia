@@ -17,6 +17,12 @@ local Estilo = require(script.Parent:WaitForChild("Estilo"))
 local L = Idioma.L
 
 local MAX_LINHAS = 8
+-- mapa aberto de cada jogador (atributo "Mapa" que o servidor põe), na frente do nome da companhia
+local NOMES_MAPA: { [string]: { pt: string, en: string } } = {
+	brasil = { pt = "Brasil", en = "Brazil" },
+	eua = { pt = "EUA", en = "USA" },
+	europa = { pt = "Europa", en = "Europe" },
+}
 local LARGURA = 250
 local ALTURA_LINHA = 38
 local INTERVALO = 2 -- segundos entre atualizações
@@ -268,6 +274,7 @@ function Placar.atualizar(self: Placar)
 			companhia = tostring(j:GetAttribute("Companhia") or ""),
 			nivel = tonumber(j:GetAttribute("Nivel")) or 0,
 			pinturas = j:GetAttribute("Pinturas") == true,
+			mapa = tostring(j:GetAttribute("Mapa") or ""),
 		})
 	end
 	table.sort(lista, function(a, b)
@@ -288,7 +295,9 @@ function Placar.atualizar(self: Placar)
 		-- a linha do próprio jogador ganha um fundo leve
 		l.frame.BackgroundTransparency = if eu then 0.8 else 1
 		l.nome.Text = item.jogador.DisplayName .. (if item.pinturas then " ✨" else "")
-		l.companhia.Text = if item.companhia ~= "" then item.companhia else Idioma.T("companhia_padrao")
+		local companhia = if item.companhia ~= "" then item.companhia else Idioma.T("companhia_padrao")
+		local mapa = NOMES_MAPA[item.mapa]
+		l.companhia.Text = if mapa then `{L(mapa.pt, mapa.en)} · {companhia}` else companhia
 		l.nivel.Text = `{L("Nível", "Level")} {item.nivel}`
 		l.linhas.Text = L(`{item.linhas} linha{if item.linhas == 1 then "" else "s"}`, `{item.linhas} line{if item.linhas == 1 then "" else "s"}`)
 		if l.foto:GetAttribute("UserId") ~= item.jogador.UserId then

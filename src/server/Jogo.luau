@@ -406,6 +406,7 @@ local function atualizarPlacar(s: Sessao, renda: number?)
 	jogador:SetAttribute("Companhia", e.nomeCompanhia or "")
 	-- era do mapa aberto: com o nível, dá o título do jogador na etiqueta do chat ([Barão] Nome)
 	jogador:SetAttribute("Era", e.era or "vapor")
+	jogador:SetAttribute("Mapa", s.mapaAtual) -- para o placar do servidor mostrar onde cada um está jogando
 	local rendaTxt = pasta:FindFirstChild("Renda/s") :: StringValue?
 	if rendaTxt and renda then
 		local dados = MAPAS[s.mapaAtual]
