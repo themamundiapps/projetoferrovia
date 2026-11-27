@@ -1,0 +1,41 @@
+from ads2 import *
+fundo = preencher(quadro("h15", 17.0, 960, 470, 1.0), W, H).filter(ImageFilter.GaussianBlur(3))
+img = fundo.copy(); esc = Image.new("RGBA", (W, H), (8, 6, 14, 150)); img.alpha_composite(esc)
+# vinheta
+yy, xx = np.mgrid[0:H, 0:W]; r = np.hypot((xx - W * 0.62) / W, (yy - H * 0.58) / H)
+v = Image.new("RGBA", (W, H), (0, 0, 0, 0)); v.putalpha(Image.fromarray((np.clip((r - 0.25) / 0.5, 0, 1) * 170).astype(np.uint8))); img.alpha_composite(v)
+texto(img, "WATCH THE MONEY", 70, 40, 104, estilo="branco", ancora="esq")
+texto(img, "ROLL IN", 70, 165, 150, estilo="ouro", ancora="esq")
+texto(img, "Your trains keep earning,", 78, 380, 50, fonte="Rye-Regular.ttf", estilo="branco", ancora="esq")
+texto(img, "even while you're away.", 78, 450, 50, fonte="Rye-Regular.ttf", estilo="branco", ancora="esq")
+# lupa
+cx, cy, R = 1330, 600, 330
+zoom = quadro("h14", 4.0, 1150, 470, 2.7)
+zoom = preencher(zoom, 2 * R, 2 * R)
+mc = Image.new("L", (2 * R, 2 * R)); ImageDraw.Draw(mc).ellipse([0, 0, 2 * R - 1, 2 * R - 1], fill=255)
+lente = Image.new("RGBA", (2 * R, 2 * R), (0, 0, 0, 0)); lente.paste(zoom, (0, 0), mc)
+# cabo
+cabo = Image.new("L", (W, H)); dc = ImageDraw.Draw(cabo)
+a = math.radians(40); x0, y0 = cx + (R + 20) * math.cos(a), cy + (R + 20) * math.sin(a)
+x1, y1 = cx + (R + 230) * math.cos(a), cy + (R + 230) * math.sin(a)
+dc.line([(x0, y0), (x1, y1)], fill=255, width=70)
+sh = Image.new("RGBA", (W, H), (0, 0, 0, 0)); sh.paste((0, 0, 0, 170), (12, 20), cabo.filter(ImageFilter.GaussianBlur(12))); img.alpha_composite(sh)
+pintar(img, dil(cabo, 7), (24, 10, 4)); g = grad([(120, 60, 30), (80, 36, 18), (50, 20, 10)], W, H); g.putalpha(cabo); img.alpha_composite(g); bisel(img, cabo, 0.8, 5)
+sh = Image.new("RGBA", (W, H), (0, 0, 0, 0)); ms = Image.new("L", (W, H)); ImageDraw.Draw(ms).ellipse([cx - R, cy - R, cx + R, cy + R], fill=255)
+sh.paste((0, 0, 0, 190), (14, 22), ms.filter(ImageFilter.GaussianBlur(18))); img.alpha_composite(sh)
+img.alpha_composite(lente, (cx - R, cy - R))
+brilho = Image.new("L", (W, H)); ImageDraw.Draw(brilho).ellipse([cx - R * 0.8, cy - R * 0.9, cx - R * 0.1, cy - R * 0.45], fill=255)
+pintar(img, brilho.filter(ImageFilter.GaussianBlur(30)).point(lambda v: int(v * 0.25)), (255, 255, 255))
+aro = Image.new("L", (W, H)); da = ImageDraw.Draw(aro); da.ellipse([cx - R - 28, cy - R - 28, cx + R + 28, cy + R + 28], fill=255); da.ellipse([cx - R, cy - R, cx + R, cy + R], fill=0)
+pintar(img, dil(aro, 6), (24, 10, 4)); g = grad(OURO, W, H); g.putalpha(aro); img.alpha_composite(g); bisel(img, aro, 1.0, 4)
+# moedas voando
+rng = np.random.default_rng(3)
+for (x, y, r) in [(880, 330, 38), (960, 250, 26), (930, 900, 30), (1050, 980, 22)]:
+    m = Image.new("L", (W, H)); ImageDraw.Draw(m).ellipse([x - r, y - r * 0.85, x + r, y + r * 0.85], fill=255)
+    pintar(img, dil(m, 4), (24, 10, 4)); g = grad(OURO, W, H); g.putalpha(m); img.alpha_composite(g); bisel(img, m, 1.0, 2)
+    mi = Image.new("L", (W, H)); ImageDraw.Draw(mi).ellipse([x - r * 0.62, y - r * 0.52, x + r * 0.62, y + r * 0.52], outline=255, width=max(2, r // 9))
+    pintar(img, mi, (170, 105, 25))
+texto(img, "+€648", 1010, 400, 92, estilo="vermelho", rot=8)
+selo(img, 1745, 200, 115, [("IDLE", 40), ("INCOME", 36)], cor=(30, 110, 60), rot=8)
+logo(img, 330, 640, 520)
+img.convert("RGB").save("ad2_renda_1920x1080.png")

@@ -1,0 +1,17 @@
+from ads2 import *
+img = raios((70, 16, 12), (98, 26, 18))
+texto(img, "FROM ONE LINE", W / 2, 20, 118, estilo="branco")
+texto(img, "TO A CONTINENT", W / 2, 150, 132, estilo="ouro")
+antes = quadro("h03", 2.0, 860, 520, 1.25)
+depois = quadro("h15", 17.0, 1000, 470, 1.15)
+cartao(img, antes, 520, 600, 660, 400, -6)
+cartao(img, depois, 1330, 590, 900, 540, 4)
+# seta dourada
+m = Image.new("L", (W, H)); d = ImageDraw.Draw(m)
+d.polygon([(820, 560), (930, 560), (930, 515), (1030, 600), (930, 685), (930, 640), (820, 640)], fill=255)
+sh = Image.new("RGBA", (W, H), (0, 0, 0, 0)); sh.paste((0, 0, 0, 180), (8, 14), m.filter(ImageFilter.GaussianBlur(8))); img.alpha_composite(sh)
+pintar(img, dil(m, 9), (24, 10, 4)); g = grad(OURO, W, H); g.putalpha(m); img.alpha_composite(g); bisel(img, m, 1.0, 3)
+selo(img, 300, 360, 105, [("YOUR", 30), ("FIRST", 40), ("LINE", 40)], rot=-14)
+selo(img, 1700, 330, 115, [("YOUR", 32), ("EMPIRE", 42)], cor=(30, 110, 60), rot=10)
+logo(img, W / 2, 875, 500)
+img.convert("RGB").save("ad2_imperio_1920x1080.png")

@@ -143,3 +143,31 @@ if __name__ == "__main__":
     c = Image.new("RGBA", (1040, 260), (60, 60, 60, 255))
     for i, im in enumerate(ims): c.alpha_composite(im.resize((250, 250)), (5 + i * 260, 5))
     c.convert("RGB").save("/tmp/badges.png")
+
+def vapor():
+    img = base()
+    lo = M(); d = ImageDraw.Draw(lo)
+    d.rounded_rectangle([250, 430, 640, 600], 70, fill=255)        # caldeira
+    d.rectangle([600, 330, 790, 620], fill=255)                     # cabine
+    d.rectangle([580, 300, 820, 340], fill=255)                     # teto
+    d.rectangle([300, 300, 370, 440], fill=255)                     # chaminé
+    d.polygon([(280, 300), (390, 300), (370, 330), (300, 330)], fill=255)
+    d.ellipse([430, 395, 500, 445], fill=255)                        # domo
+    d.polygon([(250, 560), (190, 680), (300, 640)], fill=255)        # limpa-trilhos
+    d.rectangle([220, 600, 800, 640], fill=255)                      # chassi
+    metal(img, lo, halo=True)
+    jan = M(); ImageDraw.Draw(jan).rounded_rectangle([640, 370, 750, 470], 14, fill=255)
+    pintar(img, jan, (255, 225, 150))
+    rd = M(); dr = ImageDraw.Draw(rd)
+    for x, r in ((330, 62), (480, 80), (680, 80)):
+        dr.ellipse([x - r, 690 - r, x + r, 690 + r], fill=255)
+    pintar(img, dil(rd, 8), (30, 14, 4)); g = grad([(200, 60, 40), (150, 30, 24)]); g.putalpha(rd); img.alpha_composite(g); bisel(img, rd, 0.8, 3)
+    cub = M(); dc = ImageDraw.Draw(cub)
+    for x, r in ((330, 62), (480, 80), (680, 80)):
+        dc.ellipse([x - r * 0.3, 690 - r * 0.3, x + r * 0.3, 690 + r * 0.3], fill=255)
+    metal(img, cub, contorno=False)
+    fu = M(); df = ImageDraw.Draw(fu)
+    for x, y, r in ((335, 250, 45), (390, 190, 60), (470, 140, 75)):
+        df.ellipse([x - r, y - r, x + r, y + r], fill=255)
+    pintar(img, fu.filter(ImageFilter.GaussianBlur(3)).point(lambda v: int(v * 0.85)), (240, 232, 220))
+    return acabamento(img, ((760, 220, 40), (230, 520, 22), (820, 760, 18), (620, 180, 14)))
