@@ -3,6 +3,7 @@
 -- O servidor é a única autoridade sobre dinheiro; o cliente só pede ações e mostra o estado.
 
 local BadgeService = game:GetService("BadgeService")
+local AnalyticsService = game:GetService("AnalyticsService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -66,6 +67,7 @@ type Sessao = {
 	proximoGerente: number, -- os.clock() da próxima rodada do Gerente Automático
 	pontosRanking: number, -- última pontuação enviada ao ranking global
 	pioneiro: boolean, -- título "Pioneer" (entrou antes de FIM_PIONEIRO)
+	funil: number, -- último passo do funil de onboarding já registrado (-1 = jogador antigo, fora do funil)
 }
 
 -- Parte do save com as compras. Os passes ficam guardados só como reserva (se a consulta ao Roblox
@@ -448,7 +450,59 @@ end
 
 -- Placar do servidor (lista de jogadores do Roblox, no canto de cima): nível e renda por segundo.
 -- A lista ordena pelo primeiro valor (o nível); a renda vai como texto formatado.
+-- Funil de onboarding (Creator Hub → Analytics → Funnels): mostra em que passo os jogadores novos param.
+-- Só entra quem começou do zero depois que o funil existe; o passo alcançado vai no save.
+local PASSOS_FUNIL = {
+	"Joined",
+	"Pressed Play",
+	"First section built",
+	"Tutorial finished",
+	"Level 2",
+	"First line complete",
+	"Level 5",
+	"Diesel era",
+}
+local function registrarFunil(s: Sessao, passo: number)
+	if s.funil < 0 or passo <= s.funil then
+		return
+	end
+	for p = s.funil + 1, passo do
+		pcall(function()
+			AnalyticsService:LogOnboardingFunnelStepEvent(s.jogador, p, PASSOS_FUNIL[p])
+		end)
+	end
+	s.funil = passo
+end
+local function verificarFunil(s: Sessao)
+	if s.funil < 0 then
+		return
+	end
+	local passo = 0
+	local nivel, linhas, tutorial, construiu, diesel = 0, 0, false, false, false
+	for id, e in s.mapas do
+		if type(e.trechos) == "table" and next(e.trechos) ~= nil then
+			construiu = true
+		end
+		tutorial = tutorial or e.tutorial == true
+		nivel = math.max(nivel, (Economia.nivel(e)))
+		if MAPAS[id] then
+			linhas = math.max(linhas, Economia.linhasCompletas(e, MAPAS[id]))
+		end
+		diesel = diesel or (e.era ~= nil and e.era ~= "vapor")
+	end
+	if construiu then passo = 3 end
+	if passo >= 3 and tutorial then passo = 4 end
+	if passo >= 4 and nivel >= 2 then passo = 5 end
+	if passo >= 5 and linhas >= 1 then passo = 6 end
+	if passo >= 6 and nivel >= 5 then passo = 7 end
+	if passo >= 7 and diesel then passo = 8 end
+	if passo > s.funil and s.funil >= 2 then
+		registrarFunil(s, passo)
+	end
+end
+
 local function atualizarPlacar(s: Sessao, renda: number?)
+	verificarFunil(s)
 	local jogador = s.jogador
 	local pasta = jogador:FindFirstChild("leaderstats")
 	if not pasta then
@@ -622,7 +676,7 @@ local function salvar(s: Sessao): boolean
 			s.loja.recibos[id] = nil
 		end
 	end
-	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja, mapaAtual = s.mapaAtual, pioneiro = s.pioneiro })
+	return Persistencia.salvar(s.jogador.UserId, { versao = VERSAO_SAVE, mapas = mapas, loja = s.loja, mapaAtual = s.mapaAtual, pioneiro = s.pioneiro, funil = s.funil })
 end
 
 -- ---------------------------------------------------------------- loja (ver Loja.luau)
@@ -1343,6 +1397,12 @@ function Acoes.idioma(s: Sessao, args: any): (boolean, string?)
 	return true, nil
 end
 
+-- O cliente avisa quando o jogador aperta Jogar no menu (passo 2 do funil).
+function Acoes.funil(s: Sessao, _args: any): (boolean, string?)
+	registrarFunil(s, 2)
+	return true, nil
+end
+
 function Acoes.tutorial(s: Sessao, args: any): (boolean, string?)
 	local dados = MAPAS[s.mapaAtual]
 	local e = s.mapas[s.mapaAtual]
@@ -1367,6 +1427,11 @@ remoteAcao.OnServerInvoke = function(jogador: Player, tipo: any, args: any)
 	local s = sessoes[jogador]
 	if not s or not s.carregado then
 		return { ok = false, erro = L("Carregando seus dados…", "Loading your data…") }
+	end
+	-- o aviso do funil vem junto com o "Jogar" e não pode gastar o limite de ações (senão a troca de mapa falha)
+	if tipo == "funil" then
+		registrarFunil(s, 2)
+		return { ok = true }
 	end
 	local agora = os.clock()
 	if agora - s.ultimaAcao < 0.1 then
@@ -1424,6 +1489,7 @@ local function aoEntrar(jogador: Player)
 		proximoGerente = 0,
 		pontosRanking = -1,
 		pioneiro = false,
+		funil = -1,
 	}
 	sessoes[jogador] = s
 
@@ -1435,6 +1501,21 @@ local function aoEntrar(jogador: Player)
 	s.podeSalvar = ok and Persistencia.disponivel()
 	s.loja = sanearLoja(if type(salvo) == "table" then salvo.loja else nil)
 	s.pioneiro = (type(salvo) == "table" and salvo.pioneiro == true) or os.time() < FIM_PIONEIRO
+	-- funil: continua de onde parou; quem nunca construiu nada entra agora; quem já jogava fica de fora
+	if type(salvo) == "table" and type(salvo.funil) == "number" then
+		s.funil = salvo.funil
+	else
+		local novo = true
+		if type(salvo) == "table" and type(salvo.mapas) == "table" then
+			for _, m in salvo.mapas do
+				if type(m) == "table" and type(m.trechos) == "table" and next(m.trechos) ~= nil then
+					novo = false
+				end
+			end
+		end
+		s.funil = if novo then 0 else -1
+	end
+	registrarFunil(s, 1)
 	jogador:SetAttribute("Pioneiro", s.pioneiro)
 	if s.pioneiro then
 		darBadge(jogador, BADGE_PIONEIRO)

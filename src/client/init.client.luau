@@ -637,6 +637,12 @@ local function iniciarPasseio()
 end
 
 inicio.aoJogar.Event:Connect(function(mapaId: string)
+	-- passo "Pressed Play" do funil de onboarding (o servidor só conta uma vez, e só para jogadores novos)
+	task.spawn(function()
+		pcall(function()
+			remoteAcao:InvokeServer("funil", {})
+		end)
+	end)
 	-- outro país: o servidor troca o mapa e manda o estado; espera chegar antes de fechar o menu
 	if ultimoEstado and mapaId and mapaId ~= ultimoEstado.mapa then
 		local resposta = remoteAcao:InvokeServer("mapa", { mapa = mapaId })
